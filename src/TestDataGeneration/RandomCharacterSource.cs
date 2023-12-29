@@ -1,153 +1,36 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace TestDataGeneration;
 
 public abstract class RandomCharacterSource
 {
-    public static int GetRandomNumber(Random random, int min, int max)
-    {
-        if (min > max)
-            throw new ArgumentOutOfRangeException(nameof(max));
-        if (min == max)
-            return min;
-        if (max == int.MaxValue)
-        {
-            if (min == int.MinValue)
-                return (random.Next(0, 2) == 1) ? random.Next(-1, int.MaxValue) + 1 : random.Next(int.MinValue, 0);
-            return random.Next(min - 1, max) + 1;
-        }
-        return random.Next(min, max + 1);
-    }
-    public static IEnumerable<int> GetRandomNumbers(Random random, int minRepeat, int maxRepeat, int minValue, int maxValue) { return GetRandomNumbers(random, GetRandomNumber(random, minRepeat, maxRepeat), minValue, maxValue); }
-    public static IEnumerable<int> GetRandomNumbers(Random random, int repeat, int minValue, int maxValue)
-    {
-        if (minValue > maxValue)
-            throw new ArgumentOutOfRangeException(nameof(maxValue));
-        if (minValue == maxValue)
-        {
-            for (int i = 0; i < repeat; i++)
-                yield return minValue;
-        }
-        else if (maxValue == int.MaxValue)
-        {
-            if (minValue == int.MinValue)
-            {
-                for (int i = 0; i < repeat; i++)
-                    yield return (random.Next(0, 2) == 1) ? random.Next(-1, int.MaxValue) + 1 : random.Next(int.MinValue, 0);
-            }
-            else
-                for (int i = 0; i < repeat; i++)
-                    yield return random.Next(minValue - 1, maxValue) + 1;
-        }
-        else
-            for (int i = 0; i < repeat; i++)
-                yield return random.Next(minValue, maxValue + 1);
-    }
-    public static void WriteRandomNumbers(TextWriter writer, Random random, int minRepeat, int maxRepeat, int minValue, int maxValue) { WriteRandomNumbers(writer, random, GetRandomNumber(random, minRepeat, maxRepeat), minValue, maxValue); }
-    public static void WriteRandomNumbers(TextWriter writer, Random random, int repeat, int minValue, int maxValue)
-    {
-        if (minValue > maxValue)
-            throw new ArgumentOutOfRangeException(nameof(maxValue));
-        if (repeat < 1)
-            return;
-        if (minValue == maxValue)
-        {
-            writer.Write(minValue);
-            for (int i = 1; i < repeat; i++)
-            {
-                writer.Write(", ");
-                writer.Write(minValue);
-            }
-        }
-        else if (maxValue == int.MaxValue)
-        {
-            if (minValue == int.MinValue)
-            {
-                writer.Write((random.Next(0, 2) == 1) ? random.Next(-1, int.MaxValue) + 1 : random.Next(int.MinValue, 0));
-                for (int i = 1; i < repeat; i++)
-                {
-                    writer.Write(", ");
-                    writer.Write((random.Next(0, 2) == 1) ? random.Next(-1, int.MaxValue) + 1 : random.Next(int.MinValue, 0));
-                }
-            }
-            else
-                for (int i = 1; i < repeat; i++)
-                {
-                    writer.Write(", ");
-                    writer.Write(random.Next(minValue - 1, maxValue) + 1);
-                }
-        }
-        else
-            for (int i = 1; i < repeat; i++)
-            {
-                writer.Write(", ");
-                writer.Write(random.Next(minValue, maxValue + 1));
-            }
-    }
-    private readonly CharacterType _type;
-    private ReadOnlyCollection<RandomCharacterSource> _includes;
-    private ReadOnlyCollection<RandomCharacterSource> _includedBy;
-    public CharacterType Type { get { return _type; } }
-    public ReadOnlyCollection<RandomCharacterSource> Includes { get { return _includes; } }
-    public ReadOnlyCollection<RandomCharacterSource> IncludedBy { get { return _includedBy; } }
+    public CharacterType Type { get; }
+
     public abstract bool Test(char c);
 
     public abstract IEnumerable<char> GetValues();
 
-    protected RandomCharacterSource(CharacterType type, Collection<RandomCharacterSource> includes, Collection<RandomCharacterSource> includedBy)
-    {
-        _type = type;
-        _includes = new ReadOnlyCollection<RandomCharacterSource>(includes);
-        _includedBy = new ReadOnlyCollection<RandomCharacterSource>(includedBy);
-    }
+    protected RandomCharacterSource(CharacterType type) => Type = type;
 
     public static readonly ReadOnlyCollection<RandomCharacterSource> All;
 
     public static readonly ReadOnlyDictionary<CharacterType, RandomCharacterSource> ByType;
 
-    private static RandomCharacterSource AddDelegated(CharacterType type, Dictionary<CharacterType, RandomCharacterSource> byType,
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includes,
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includedBy, Predicate<char> test, Func<IEnumerable<char>> getValues)
+    private static RandomCharacterSource AddDelegated(CharacterType type, Dictionary<CharacterType, RandomCharacterSource> byType, Predicate<char> test, Func<IEnumerable<char>> getValues)
     {
-        Collection<RandomCharacterSource> i = new Collection<RandomCharacterSource>();
-        Collection<RandomCharacterSource> b = new Collection<RandomCharacterSource>();
-        includes.Add(type, i);
-        includedBy.Add(type, b);
-        RandomCharacterSource result = new DelegatedRandomCharSource(type, i, b, test, getValues);
+        Collection<RandomCharacterSource> b = new();
+        RandomCharacterSource result = new DelegatedRandomCharSource(type, test, getValues);
         byType.Add(type, result);
         return result;
     }
 
-    private static RandomCharacterSource AddExplicit(CharacterType type, string characters, Dictionary<CharacterType, RandomCharacterSource> byType,
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includes,
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includedBy)
+    private static RandomCharacterSource AddExplicit(CharacterType type, string characters, Dictionary<CharacterType, RandomCharacterSource> byType)
     {
-        Collection<RandomCharacterSource> i = new Collection<RandomCharacterSource>();
-        Collection<RandomCharacterSource> b = new Collection<RandomCharacterSource>();
-        includes.Add(type, i);
-        includedBy.Add(type, b);
-        RandomCharacterSource result = new ExplicitRandomCharSource(type, characters, i, b);
+        RandomCharacterSource result = new ExplicitRandomCharSource(type, characters);
         byType.Add(type, result);
         return result;
     }
 
-    private static void SetIncludes(CharacterType type, Dictionary<CharacterType, RandomCharacterSource> byType,
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includes,
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includedBy, params CharacterType[] includedTypes)
-    {
-        RandomCharacterSource p = byType[type];
-        Collection<RandomCharacterSource> i = includes[type];
-        foreach (CharacterType n in includedTypes)
-        {
-            i.Add(byType[n]);
-            includedBy[type].Add(p);
-        }
-    }
     public static IEnumerable<char> GetAsciiChars()
     {
         for (char c = char.MinValue; c < '\u0080'; c++) yield return c;
@@ -177,7 +60,7 @@ public abstract class RandomCharacterSource
             _ => char.IsAsciiLetterOrDigit(c),
         };
     }
-    
+
     public static IEnumerable<char> GetCsIdentifierChars()
     {
         for (char c = '0'; c <= '9'; c++) yield return c;
@@ -200,12 +83,12 @@ public abstract class RandomCharacterSource
         for (char c = 'A'; c <= 'Z'; c++) yield return c;
         for (char c = 'a'; c <= 'z'; c++) yield return c;
     }
-    
+
     public static IEnumerable<char> GetAsciiLettersUpper()
     {
         for (char c = 'A'; c <= 'Z'; c++) yield return c;
     }
-    
+
     public static IEnumerable<char> GetAsciiLettersLower()
     {
         for (char c = 'a'; c <= 'z'; c++) yield return c;
@@ -234,7 +117,7 @@ public abstract class RandomCharacterSource
         for (char c = '0'; c <= '9'; c++) yield return c;
         for (char c = 'a'; c <= 'f'; c++) yield return c;
     }
-    
+
     public static IEnumerable<char> GetWhiteSpaceChars()
     {
         for (char c = '\t'; c <= '\r'; c++) yield return c;
@@ -259,13 +142,13 @@ public abstract class RandomCharacterSource
     {
         for (char c = '\udc00'; c <= '\udfff'; c++) yield return c;
     }
-    
+
     public static IEnumerable<char> GetAsciiControlChars()
     {
         for (char c = '\u0000'; c <= '\u001f'; c++) yield return c;
         yield return '\u007f';
     }
-    
+
     public static bool IsAsciiControlChar(char c) => c == '\u007f' || (c >= '\u0000' && c <= '\u001f');
 
     public static IEnumerable<char> GetControlChars()
@@ -293,7 +176,7 @@ public abstract class RandomCharacterSource
     {
         foreach (char c in GetAsciiLettersUpper()) yield return c;
         foreach (char c in GetAsciiLettersLower()) yield return c;
-        
+
         yield return '\u00aa';
         yield return '\u00b5';
         yield return '\u00ba';
@@ -2365,7 +2248,7 @@ public abstract class RandomCharacterSource
         for (char c = '\uaa50'; c <= '\uaa59'; c++) yield return c;
         for (char c = '\uabf0'; c <= '\uabf9'; c++) yield return c;
         for (char c = '\uff10'; c <= '\uff19'; c++) yield return c;
-        
+
     }
 
     public static IEnumerable<char> GetAsciiPunctuation()
@@ -2382,7 +2265,7 @@ public abstract class RandomCharacterSource
         yield return '{';
         yield return '}';
     }
-    
+
     public static bool IsAsciiPunctuation(char c) => c < '\u0080' && char.IsPunctuation(c);
 
     public static IEnumerable<char> GetPunctuationChars()
@@ -2738,13 +2621,13 @@ public abstract class RandomCharacterSource
             yield return c;
         yield return char.MaxValue;
     }
-    
+
     public static IEnumerable<CharacterType> GetIncludedTypes(CharacterType type)
     {
         switch (type)
         {
             case CharacterType.AsciiControlChars:
-            case CharacterType.AsciiDigits: 
+            case CharacterType.AsciiDigits:
             case CharacterType.AsciiPunctuation:
             case CharacterType.AsciiSymbols:
             case CharacterType.Separators:
@@ -2767,7 +2650,7 @@ public abstract class RandomCharacterSource
         switch (type)
         {
             case CharacterType.Surrogates:
-            case CharacterType.PunctuationChars: 
+            case CharacterType.PunctuationChars:
             case CharacterType.Symbols:
             case CharacterType.WhiteSpaceChars:
             case CharacterType.Numbers:
@@ -2784,147 +2667,73 @@ public abstract class RandomCharacterSource
         });
     }
 
-    private static Collection<CharacterType> Consolidate(IEnumerable<CharacterType> source)
+    public static Collection<CharacterType> Consolidate(IEnumerable<CharacterType> source)
     {
         if (source is null) return new();
-        Collection<CharacterType> result = new(source.Distinct().ToList());
-        if (result.Count < 2)
-            return result;
-        throw new NotImplementedException();
+        uint flags = 0;
+        foreach (CharacterType t in source)
+            flags |= (uint)t;
+        var result = new Collection<CharacterType>();
+        foreach (CharacterType t in Enum.GetValues<CharacterType>().Reverse())
+        {
+            uint f = (uint)t;
+            if ((flags & f) == f && !result.Any(r => GetIncludedTypes(r).Contains(t)))
+                result.Add(t);
+        }
+        return result;
     }
 
-    private static IEnumerable<CharacterType> Map(IEnumerable<string> source)
-    {
-        CharacterType t;
-        foreach (string s in source)
-            if (Enum.TryParse<CharacterType>(s, out t))
-                yield return t;
-    }
+    internal static IEnumerable<RandomCharacterSource> Map(IEnumerable<CharacterType> source) => Consolidate(source).Select(k => ByType[k]);
 
-    internal static IEnumerable<RandomCharacterSource> Map(IEnumerable<CharacterType> source)
-    {
-        IEnumerable<RandomCharacterSource> mapped = source.Distinct().Select(k => ByType[k]);
-        return mapped.Skip(1).Any() ? mapped.Where(m => !mapped.Any(a => a._includes.Contains(m))) : mapped;
-    }
-    
-    public char[] GetCharacters(IEnumerable<string> include, IEnumerable<string> exclude, IEnumerable<char> explicitInclude, IEnumerable<char> explicitExclude)
-    {
-        IEnumerable<char> result;
-        if (explicitInclude != null && (explicitInclude = explicitInclude.Distinct()).Any())
-        {
-            if (include != null && (include = include.Where(s => !string.IsNullOrEmpty(s))).Any())
-                result = explicitInclude.Concat(Map(Map(include)).SelectMany(g => g.GetValues()).Where(c => !explicitInclude.Contains(c)));
-            else
-                result = explicitInclude;
-        }
-        else if (include != null && (include = include.Where(s => !string.IsNullOrEmpty(s))).Any())
-        {
-            if (!(result = Map(Map(include)).SelectMany(g => g.GetValues())).Any())
-                return Array.Empty<char>();
-        }
-        else
-            result = GetAllChars();
-        if (explicitExclude != null && (explicitExclude = explicitExclude.Distinct()).Any() && !(result = result.Where(c => !explicitExclude.Contains(c))).Any())
-                return Array.Empty<char>();
-        if (exclude != null && (exclude = exclude.Where(s => !string.IsNullOrEmpty(s))).Any())
-        {
-            IEnumerable<RandomCharacterSource> excludeGroups = Map(Map(exclude));
-            result = result.Where(c => !excludeGroups.Any(e => e.Test(c)));
-        }
-        return result.ToArray();
-    }
-    
     static RandomCharacterSource()
     {
-        Dictionary<CharacterType, RandomCharacterSource> byName = new Dictionary<CharacterType, RandomCharacterSource>();
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includes = new Dictionary<CharacterType, Collection<RandomCharacterSource>>();
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includedBy = new Dictionary<CharacterType, Collection<RandomCharacterSource>>();
-        Collection<RandomCharacterSource> all = new Collection<RandomCharacterSource>();
+        Dictionary<CharacterType, RandomCharacterSource> byName = new();
+        Dictionary<CharacterType, Collection<RandomCharacterSource>> includes = new();
+        Dictionary<CharacterType, Collection<RandomCharacterSource>> includedBy = new();
+        Collection<RandomCharacterSource> all = new()
+        {
+            AddDelegated(CharacterType.LettersAndDigits, byName, char.IsLetterOrDigit, GetLettersAndDigits),
+            AddDelegated(CharacterType.AsciiChars, byName, char.IsAscii, GetAsciiChars),
+            AddDelegated(CharacterType.UriDataChars, byName, IsUriDataChar, GetUriDataChars),
+            AddDelegated(CharacterType.CsIdentifierChars, byName, IsCsIdentifierChar, GetCsIdentifierChars),
+            AddDelegated(CharacterType.AsciiLettersAndDigits, byName, char.IsAsciiLetterOrDigit, GetAsciiLettersAndDigits),
+            AddDelegated(CharacterType.Letters, byName, char.IsLetter, GetLetters),
+            AddDelegated(CharacterType.AsciiLetters, byName, char.IsAsciiLetter, GetAsciiLetters),
+            AddDelegated(CharacterType.UpperChars, byName, char.IsUpper, GetUpperChars),
+            AddDelegated(CharacterType.LowerChars, byName, char.IsLower, GetLowerChars),
+            AddExplicit(CharacterType.Consonants, "BCDFGJJKLMNPQRSTVWXYZbcdfgjjklmnpqrstvwxyz", byName),
+            AddDelegated(CharacterType.AsciiLettersUpper, byName, char.IsAsciiLetterUpper, GetAsciiLettersUpper),
+            AddDelegated(CharacterType.AsciiLettersLower, byName, char.IsAsciiLetterLower, GetAsciiLettersLower),
+            AddDelegated(CharacterType.Numbers, byName, char.IsNumber, GetNumbers),
+            AddExplicit(CharacterType.HardConsonants, "BCDGJKPQTXbcdgjkpqtx", byName),
+            AddExplicit(CharacterType.SoftConsonants, "CFHLMNRSVWYZcfhlmnrsvwyz", byName),
+            AddExplicit(CharacterType.Vowels, "AEIOUYaeiouy", byName),
+            AddDelegated(CharacterType.AsciiHexDigits, byName, char.IsAsciiHexDigit, GetAsciiHexDigits),
+            AddDelegated(CharacterType.Surrogates, byName, char.IsSurrogate, GetSurrogates),
+            AddDelegated(CharacterType.Digits, byName, char.IsDigit, GetDigits),
+            AddExplicit(CharacterType.ConsonantsUpper, "BCDFGJJKLMNPQRSTVWXYZ", byName),
+            AddExplicit(CharacterType.ConsonantsLower, "bcdfgjjklmnpqrstvwxyz", byName),
+            AddDelegated(CharacterType.AsciiHexDigitsUpper, byName, char.IsAsciiHexDigitUpper, GetAsciiHexDigitsUpper),
+            AddDelegated(CharacterType.AsciiHexDigitsLower, byName, char.IsAsciiHexDigitLower, GetAsciiHexDigitsLower),
+            AddDelegated(CharacterType.WhiteSpaceChars, byName, char.IsWhiteSpace, GetWhiteSpaceChars),
+            AddDelegated(CharacterType.HighSurrogates, byName, char.IsHighSurrogate, GetHighSurrogates),
+            AddDelegated(CharacterType.LowSurrogates, byName, char.IsLowSurrogate, GetLowSurrogates),
+            AddDelegated(CharacterType.ControlChars, byName, char.IsControl, GetControlChars),
+            AddExplicit(CharacterType.HardConsonantsUpper, "BCDGJKPQTX", byName),
+            AddExplicit(CharacterType.HardConsonantsLower, "bcdgjkpqtx", byName),
+            AddExplicit(CharacterType.SoftConsonantsUpper, "CFHLMNRSVWYZ", byName),
+            AddExplicit(CharacterType.SoftConsonantsLower, "cfhlmnrsvwyz", byName),
+            AddExplicit(CharacterType.VowelsUpper, "AEIOUY", byName),
+            AddExplicit(CharacterType.VowelsLower, "aeiouy", byName),
+            AddDelegated(CharacterType.Separators, byName, char.IsSeparator, GetSeparators),
+            AddDelegated(CharacterType.PunctuationChars, byName, char.IsPunctuation, GetPunctuationChars),
+            AddDelegated(CharacterType.Symbols, byName, char.IsSymbol, GetSymbols),
+            AddDelegated(CharacterType.AsciiDigits, byName, char.IsAsciiDigit, GetAsciiDigits),
+            AddDelegated(CharacterType.AsciiControlChars, byName, IsAsciiControlChar, GetAsciiControlChars),
+            AddDelegated(CharacterType.AsciiPunctuation, byName, IsAsciiPunctuation, GetAsciiPunctuation),
+            AddDelegated(CharacterType.AsciiSymbols, byName, IsAsciiSymbol, GetAsciiSymbols)
+        };
         All = new ReadOnlyCollection<RandomCharacterSource>(all);
         ByType = new ReadOnlyDictionary<CharacterType, RandomCharacterSource>(byName);
-        all.Add(AddDelegated(CharacterType.LettersAndDigits, byName, includes, includedBy, char.IsLetterOrDigit, GetLettersAndDigits));
-        all.Add(AddDelegated(CharacterType.AsciiChars, byName, includes, includedBy, char.IsAscii, GetAsciiChars));
-        all.Add(AddDelegated(CharacterType.UriDataChars, byName, includes, includedBy, IsUriDataChar, GetUriDataChars));
-        all.Add(AddDelegated(CharacterType.CsIdentifierChars, byName, includes, includedBy, IsCsIdentifierChar, GetCsIdentifierChars));
-        all.Add(AddDelegated(CharacterType.AsciiLettersAndDigits, byName, includes, includedBy, char.IsAsciiLetterOrDigit, GetAsciiLettersAndDigits));
-        all.Add(AddDelegated(CharacterType.Letters, byName, includes, includedBy, char.IsLetter, GetLetters));
-        all.Add(AddDelegated(CharacterType.AsciiLetters, byName, includes, includedBy, char.IsAsciiLetter, GetAsciiLetters));
-        all.Add(AddDelegated(CharacterType.UpperChars, byName, includes, includedBy, char.IsUpper, GetUpperChars));
-        all.Add(AddDelegated(CharacterType.LowerChars, byName, includes, includedBy, char.IsLower, GetLowerChars));
-        all.Add(AddExplicit(CharacterType.Consonants, "BCDFGJJKLMNPQRSTVWXYZbcdfgjjklmnpqrstvwxyz", byName, includes, includedBy));
-        all.Add(AddDelegated(CharacterType.AsciiLettersUpper, byName, includes, includedBy, char.IsAsciiLetterUpper, GetAsciiLettersUpper));
-        all.Add(AddDelegated(CharacterType.AsciiLettersLower, byName, includes, includedBy, char.IsAsciiLetterLower, GetAsciiLettersLower));
-        all.Add(AddDelegated(CharacterType.Numbers, byName, includes, includedBy, char.IsNumber, GetNumbers));
-        all.Add(AddExplicit(CharacterType.HardConsonants, "BCDGJKPQTXbcdgjkpqtx", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.SoftConsonants, "CFHLMNRSVWYZcfhlmnrsvwyz", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.Vowels, "AEIOUYaeiouy", byName, includes, includedBy));
-        all.Add(AddDelegated(CharacterType.AsciiHexDigits, byName, includes, includedBy, char.IsAsciiHexDigit, GetAsciiHexDigits));
-        all.Add(AddDelegated(CharacterType.Surrogates, byName, includes, includedBy, char.IsSurrogate, GetSurrogates));
-        all.Add(AddDelegated(CharacterType.Digits, byName, includes, includedBy, char.IsDigit, GetDigits));
-        all.Add(AddExplicit(CharacterType.ConsonantsUpper, "BCDFGJJKLMNPQRSTVWXYZ", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.ConsonantsLower, "bcdfgjjklmnpqrstvwxyz", byName, includes, includedBy));
-        all.Add(AddDelegated(CharacterType.AsciiHexDigitsUpper, byName, includes, includedBy, char.IsAsciiHexDigitUpper, GetAsciiHexDigitsUpper));
-        all.Add(AddDelegated(CharacterType.AsciiHexDigitsLower, byName, includes, includedBy, char.IsAsciiHexDigitLower, GetAsciiHexDigitsLower));
-        all.Add(AddDelegated(CharacterType.WhiteSpaceChars, byName, includes, includedBy, char.IsWhiteSpace, GetWhiteSpaceChars));
-        all.Add(AddDelegated(CharacterType.HighSurrogates, byName, includes, includedBy, char.IsHighSurrogate, GetHighSurrogates));
-        all.Add(AddDelegated(CharacterType.LowSurrogates, byName, includes, includedBy, char.IsLowSurrogate, GetLowSurrogates));
-        all.Add(AddDelegated(CharacterType.ControlChars, byName, includes, includedBy, char.IsControl, GetControlChars));
-        all.Add(AddExplicit(CharacterType.HardConsonantsUpper, "BCDGJKPQTX", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.HardConsonantsLower, "bcdgjkpqtx", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.SoftConsonantsUpper, "CFHLMNRSVWYZ", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.SoftConsonantsLower, "cfhlmnrsvwyz", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.VowelsUpper, "AEIOUY", byName, includes, includedBy));
-        all.Add(AddExplicit(CharacterType.VowelsLower, "aeiouy", byName, includes, includedBy));
-        all.Add(AddDelegated(CharacterType.Separators, byName, includes, includedBy, char.IsSeparator, GetSeparators));
-        all.Add(AddDelegated(CharacterType.PunctuationChars, byName, includes, includedBy, char.IsPunctuation, GetPunctuationChars));
-        all.Add(AddDelegated(CharacterType.Symbols, byName, includes, includedBy, char.IsSymbol, GetSymbols));
-        all.Add(AddDelegated(CharacterType.AsciiDigits, byName, includes, includedBy, char.IsAsciiDigit, GetAsciiDigits));
-        all.Add(AddDelegated(CharacterType.AsciiControlChars, byName, includes, includedBy, IsAsciiControlChar, GetAsciiControlChars));
-        all.Add(AddDelegated(CharacterType.AsciiPunctuation, byName, includes, includedBy, IsAsciiPunctuation, GetAsciiPunctuation));
-        all.Add(AddDelegated(CharacterType.AsciiSymbols, byName, includes, includedBy, IsAsciiSymbol, GetAsciiSymbols));
-        
-        SetIncludes(CharacterType.LettersAndDigits, byName, includes, includedBy, CharacterType.AsciiLettersUpper, CharacterType.Digits, CharacterType.UpperChars, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower,
-            CharacterType.AsciiHexDigitsLower, CharacterType.LowerChars, CharacterType.AsciiLetters, CharacterType.UriDataChars, CharacterType.CsIdentifierChars, CharacterType.AsciiLettersAndDigits, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower,
-            CharacterType.VowelsLower, CharacterType.AsciiDigits, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersLower, CharacterType.AsciiHexDigitsUpper, CharacterType.Letters, CharacterType.HardConsonantsUpper,
-            CharacterType.Consonants, CharacterType.AsciiHexDigits, CharacterType.SoftConsonants);
-        SetIncludes(CharacterType.AsciiChars, byName, includes, includedBy, CharacterType.AsciiLettersUpper, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiLetters,
-            CharacterType.UriDataChars, CharacterType.CsIdentifierChars, CharacterType.AsciiLettersAndDigits, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.AsciiDigits, CharacterType.VowelsUpper,
-            CharacterType.ConsonantsUpper, CharacterType.AsciiLettersLower, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.Consonants, CharacterType.AsciiHexDigits, CharacterType.SoftConsonants,
-            CharacterType.AsciiControlChars, CharacterType.AsciiPunctuation, CharacterType.AsciiSymbols);
-        SetIncludes(CharacterType.UriDataChars, byName, includes, includedBy, CharacterType.CsIdentifierChars, CharacterType.AsciiLettersAndDigits, CharacterType.AsciiLettersUpper, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.AsciiHexDigitsLower,
-            CharacterType.AsciiLetters, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.AsciiDigits, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.Consonants, CharacterType.AsciiHexDigits, CharacterType.SoftConsonants);
-        SetIncludes(CharacterType.CsIdentifierChars, byName, includes, includedBy, CharacterType.AsciiLettersAndDigits, CharacterType.AsciiLettersUpper, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.AsciiHexDigitsLower,
-            CharacterType.AsciiLetters, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.AsciiDigits, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.Consonants, CharacterType.AsciiHexDigits, CharacterType.SoftConsonants);
-        SetIncludes(CharacterType.AsciiLettersAndDigits, byName, includes, includedBy, CharacterType.AsciiLettersUpper, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.AsciiHexDigitsLower,
-            CharacterType.AsciiLetters, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.AsciiDigits, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.Consonants, CharacterType.AsciiHexDigits, CharacterType.SoftConsonants);
-        SetIncludes(CharacterType.Letters, byName, includes, includedBy, CharacterType.AsciiLettersUpper, CharacterType.UpperChars, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.LowerChars,
-            CharacterType.AsciiLetters, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersLower, CharacterType.HardConsonantsUpper, CharacterType.Consonants, CharacterType.SoftConsonants);
-        SetIncludes(CharacterType.AsciiLetters, byName, includes, includedBy, CharacterType.AsciiLettersUpper, CharacterType.Vowels, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonantsUpper,
-            CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersLower, CharacterType.HardConsonantsUpper,
-            CharacterType.Consonants, CharacterType.SoftConsonants);
-        SetIncludes(CharacterType.UpperChars, byName, includes, includedBy, CharacterType.AsciiLettersUpper, CharacterType.SoftConsonantsUpper, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper, CharacterType.HardConsonantsUpper);
-        SetIncludes(CharacterType.LowerChars, byName, includes, includedBy, CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.AsciiLettersLower);
-        SetIncludes(CharacterType.Consonants, byName, includes, includedBy, CharacterType.HardConsonants, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.ConsonantsUpper, CharacterType.HardConsonantsUpper);
-        SetIncludes(CharacterType.AsciiLettersUpper, byName, includes, includedBy, CharacterType.SoftConsonantsUpper, CharacterType.VowelsUpper, CharacterType.ConsonantsUpper, CharacterType.HardConsonantsUpper);
-        SetIncludes(CharacterType.AsciiLettersLower, byName, includes, includedBy, CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.HardConsonantsLower, CharacterType.VowelsLower);
-        SetIncludes(CharacterType.Numbers, byName, includes, includedBy, CharacterType.Digits, CharacterType.AsciiDigits);
-        SetIncludes(CharacterType.SoftConsonants, byName, includes, includedBy, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonantsUpper);
-        SetIncludes(CharacterType.AsciiHexDigits, byName, includes, includedBy, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiDigits, CharacterType.AsciiHexDigitsUpper);
-        SetIncludes(CharacterType.Vowels, byName, includes, includedBy, CharacterType.VowelsLower, CharacterType.VowelsUpper);
-        SetIncludes(CharacterType.HardConsonants, byName, includes, includedBy, CharacterType.HardConsonantsLower, CharacterType.HardConsonantsUpper);
-        SetIncludes(CharacterType.Surrogates, byName, includes, includedBy, CharacterType.HighSurrogates, CharacterType.LowSurrogates);
-        SetIncludes(CharacterType.Digits, byName, includes, includedBy, CharacterType.AsciiDigits);
-        SetIncludes(CharacterType.ConsonantsUpper, byName, includes, includedBy, CharacterType.HardConsonantsUpper);
-        SetIncludes(CharacterType.ConsonantsLower, byName, includes, includedBy, CharacterType.HardConsonantsLower);
-        SetIncludes(CharacterType.AsciiHexDigitsUpper, byName, includes, includedBy, CharacterType.AsciiDigits);
-        SetIncludes(CharacterType.AsciiHexDigitsLower, byName, includes, includedBy, CharacterType.AsciiDigits);
-        SetIncludes(CharacterType.WhiteSpaceChars, byName, includes, includedBy, CharacterType.Separators);
-        SetIncludes(CharacterType.ControlChars, byName, includes, includedBy, CharacterType.AsciiControlChars);
-        SetIncludes(CharacterType.PunctuationChars, byName, includes, includedBy, CharacterType.AsciiPunctuation);
-        SetIncludes(CharacterType.Symbols, byName, includes, includedBy, CharacterType.AsciiSymbols);
     }
 }
