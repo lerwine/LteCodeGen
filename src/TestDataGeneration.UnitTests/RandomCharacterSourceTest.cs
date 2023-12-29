@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using NuGet.Frameworks;
 using NUnit.Framework.Internal;
 
@@ -1289,5 +1290,14 @@ public class RandomCharacterSourceTest
         }
         actual = RandomCharacterSource.IsUriDataChar(char.MaxValue);
         Assert.That(actual, Is.EqualTo(char.IsAsciiLetterOrDigit(char.MaxValue)), $"Char: {(int)char.MaxValue:x4}");
+    }
+
+    [Test]
+    public void ConsolidateTest()
+    {
+        IEnumerable<CharacterType> source = new CharacterType[] { CharacterType.Surrogates, CharacterType.LowSurrogates };
+        Collection<CharacterType> actual = RandomCharacterSource.Consolidate(source);
+        Assert.That(actual, Has.Count.EqualTo(1));
+        Assert.That(actual[0], Is.EqualTo(CharacterType.Surrogates));
     }
 }
