@@ -1,0 +1,32 @@
+﻿TOPIC
+    about_TestDataGeneration
+
+SHORT DESCRIPTION
+    PowerShell module for code generation.
+
+LONG DESCRIPTION
+    Provides utility commands and classes for code generation.
+
+EXPORTED COMMANDS
+    Following is a list of commands exported by this module:
+
+    Get-RandomCharacterSource
+        Get characters for random string generation.
+
+    Convert-RangePatternToTuple
+        Converts range pattern strings to tuple classes.
+
+    Convert-RangeValuesToTuple
+        Converts range integer values to tuple classes.
+
+    Get-RandomInteger
+        Generates random integer values.
+
+    Select-Random
+        Randomly selects values(s) from input values.
+
+    Get-RandomIpV4Address
+        Generates random IPv4 address strings.
+
+    Get-RandomString
+        Generates random string values.
