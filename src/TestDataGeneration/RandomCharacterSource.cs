@@ -4,18 +4,23 @@ namespace TestDataGeneration;
 
 public abstract class RandomCharacterSource
 {
+    // FIXME: Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars.
     public CharacterType Type { get; }
 
     public abstract bool Test(char c);
 
     public abstract IEnumerable<char> GetValues();
 
+    // FIXME: Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars.
     protected RandomCharacterSource(CharacterType type) => Type = type;
 
+    // FIXME: Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars.
     public static readonly ReadOnlyCollection<RandomCharacterSource> All;
 
+    // FIXME: Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars.
     public static readonly ReadOnlyDictionary<CharacterType, RandomCharacterSource> ByType;
 
+    // FIXME: Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars.
     private static RandomCharacterSource AddDelegated(CharacterType type, Dictionary<CharacterType, RandomCharacterSource> byType, Predicate<char> test, Func<IEnumerable<char>> getValues)
     {
         Collection<RandomCharacterSource> b = new();
@@ -24,6 +29,7 @@ public abstract class RandomCharacterSource
         return result;
     }
 
+    // FIXME: Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars.
     private static RandomCharacterSource AddExplicit(CharacterType type, string characters, Dictionary<CharacterType, RandomCharacterSource> byType)
     {
         RandomCharacterSource result = new ExplicitRandomCharSource(type, characters);
@@ -2641,8 +2647,8 @@ public abstract class RandomCharacterSource
             case CharacterType.VowelsLower:
                 return Enumerable.Empty<CharacterType>();
         }
-        uint value = (uint)type;
-        return Enum.GetValues<CharacterType>().Where(t => t != type && (value | (uint)t) == value);
+        ulong value = (ulong)type;
+        return Enum.GetValues<CharacterType>().Where(t => t != type && (value | (ulong)t) == value);
     }
 
     public static IEnumerable<CharacterType> GetIncludedBy(CharacterType type)
@@ -2658,11 +2664,11 @@ public abstract class RandomCharacterSource
             case CharacterType.AsciiChars:
                 return Enumerable.Empty<CharacterType>();
         }
-        uint value = (uint)type;
+        ulong value = (ulong)type;
         return Enum.GetValues<CharacterType>().Where(t =>
         {
             if (t == type) return false;
-            uint v = (uint)t;
+            ulong v = (ulong)t;
             return (value | v) == v;
         });
     }
@@ -2670,13 +2676,13 @@ public abstract class RandomCharacterSource
     public static Collection<CharacterType> Consolidate(IEnumerable<CharacterType> source)
     {
         if (source is null) return new();
-        uint flags = 0;
+        ulong flags = 0;
         foreach (CharacterType t in source)
-            flags |= (uint)t;
+            flags |= (ulong)t;
         var result = new Collection<CharacterType>();
         foreach (CharacterType t in Enum.GetValues<CharacterType>().Reverse())
         {
-            uint f = (uint)t;
+            ulong f = (ulong)t;
             if ((flags & f) == f && !result.Any(r => GetIncludedTypes(r).Contains(t)))
                 result.Add(t);
         }
@@ -2688,8 +2694,6 @@ public abstract class RandomCharacterSource
     static RandomCharacterSource()
     {
         Dictionary<CharacterType, RandomCharacterSource> byName = new();
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includes = new();
-        Dictionary<CharacterType, Collection<RandomCharacterSource>> includedBy = new();
         Collection<RandomCharacterSource> all = new()
         {
             AddDelegated(CharacterType.LettersAndDigits, byName, char.IsLetterOrDigit, GetLettersAndDigits),
@@ -2706,7 +2710,7 @@ public abstract class RandomCharacterSource
             AddDelegated(CharacterType.AsciiLettersLower, byName, char.IsAsciiLetterLower, GetAsciiLettersLower),
             AddDelegated(CharacterType.Numbers, byName, char.IsNumber, GetNumbers),
             AddExplicit(CharacterType.HardConsonants, "BCDGJKPQTXbcdgjkpqtx", byName),
-            AddExplicit(CharacterType.SoftConsonants, "CFHLMNRSVWYZcfhlmnrsvwyz", byName),
+            AddExplicit(CharacterType.SoftConsonants, "CFGHLMNRSVWYZcfghlmnrsvwyz", byName),
             AddExplicit(CharacterType.Vowels, "AEIOUYaeiouy", byName),
             AddDelegated(CharacterType.AsciiHexDigits, byName, char.IsAsciiHexDigit, GetAsciiHexDigits),
             AddDelegated(CharacterType.Surrogates, byName, char.IsSurrogate, GetSurrogates),
@@ -2719,10 +2723,10 @@ public abstract class RandomCharacterSource
             AddDelegated(CharacterType.HighSurrogates, byName, char.IsHighSurrogate, GetHighSurrogates),
             AddDelegated(CharacterType.LowSurrogates, byName, char.IsLowSurrogate, GetLowSurrogates),
             AddDelegated(CharacterType.ControlChars, byName, char.IsControl, GetControlChars),
-            AddExplicit(CharacterType.HardConsonantsUpper, "BCDGJKPQTX", byName),
-            AddExplicit(CharacterType.HardConsonantsLower, "bcdgjkpqtx", byName),
-            AddExplicit(CharacterType.SoftConsonantsUpper, "CFHLMNRSVWYZ", byName),
-            AddExplicit(CharacterType.SoftConsonantsLower, "cfhlmnrsvwyz", byName),
+            AddExplicit(CharacterType.HardConsonantsUpper, "BCDGKPQTX", byName),
+            AddExplicit(CharacterType.HardConsonantsLower, "bcdgkpqtx", byName),
+            AddExplicit(CharacterType.SoftConsonantsUpper, "CFGHjLMNRSVWYZ", byName),
+            AddExplicit(CharacterType.SoftConsonantsLower, "cfghjlmnrsvwyz", byName),
             AddExplicit(CharacterType.VowelsUpper, "AEIOUY", byName),
             AddExplicit(CharacterType.VowelsLower, "aeiouy", byName),
             AddDelegated(CharacterType.Separators, byName, char.IsSeparator, GetSeparators),
