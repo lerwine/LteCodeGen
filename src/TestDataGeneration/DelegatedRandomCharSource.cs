@@ -1,5 +1,6 @@
 namespace TestDataGeneration;
 
+[Obsolete("Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars")]
 public sealed class DelegatedRandomCharSource : RandomCharacterSource
 {
     private readonly Func<IEnumerable<char>> _getValues;

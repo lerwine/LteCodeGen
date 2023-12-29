@@ -1,5 +1,6 @@
 namespace TestDataGeneration;
 
+[Obsolete("Logic is invalid. Some types have overlapping character sets, such as AsciiPunctuation and CsIdentifierChars")]
 public sealed class ExplicitRandomCharSource : RandomCharacterSource
 {
     private readonly string _characters;
