@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TestDataGeneration;
 
 public static class RandomStatic
 {
     internal static Random Random { get; } = new();
-    
+
     internal static bool GetRandomBoolean() => Random.Next(0, 2) == 1;
 
     internal static int GetRandomInteger(int minValue, int maxValue)
@@ -35,7 +31,7 @@ public static class RandomStatic
         else
             for (int i = 0; i < repeat; i++) yield return Random.Next(minValue - 1, maxValue) + 1;
     }
-    
+
     internal static IEnumerable<int> GetRandomIntegers(int minRepeat, int maxRepeat, int minValue, int maxValue)
     {
         if (minRepeat > maxRepeat)
@@ -74,7 +70,7 @@ public static class RandomStatic
             }
         }
     }
-    
+
     internal static IEnumerable<T> PickRandom<T>(IList<T> source, int minCount, int maxCount)
     {
         if (minCount > maxCount)
