@@ -28,13 +28,6 @@ public static class CharacterTypes
     {
         for (char c = '\u0009'; c <= '\u000d'; c++) yield return c;
     }
-
-    // /// <summary>
-    // /// ASCII whitespace control characters.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_AsciiWhitespaceControlChars"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_AsciiWhitespaceControlChars = new() { '\t', '\n', '\v', '\f', '\r' };
-
     /// <summary>
     /// Bitwise flag for space character.
     /// </summary>
@@ -60,13 +53,6 @@ public static class CharacterTypes
         yield return '\u3000';
     }
 
-    // /// <summary>
-    // /// ASCII whitespace control characters.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_NonAsciiSeparator"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_NonAsciiSeparatorChars = new() { '\u00a0', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008', '\u2009', '\u200a',
-    //     '\u2028', '\u2029', '\u202f', '\u205f', '\u3000' };
-
     /// <summary>
     /// Bitwise flag for ASCII punctuation characters.
     /// </summary>
@@ -90,12 +76,6 @@ public static class CharacterTypes
         yield return '}';
     }
 
-    // /// <summary>
-    // /// ASCII punctuation characters except <c>-</c>, <c>.</c>, and <c>_</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_AsciiPunctuation"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_AsciiPunctuation = new() { '!', '"', '#', '%', '&', '\'', '(', ')', '*', ',', '/', ':', ';', '?', '@', '[', '\\', ']', '{', '}' };
-
     /// <summary>
     /// Bitwise flag for ASCII digit characters.
     /// </summary>
@@ -107,12 +87,6 @@ public static class CharacterTypes
     {
         for (char c = '0'; c <= '9'; c++) yield return c;
     }
-
-    // /// <summary>
-    // /// ASCII digit characters.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_AsciiDigits"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_AsciiDigits = new() { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
     /// <summary>
     /// Bitwise flag for ASCII symbol characters.
@@ -130,13 +104,6 @@ public static class CharacterTypes
         yield return '`';
         yield return '|';
     }
-
-    // /// <summary>
-    // /// ASCII digit characters, except for <c>+</c> and <c>~</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_AsciiSymbols"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_AsciiSymbols = new() { '$', '<', '=', '>', '^', '`', '|' };
-
     /// <summary>
     /// Bitwise flag for the <c>+</c> symbol.
     /// </summary>
@@ -167,13 +134,6 @@ public static class CharacterTypes
         yield return 'A';
         yield return 'E';
     }
-
-    // /// <summary>
-    // /// Upper-case vowels representing hexidecimal digits.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_HexDigitVowelsUpper"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_HexDigitVowelsUpper = new() { 'A', 'E' };
-
     /// <summary>
     /// Bitwise flag for the upper-case <c>B</c> letter character.
     /// </summary>
@@ -213,12 +173,6 @@ public static class CharacterTypes
         yield return 'U';
     }
 
-    // /// <summary>
-    // /// Upper-case vowels, except for <c>A</c>, <c>E</c>, and <c>Y</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_VowelsUpper"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_VowelsUpper = new() { 'I', 'O', 'U' };
-
     /// <summary>
     /// Bitwise flag for upper-case hard consonents.
     /// </summary>
@@ -236,13 +190,6 @@ public static class CharacterTypes
         yield return 'T';
         yield return 'X';
     }
-
-    // /// <summary>
-    // /// Upper-case hard consonants, except for <c>B</c>, <c>C</c>, and <c>D</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_HardConsonantsUpper"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_HardConsonantsUpper = new() { 'G', 'J', 'K', 'P', 'Q', 'T', 'X' };
-
     /// <summary>
     /// Bitwise flag for upper-case soft consonents.
     /// </summary>
@@ -262,12 +209,6 @@ public static class CharacterTypes
         yield return 'W';
         yield return 'Z';
     }
-
-    // /// <summary>
-    // /// Upper-case soft consonants, except for <c>C</c>, <c>F</c>, and <c>Y</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_SoftConsonantsUpper"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_SoftConsonantsUpper = new() { 'H', 'L', 'M', 'N', 'R', 'S', 'V', 'W', 'Z' };
 
     /// <summary>
     /// Bitwise flag for the upper-case <c>Y</c> character.
@@ -333,12 +274,6 @@ public static class CharacterTypes
         yield return 'u';
     }
 
-    // /// <summary>
-    // /// Lower-case vowels, except for <c>a</c>, <c>e</c>, and <c>y</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_VowelsLower"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_VowelsLower = new() { 'i', 'o', 'u' };
-
     /// <summary>
     /// Bitwise flag for lower-case hard consonents.
     /// </summary>
@@ -357,12 +292,6 @@ public static class CharacterTypes
         yield return 't';
         yield return 'x';
     }
-
-    // /// <summary>
-    // /// Lower-case hard consonants, except for <c>b</c>, <c>c</c>, and <c>d</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_HardConsonantsLower"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_HardConsonantsLower = new() { 'g', 'j', 'k', 'p', 'q', 't', 'x' };
 
     /// <summary>
     /// Bitwise flag for lower-case soft consonents.
@@ -384,12 +313,6 @@ public static class CharacterTypes
         yield return 'w';
         yield return 'z';
     }
-
-    // /// <summary>
-    // /// Lower-case soft consonants, except for <c>c</c>, <c>f</c>, and <c>y</c>.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_SoftConsonantsLower"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_SoftConsonantsLower = new() { 'h', 'l', 'm', 'n', 'r', 's', 'v', 'w', 'z' };
 
     /// <summary>
     /// Bitwise flag for the lower-case <c>y</c> character.
@@ -416,13 +339,6 @@ public static class CharacterTypes
         for (char c = '\u0080'; c <= '\u0084'; c++) yield return c;
         for (char c = '\u0086'; c <= '\u009f'; c++) yield return c;
     }
-
-    // /// <summary>
-    // /// Non-ASCII, non-whitespace control characters.
-    // /// </summary>
-    // /// <returns>Characters represented by <see cref="Flag_NonAsciiNonWsControlChars"/>.</returns>
-    // public static readonly ImmutableArray<char> Chars_NonAsciiNonWsControlChars = new() { '\u0080', '\u0081', '\u0082', '\u0083', '\u0084', '\u0086', '\u0087', '\u0088', '\u0089', '\u008a', '\u008b', '\u008c',
-    //     '\u008d', '\u008e', '\u008f', '\u0090', '\u0091', '\u0092', '\u0093', '\u0094', '\u0095', '\u0096', '\u0097', '\u0098', '\u0099', '\u009a', '\u009b', '\u009c', '\u009d', '\u009e', '\u009f' };
 
     /// <summary>
     /// Bitwise flag for non-ASCII punctuation characters.
@@ -779,7 +695,7 @@ public static class CharacterTypes
     /// <summary>
     /// Bitwise flag for non-separator, non-ascii white-space characters.
     /// </summary>
-    /// /// <remarks>This represents characters where <see cref="char.IsWhiteSpace(char)"/> returns <see langword="true"/>, and <see cref="char.IsSeparator(char)"/> and <see cref="char.IsAscii(char)"/>
+    /// <remarks>This represents characters where <see cref="char.IsWhiteSpace(char)"/> returns <see langword="true"/>, and <see cref="char.IsSeparator(char)"/> and <see cref="char.IsAscii(char)"/>
     /// both return <see langword="false"/>.</remarks>
     /// <seealso cref="Char_NextLine"/>
     public const ulong Flag_NonSeparatorWhiteSpace = 0b0000_0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000UL;
