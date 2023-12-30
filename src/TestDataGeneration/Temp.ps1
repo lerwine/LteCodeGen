@@ -65,350 +65,296 @@ Function ConvertTo-BinaryNotation {
         }
     }
 }
-
+<#
+$FlagValues = @{
+    AsciiControlChars =     "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001" | ConvertFrom-BinaryNotation;
+    Space =                 "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0010" | ConvertFrom-BinaryNotation;
+    Separators =            "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0100" | ConvertFrom-BinaryNotation;
+    AsciiPunctuation =      "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1000" | ConvertFrom-BinaryNotation;
+    AsciiDigits =           "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001_0000" | ConvertFrom-BinaryNotation;
+    AsciiSymbols =          "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0010_0000" | ConvertFrom-BinaryNotation;
+    Plus =                  "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0100_0000" | ConvertFrom-BinaryNotation;
+    Dash =                  "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1000_0000" | ConvertFrom-BinaryNotation;
+    Period =                "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0001_0000_0000" | ConvertFrom-BinaryNotation;
+    HexDigitVowelsUpper =   "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0010_0000_0000" | ConvertFrom-BinaryNotation; # AE
+    UpperB =                "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0100_0000_0000" | ConvertFrom-BinaryNotation; # B
+    UpperC =                "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_1000_0000_0000" | ConvertFrom-BinaryNotation; # C
+    UpperD =                "0b0000_0000_0000_0000_0000_0000_0000_0000_0001_0000_0000_0000" | ConvertFrom-BinaryNotation; # D
+    UpperF =                "0b0000_0000_0000_0000_0000_0000_0000_0000_0010_0000_0000_0000" | ConvertFrom-BinaryNotation; # F
+    UpperG =                "0b0000_0000_0000_0000_0000_0000_0000_0000_0100_0000_0000_0000" | ConvertFrom-BinaryNotation; # G
+    VowelsUpper =           "0b0000_0000_0000_0000_0000_0000_0000_0000_1000_0000_0000_0000" | ConvertFrom-BinaryNotation; # IOU
+    HardConsonantsUpper =   "0b0000_0000_0000_0000_0000_0000_0000_0001_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # JKPQTX
+    SoftConsonantsUpper =   "0b0000_0000_0000_0000_0000_0000_0000_0010_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # HLMNRSVWZ
+    UpperY =                "0b0000_0000_0000_0000_0000_0000_0000_0100_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # Y
+    Underscore =            "0b0000_0000_0000_0000_0000_0000_0000_1000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # _
+    HexDigitVowelsLower =   "0b0000_0000_0000_0000_0000_0000_0001_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # AE
+    LowerB =                "0b0000_0000_0000_0000_0000_0000_0010_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # B
+    LowerC =                "0b0000_0000_0000_0000_0000_0000_0100_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # C
+    LowerD =                "0b0000_0000_0000_0000_0000_0000_1000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # D
+    LowerF =                "0b0000_0000_0000_0000_0000_0001_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # F
+    LowerG =                "0b0000_0000_0000_0000_0000_0010_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # G
+    VowelsLower =           "0b0000_0000_0000_0000_0000_0100_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # IOU
+    HardConsonantsLower =   "0b0000_0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # JKPQTX
+    SoftConsonantsLower =   "0b0000_0000_0000_0000_0001_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # HLMNRSVWZ
+    LowerY =                "0b0000_0000_0000_0000_0010_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # Y
+    Tilde =                 "0b0000_0000_0000_0000_0100_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation; # ~
+    ControlChars =          "0b0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    PunctuationChars =      "0b0000_0000_0000_0001_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    Symbols =               "0b0000_0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    WhiteSpaceChars =       "0b0000_0000_0000_0100_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    Numbers =                "0b0000_0000_0000_1000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    Digits =               "0b0000_0000_0001_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    UpperChars =            "0b0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    LowerChars =            "0b0000_0000_0100_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    Letters =               "0b0000_0000_1000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    HighSurrogates =        "0b0000_0001_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+    LowSurrogates =         "0b0000_0010_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+}
 $EnumFields = @(
     [PSCustomObject]@{
         Name = "AsciiControlChars";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
+        Flags = ([string[]]@("AsciiControlChars"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "Space";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0010" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
+        Flags = ([string[]]@("Space"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "Separators";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0100" | ConvertFrom-BinaryNotation;
-        Includes = ([string[]]@("Space"));
-    },
-    [PSCustomObject]@{
-        Name = "_AsciiPunctuation";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # !"#%&'()*,/:;?@[\]{}
-    [PSCustomObject]@{
-        Name = "AsciiDigits";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # 01234567890
-    [PSCustomObject]@{
-        Name = "_AsciiSymbols";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0010_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # $<=>^`|
-    [PSCustomObject]@{
-        Name = "Plus";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0100_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # +
-    [PSCustomObject]@{
-        Name = "Dash";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # -
-    [PSCustomObject]@{
-        Name = "Period";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0001_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # .
-    [PSCustomObject]@{
-        Name = "_HexDigitVowelsUpper";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0010_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # AE
-    [PSCustomObject]@{
-        Name = "_UpperB";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0100_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # B
-    [PSCustomObject]@{
-        Name = "_UpperC";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_1000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # C
-    [PSCustomObject]@{
-        Name = "_UpperD";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0001_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # D
-    [PSCustomObject]@{
-        Name = "_UpperF";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0010_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # F
-    [PSCustomObject]@{
-        Name = "_UpperG";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_0100_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # G
-    [PSCustomObject]@{
-        Name = "_VowelsUpper";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0000_1000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # IOU
-    [PSCustomObject]@{
-        Name = "_HardConsonantsUpper";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0001_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # JKPQTX
-    [PSCustomObject]@{
-        Name = "_SoftConsonantsUpper";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0010_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # HLMNRSVWZ
-    [PSCustomObject]@{
-        Name = "_UpperY";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_0100_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # Y
-    [PSCustomObject]@{
-        Name = "Underscore";
-        Value = "0b0000_0000_0000_0000_0000_0000_0000_1000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # _
-    [PSCustomObject]@{
-        Name = "_HexDigitVowelsLower";
-        Value = "0b0000_0000_0000_0000_0000_0000_0001_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # AE
-    [PSCustomObject]@{
-        Name = "_LowerB";
-        Value = "0b0000_0000_0000_0000_0000_0000_0010_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # B
-    [PSCustomObject]@{
-        Name = "_LowerC";
-        Value = "0b0000_0000_0000_0000_0000_0000_0100_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # C
-    [PSCustomObject]@{
-        Name = "_LowerD";
-        Value = "0b0000_0000_0000_0000_0000_0000_1000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # D
-    [PSCustomObject]@{
-        Name = "_LowerF";
-        Value = "0b0000_0000_0000_0000_0000_0001_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # F
-    [PSCustomObject]@{
-        Name = "_LowerG";
-        Value = "0b0000_0000_0000_0000_0000_0010_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # G
-    [PSCustomObject]@{
-        Name = "_VowelsLower";
-        Value = "0b0000_0000_0000_0000_0000_0100_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # IOU
-    [PSCustomObject]@{
-        Name = "_HardConsonantsLower";
-        Value = "0b0000_0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # JKPQTX
-    [PSCustomObject]@{
-        Name = "_SoftConsonantsLower";
-        Value = "0b0000_0000_0000_0000_0001_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # HLMNRSVWZ
-    [PSCustomObject]@{
-        Name = "_LowerY";
-        Value = "0b0000_0000_0000_0000_0010_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # Y
-    [PSCustomObject]@{
-        Name = "Tilde";
-        Value = "0b0000_0000_0000_0000_0100_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
-    }, # ~
-
-    [PSCustomObject]@{
-        Name = "ControlChars";
-        Value = "0b0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = ([string[]]@("AsciiControlChars"));
+        Flags = ([string[]]@("Separators", "Space"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "AsciiPunctuation";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_AsciiPunctuation", "Underscore", "Dash", "Period"));
+        Flags = ([string[]]@("AsciiPunctuation", "Underscore", "Dash", "Period"));
+        Includes = ([string[]]@());
+    },
+    [PSCustomObject]@{
+        Name = "AsciiDigits";
+        Flags = ([string[]]@("AsciiDigits"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "AsciiSymbols";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_AsciiSymbols", "Tilde", "Plus"));
-    }, # $+<=>^`|~
+        Flags = ([string[]]@("AsciiSymbols", "Tilde", "Plus"));
+        Includes = ([string[]]@());
+    },
+    [PSCustomObject]@{
+        Name = "Plus";
+        Flags = ([string[]]@("Plus"));
+        Includes = ([string[]]@());
+    },
+    [PSCustomObject]@{
+        Name = "Dash";
+        Flags = ([string[]]@("Dash"));
+        Includes = ([string[]]@());
+    },
+    [PSCustomObject]@{
+        Name = "Period";
+        Flags = ([string[]]@("Period"));
+        Includes = ([string[]]@());
+    },
     [PSCustomObject]@{
         Name = "PunctuationChars";
-        Value = "0b0000_0000_0000_0001_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Flags = ([string[]]@("PunctuationChars", "AsciiPunctuation", "Underscore", "Dash", "Period"));
         Includes = ([string[]]@("AsciiPunctuation"));
     },
     [PSCustomObject]@{
         Name = "Symbols";
-        Value = "0b0000_0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Flags = ([string[]]@("Symbols", "AsciiSymbols", "Tilde", "Plus"));
         Includes = ([string[]]@("AsciiSymbols"));
     },
     [PSCustomObject]@{
         Name = "WhiteSpaceChars";
-        Value = "0b0000_0000_0000_0100_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Flags = ([string[]]@("WhiteSpaceChars"));
         Includes = ([string[]]@("Separators"));
     },
     [PSCustomObject]@{
-        Name = "Digits";
-        Value = "0b0000_0000_0000_1000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Name = "Numbers";
+        Flags = ([string[]]@("Numbers"));
         Includes = ([string[]]@("AsciiDigits"));
     },
     [PSCustomObject]@{
-        Name = "Numbers";
-        Value = "0b0000_0000_0001_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = ([string[]]@("Digits"));
+        Name = "Digits";
+        Flags = ([string[]]@("Digits"));
+        Includes = ([string[]]@("Numbers"));
     },
     [PSCustomObject]@{
         Name = "HardConsonantsUpper";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_HardConsonantsUpper", "_UpperB", "_UpperC", "_UpperD", "_UpperG"));
+        Flags = ([string[]]@("HardConsonantsUpper", "UpperB", "UpperC", "UpperD", "UpperG"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "SoftConsonantsUpper";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_SoftConsonantsUpper", "_UpperF", "_UpperG", "_UpperY"));
+        Flags = ([string[]]@("SoftConsonantsUpper", "UpperC", "UpperF", "UpperG", "UpperY"));
+        Includes = ([string[]]@());
+    },
+    [PSCustomObject]@{
+        Name = "Underscore";
+        Flags = ([string[]]@("Underscore"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "VowelsUpper";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_VowelsUpper", "_HexDigitVowelsUpper", "_UpperY"));
+        Flags = ([string[]]@("VowelsUpper", "HexDigitVowelsUpper", "UpperY"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "HardConsonantsLower";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_HardConsonantsLower", "_LowerB", "_LowerC", "_LowerD", "_LowerG"));
+        Flags = ([string[]]@("HardConsonantsLower", "LowerB", "LowerC", "LowerD", "LowerG"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "SoftConsonantsLower";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_SoftConsonantsLower", "_LowerF", "_LowerG", "_LowerY"));
+        Flags = ([string[]]@("SoftConsonantsLower", "LowerC", "LowerF", "LowerG", "LowerY"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "VowelsLower";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("_VowelsLower", "_HexDigitVowelsLower", "_LowerY"));
+        Flags = ([string[]]@("VowelsLower", "HexDigitVowelsLower", "LowerY"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "HardConsonants";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("HardConsonantsUpper", "HardConsonantsLower"));
     },
     [PSCustomObject]@{
         Name = "ConsonantsUpper";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("HardConsonantsUpper", "SoftConsonantsUpper"));
     },
     [PSCustomObject]@{
         Name = "ConsonantsLower";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("HardConsonantsLower", "SoftConsonantsLower"));
     },
     [PSCustomObject]@{
         Name = "SoftConsonants";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("SoftConsonantsUpper", "SoftConsonantsLower"));
     },
     [PSCustomObject]@{
         Name = "Consonants";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("ConsonantsUpper", "ConsonantsLower"));
     },
     [PSCustomObject]@{
         Name = "Vowels";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("VowelsUpper", "VowelsLower"));
     },
     [PSCustomObject]@{
         Name = "AsciiLettersUpper";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("ConsonantsUpper", "VowelsUpper"));
     },
     [PSCustomObject]@{
         Name = "UpperChars";
-        Value = "0b0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Flags = ([string[]]@("UpperChars"));
         Includes = ([string[]]@("AsciiLettersUpper"));
     },
     [PSCustomObject]@{
         Name = "AsciiLettersLower";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("ConsonantsLower", "VowelsLower"));
     },
     [PSCustomObject]@{
         Name = "LowerChars";
-        Value = "0b0000_0000_0100_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Flags = ([string[]]@("LowerChars"));
         Includes = ([string[]]@("AsciiLettersLower"));
     },
     [PSCustomObject]@{
         Name = "AsciiLetters";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("Consonants", "Vowels"));
     },
     [PSCustomObject]@{
         Name = "Letters";
-        Value = "0b0000_0000_1000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
+        Flags = ([string[]]@("Letters"));
         Includes = ([string[]]@("AsciiLetters", "UpperChars", "LowerChars"));
     },
     [PSCustomObject]@{
+        Name = "Tilde";
+        Flags = ([string[]]@("Tilde"));
+        Includes = ([string[]]@());
+    },
+    [PSCustomObject]@{
         Name = "HighSurrogates";
-        Value = "0b0000_0001_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
+        Flags = ([string[]]@("HighSurrogates"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "LowSurrogates";
-        Value = "0b0000_0010_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
-        Includes = New-Object -TypeName 'System.String[]' -ArgumentList 0;
+        Flags = ([string[]]@("LowSurrogates"));
+        Includes = ([string[]]@());
     },
     [PSCustomObject]@{
         Name = "Surrogates";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("HighSurrogates", "LowSurrogates"));
     },
     [PSCustomObject]@{
         Name = "AsciiHexDigitsUpper";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("AsciiDigits", "_HexDigitVowelsUpper", "_UpperB", "_UpperC", "_UpperD", "_UpperF", "_HexDigitVowelsUpper"));
+        Flags = ([string[]]@("HexDigitVowelsUpper", "UpperB", "UpperC", "UpperD", "UpperF", "HexDigitVowelsUpper"));
+        Includes = ([string[]]@("AsciiDigits"));
     },
     [PSCustomObject]@{
         Name = "AsciiHexDigitsLower";
-        Value = ([ulong]0);
-        Includes = ([string[]]@("AsciiDigits", "_HexDigitVowelsLower", "_LowerB", "_LowerC", "_LowerD", "_LowerF", "_HexDigitVowelsLower"));
+        Flags = ([string[]]@("HexDigitVowelsLower", "LowerB", "LowerC", "LowerD", "LowerF", "HexDigitVowelsLower"));
+        Includes = ([string[]]@("AsciiDigits"));
     },
     [PSCustomObject]@{
         Name = "AsciiHexDigits";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("AsciiHexDigitsUpper", "AsciiHexDigitsLower"));
     },
     [PSCustomObject]@{
         Name = "AsciiLettersAndDigits";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("AsciiLetters", "AsciiDigits"));
     },
     [PSCustomObject]@{
         Name = "CsIdentifierChars";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("AsciiLettersAndDigits", "Underscore"));
     },
     [PSCustomObject]@{
         Name = "UriDataChars";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("CsIdentifierChars", "Dash", "Period", "Underscore", "Tilde"));
     },
     [PSCustomObject]@{
         Name = "LettersAndDigits";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("Letters", "Digits"));
     },
     [PSCustomObject]@{
         Name = "AsciiChars";
-        Value = ([ulong]0);
+        Flags = ([string[]]@());
         Includes = ([string[]]@("AsciiControlChars", "Space", "AsciiPunctuation", "AsciiSymbols", "AsciiLettersAndDigits"));
     }
 );
+$EnumFields | ForEach-Object {
+    [ulong]$Value = 0;
+    if ($_.Flags.Length -gt 0) {
+        if ($FlagValues.ContainsKey($_.Flags[0])) {
+            $Value = $FlagValues[$_.Flags[0]];
+        } else {
+            Write-Warning -Message "Flag $($_.Flags[0]) not found.";
+        }
+        ($_.Flags | Select-Object -Skip 1) | ForEach-Object {
+            if ($FlagValues.ContainsKey($_)) {
+                $Value = $Value -bor $FlagValues[$_];
+            } else {
+                Write-Warning -Message "Flag $_ not found.";
+            }
+        }
+    }
+    $_ | Add-Member -MemberType NoteProperty -Name 'Value' -Value $Value;
+}
 $Changed = @();
 do {
     $Changed = @($EnumFields | Where-Object {
@@ -434,22 +380,35 @@ $EnumFields | ForEach-Object {
     $n = $_.Name;
     if ($n.Length -gt $MaxNameLength) { $MaxNameLength = $n.Length }
     $v = $_.Value;
+    $_ | Add-Member -Name 'Flags' -MemberType NoteProperty -Value ([string[]]($FlagValues.Keys | Where-Object { ($FlagValues[$_] -band $v) -ne 0 })) -Force;
     $_ | Add-Member -Name 'Includes' -MemberType NoteProperty -Value ([string[]]($EnumFields | Where-Object { $_.Name -ne $n -and ($_.Value -bor $v) -eq $v } | ForEach-Object { $_.Name })) -Force;
     $_ | Add-Member -Name 'IncludedBy' -MemberType NoteProperty -Value ([string[]]($EnumFields | Where-Object { $_.Name -ne $n -and ($_.Value -band $v) -eq $v } | ForEach-Object { $_.Name }));
 }
+$SortedFlags = @($FlagValues.Keys | Sort-Object -Property @{ Expression = { $FlagValues[$_] } });
 $Writer = [System.IO.StreamWriter]::new(($PSScriptRoot | Join-Path -ChildPath 'temp.txt'), $false, [System.Text.UTF8Encoding]::new($false, $false));
 try {
+    $Writer.WriteLine("public static class CharacterTypes");
+    $Writer.Write("{");
+    $SortedFlags | ForEach-Object {
+        $Writer.WriteLine();
+        $Spacing = [string]::new(([char]' '), ($MaxNameLength - $_.Length) + 1);
+        $bn = $FlagValues[$_] | ConvertTo-BinaryNotation;
+        $Writer.WriteLine("    public const ulong Flag_$($_) =$Spacing $($bn)UL;");
+    }
+    $Writer.WriteLine("}");
+    $Writer.WriteLine();
+    $Writer.WriteLine("public enum CharacterType : ulong");
+    $Writer.Write("{");
     $EnumFields | ForEach-Object {
-        $n = $_.Name;
         $Writer.WriteLine();
         if ($_.Includes.Length -gt 0) { $Writer.WriteLine("    // Includes: CharacterType.$($_.Includes -join ', CharacterType.')") }
         if ($_.IncludedBy.Length -gt 0) { $Writer.WriteLine("    // IncludedBy: CharacterType.$($_.IncludedBy -join ', CharacterType.')") }
-        $Spacing = [string]::new(([char]' '), ($MaxNameLength - $n.Length) + 1);
-        $bn = $_.Value | ConvertTo-BinaryNotation;
-        $Writer.WriteLine("    $n =$Spacing$($bn)UL,");
+        $Value = $_.Value;
+        $Writer.WriteLine("    $($_.Name) = Flag_$(($SortedFlags | Where-Object { ($Value -band $FlagValues[$_]) -ne 0 }) -join ' | Flag_'),");
     }
 
 } finally { $Writer.Close() }
+#>
 # "0b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111" | ConvertFrom-BinaryNotation;
 # "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000" | ConvertFrom-BinaryNotation;
 # "0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001" | ConvertFrom-BinaryNotation;
@@ -458,3 +417,78 @@ try {
 # 1 | ConvertTo-BinaryNotation
 # 92381071 | ConvertTo-BinaryNotation;
 # 281474976710655 | ConvertTo-BinaryNotation;
+<#
+$Values = @();
+for ($i = 0; $i -lt 65536; $i++) {
+    [char]$c = $i;
+    # if ([char]::IsAscii($c) -and [char]::IsControl($c) -and -not [char]::IsWhiteSpace($c)) { $Values += $i.ToString('x4'); }
+    # if ([char]::IsNumber($c) -and -not ([char]::IsAscii($c) -or [char]::IsDigit($c))) { $Values += $i.ToString('x4'); }
+    if ([char]::IsControl($c) -and [char]::IsAscii($c)) { $Values += $i.ToString('x4'); }
+    # if ([char]::IsPunctuation($c) -and -not [char]::IsAscii($c)) { $Values += $c; }
+    # if ([char]::IsHighSurrogate($c)) { $Values += $c; }
+    # if ([char]::IsHighSurrogate($c)) { $Values += $i.ToString('x4'); }
+}
+"'\u" + ($Values -join "', '\u") + "'"
+# "'" + ($Values -join "', '") + "'"
+#>
+#<#
+[char]$c = 0;
+$EndIndex = -1;
+$StartIndex = -1;
+if ([char]::IsLetter($c) -and -not ([char]::IsUpper($c) -or [char]::IsLower($c) -or [char]::IsAscii($c))) {
+# if ([char]::IsSymbol($c) -and [char]::IsAscii($c) -and $c -ne '+' -and $c -ne '~') {
+# if ([char]::IsAsciiDigit($c)) {
+    $StartIndex = 0;
+    $EndIndex = 1;
+}
+$Writer = [System.IO.StreamWriter]::new(($PSScriptRoot | Join-Path -ChildPath 'temp.txt'), $false, [System.Text.UTF8Encoding]::new($false, $false));
+try {
+    $Writer.WriteLine();
+    for ($i = 1; $i -lt 65536; $i++) {
+        [char]$c = $i;
+        if ([char]::IsLetter($c) -and -not ([char]::IsUpper($c) -or [char]::IsLower($c) -or [char]::IsAscii($c))) {
+            if ($EndIndex -eq $i) {
+                $EndIndex++;
+            } else {
+                $StartIndex = $i;
+                $EndIndex = $i + 1;
+            }
+        } else {
+            if ($EndIndex -eq $i) {
+                if ($StartIndex -eq $EndIndex - 2) {
+                    $Writer.WriteLine("        yield return '\u$($StartIndex.ToString('x4'))';");
+                    $Writer.WriteLine("        yield return '\u$(($i - 1).ToString('x4'))';");
+                    # $Writer.WriteLine("        yield return '$(([char]$StartIndex))';");
+                    # $Writer.WriteLine("        yield return '$(([char]($i - 1)))';");
+                } else {
+                    if ($StartIndex -lt $EndIndex - 2) {
+                        $Writer.WriteLine("        for (char c = '\u$($StartIndex.ToString('x4'))'; c <= '\u$(($i - 1).ToString('x4'))'; c++) yield return c;");
+                        # $Writer.WriteLine("        for (char c = '$(([char]$StartIndex))'; c <= '$(([char]($i - 1)))'; c++) yield return c;");
+                    } else {
+                        $Writer.WriteLine("        yield return '\u$($StartIndex.ToString('x4'))';");
+                        # $Writer.WriteLine("        yield return '$(([char]$StartIndex))';");
+                    }
+                }
+            }
+            $StartIndex = -2;
+        }
+    }
+    if ($StartIndex -gt -1) {
+        if ($StartIndex -eq $EndIndex - 2) {
+            $Writer.WriteLine("        yield return '\u$($StartIndex.ToString('x4'))';");
+            $Writer.WriteLine("        yield return '\u$(($i - 1).ToString('x4'))';");
+            # $Writer.WriteLine("        yield return '$(([char]$StartIndex))';");
+            # $Writer.WriteLine("        yield return '$(([char]($i - 1)))';");
+        } else {
+            if ($StartIndex -lt $EndIndex - 2) {
+                $Writer.WriteLine("        for (char c = '\u$($StartIndex.ToString('x4'))'; c <= '\u$(($i - 1).ToString('x4'))'; c++) yield return c;");
+                # $Writer.WriteLine("        for (char c = '$(([char]$StartIndex))'; c <= '$(([char]($i - 1)))'; c++) yield return c;");
+            } else {
+                $Writer.WriteLine("        yield return '\u$($StartIndex.ToString('x4'))';");
+                # $Writer.WriteLine("        yield return '$(([char]$StartIndex))';");
+            }
+        }
+    }
+    $Writer.Flush();
+} finally { $Writer.Close() }
+#>
