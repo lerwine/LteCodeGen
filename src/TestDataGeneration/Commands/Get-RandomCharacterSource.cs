@@ -1,6 +1,4 @@
 using System.Management.Automation;
-using static TestDataGeneration.RandomStatic;
-using static TestDataGeneration.CmdletStatic;
 
 namespace TestDataGeneration.Commands;
 
