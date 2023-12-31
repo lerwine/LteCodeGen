@@ -5,213 +5,250 @@ namespace TestDataGeneration;
 [Flags]
 public enum CharacterType : ulong
 {
-    // IncludedBy: CharacterType.AsciiChars
     /// <summary>
-    /// 
+    /// Non-whitespace ASCII control characters.
     /// </summary>
-    AsciiControlChars = Flag_AsciiNonWsControlChars,
+    AsciiControlChars = Flag_AsciiNonWsControlChars | Flag_AsciiWhitespaceControlChars,
 
-    // IncludedBy: CharacterType.Separators, CharacterType.AsciiChars, CharacterType.WhiteSpaceChars
+    /// <summary>
+    /// Space character.
+    /// </summary>
     Space = Flag_Space,
 
-    // Includes: CharacterType.Space
-    // IncludedBy: CharacterType.WhiteSpaceChars
+    /// <summary>
+    /// Whitespace ASCII control characters.
+    /// </summary>
+    AsciiWhiteSpace = Flag_Space | Flag_AsciiWhitespaceControlChars,
+
+    /// <summary>
+    /// Separator characters.
+    /// </summary>
     Separators = Flag_Space | Flag_NonAsciiSeparator,
 
-    // IncludedBy: CharacterType.AsciiHexDigitsUpper, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-    //             CharacterType.AsciiChars, CharacterType.Digits, CharacterType.Digits, CharacterType.LettersAndDigits
+    /// <summary>
+    /// ASCII digits.
+    /// </summary>
     AsciiDigits = Flag_AsciiDigits,
 
-    // IncludedBy: CharacterType.AsciiSymbols, CharacterType.AsciiChars, CharacterType.Symbols
+    /// <summary>
+    /// The <c>+</c> symbol.
+    /// </summary>
     Plus = Flag_Plus,
 
-    // IncludedBy: CharacterType.AsciiPunctuation, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.PunctuationChars
+    /// <summary>
+    /// The <c>-</c> punctuation character.
+    /// </summary>
     Dash = Flag_Dash,
 
-    // IncludedBy: CharacterType.AsciiPunctuation, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.PunctuationChars
+    /// <summary>
+    /// The <c>.</c> punctuation character.
+    /// </summary>
     Period = Flag_Period,
 
-    // Includes: CharacterType.AsciiDigits
-    // IncludedBy: CharacterType.AsciiHexDigits, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits
+    /// <summary>
+    /// ASCII digits, including upper-case hexidecimal letters.
+    /// </summary>
     AsciiHexDigitsUpper = Flag_AsciiDigits | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF,
 
-    // IncludedBy: CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.HardConsonants, CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-    //             CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// Upper-case consonants.
+    /// </summary>
     HardConsonantsUpper = Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_HardConsonantsUpper,
 
-    // IncludedBy: CharacterType.AsciiLettersUpper, CharacterType.Vowels, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-    //             CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// Upper-case vowels
+    /// </summary>
     VowelsUpper = Flag_HexDigitVowelsUpper | Flag_VowelsUpper | Flag_UpperY,
 
-    // IncludedBy: CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.SoftConsonants, CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-    //             CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// Upper-case soft consonants.
+    /// </summary>
     SoftConsonantsUpper = Flag_UpperC | Flag_UpperF | Flag_SoftConsonantsUpper | Flag_UpperY,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.SoftConsonantsUpper
-    // IncludedBy: CharacterType.AsciiLettersUpper, CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-    //             CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All upper-case consonants.
+    /// </summary>
     ConsonantsUpper = Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper
-    // IncludedBy: CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters,
-    //             CharacterType.LettersAndDigits
+    /// <summary>
+    /// All ASCII upper-case letters.
+    /// </summary>
     AsciiLettersUpper = Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY,
 
-    // IncludedBy: CharacterType.AsciiPunctuation, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.PunctuationChars
+    /// <summary>
+    /// The <c>_</c> character.
+    /// </summary>
     Underscore = Flag_Underscore,
 
-    // Includes: CharacterType.Dash, CharacterType.Period, CharacterType.Underscore
-    // IncludedBy: CharacterType.AsciiChars, CharacterType.PunctuationChars
+    /// <summary>
+    /// ASCII punctuation characters.
+    /// </summary>
     AsciiPunctuation = Flag_AsciiPunctuation | Flag_Dash | Flag_Period | Flag_Underscore,
 
-    // Includes: CharacterType.AsciiDigits
-    // IncludedBy: CharacterType.AsciiHexDigits, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits
+    /// <summary>
+    /// ASCII digits, including lower-case hexidecimal letters.
+    /// </summary>
     AsciiHexDigitsLower = Flag_AsciiDigits | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF,
 
-    // Includes: CharacterType.AsciiDigits, CharacterType.AsciiHexDigitsUpper, CharacterType.AsciiHexDigitsLower
-    // IncludedBy: CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits
+    /// <summary>
+    /// ASCII digits, including hexidecimal letters.
+    /// </summary>
     AsciiHexDigits = Flag_AsciiDigits | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF,
 
-    // IncludedBy: CharacterType.HardConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-    //             CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// Lower-case hard consonants.
+    /// </summary>
     HardConsonantsLower = Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_HardConsonantsLower,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.HardConsonantsLower
-    // IncludedBy: CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters,
-    //             CharacterType.LettersAndDigits
+    /// <summary>
+    /// All hard consonants.
+    /// </summary>
     HardConsonants = Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_HardConsonantsUpper | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_HardConsonantsLower,
 
-    // IncludedBy: CharacterType.Vowels, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-    //             CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// Lower-case vowels.
+    /// </summary>
     VowelsLower = Flag_HexDigitVowelsLower | Flag_VowelsLower | Flag_LowerY,
 
-    // Includes: CharacterType.VowelsUpper, CharacterType.VowelsLower
-    // IncludedBy: CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters,
-    //             CharacterType.LettersAndDigits
+    /// <summary>
+    /// All Vowels.
+    /// </summary>
     Vowels = Flag_HexDigitVowelsUpper | Flag_VowelsUpper | Flag_UpperY | Flag_HexDigitVowelsLower | Flag_VowelsLower | Flag_LowerY,
 
-    // IncludedBy: CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-    //             CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// Lower-case soft consonants.
+    /// </summary>
     SoftConsonantsLower = Flag_LowerC | Flag_LowerF | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.SoftConsonantsUpper, CharacterType.SoftConsonantsLower
-    // IncludedBy: CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters,
-    //             CharacterType.LettersAndDigits
+    /// <summary>
+    /// All soft consonants.
+    /// </summary>
     SoftConsonants = Flag_UpperC | Flag_UpperF | Flag_SoftConsonantsUpper | Flag_UpperY | Flag_LowerC | Flag_LowerF | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.HardConsonantsLower, CharacterType.SoftConsonantsLower
-    // IncludedBy: CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-    //             CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All lower-case consonants.
+    /// </summary>
     ConsonantsLower = Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.SoftConsonantsLower,
-    //           CharacterType.SoftConsonants, CharacterType.ConsonantsLower
-    // IncludedBy: CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters,
-    //             CharacterType.LettersAndDigits
+    /// <summary>
+    /// All consonants.
+    /// </summary>
     Consonants = Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF |
         Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower
-    // IncludedBy: CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters,
-    //             CharacterType.LettersAndDigits
+    /// <summary>
+    /// All lower-case ASCII letters.
+    /// </summary>
     AsciiLettersLower = Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.HardConsonantsLower,
-    //           CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-    //           CharacterType.AsciiLettersLower
-    // IncludedBy: CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All ASCII letters.
+    /// </summary>
     AsciiLetters = Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY |
         Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.AsciiDigits, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-    //           CharacterType.AsciiLettersUpper, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-    //           CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters
-    // IncludedBy: CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All ASCII letters and digits.
+    /// </summary>
     AsciiLettersAndDigits = Flag_AsciiDigits | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper |
         Flag_UpperY | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // Includes: CharacterType.AsciiDigits, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-    //           CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-    //           CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-    //           CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits
-    // IncludedBy: CharacterType.UriDataChars, CharacterType.AsciiChars
+    /// <summary>
+    /// Basic characters for csharp identifier names.
+    /// </summary>
     CsIdentifierChars = Flag_AsciiDigits | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper |
         Flag_UpperY | Flag_Underscore | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY,
 
-    // IncludedBy: CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Symbols
+    /// <summary>
+    /// The <c>~</c> character.
+    /// </summary>
     Tilde = Flag_Tilde,
 
-    // Includes: CharacterType.Plus, CharacterType.Tilde
-    // IncludedBy: CharacterType.AsciiChars, CharacterType.Symbols
+    /// <summary>
+    /// ASCII symbol characters.
+    /// </summary>
     AsciiSymbols = Flag_AsciiSymbols | Flag_Plus | Flag_Tilde,
 
-    // Includes: CharacterType.AsciiDigits, CharacterType.Dash, CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper,
-    //           CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-    //           CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-    //           CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde
-    // IncludedBy: CharacterType.AsciiChars
+    /// <summary>
+    /// Characters which do not need to be encoded in a URL data string.
+    /// </summary>
     UriDataChars = Flag_AsciiDigits | Flag_Dash | Flag_Period | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper |
         Flag_SoftConsonantsUpper | Flag_UpperY | Flag_Underscore | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower |
         Flag_SoftConsonantsLower | Flag_LowerY | Flag_Tilde,
 
-    // Includes: CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash, CharacterType.Period, CharacterType.AsciiHexDigitsUpper,
-    //           CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.Underscore,
-    //           CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-    //           CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
-    //           CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars
-    AsciiChars = Flag_AsciiNonWsControlChars | Flag_Space | Flag_AsciiPunctuation | Flag_AsciiDigits | Flag_AsciiSymbols | Flag_Plus | Flag_Dash | Flag_Period | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC |
-        Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY | Flag_Underscore | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC |
-        Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY | Flag_Tilde,
+    /// <summary>
+    /// All ASCII characters.
+    /// </summary>
+    AsciiChars = Flag_AsciiNonWsControlChars | Flag_AsciiWhitespaceControlChars | Flag_Space | Flag_AsciiPunctuation | Flag_AsciiDigits | Flag_AsciiSymbols | Flag_Plus | Flag_Dash | Flag_Period |
+        Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY | Flag_Underscore |
+        Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY | Flag_Tilde,
 
-    // Includes: CharacterType.Dash, CharacterType.Period, CharacterType.Underscore, CharacterType.AsciiPunctuation
+    /// <summary>
+    /// All punctuation characters.
+    /// </summary>
     PunctuationChars = Flag_AsciiPunctuation | Flag_Dash | Flag_Period | Flag_Underscore | Flag_NonAsciiPunctuationChars,
 
-    // Includes: CharacterType.Plus, CharacterType.Tilde, CharacterType.AsciiSymbols
+    /// <summary>
+    /// All symbol characters.
+    /// </summary>
     Symbols = Flag_AsciiSymbols | Flag_Plus | Flag_Tilde | Flag_NonAsciiSymbols,
 
-    // Includes: CharacterType.Space, CharacterType.Separators
-    WhiteSpaceChars = Flag_Space | Flag_NonAsciiSeparator | Flag_NonSeparatorWhiteSpace,
+    /// <summary>
+    /// All whitespace characters.
+    /// </summary>
+    WhiteSpaceChars = Flag_Space | Flag_NonAsciiSeparator | Flag_AsciiWhitespaceControlChars | Flag_NonSeparatorWhiteSpace,
 
-    // Includes: CharacterType.AsciiDigits
-    // IncludedBy: CharacterType.Digits, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All number characters.
+    /// </summary>
     Numbers = Flag_AsciiDigits | Flag_NonAsciiNumbers,
 
-    // Includes: CharacterType.AsciiDigits, CharacterType.Digits
+    /// <summary>
+    /// All digits.
+    /// </summary>
     Digits = Flag_AsciiDigits | Flag_NonAsciiNumbers | Flag_NonAsciiDigits,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper
-    // IncludedBy: CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All upper-case letters.
+    /// </summary>
     UpperChars = Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY | Flag_UpperNonAsciiChars,
 
-    // Includes: CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower
-    // IncludedBy: CharacterType.Letters, CharacterType.LettersAndDigits
+    /// <summary>
+    /// All lower-case letters.
+    /// </summary>
     LowerChars = Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY | Flag_LowerNonAsciiChars,
 
-    // Includes: CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.HardConsonantsLower,
-    //           CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-    //           CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.UpperChars, CharacterType.LowerChars
-    // IncludedBy: CharacterType.LettersAndDigits
+    /// <summary>
+    /// All letters.
+    /// </summary>
     Letters = Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper | Flag_UpperY |
         Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY | Flag_UpperNonAsciiChars |
         Flag_LowerNonAsciiChars | Flag_NonAsciiNonCaseLetters,
 
-    // Includes: CharacterType.AsciiDigits, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-    //           CharacterType.AsciiLettersUpper, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-    //           CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
-    //           CharacterType.AsciiLettersAndDigits, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters
+    /// <summary>
+    /// All letters and digits.
+    /// </summary>
     LettersAndDigits = Flag_AsciiDigits | Flag_HexDigitVowelsUpper | Flag_UpperB | Flag_UpperC | Flag_UpperD | Flag_UpperF | Flag_VowelsUpper | Flag_HardConsonantsUpper | Flag_SoftConsonantsUpper |
         Flag_UpperY | Flag_HexDigitVowelsLower | Flag_LowerB | Flag_LowerC | Flag_LowerD | Flag_LowerF | Flag_VowelsLower | Flag_HardConsonantsLower | Flag_SoftConsonantsLower | Flag_LowerY | Flag_NonAsciiNumbers |
         Flag_UpperNonAsciiChars | Flag_LowerNonAsciiChars | Flag_NonAsciiNonCaseLetters,
 
-    // IncludedBy: CharacterType.Surrogates
+    /// <summary>
+    /// High surrogate characters.
+    /// </summary>
     HighSurrogates = Flag_HighSurrogates,
 
-    // IncludedBy: CharacterType.AsciiControlChars, CharacterType.AsciiChars
-    ControlChars = Flag_NonAsciiNonWsControlChars | Flag_AsciiNonWsControlChars,
+    /// <summary>
+    /// All control characters.
+    /// </summary>
+    ControlChars = Flag_AsciiWhitespaceControlChars | Flag_NonAsciiNonWsControlChars | Flag_AsciiNonWsControlChars,
 
-    // IncludedBy: CharacterType.Surrogates
+    /// <summary>
+    /// Low surrogate characters.
+    /// </summary>
     LowSurrogates = Flag_LowSurrogates,
 
-    // Includes: CharacterType.HighSurrogates, CharacterType.LowSurrogates
+    /// <summary>
+    /// All surrogate characters.
+    /// </summary>
     Surrogates = Flag_HighSurrogates | Flag_LowSurrogates
 }
