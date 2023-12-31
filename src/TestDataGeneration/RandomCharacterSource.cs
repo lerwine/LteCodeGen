@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace TestDataGeneration;
+﻿namespace TestDataGeneration;
 
 public class RandomCharacterSource
 {

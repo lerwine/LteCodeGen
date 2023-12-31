@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using NUnit.Framework.Internal;
 
 namespace TestDataGeneration.UnitTests;
