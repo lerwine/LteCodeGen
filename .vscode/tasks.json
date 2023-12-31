@@ -16,6 +16,58 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Build TestDataGeneration",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/TestDataGeneration/TestDataGeneration.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build"
+        },
+        {
+            "label": "Build TestDataGeneration.UnitTests",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/TestDataGeneration.UnitTests/TestDataGeneration.UnitTests.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build",
+            "dependsOn":[ "Build TestDataGeneration" ]
+        },
+        {
+            "label": "Clean TestDataGeneration",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean",
+                "${workspaceFolder}/src/TestDataGeneration/TestDataGeneration.csproj"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean TestDataGeneration.UnitTests",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean",
+                "${workspaceFolder}/src/TestDataGeneration.UnitTests/TestDataGeneration.UnitTests.csproj"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean All",
+            "dependsOn":[ "Clean TestDataGeneration", "Clean TestDataGeneration.UnitTests" ],
+            "problemMatcher": []
         }
     ]
 }

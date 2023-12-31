@@ -6,6 +6,11 @@ namespace TestDataGeneration;
 public enum CharacterType : ulong
 {
     /// <summary>
+    /// No character type is not specified.
+    /// </summary>
+    NotSpecified = 0UL,
+
+    /// <summary>
     /// Non-whitespace ASCII control characters.
     /// </summary>
     AsciiControlChars = Flag_AsciiNonWsControlChars | Flag_AsciiWhitespaceControlChars,

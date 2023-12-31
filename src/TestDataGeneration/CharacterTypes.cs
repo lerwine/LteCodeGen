@@ -129,6 +129,8 @@ public static class CharacterTypes
     /// <seealso cref="GetHexDigitVowelsUpper()"/>
     public const ulong Flag_HexDigitVowelsUpper = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0100_0000_0000UL;
 
+    public static bool IsHexDigitVowelUpper(char c) => GetHexDigitVowelsUpper().Contains(c);
+
     public static IEnumerable<char> GetHexDigitVowelsUpper()
     {
         yield return 'A';
@@ -173,6 +175,18 @@ public static class CharacterTypes
         yield return 'U';
     }
 
+    public static bool IsVowelUpper(char c) => GetAllVowelsUpper().Contains(c);
+
+    public static IEnumerable<char> GetAllVowelsUpper()
+    {
+        yield return 'A';
+        yield return 'E';
+        yield return 'I';
+        yield return 'O';
+        yield return 'U';
+        yield return 'Y';
+    }
+
     /// <summary>
     /// Bitwise flag for upper-case hard consonents.
     /// </summary>
@@ -190,6 +204,22 @@ public static class CharacterTypes
         yield return 'T';
         yield return 'X';
     }
+
+    public static bool IsHardConsonantUpper(char c) => GetAllHardConsonantsUpper().Contains(c);
+
+    public static IEnumerable<char> GetAllHardConsonantsUpper()
+    {
+        yield return 'B';
+        yield return 'C';
+        yield return 'D';
+        yield return 'J';
+        yield return 'K';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'T';
+        yield return 'X';
+    }
+
     /// <summary>
     /// Bitwise flag for upper-case soft consonents.
     /// </summary>
@@ -207,6 +237,24 @@ public static class CharacterTypes
         yield return 'S';
         yield return 'V';
         yield return 'W';
+        yield return 'Z';
+    }
+
+    public static bool IsSoftConsonantUpper(char c) => GetAllSoftConsonantsUpper().Contains(c);
+
+    public static IEnumerable<char> GetAllSoftConsonantsUpper()
+    {
+        yield return 'C';
+        yield return 'F';
+        yield return 'H';
+        yield return 'L';
+        yield return 'M';
+        yield return 'N';
+        yield return 'R';
+        yield return 'S';
+        yield return 'V';
+        yield return 'W';
+        yield return 'Y';
         yield return 'Z';
     }
 
@@ -228,6 +276,8 @@ public static class CharacterTypes
     /// <remarks>This represents the character codes <c>U+0061</c> (<c>a</c>) and <c>U+0065</c> (<c>e</c>).</remarks>
     /// <seealso cref="GetHexDigitVowelsLower()"/>
     public const ulong Flag_HexDigitVowelsLower = 0b0000_0000_0000_0000_0000_0000_0001_0000_0000_0000_0000_0000UL;
+
+    public static bool IsHexDigitVowelLower(char c) => GetHexDigitVowelsLower().Contains(c);
 
     public static IEnumerable<char> GetHexDigitVowelsLower()
     {
@@ -267,11 +317,53 @@ public static class CharacterTypes
     /// <seealso cref="GetVowelsLower()"/>
     public const ulong Flag_VowelsLower = 0b0000_0000_0000_0000_0000_0010_0000_0000_0000_0000_0000_0000UL;
 
+    public static bool IsHexVowelLower(char c) => GetVowelsLower().Contains(c);
+
     public static IEnumerable<char> GetVowelsLower()
     {
         yield return 'i';
         yield return 'o';
         yield return 'u';
+    }
+
+    public static bool IsVowelLower(char c) => GetAllVowelsLower().Contains(c);
+
+    public static IEnumerable<char> GetAllVowelsLower()
+    {
+        yield return 'a';
+        yield return 'e';
+        yield return 'i';
+        yield return 'o';
+        yield return 'u';
+        yield return 'y';
+    }
+
+    public static IEnumerable<char> GetVowels()
+    {
+        yield return 'I';
+        yield return 'O';
+        yield return 'U';
+        yield return 'i';
+        yield return 'o';
+        yield return 'u';
+    }
+
+    public static bool IsVowel(char c) => GetAllVowels().Contains(c);
+
+    public static IEnumerable<char> GetAllVowels()
+    {
+        yield return 'A';
+        yield return 'E';
+        yield return 'I';
+        yield return 'O';
+        yield return 'U';
+        yield return 'y';
+        yield return 'a';
+        yield return 'e';
+        yield return 'i';
+        yield return 'o';
+        yield return 'u';
+        yield return 'y';
     }
 
     /// <summary>
@@ -284,6 +376,66 @@ public static class CharacterTypes
 
     public static IEnumerable<char> GetHardConsonantsLower()
     {
+        yield return 'g';
+        yield return 'j';
+        yield return 'k';
+        yield return 'p';
+        yield return 'q';
+        yield return 't';
+        yield return 'x';
+    }
+
+    public static bool IsHardConsonantLower(char c) => GetAllHardConsonantsLower().Contains(c);
+
+    public static IEnumerable<char> GetAllHardConsonantsLower()
+    {
+        yield return 'b';
+        yield return 'c';
+        yield return 'd';
+        yield return 'g';
+        yield return 'j';
+        yield return 'k';
+        yield return 'p';
+        yield return 'q';
+        yield return 't';
+        yield return 'x';
+    }
+
+    public static IEnumerable<char> GetHardConsonants()
+    {
+        yield return 'G';
+        yield return 'J';
+        yield return 'K';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'T';
+        yield return 'X';
+        yield return 'g';
+        yield return 'j';
+        yield return 'k';
+        yield return 'p';
+        yield return 'q';
+        yield return 't';
+        yield return 'x';
+    }
+
+    public static bool IsHardConsonant(char c) => GetAllHardConsonants().Contains(c);
+
+    public static IEnumerable<char> GetAllHardConsonants()
+    {
+        yield return 'B';
+        yield return 'C';
+        yield return 'D';
+        yield return 'G';
+        yield return 'J';
+        yield return 'K';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'T';
+        yield return 'X';
+        yield return 'b';
+        yield return 'c';
+        yield return 'd';
         yield return 'g';
         yield return 'j';
         yield return 'k';
@@ -311,6 +463,218 @@ public static class CharacterTypes
         yield return 's';
         yield return 'v';
         yield return 'w';
+        yield return 'z';
+    }
+
+    public static bool IsSoftConsonantLower(char c) => GetAllSoftConsonantsLower().Contains(c);
+
+    public static IEnumerable<char> GetAllSoftConsonantsLower()
+    {
+        yield return 'c';
+        yield return 'f';
+        yield return 'h';
+        yield return 'l';
+        yield return 'm';
+        yield return 'n';
+        yield return 'r';
+        yield return 's';
+        yield return 'v';
+        yield return 'w';
+        yield return 'y';
+        yield return 'z';
+    }
+
+    public static bool IsSoftConsonant(char c) => GetAllSoftConsonants().Contains(c);
+
+    public static IEnumerable<char> GetAllSoftConsonants()
+    {
+        yield return 'C';
+        yield return 'F';
+        yield return 'H';
+        yield return 'L';
+        yield return 'M';
+        yield return 'N';
+        yield return 'R';
+        yield return 'S';
+        yield return 'V';
+        yield return 'W';
+        yield return 'Y';
+        yield return 'Z';
+        yield return 'c';
+        yield return 'f';
+        yield return 'h';
+        yield return 'l';
+        yield return 'm';
+        yield return 'n';
+        yield return 'r';
+        yield return 's';
+        yield return 'v';
+        yield return 'w';
+        yield return 'y';
+        yield return 'z';
+    }
+
+    public static IEnumerable<char> GetConsonantsLower()
+    {
+        yield return 'g';
+        yield return 'h';
+        yield return 'j';
+        yield return 'k';
+        yield return 'l';
+        yield return 'm';
+        yield return 'n';
+        yield return 'p';
+        yield return 'q';
+        yield return 'r';
+        yield return 's';
+        yield return 't';
+        yield return 'v';
+        yield return 'w';
+        yield return 'x';
+        yield return 'z';
+    }
+
+    public static bool IsConsonantLower(char c) => GetAllConsonantsLower().Contains(c);
+
+    public static IEnumerable<char> GetAllConsonantsLower()
+    {
+        yield return 'b';
+        yield return 'c';
+        yield return 'd';
+        yield return 'g';
+        yield return 'h';
+        yield return 'j';
+        yield return 'k';
+        yield return 'l';
+        yield return 'm';
+        yield return 'n';
+        yield return 'p';
+        yield return 'q';
+        yield return 'r';
+        yield return 's';
+        yield return 't';
+        yield return 'v';
+        yield return 'w';
+        yield return 'x';
+        yield return 'z';
+    }
+
+    public static IEnumerable<char> GetConsonantsUpper()
+    {
+        yield return 'G';
+        yield return 'H';
+        yield return 'J';
+        yield return 'K';
+        yield return 'L';
+        yield return 'M';
+        yield return 'N';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'R';
+        yield return 'S';
+        yield return 'T';
+        yield return 'V';
+        yield return 'W';
+        yield return 'X';
+        yield return 'Z';
+    }
+
+    public static bool IsConsonantUpper(char c) => GetAllConsonantsUpper().Contains(c);
+
+    public static IEnumerable<char> GetAllConsonantsUpper()
+    {
+        yield return 'B';
+        yield return 'C';
+        yield return 'D';
+        yield return 'G';
+        yield return 'H';
+        yield return 'J';
+        yield return 'K';
+        yield return 'L';
+        yield return 'M';
+        yield return 'N';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'R';
+        yield return 'S';
+        yield return 'T';
+        yield return 'V';
+        yield return 'W';
+        yield return 'X';
+        yield return 'Z';
+    }
+
+    public static IEnumerable<char> GetConsonants()
+    {
+        yield return 'G';
+        yield return 'H';
+        yield return 'J';
+        yield return 'K';
+        yield return 'L';
+        yield return 'M';
+        yield return 'N';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'R';
+        yield return 'S';
+        yield return 'T';
+        yield return 'V';
+        yield return 'W';
+        yield return 'X';
+        yield return 'Z';
+        yield return 'g';
+        yield return 'h';
+        yield return 'j';
+        yield return 'k';
+        yield return 'l';
+        yield return 'm';
+        yield return 'n';
+        yield return 'p';
+        yield return 'q';
+        yield return 'r';
+        yield return 's';
+        yield return 't';
+        yield return 'v';
+        yield return 'w';
+        yield return 'x';
+        yield return 'z';
+    }
+
+    public static bool IsConsonant(char c) => GetAllConsonants().Contains(c);
+
+    public static IEnumerable<char> GetAllConsonants()
+    {
+        yield return 'G';
+        yield return 'H';
+        yield return 'J';
+        yield return 'K';
+        yield return 'L';
+        yield return 'M';
+        yield return 'N';
+        yield return 'P';
+        yield return 'Q';
+        yield return 'R';
+        yield return 'S';
+        yield return 'T';
+        yield return 'V';
+        yield return 'W';
+        yield return 'X';
+        yield return 'Z';
+        yield return 'g';
+        yield return 'h';
+        yield return 'j';
+        yield return 'k';
+        yield return 'l';
+        yield return 'm';
+        yield return 'n';
+        yield return 'p';
+        yield return 'q';
+        yield return 'r';
+        yield return 's';
+        yield return 't';
+        yield return 'v';
+        yield return 'w';
+        yield return 'x';
         yield return 'z';
     }
 

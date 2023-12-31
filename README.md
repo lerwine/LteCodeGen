@@ -2,6 +2,23 @@
 
 Code generation project
 
+## Testing
+
+### Pester Issues
+
+You may see errors such as `The BeforeAll command may only be used inside a Describe block.` or `RuntimeException: '-Be' is not a valid Should operator.`.
+This may occur if version 3 or older is installed. To check the version of Pester, execute the following command to make sure you're using at least version 4:
+
+```powershell
+Get-Module -Name 'Pester'
+```
+
+You can run the following command to install the latest version:
+
+```Powershell
+Install-Module -Name Pester -Force -SkipPublisherCheck
+```
+
 ## Solution Development Dependencies
 
 ### APIs
@@ -22,6 +39,7 @@ Code generation project
 - [MSBuild project tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools)
 - [NuGet Gallery](https://marketplace.visualstudio.com/items?itemName=patcx.vscode-nuget-gallery)
 - [NuGet Package Manager](https://marketplace.visualstudio.com/items?itemName=jmrog.vscode-nuget-package-manager)
+- [Pester Tests](https://marketplace.visualstudio.com/items?itemName=pspester.pester-test)
 - [PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.powershell)
 - [Test Adapter Converter](https://marketplace.visualstudio.com/items?itemName=ms-vscode.test-adapter-converter)
 - [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer)
@@ -66,19 +84,10 @@ Code generation project
 
 General development reference links
 
-- [SQLite Data Types](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/types)
-- [SQLite Syntax](https://www.sqlite.org/lang.html)
-- [SQLite Database Provider - EF Core](https://learn.microsoft.com/en-us/ef/core/providers/sqlite/?tabs=dotnet-core-cli)
-- [EF Core](https://learn.microsoft.com/en-us/ef/core/)
-- [.NET Generic Host](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
-- [Configuration in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration)
-- [Make HTTP requests with the HttpClient class](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient)
-  - [JsonContent Class](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.json.jsoncontent?view=net-7.0)
-  - [StringContent Class](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.stringcontent?view=net-7.0)
+- [Pester](https://github.com/pester/Pester)
 - [NUnit.org](https://nunit.org/)
   - [NUnit Documentation Site](https://docs.nunit.org/)
   - [Unit testing C# with NUnit and .NET Core](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit)
   - [Most Complete NUnit Unit Testing Framework Cheat Sheet](https://www.automatetheplanet.com/nunit-cheat-sheet/)
   - [CodeProject: Unit Testing Using NUnit](https://www.codeproject.com/articles/178635/unit-testing-using-nunit)
-- [XUnit Testing](https://xunit.net)
 - [c# Documentation Comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments)
