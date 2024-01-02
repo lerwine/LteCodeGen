@@ -7,7 +7,8 @@ namespace TestDataGeneration
     {
         public class ValueRange : IEnumerable<T>, IEquatable<ValueRange>
         {
-            private readonly ValueRangeSet<T> _set;
+            private readonly ISequentalValueAccessors<T> _valueAccessors;
+            private ValueRangeSet<T>? _set;
             private IEnumerable<T>? _values;
 
 
@@ -23,7 +24,7 @@ namespace TestDataGeneration
 
             private ValueRange(ValueRangeSet<T> set, T value)
             {
-                _set = set;
+                _valueAccessors = (_set = set)._valueAccessors;
                 _values = Enumerable.Repeat(value, 1);
                 Start = End = value;
                 Count = 1;
@@ -31,8 +32,8 @@ namespace TestDataGeneration
 
             public ValueRange(ValueRangeSet<T> set, T startInclusive, T endInclusive)
             {
-                _set = set;
-                if ((Count = set._getCountInRange(startInclusive, endInclusive)) < 2) throw new InvalidOperationException();
+                _valueAccessors = (_set = set)._valueAccessors;
+                if ((Count = _valueAccessors.GetRangeCount(startInclusive, endInclusive)) < 2) throw new InvalidOperationException();
                 if (Count == 2) _values = new T[] { startInclusive, endInclusive };
                 Start = startInclusive;
                 End = endInclusive;
@@ -42,35 +43,33 @@ namespace TestDataGeneration
             {
                 if (other is null) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return _set._equalityComparer.Equals(Start, other.Start) && _set._equalityComparer.Equals(End, other.End);
+                return _valueAccessors.Equals(Start, other.Start) && _valueAccessors.Equals(End, other.End);
             }
 
             public override bool Equals(object? obj)
             {
                 if (obj is not ValueRangeSet<T>.ValueRange other) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return _set._equalityComparer.Equals(Start, other.Start) && _set._equalityComparer.Equals(End, other.End);
+                return _valueAccessors.Equals(Start, other.Start) && _valueAccessors.Equals(End, other.End);
             }
 
-            public IEnumerator<T> GetEnumerator() => (_values ?? _set._getValuesInRange(Start, End)).GetEnumerator();
+            public IEnumerator<T> GetEnumerator() => (_values ?? _valueAccessors.GetValuesInRange(Start, End)).GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             public override int GetHashCode()
             {
                 HashCode hashCode = new();
-                hashCode.Add(Start, _set._equalityComparer);
-                hashCode.Add(End, _set._equalityComparer);
+                hashCode.Add(Start, _valueAccessors);
+                hashCode.Add(End, _valueAccessors);
                 return hashCode.ToHashCode();
             }
 
             public override string ToString() => (Count == 1) ? $"[{Start}]" : $"[{Start}..{End}]";
 
-            // value == range.Start
-            // value == range.End
             internal static bool TryFind(T value, ValueRangeSet<T> set, [NotNullWhen(true)] out ValueRange? range, out bool? isEnd)
             {
-                var comparer = set._sortComparer;
+                var comparer = set._valueAccessors;
                 for (range = set.First; range is not null; range = range.Next)
                 {
                     int d = comparer.Compare(value, range.Start);
@@ -97,9 +96,7 @@ namespace TestDataGeneration
 
             private static bool Find(T value, ValueRangeSet<T> set, [NotNullWhen(true)] out ValueRange? range, out int comparison)
             {
-                var comparer = set._sortComparer;
-                var isImmediatelyPreceding = set._isImmediatelyPreceding;
-                var isImmediatelyFollowing = set._isImmediatelyFollowing;
+                var comparer = set._valueAccessors;
                 range = set.First;
                 if (range is null)
                 {
@@ -112,10 +109,10 @@ namespace TestDataGeneration
                 {
                     if ((comparison = comparer.Compare(value, range.Start)) >= 0)
                         return true;
-                    comparison = isImmediatelyPreceding(value, range.Start) ? -1 : -2;
+                    comparison = comparer.IsSequentiallyNext(range.Start, value) ? -1 : -2;
                     return false;
                 }
-                if (isImmediatelyFollowing(value, range.End))
+                if (comparer.IsSequentiallyNext(value, range.End))
                 {
                     comparison = 1;
                     return false;
@@ -128,10 +125,10 @@ namespace TestDataGeneration
                     {
                         if ((comparison = comparer.Compare(value, range.Start)) >= 0) return true;
                         // value is before start
-                        comparison = isImmediatelyPreceding(value, range.Start) ? -1 : -2;
+                        comparison = comparer.IsSequentiallyNext(range.Start, value) ? -1 : -2;
                         return false;
                     }
-                    if (isImmediatelyFollowing(value, range.End))
+                    if (comparer.IsSequentiallyNext(value, range.End))
                     {
                         comparison = 1;
                         return false;
@@ -144,15 +141,12 @@ namespace TestDataGeneration
 
             private void ExpandEnd(T end)
             {
-                var comparer = _set._sortComparer;
-                var isImmediatelyPreceding = _set._isImmediatelyPreceding;
-                var isImmediatelyFollowing = _set._isImmediatelyFollowing;
                 while (Next is not null)
                 {
-                    var d = comparer.Compare(end, Next.Start);
+                    var d = _valueAccessors.Compare(end, Next.Start);
                     if (d < 0)
                     {
-                        if (isImmediatelyPreceding(end, Next.Start))
+                        if (_valueAccessors.IsSequentiallyNext(Next.Start, end))
                             MergeWithNext();
                         else
                         {
@@ -162,8 +156,8 @@ namespace TestDataGeneration
                         return;
                     }
                     MergeWithNext();
-                    if (d == 0 || (d = comparer.Compare(end, End)) <= 0) return;
-                    if (isImmediatelyFollowing(end, End))
+                    if (d == 0 || _valueAccessors.Compare(end, End) <= 0) return;
+                    if (_valueAccessors.IsSequentiallyNext(end, End))
                     {
                         End = end;
                         OnIncrementEnd();
@@ -176,15 +170,12 @@ namespace TestDataGeneration
 
             private void ExpandStart(T start)
             {
-                var comparer = _set._sortComparer;
-                var isImmediatelyPreceding = _set._isImmediatelyPreceding;
-                var isImmediatelyFollowing = _set._isImmediatelyFollowing;
                 while (Previous is not null)
                 {
-                    var d = comparer.Compare(start, Previous.End);
+                    var d = _valueAccessors.Compare(start, Previous.End);
                     if (d > 0)
                     {
-                        if (isImmediatelyFollowing(start, Previous.End))
+                        if (_valueAccessors.IsSequentiallyNext(start, Previous.End))
                             MergeWithPrevious();
                         else
                         {
@@ -194,8 +185,8 @@ namespace TestDataGeneration
                         return;
                     }
                     MergeWithPrevious();
-                    if (d == 0 || (d = comparer.Compare(start, Start)) >= 0) return;
-                    if (isImmediatelyPreceding(start, Start))
+                    if (d == 0 || _valueAccessors.Compare(start, Start) >= 0) return;
+                    if (_valueAccessors.IsSequentiallyNext(start, Start))
                     {
                         Start = start;
                         OnDecrementStart();
@@ -208,7 +199,7 @@ namespace TestDataGeneration
 
             private void OnDecrementStart()
             {
-                if (Previous is not null && _set._isImmediatelyFollowing(Previous.End, Start))
+                if (Previous is not null && _valueAccessors.IsSequentiallyNext(Previous.End, Start))
                     MergeWithPrevious();
                 else
                 {
@@ -219,7 +210,7 @@ namespace TestDataGeneration
 
             private void OnIncrementEnd()
             {
-                if (Next is not null && _set._isImmediatelyPreceding(Next.Start, End))
+                if (Next is not null && _valueAccessors.IsSequentiallyNext(End, Next.Start))
                     MergeWithNext();
                 else
                 {
@@ -230,13 +221,13 @@ namespace TestDataGeneration
             
             private void UpdateCount()
             {
-                if (_set._sortComparer.Compare(Start, End) == 0)
+                if (_valueAccessors.Compare(Start, End) == 0)
                     _values = Enumerable.Repeat(Start, 1);
-                else if (_set._isImmediatelyPreceding(Start, End))
+                else if (_valueAccessors.IsSequentiallyNext(End, Start))
                     _values = new T[] { Start, End };
                 else
                 {
-                    Count = _set._getCountInRange(Start, End);
+                    Count = _valueAccessors.GetRangeCount(Start, End);
                     _values = null;
                 }
             }
@@ -250,6 +241,7 @@ namespace TestDataGeneration
 
             private void MergeWithPrevious()
             {
+                if (_set is null) throw new InvalidOperationException();
                 var removed = Previous;
                 if (removed is null) throw new InvalidOperationException();
                 removed.Next = null;
@@ -266,6 +258,7 @@ namespace TestDataGeneration
 
             private void MergeWithNext()
             {
+                if (_set is null) throw new InvalidOperationException();
                 var removed = Next;
                 if (removed is null) throw new InvalidOperationException();
                 removed.Previous = null;
@@ -317,7 +310,7 @@ namespace TestDataGeneration
 
             internal static bool IncludeRange(T startInclusive, T endInclusive, ValueRangeSet<T> set)
             {
-                var comparer = set._sortComparer;
+                var comparer = set._valueAccessors;
                 if (Find(startInclusive, set, out ValueRange? range, out int comparison))
                 {
                     int d = comparer.Compare(endInclusive, range.End);
@@ -334,15 +327,13 @@ namespace TestDataGeneration
                 }
                 else
                 {
-                    var isImmediatelyPreceding = set._isImmediatelyPreceding;
-                    var isImmediatelyFollowing = set._isImmediatelyFollowing;
                     int d;
                     switch (comparison)
                     {
                         case -2:
                             if ((d = comparer.Compare(endInclusive, range.Start)) < 0)
                             {
-                                if (isImmediatelyPreceding(endInclusive, range.Start))
+                                if (comparer.IsSequentiallyNext(range.Start, endInclusive))
                                     range.ExpandStart(startInclusive);
                                 else
                                 {
@@ -418,31 +409,28 @@ namespace TestDataGeneration
                             set._changeToken = new();
                             return true;
                         default:
+                            var valueAccessors = set._valueAccessors;
                             if (isEnd.HasValue)
                             {
                                 if (isEnd.Value)
                                 {
-                                    if (set._tryGetDecrementedValue(range.End, out value))
-                                    {
-                                        range.End = value;
-                                        range.Count--;
-                                        range.OnCountChanged();
-                                        set._changeToken = new();
-                                        return true;
-                                    }
+                                    value = valueAccessors.Decrement(range.End);
+                                    range.End = value;
                                 }
-                                else if (set._tryGetIncrementedValue(range.Start, out value))
+                                else
                                 {
+                                    value = valueAccessors.Increment(range.Start);
                                     range.Start = value;
                                     range.Count--;
-                                    range.OnCountChanged();
-                                    set._changeToken = new();
-                                    return true;
                                 }
+                                range.Count--;
+                                range.OnCountChanged();
+                                set._changeToken = new();
+                                return true;
                             }
                             else
                             {
-                                if (set._isImmediatelyFollowing(value, range.Start))
+                                if (valueAccessors.IsSequentiallyNext(value, range.Start))
                                 {
                                     if (range.Count == 3)
                                     {
@@ -454,12 +442,10 @@ namespace TestDataGeneration
                                         range.Previous = item;
                                         range.End = range.Start;
                                         range.Count = 1;
-                                        range.OnCountChanged();
-                                        set._changeToken = new();
-                                        return true;
                                     }
-                                    if (set._tryGetIncrementedValue(value, out value))
+                                    else
                                     {
+                                        value = valueAccessors.Increment(value);
                                         var item = new ValueRange(set, range.Start) { Next = range, Previous = range.Previous };
                                         if (item.Previous is null)
                                             set.First = item;
@@ -468,27 +454,25 @@ namespace TestDataGeneration
                                         range.Previous = item;
                                         range.Start = value;
                                         range.Count--;
-                                        range.OnCountChanged();
-                                        set._changeToken = new();
-                                        return true;
                                     }
+                                    range.OnCountChanged();
+                                    set._changeToken = new();
+                                    return true;
                                 }
-                                else if (set._isImmediatelyPreceding(value, range.End))
+                                else if (valueAccessors.IsSequentiallyNext(range.End, value))
                                 {
-                                    if (set._tryGetDecrementedValue(value, out value))
-                                    {
-                                        var item = new ValueRange(set, range.End) { Previous = range, Next = range.Next };
-                                        if (item.Next is null)
-                                            set.Last = item;
-                                        else
-                                            item.Next.Previous = item;
-                                        range.Next = item;
-                                        range.End = value;
-                                        range.Count--;
-                                        range.OnCountChanged();
-                                        set._changeToken = new();
-                                        return true;
-                                    }
+                                    value = valueAccessors.Decrement(value);
+                                    var item = new ValueRange(set, range.End) { Previous = range, Next = range.Next };
+                                    if (item.Next is null)
+                                        set.Last = item;
+                                    else
+                                        item.Next.Previous = item;
+                                    range.Next = item;
+                                    range.End = value;
+                                    range.Count--;
+                                    range.OnCountChanged();
+                                    set._changeToken = new();
+                                    return true;
                                 }
                             }
                             break;
@@ -499,6 +483,7 @@ namespace TestDataGeneration
 
             private void Remove()
             {
+                if (_set is null) throw new InvalidOperationException();
                 if (Previous is null)
                 {
                     if ((_set.First = Next) is null)
