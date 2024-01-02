@@ -19,6 +19,15 @@
             "createTemporaryIntegratedConsole": true,
             "attachDotnetDebugger": true,
             "preLaunchTask": "Build TestDataGeneration"
+        }, {
+            "name": "Remove-NonPrintableChars",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/src/TestDataGeneration/RemoveNonPrintableChars.ps1",
+            "cwd": "${cwd}",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true,
+            "preLaunchTask": "Build TestDataGeneration"
         }
     ]
 }

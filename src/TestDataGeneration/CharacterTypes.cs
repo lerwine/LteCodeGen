@@ -26,7 +26,7 @@ public static class CharacterTypes
 
     public static IEnumerable<char> GetAsciiWhitespaceControlChars()
     {
-        for (char c = '\u0009'; c <= '\u000d'; c++) yield return c;
+        for (char c = '\t'; c <= '\r'; c++) yield return c;
     }
     /// <summary>
     /// Bitwise flag for space character.
