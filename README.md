@@ -84,7 +84,23 @@ Install-Module -Name Pester -Force -SkipPublisherCheck
 
 General development reference links
 
-- [Pester](https://github.com/pester/Pester)
+- [Character Name Index - unicode.org](https://www.unicode.org/charts/charindex.html)
+- [UTF-8, UTF-16, UTF-32 & BOM - unicode.org](https://www.unicode.org/faq/utf_bom.html)
+- [U0000.pdf: C0 Controls and Basic Latin - unicode.org](Resources/U0000.pdf)
+  - [U0000.pdf on unicode.org](https://www.unicode.org/charts/PDF/U0000.pdf)
+- [RFC 3629 - UTF-8, a transformation format of ISO 10646](Resources/rfc3629.txt)
+  - [RFC 3629 on datatracker.ietf.org](https://datatracker.ietf.org/doc/html/rfc3629)
+- [RFC 2781 - UTF-16, an encoding of ISO 10646](Resources/rfc2781.txt)
+  - [RFC 2781 on datatracker.ietf.org](https://datatracker.ietf.org/doc/html/rfc2781)
+- [RFC 2152 - UTF-7](Resources/rfc2152.txt)
+  - [RFC 2152 - UTF-7](https://datatracker.ietf.org/doc/html/rfc2152)
+- [UTF-16 - Wikipedia](https://en.wikipedia.org/wiki/UTF-16)
+- [UTF-8 - Wikipedia](https://en.wikipedia.org/wiki/UTF-8)
+- PowerShell
+  - [Examples](https://github.com/PowerShell/vscode-powershell/tree/main/examples)
+  - [Pester](https://github.com/pester/Pester)
+  - [Working with local PSRepositories - PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/gallery/how-to/working-with-local-psrepositories?view=powershellget-3.x)
+  - [Install-Script (PowerShellGet) - PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/module/powershellget/install-script?view=powershellget-3.x)
 - [NUnit.org](https://nunit.org/)
   - [NUnit Documentation Site](https://docs.nunit.org/)
   - [Unit testing C# with NUnit and .NET Core](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit)

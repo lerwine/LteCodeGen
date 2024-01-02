@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Character Classes</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+                font-size: 10pt;
+        }
+        code {
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            background-color: lightgray;
+            color: #3f3f3f
+        }
+        table.charcodes, table.charcodes td {
+            border: 1px solid;
+        }
+        table.charcodes th, table.charcodes td {
+            vertical-align: top;
+            text-align: center;
+            font-weight: bold;
+            font-size: large;
+        }
+        table.charcodes td small {
+            font-weight: normal;
+            font-size: small;
+        }
+    </style>
+  </head>
+  <body>
+    <table class="charcodes">
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th scope="col">000</th>
+          <th scope="col">001</th>
+          <th scope="col">002</th>
+          <th scope="col">003</th>
+          <th scope="col">004</th>
+          <th scope="col">005</th>
+          <th scope="col">006</th>
+          <th scope="col">007</th>
+        </tr>
+        <tr>
+          <th scope="row">0</th>
+          <td><code>NUL</code><br />  <small>0000</small></td>
+          <td><code>DLE</code><br />  <small>0010</small></td>
+          <td><code>SP</code><br />   <small>0020</small></td>
+          <td>0<br /><small>0030</small></td>
+          <td>@<br /><small>0040</small></td>
+          <td>P<br /><small>0050</small></td>
+          <td>`<br /><small>0060</small></td>
+          <td>p<br /><small>0070</small></td>
+        </tr>
+        <tr>
+          <th scope="row">1</th>
+          <td><code>SOH</code><br />  <small>0001</small></td>
+          <td><code>DC1</code><br />  <small>0011</small></td>
+          <td>!<br /><small>0021</small></td>
+          <td>1<br /><small>0031</small></td>
+          <td>A<br /><small>0041</small></td>
+          <td>Q<br /><small>0051</small></td>
+          <td>a<br /><small>0061</small></td>
+          <td>q<br /><small>0071</small></td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td><code>STX</code><br />  <small>0002</small></td>
+          <td><code>DC2</code><br />  <small>0012</small></td>
+          <td>"<br /><small>0022</small></td>
+          <td>2<br /><small>0032</small></td>
+          <td>B<br /><small>0042</small></td>
+          <td>R<br /><small>0052</small></td>
+          <td>b<br /><small>0062</small></td>
+          <td>r<br /><small>0072</small></td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td><code>ETX</code><br />  <small>0003</small></td>
+          <td><code>DC3</code><br />  <small>0013</small></td>
+          <td>#<br /><small>0023</small></td>
+          <td>3<br /><small>0033</small></td>
+          <td>C<br /><small>0043</small></td>
+          <td>S<br /><small>0053</small></td>
+          <td>c<br /><small>0063</small></td>
+          <td>s<br /><small>0073</small></td>
+        </tr>
+        <tr>
+          <th scope="row">4</th>
+          <td><code>EOT</code><br />  <small>0004</small></td>
+          <td><code>DC4</code><br />  <small>0014</small></td>
+          <td>$<br /><small>0024</small></td>
+          <td>4<br /><small>0034</small></td>
+          <td>D<br /><small>0044</small></td>
+          <td>T<br /><small>0054</small></td>
+          <td>d<br /><small>0064</small></td>
+          <td>t<br /><small>0074</small></td>
+        </tr>
+        <tr>
+          <th scope="row">5</th>
+          <td><code>ENQ</code><br />  <small>0005</small></td>
+          <td><code>NAK</code><br />  <small>0015</small></td>
+          <td>%<br /><small>0025</small></td>
+          <td>5<br /><small>0035</small></td>
+          <td>E<br /><small>0045</small></td>
+          <td>U<br /><small>0055</small></td>
+          <td>e<br /><small>0065</small></td>
+          <td>u<br /><small>0075</small></td>
+        </tr>
+        <tr>
+          <th scope="row">6</th>
+          <td><code>ACK</code><br />  <small>0006</small></td>
+          <td><code>SYN</code><br />  <small>0016</small></td>
+          <td>&amp;<br /><small>0026</small></td>
+          <td>6<br /><small>0036</small></td>
+          <td>F<br /><small>0046</small></td>
+          <td>V<br /><small>0056</small></td>
+          <td>f<br /><small>0066</small></td>
+          <td>v<br /><small>0076</small></td>
+        </tr>
+        <tr>
+          <th scope="row">7</th>
+          <td><code>BEL</code><br />  <small>0007</small></td>
+          <td><code>ETB</code><br />  <small>0017</small></td>
+          <td>'<br /><small>0027</small></td>
+          <td>7<br /><small>0037</small></td>
+          <td>G<br /><small>0047</small></td>
+          <td>W<br /><small>0057</small></td>
+          <td>g<br /><small>0067</small></td>
+          <td>w<br /><small>0077</small></td>
+        </tr>
+        <tr>
+          <th scope="row">8</th>
+          <td><code>BS</code><br />  <small>0008</small></td>
+          <td><code>CAN</code><br />  <small>0018</small></td>
+          <td>(<br /><small>0028</small></td>
+          <td>8<br /><small>0038</small></td>
+          <td>H<br /><small>0048</small></td>
+          <td>X<br /><small>0058</small></td>
+          <td>h<br /><small>0068</small></td>
+          <td>x<br /><small>0078</small></td>
+        </tr>
+        <tr>
+          <th scope="row">9</th>
+          <td><code>HT</code><br />  <small>0009</small></td>
+          <td><code>EM</code><br />  <small>0019</small></td>
+          <td>)<br /><small>0029</small></td>
+          <td>9<br /><small>0039</small></td>
+          <td>I<br /><small>0049</small></td>
+          <td>Y<br /><small>0059</small></td>
+          <td>i<br /><small>0069</small></td>
+          <td>y<br /><small>0079</small></td>
+        </tr>
+        <tr>
+          <th scope="row">A</th>
+          <td><code>LF</code><br />   <small>000A</small></td>
+          <td><code>SUB</code><br />  <small>001A</small></td>
+          <td>*<br /><small>002A</small></td>
+          <td>:<br /><small>003A</small></td>
+          <td>J<br /><small>004A</small></td>
+          <td>Z<br /><small>005A</small></td>
+          <td>j<br /><small>006A</small></td>
+          <td>z<br /><small>007A</small></td>
+        </tr>
+        <tr>
+          <th scope="row">B</th>
+          <td><code>VT</code><br />   <small>000B</small></td>
+          <td><code>ESC</code><br />  <small>001B</small></td>
+          <td>+<br /><small>002B</small></td>
+          <td>;<br /><small>003B</small></td>
+          <td>K<br /><small>004B</small></td>
+          <td>[<br /><small>005B</small></td>
+          <td>k<br /><small>006B</small></td>
+          <td>{<br /><small>007B</small></td>
+        </tr>
+        <tr>
+          <th scope="row">C</th>
+          <td><code>FF</code><br />   <small>000C</small></td>
+          <td><code>FS</code><br />   <small>001C</small></td>
+          <td>,<br /><small>002C</small></td>
+          <td>&lt;<br /><small>003C</small></td>
+          <td>L<br /><small>004C</small></td>
+          <td>\<br /><small>005C</small></td>
+          <td>l<br /><small>006C</small></td>
+          <td>|<br /><small>007C</small></td>
+        </tr>
+        <tr>
+          <th scope="row">D</th>
+          <td><code>CR</code><br />   <small>000D</small></td>
+          <td><code>GS</code><br />   <small>001D</small></td>
+          <td>-<br /><small>002D</small></td>
+          <td>=<br /><small>003D</small></td>
+          <td>M<br /><small>004D</small></td>
+          <td>]<br /><small>005D</small></td>
+          <td>m<br /><small>006D</small></td>
+          <td>}<br /><small>007D</small></td>
+        </tr>
+        <tr>
+          <th scope="row">E</th>
+          <td><code>SO</code><br />   <small>000E</small></td>
+          <td><code>RS</code><br />   <small>001E</small></td>
+          <td>.<br /><small>002E</small></td>
+          <td>&gt;<br /><small>003E</small></td>
+          <td>N<br /><small>004E</small></td>
+          <td>^<br /><small>005E</small></td>
+          <td>n<br /><small>006E</small></td>
+          <td>~<br /><small>007E</small></td>
+        </tr>
+        <tr>
+          <th scope="row">F</th>
+          <td><code>SI</code><br />   <small>000F</small></td>
+          <td><code>US</code><br />   <small>001F</small></td>
+          <td>/<br /><small>002F</small></td>
+          <td>?<br /><small>003F</small></td>
+          <td>O<br /><small>004F</small></td>
+          <td>_<br /><small>005F</small></td>
+          <td>o<br /><small>006F</small></td>
+          <td><code>DEL</code><br />  <small>007F</small></td>
+        </tr>
+      </thead>
+    </table>
+  </body>
+</html>
