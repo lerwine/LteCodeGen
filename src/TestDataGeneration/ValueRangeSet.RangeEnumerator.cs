@@ -39,6 +39,7 @@ namespace TestDataGeneration
                 {
                     if (_source is null) throw new ObjectDisposedException(nameof(RangeEnumerator));
                     if (_endOfEnumeration) return false;
+                    if (!ReferenceEquals(_changeToken, _source._changeToken)) throw new InvalidOperationException("Collection has changed.");
                     if ((Current = (Current is null) ? _source.First! : Current.Next!) is not null) return true;
                     _endOfEnumeration = true;
                     return false;
