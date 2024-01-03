@@ -2,10 +2,10 @@
     about_TestDataGeneration
 
 SHORT DESCRIPTION
-    PowerShell module for code generation.
+    PowerShell module for data / code generation.
 
 LONG DESCRIPTION
-    Provides utility commands and classes for code generation.
+    Provides utility commands and classes for data and code generation.
 
 EXPORTED COMMANDS
     Following is a list of commands exported by this module:
@@ -16,8 +16,8 @@ EXPORTED COMMANDS
     Convert-RangePatternToTuple
         Converts range pattern strings to tuple classes.
 
-    Convert-RangeValuesToTuple
-        Converts range integer values to tuple classes.
+    Test-RangePatternString
+        Tests validity of a range pattern string.
 
     Get-RandomInteger
         Generates random integer values.
