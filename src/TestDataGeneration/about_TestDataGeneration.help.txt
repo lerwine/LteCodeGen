@@ -13,11 +13,14 @@ EXPORTED COMMANDS
     Get-RandomCharacterSource
         Get characters for random string generation.
 
-    Convert-RangePatternToTuple
-        Converts range pattern strings to tuple classes.
+    Convert-RangePatternToRandomInt
+        Converts range pattern strings to random integers.
 
-    Test-RangePatternString
-        Tests validity of a range pattern string.
+    ConvertFrom-BinaryNotation
+        Converts binary notation strings to number values.
+
+    ConvertTo-BinaryNotation
+        Converts number values to binary notation strings.
 
     Get-RandomInteger
         Generates random integer values.
@@ -27,6 +30,3 @@ EXPORTED COMMANDS
 
     Get-RandomIpV4Address
         Generates random IPv4 address strings.
-
-    Get-RandomString
-        Generates random string values.

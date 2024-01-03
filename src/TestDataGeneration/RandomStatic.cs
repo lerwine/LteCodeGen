@@ -4,7 +4,7 @@ namespace TestDataGeneration;
 
 public static class RandomStatic
 {
-    internal static Random Random { get; } = new();
+    public static Random Random { get; } = new();
 
     internal static bool GetRandomBoolean() => Random.Next(0, 2) == 1;
 
