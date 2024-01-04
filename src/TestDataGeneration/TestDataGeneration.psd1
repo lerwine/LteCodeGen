@@ -30,7 +30,7 @@ CompanyName = 'Leonard T. Erwine'
 Copyright = '(c) 2023 Leonard Thomas Erwine. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Provides utility commands and classes for code generation.'
+Description = 'Provides utility commands and classes for data and code generation.'
 
 # Minimum version of the PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -69,10 +69,10 @@ Description = 'Provides utility commands and classes for code generation.'
 NestedModules = @('TestDataGeneration.dll')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Convert-RangePatternToTuple', 'Convert-RangeValuesToTuple')
+FunctionsToExport = @('Select-Random')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Get-RandomInteger', 'Get-RandomCharacterSource', 'Remove-NonPrintableChars')
+CmdletsToExport = @('Get-RandomInteger', 'Convert-RangePatternToRandomInt', 'Get-RandomCharacterSource', 'Remove-NonPrintableChars')
 
 # Variables to export from this module
 VariablesToExport = '*'

@@ -1,89 +1,152 @@
-
-Function Convert-RangePatternToTuple {
-    Param(
+function Select-Random {
+    [CmdletBinding(DefaultParameterSetName = "NoRepeat")]
+    Param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [string]$Pattern
+        [AllowNull()]
+        [AllowEmptyString()]
+        # Items to randomly select from.
+        [object[]]$InputObject,
+
+        [Parameter(Mandatory = $true, ParameterSetName = "FixedRepeat")]
+        [ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)]
+        # Number of times to repeat random selection.
+        [int]$Repeat,
+
+        [Parameter(ParameterSetName = "RandomRepeat")]
+        [ValidateRange([System.Management.Automation.ValidateRangeKind]::NonNegative)]
+        # Mininum number of times to repeat random selection (defaults to 1).
+        [int]$MinRepeat = 1,
+
+        [Parameter(Mandatory = $true, ParameterSetName = "RandomRepeat")]
+        [ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)]
+        # The maximum number of times to repeat random selection.
+        [int]$MaxRepeat = 1,
+
+        [Parameter(ParameterSetName = "RandomRepeat")]
+        [Parameter(ParameterSetName = "FixedRepeat")]
+        # Ensures that the same input item is not emitted more than once.
+        [switch]$NoDuplicates
     )
+    
     Begin {
-        if ($null -eq $Script:__Convert_RangePatternToTuple) {
-            New-Variable -Name '__Convert_RangePatternToTuple' -Scope 'Script' -Option ReadOnly -Value ([System.Text.RegularExpressions.Regex]::new(
-                '^(?<s>\d+)(-(?<e>\d+))?$',
-                [System.Text.RegularExpressions.RegexOptions]::Compiled
-            )) -Force;
-        }
-    }
-
-    Process {
-        $m = $Script:__Convert_RangePatternToTuple.Match($Pattern);
-        if ($m.Success) {
-            $Start = 0;
-            if ([int]::TryParse($m.Groups['s'].Value, [ref]$Start)) {
-                $g = $m.Groups['e'].Value;
-                if ($g.Success) {
-                    $End = 0;
-                    if ([int]::TryParse($g.Value, [ref]$End)) {
-                        if ($End -lt $Start) {
-                            Write-Error -Message "Range start cannot be greater than the range end" -Category InvalidArgument;
-                            Write-Output -InputObject ([ValueTuple]::Create($End, $End)) -NoEnumerate;
-                        } else {
-                            Write-Output -InputObject ([ValueTuple]::Create($Start, $End)) -NoEnumerate;
-                        }
-                    } else {
-                        Write-Error -Message "Could not parse $($g.Value) as an integer." -Category InvalidArgument;
-                        Write-Output -InputObject ([ValueTuple]::Create($Start, $Start)) -NoEnumerate;
-                    }
-                } else {
-                    Write-Output -InputObject ([ValueTuple]::Create($Start, $Start)) -NoEnumerate;
-                }
-            } else {
-                Write-Error -Message "Could not parse $($m.Groups['s'].Value) as an integer." -Category InvalidArgument;
-                Write-Output -InputObject ([ValueTuple]::Create(0, 0)) -NoEnumerate;
-            }
-        }
-    }
-}
-
-Function Convert-RangeValuesToTuple {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [int[]]$Values
-    )
-
-    Begin { $AllValues = @() }
-
-    Process { $AllValues += $Values }
-
-    End {
-        switch ($AllValues.Count) {
-            0 {
-                Write-Error -Message 'Cannot convert empty collection to Tuple[int,int]' -Category InvalidArgument -ErrorId 'NoValuesGiven';
-                return [System.ValueTuple]::Create(0, 0);
+        $AllValues = [System.Collections.ObjectModel.Collection[object]]::new();
+        switch ($PSCmdlet.ParameterSetName) {
+            'NoRepeat' {
+                $Repeat = 1;
                 break;
             }
-            1 {
-                return [System.ValueTuple]::Create($AllValues[0], $AllValues[0]);
-            }
-            2 {
-                if ($AllValues[1] -lt $AllValues[0]) {
-                    Write-Error -Message 'First range value cannot be greater than the second' -Category InvalidArgument -ErrorId 'RangeStartAfterEnd' `
-                        -CategoryReason "First range value of $($AllValues[0]) is greater than the second value of $($AllValues[1])." `
-                        -RecommendedAction 'Pass a single value or pass 2 values with the second one not being less than the first.';
-                    if ($AllValues[1] -lt 0 -and [Math]::Abs($AllValues[0]) -lt [Math]::Abs($AllValues[1])) { return [System.ValueTuple]::Create($AllValues[0], $AllValues[0]) }
-                    [System.ValueTuple]::Create($AllValues[1], $AllValues[1]);
+            'RandomRepeat' {
+                if ($MaxRepeat -lt $MinRepeat) {
+                    Write-Error -Message 'The MinRepeat parameter cannot be greater than the MaxRepeat parameter' -Category InvalidArgument -ErrorId 'MinRepeatGreaterThanMaxRepeat' -TargetObject $MinRepeat -CategoryTargetName 'MinRepeat';
+                    return;
                 }
-                return [System.ValueTuple]::Create($AllValues[0], $AllValues[1]);
+                $Repeat = Get-RandomInteger -MinValue $MinRepeat -Maxvalue -$MaxRepeat;
+                break;
             }
-            default {
-                Write-Error -Message "Cannot convert collection of $_ values to Tuple[int,int]" -Category InvalidArgument -ErrorId 'TooManyRangeValues' `
-                    -CategoryReason 'More than 2 values were provided.' `
-                    -RecommendedAction 'Pass a single value or pass 2 values with the second one not being less than the first.';
-                if ($AllValues[1] -lt $AllValues[0]) {
-                    if ($AllValues[1] -lt 0 -and [Math]::Abs($AllValues[0]) -lt [Math]::Abs($AllValues[1])) { return [System.ValueTuple]::Create($AllValues[0], $AllValues[0]) }
-                    [System.ValueTuple]::Create($AllValues[1], $AllValues[1]);
+        }
+    }
+    
+    Process {
+        foreach ($obj in $InputObject) { $AllValues.Add($obj) }
+    }
+    
+    End {
+        if ($AllValues.Count -lt 2) {
+            $obj = $AllValues[0];
+            for ($i = 0; $i -lt $Repeat; $i++) { Write-Output -InputObject $obj -NoEnumerate }
+        } else {
+            Write-Output -InputObject $AllValues[(Get-RandomInteger -MinValue 0 -Maxvalue $AllValues.Count)] -NoEnumerate;
+        }
+    }
+    <#
+        .SYNOPSIS
+
+        Randomly select from input values.
+
+        .DESCRIPTION
+
+        Randomly selects one or more items from the provided input values.
+
+        .INPUTS
+
+        System.Object[]. Objects to randomly select from.
+
+        .OUTPUTS
+
+        System.Object[]. Returns the object or objects that have been randomly selected.
+
+        .EXAMPLE
+
+        PS> ('Cat', 'Dog', 'Parakeet', 'Hamster', 'Fish', 'Bearded Dragon', 'Rabbit', 'Ferret') | Select-Random;
+
+        Dog
+
+        .EXAMPLE
+
+        PS> ('Cat', 'Dog') | Select-Random -Repeat 6;
+
+        Dog
+        Cat
+        Cat
+        Dog
+        Cat
+        Dog
+
+        .EXAMPLE
+
+        PS> ('Cat', 'Dog', 'Parakeet', 'Hamster', 'Fish', 'Bearded Dragon', 'Rabbit', 'Ferret') | Select-Random -MinRepeat 1 -MaxRepeat 10 -NoDuplicates;
+
+        Bearded Dragon
+        Rabbit
+        Dog
+        Fish
+
+        .EXAMPLE
+
+        PS> ('Cat', 'Dog') | Select-Random -Repeat 6 -NoDuplicates;
+
+        Dog
+        Cat
+    #>
+}
+
+Function Get-RandomIpV4Address {
+    [CmdletBinding()]
+    Param(
+        [ValidateRange(1, 32768)]
+        [int]$Count = 1,
+
+        [System.IO.TextWriter]$Writer
+    )
+    if ($PSBoundParameters.ContainsKey('Writer')) {
+        $Writer.Write((Get-RandomInteger -MinValue 0 -Maxvalue 255));
+        for ($i = 0; $i -lt 3; $i++) {
+            $Writer.Write('.');
+            $Writer.Write((Get-RandomInteger -MinValue 0 -Maxvalue 255));
+        }
+        for ($i = 1; $i -lt $Count; $i++) {
+            $Writer.Write(";");
+            $Writer.Write((Get-RandomInteger -MinValue 0 -Maxvalue 255));
+            for ($i = 0; $i -lt 3; $i++) {
+                $Writer.Write('.');
+                $Writer.Write((Get-RandomInteger -MinValue 0 -Maxvalue 255));
+            }
+        }
+    } else {
+        if ($Count -gt 1) {
+            $Value = "$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255)";
+            $Value | Write-Output;
+            $Emitted = @($Value);
+            for ($i = 1; $i -lt $Count; $i++) {
+                $Value = "$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255)";
+                while ($Emitted -contains $Value) {
+                    $Value = "$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255)";
                 }
-                return [System.ValueTuple]::Create($AllValues[0], $AllValues[1]);
+                $Value | Write-Output;
+                $Emitted += $Value;
             }
+        } else {
+            "$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255).$(Get-RandomInteger -MinValue 0 -Maxvalue 255)" | Write-Output;
         }
     }
 }

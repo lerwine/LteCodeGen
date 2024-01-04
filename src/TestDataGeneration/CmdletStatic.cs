@@ -10,6 +10,8 @@ public static class CmdletStatic
     public const string ErrorId_ItemNotFound = "ItemNotFound";
     public const string ErrorId_PathCannotBeReadAsText = "PathCannotBeReadAsText";
 
+    internal static object EnsureBaseObject(object value) => (value is PSObject psObject) ? psObject.BaseObject : value;
+
     internal static ErrorRecord CreateArgumentErrorRecord(string message, string errorId, object targetObject, string targetName)
     {
         var errorRecord = new ErrorRecord(new PSArgumentException(message), errorId, ErrorCategory.InvalidArgument, targetObject);
@@ -79,6 +81,46 @@ public static class CmdletStatic
             start++;
         }
         return result;
+    }
+
+    internal static string ConvertUInt64ToBinaryNotation(ulong value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertInt64ToBinaryNotation(long value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertUInt32ToBinaryNotation(uint value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertInt32ToBinaryNotation(int value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertUInt16ToBinaryNotation(ushort value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertInt16ToBinaryNotation(short value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertByteToBinaryNotation(byte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static string ConvertSByteToBinaryNotation(sbyte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        throw new NotImplementedException();
     }
 
     internal static ulong ConvertFromBinary64BitNotation(string pattern)

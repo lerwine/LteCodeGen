@@ -1,6 +1,11 @@
-# LteCodeGen
+# LteCodeGen - Code / Data generation utilities
 
-Code generation project
+The purpose of this project is to provide ways to generate test data and source code for development.
+
+## Projects
+
+- [TestDataGeneration](./src/TestDataGeneration/README.md) PowerShell module providing several cmdlets supporting data and code generation.
+- [](./src/TestDataGeneration.UnitTests/README.md) NUnit tests for the `TestDataGeneration` project.
 
 ## Testing
 
