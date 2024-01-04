@@ -1,12 +1,12 @@
 namespace TestDataGeneration;
 
-public class LinkedSetItemInsertedEventArgs<T> : EventArgs where T : LinkedSet<T>.Node, IComparable<T>, IEquatable<T>, ICloneable
+public class LinkedSetItemInsertedEventArgs<T> : EventArgs where T : OrderedLinkedSet<T>.Node, IComparable<T>, IEquatable<T>, ICloneable
 {
-    public LinkedSet<T> Container { get; }
+    public OrderedLinkedSet<T> Container { get; }
     
     public T Target { get; }
 
-    public LinkedSetItemInsertedEventArgs(LinkedSet<T> container, T target)
+    public LinkedSetItemInsertedEventArgs(OrderedLinkedSet<T> container, T target)
     {
         Container = container;
         Target = target;

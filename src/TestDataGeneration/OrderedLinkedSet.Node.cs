@@ -1,25 +1,25 @@
 namespace TestDataGeneration;
 
-public partial class LinkedSet<T>
+public partial class OrderedLinkedSet<T>
 {
-    public abstract class Node
+    public abstract class Node : ICloneable
     {
         private readonly object _syncRoot = new();
 
-        public LinkedSet<T>? Container { get; set; }
+        public OrderedLinkedSet<T>? Container { get; set; }
 
         public T? Previous { get; private set; }
 
         public T? Next { get; private set; }
 
-        private static void OnAfterRemove(LinkedSet<T> container, IEnumerator<(T item, LinkedSet<T>.Node? RefNode, bool RefNodeIsPrevious)> enumerator)
+        private static void OnAfterRemove(OrderedLinkedSet<T> container, IEnumerator<(T item, OrderedLinkedSet<T>.Node? RefNode, bool RefNodeIsPrevious)> enumerator)
         {
-            (T item, LinkedSet<T>.Node? refNode, bool refNodeIsPrevious) = enumerator.Current;
+            (T item, OrderedLinkedSet<T>.Node? refNode, bool refNodeIsPrevious) = enumerator.Current;
             try { item.OnAfterRemove(container, (T?)refNode, refNodeIsPrevious); }
             finally { if (enumerator.MoveNext()) OnAfterRemove(container, enumerator); }
         }
 
-        protected virtual void OnAfterRemove(LinkedSet<T> container, T? refNode, bool refNodeIsPrevious)
+        protected virtual void OnAfterRemove(OrderedLinkedSet<T> container, T? refNode, bool refNodeIsPrevious)
         {
             if (refNode is null)
                 container.RaiseAfterRemove((T)this);
@@ -31,7 +31,7 @@ public partial class LinkedSet<T>
 
         #region Private Methods
 
-        private static bool AddLast(T item, LinkedSet<T> container)
+        private static bool AddLast(T item, OrderedLinkedSet<T> container)
         {
             container._changeToken = new();
             if ((item.Previous = container.Last) is null)
@@ -95,7 +95,7 @@ public partial class LinkedSet<T>
 
         #endregion
 
-        internal static bool Add(T item, LinkedSet<T> set)
+        internal static bool Add(T item, OrderedLinkedSet<T> set)
         {
             ArgumentNullException.ThrowIfNull(set);
             if (item is null) return false;
@@ -120,7 +120,7 @@ public partial class LinkedSet<T>
             finally { Monitor.Exit(set.SyncRoot); }
         }
 
-        internal static void Clear(LinkedSet<T> set)
+        internal static void Clear(OrderedLinkedSet<T> set)
         {
             LinkedList<(T item, Node? RefNode, bool RefNodeIsPrevious)> eventData = new();
             Monitor.Enter(set.SyncRoot);
@@ -141,7 +141,9 @@ public partial class LinkedSet<T>
 
         public abstract T Clone();
 
-        internal static IEnumerable<T> GetAllItems(LinkedSet<T> set)
+        object ICloneable.Clone() => Clone();
+
+        internal static IEnumerable<T> GetAllItems(OrderedLinkedSet<T> set)
         {
             for (T? item = set.First; item is not null; item = item.Next)
                 yield return item;

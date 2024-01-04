@@ -1,9 +1,8 @@
 using System.Collections;
-using System.DirectoryServices;
 
 namespace TestDataGeneration;
 
-public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : LinkedSet<T>.Node, IComparable<T>, IEquatable<T>, ICloneable
+public partial class OrderedLinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : OrderedLinkedSet<T>.Node, IComparable<T>, IEquatable<T>
 {
     private object _changeToken = new();
 

@@ -2,13 +2,13 @@ using System.Collections;
 
 namespace TestDataGeneration;
 
-public partial class LinkedSet<T> where T : LinkedSet<T>.Node, IComparable<T>, IEquatable<T>, ICloneable
+public partial class OrderedLinkedSet<T>
 {
     class Enumerator : IEnumerator<T>
     {
         private object _syncRoot;
         private object _changeToken;
-        private LinkedSet<T>? _target;
+        private OrderedLinkedSet<T>? _target;
         private T? _current;
         private bool _endOfEnumeration;
         public T Current
@@ -23,7 +23,7 @@ public partial class LinkedSet<T> where T : LinkedSet<T>.Node, IComparable<T>, I
 
         object IEnumerator.Current => throw new NotImplementedException();
 
-        internal Enumerator(LinkedSet<T> target)
+        internal Enumerator(OrderedLinkedSet<T> target)
         {
             ArgumentNullException.ThrowIfNull(target);
             _syncRoot = (_target = target).SyncRoot;
