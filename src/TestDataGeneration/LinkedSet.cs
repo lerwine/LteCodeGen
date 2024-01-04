@@ -1,4 +1,5 @@
 using System.Collections;
+using System.DirectoryServices;
 
 namespace TestDataGeneration;
 
@@ -6,13 +7,9 @@ public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : L
 {
     private object _changeToken = new();
 
-    public event EventHandler<LinkedSetItemEventArgs<T>>? AfterInsert;
+    public event EventHandler<LinkedSetItemInsertedEventArgs<T>>? AfterInsert;
 
     public event EventHandler<LinkedSetItemDeletedEventArgs<T>>? AfterRemove;
-
-    public event EventHandler<LinkedSetInsertEventArgs<T>>? BeforeInsert;
-
-    public event EventHandler<LinkedSetChangingEventArgs<T>>? BeforeRemove;
 
     public T? First { get; private set; }
 
@@ -21,8 +18,6 @@ public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : L
     T IReadOnlyList<T>.this[int index] => GetItemAt(index);
 
     object? IList.this[int index] { get => GetItemAt(index); set => throw new NotSupportedException(); }
-
-    public int Count { get; private set; }
 
     bool ICollection<T>.IsReadOnly => true;
 
@@ -33,6 +28,12 @@ public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : L
     bool ICollection.IsSynchronized => true;
 
     public object SyncRoot { get; } = new();
+
+    int ICollection<T>.Count => Count();
+
+    int IReadOnlyCollection<T>.Count => Count();
+
+    int ICollection.Count => Count();
 
     public bool Add(T item) => Node.Add(item, this);
 
@@ -75,7 +76,24 @@ public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : L
         finally { Monitor.Exit(SyncRoot); }
     }
 
-    public void ExceptWith(IEnumerable<T> other) => Node.ExceptWith(other, this);
+    public int Count()
+    {
+            int result = 0;
+        Monitor.Enter(SyncRoot);
+        try
+        {
+            for (var item = First; item is not null; item = item.Next)
+                result++;
+        }
+        finally { Monitor.Exit(SyncRoot); }
+        return result;
+    }
+
+    public void ExceptWith(IEnumerable<T> other)
+    {
+        var toDelete = this.Where(other.Contains).ToArray();
+        foreach (var item in toDelete) Remove(item);
+    }
 
     public IEnumerator<T> GetEnumerator() => new Enumerator(this);
 
@@ -124,65 +142,25 @@ public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : L
 
     void IList.Insert(int index, object? value) => throw new NotSupportedException();
 
-    public void IntersectWith(IEnumerable<T> other) => Node.IntersectWith(other, this);
-
-    public bool IsProperSubsetOf(IEnumerable<T> other)
+    public void IntersectWith(IEnumerable<T> other)
     {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
+        foreach (T item in this)
+            if (!other.Contains(item)) Remove(item);
     }
 
-    public bool IsProperSupersetOf(IEnumerable<T> other)
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-    }
+    public bool IsProperSubsetOf(IEnumerable<T> other) => (First is null) ? other.Any() : Count() < other.Count() && !other.Any(item => !Contains(item));
 
-    public bool IsSubsetOf(IEnumerable<T> other)
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-    }
+    public bool IsProperSupersetOf(IEnumerable<T> other) => First is not null && Count() > other.Count() && !this.Any(item => other.Contains(item));
 
-    public bool IsSupersetOf(IEnumerable<T> other)
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-    }
+    public bool IsSubsetOf(IEnumerable<T> other) => Count() >= other.Count() && this.All(other.Contains);
 
-    protected virtual void OnAfterInsert(LinkedSetItemEventArgs<T> args) => AfterInsert?.Invoke(this, args);
+    public bool IsSupersetOf(IEnumerable<T> other) => Count() <= other.Count() && other.All(Contains);
+
+    protected virtual void OnAfterInsert(LinkedSetItemInsertedEventArgs<T> args) => AfterInsert?.Invoke(this, args);
     
     protected virtual void OnAfterRemove(LinkedSetItemDeletedEventArgs<T> args) => AfterRemove?.Invoke(this, args);
     
-    protected virtual void OnBeforeInsert(LinkedSetInsertEventArgs<T> args) => BeforeInsert?.Invoke(this, args);
-    
-    protected virtual void OnBeforeRemove(LinkedSetChangingEventArgs<T> args) => BeforeRemove?.Invoke(this, args);
-    
-    public bool Overlaps(IEnumerable<T> other)
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-    }
+    public bool Overlaps(IEnumerable<T> other) => First is not null && other.Any(Contains);
 
     private void RaiseAfterInsert(T target) => OnAfterInsert(new(this, target));
     
@@ -190,44 +168,25 @@ public partial class LinkedSet<T> : ISet<T>, IReadOnlyList<T>, IList where T : L
     
     private void RaiseAfterRemove(T target) => OnAfterRemove(new(this, target));
     
-    private bool RaiseBeforeInsert(T target, T refNode, bool refNodeIsPrevious = false)
-    {
-        LinkedSetInsertEventArgs<T> args = new(this, target, refNode, refNodeIsPrevious);
-        OnBeforeInsert(args);
-        return args.CanInsert;
-    }
-    
-    private bool RaiseBeforeInsert(T target)
-    {
-        LinkedSetInsertEventArgs<T> args = new(this, target);
-        OnBeforeInsert(args);
-        return args.CanInsert;
-    }
-    
-    private bool RaiseBeforeRemove(T target)
-    {
-        LinkedSetChangingEventArgs<T> args = new(this, target);
-        OnBeforeRemove(args);
-        return args.CanInsert;
-    }
-    
     public bool Remove(T item) => item.Remove();
 
     void IList.Remove(object? value) => throw new NotSupportedException();
 
     void IList.RemoveAt(int index) => throw new NotSupportedException();
 
-    public bool SetEquals(IEnumerable<T> other)
+    public bool SetEquals(IEnumerable<T> other) => Count() == other.Count() && other.All(Contains);
+
+    public void SymmetricExceptWith(IEnumerable<T> other)
     {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
+        var toDelete = this.Where(other.Contains).ToArray();
+        var toAdd = other.Where(item => !Contains(item)).ToArray();
+        foreach (var item in toDelete) Remove(item);
+        foreach (var item in toAdd) Add(item);
     }
 
-    public void SymmetricExceptWith(IEnumerable<T> other) => Node.SymmetricExceptWith(other, this);
-
-    public void UnionWith(IEnumerable<T> other) => Node.UnionWith(other, this);
+    public void UnionWith(IEnumerable<T> other)
+    {
+        var toAdd = other.Where(item => !Contains(item)).ToArray();
+        foreach (var item in toAdd) Add(item);
+    }
 }

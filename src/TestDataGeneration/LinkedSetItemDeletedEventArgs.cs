@@ -1,6 +1,6 @@
 namespace TestDataGeneration;
 
-public class LinkedSetItemDeletedEventArgs<T> : LinkedSetItemEventArgs<T> where T : LinkedSet<T>.Node, IComparable<T>, IEquatable<T>, ICloneable
+public class LinkedSetItemDeletedEventArgs<T> : LinkedSetItemInsertedEventArgs<T> where T : LinkedSet<T>.Node, IComparable<T>, IEquatable<T>, ICloneable
 {
     public T? Previous { get; }
 

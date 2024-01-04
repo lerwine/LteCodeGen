@@ -12,8 +12,6 @@ public partial class LinkedSet<T>
 
         public T? Next { get; private set; }
 
-        protected virtual bool OnBeforeInsert(LinkedSet<T> container, T? refNode, bool refNodeIsPrevious) => (refNode is null) ? container.RaiseBeforeInsert((T)this) : container.RaiseBeforeInsert((T)this, refNode, refNodeIsPrevious);
-        
         private static void OnAfterRemove(LinkedSet<T> container, IEnumerator<(T item, LinkedSet<T>.Node? RefNode, bool RefNodeIsPrevious)> enumerator)
         {
             (T item, LinkedSet<T>.Node? refNode, bool refNodeIsPrevious) = enumerator.Current;
@@ -31,22 +29,16 @@ public partial class LinkedSet<T>
 
         protected virtual void OnAfterInsert() => Container!.RaiseAfterInsert((T)this);
 
-        protected virtual bool OnBeforeRemove() => Container!.RaiseBeforeRemove((T)this);
-
         #region Private Methods
 
         private static bool AddLast(T item, LinkedSet<T> container)
         {
-            var changeToken = container._changeToken;
-            if (!item.OnBeforeInsert(container, null, false)) return false;
-            if (item.Container is not null || !ReferenceEquals(changeToken, container._changeToken)) throw new InvalidOperationException();
             container._changeToken = new();
             if ((item.Previous = container.Last) is null)
                 container.Last = item;
             else
                 item.Previous.Next = item;
             item.Container = container;
-            container.Count++;
             item.OnAfterInsert();
             return true;
         }
@@ -54,9 +46,6 @@ public partial class LinkedSet<T>
         private static bool InsertAfter(T item, T refNode)
         {
             var container = refNode.Container!;
-            var changeToken = container._changeToken;
-            if (!item.OnBeforeInsert(container, refNode, true)) return false;
-            if (item.Container is not null || !ReferenceEquals(changeToken, container._changeToken)) throw new InvalidOperationException();
             container._changeToken = new();
             if ((item.Next = refNode.Next) is null)
                 container.Last = item;
@@ -64,7 +53,6 @@ public partial class LinkedSet<T>
                 item.Next.Previous = item;
             (refNode.Next = item).Previous = refNode;
             item.Container = container;
-            container.Count++;
             item.OnAfterInsert();
             return true;
         }
@@ -72,9 +60,6 @@ public partial class LinkedSet<T>
         private static bool InsertBefore(T item, T refNode)
         {
             var container = refNode.Container!;
-            var changeToken = container._changeToken;
-            if (!item.OnBeforeInsert(container, refNode, false)) return false;
-            if (item.Container is not null || !ReferenceEquals(changeToken, container._changeToken)) throw new InvalidOperationException();
             container._changeToken = new();
             if ((item.Previous = refNode.Previous) is null)
                 container.First = item;
@@ -82,18 +67,7 @@ public partial class LinkedSet<T>
                 item.Previous.Next = item;
             (refNode.Previous = item).Next = refNode;
             item.Container = container;
-            container.Count++;
             item.OnAfterInsert();
-            return true;
-        }
-
-        private bool IsUnlinkable()
-        {
-            var container = Container;
-            if (container is null) return false;
-            var changeToken = container._changeToken;
-            if (!OnBeforeRemove()) return false;
-            if (Container is null || !ReferenceEquals(changeToken, container._changeToken)) throw new InvalidOperationException();
             return true;
         }
 
@@ -117,7 +91,6 @@ public partial class LinkedSet<T>
                 else
                     refNode.Next.Previous = (T)refNode;
             }
-            container.Count--;
         }
 
         #endregion
@@ -147,15 +120,13 @@ public partial class LinkedSet<T>
             finally { Monitor.Exit(set.SyncRoot); }
         }
 
-        internal static bool Clear(LinkedSet<T> set)
+        internal static void Clear(LinkedSet<T> set)
         {
             LinkedList<(T item, Node? RefNode, bool RefNodeIsPrevious)> eventData = new();
             Monitor.Enter(set.SyncRoot);
             try
             {
-                if (set.First is null) return true;
-                for (var item = set.First; item is not null; item = item.Next)
-                    if (!item.IsUnlinkable()) return false;
+                if (set.First is null) return;
                 for (var item = set.First; item is not null; item = item.Next)
                 {
                     item.Unlink(out Node? refNode, out bool refNodeIsPrevious);
@@ -166,35 +137,14 @@ public partial class LinkedSet<T>
             using var enumerator = eventData.GetEnumerator();
             if (enumerator.MoveNext())
                 OnAfterRemove(set, enumerator);
-            return true;
         }
 
         public abstract T Clone();
-
-        internal static void ExceptWith(IEnumerable<T> other, LinkedSet<T> set)
-        {
-            Monitor.Enter(set.SyncRoot);
-            try
-            {
-                throw new NotImplementedException();
-            }
-            finally { Monitor.Exit(set.SyncRoot); }
-        }
 
         internal static IEnumerable<T> GetAllItems(LinkedSet<T> set)
         {
             for (T? item = set.First; item is not null; item = item.Next)
                 yield return item;
-        }
-
-        internal static void IntersectWith(IEnumerable<T> other, LinkedSet<T> set)
-        {
-            Monitor.Enter(set.SyncRoot);
-            try
-            {
-                throw new NotImplementedException();
-            }
-            finally { Monitor.Exit(set.SyncRoot); }
         }
 
         internal bool Remove()
@@ -207,7 +157,6 @@ public partial class LinkedSet<T>
                 Monitor.Enter(container.SyncRoot);
                 try
                 {
-                    if (!IsUnlinkable()) return false;
                     container._changeToken = new();
                     Unlink(out Node? refNode, out bool refNodeIsPrevious);
                     OnAfterRemove(container, (T?)refNode, refNodeIsPrevious);
@@ -216,26 +165,6 @@ public partial class LinkedSet<T>
             }
             finally { Monitor.Exit(_syncRoot); }
             return true;
-        }
-
-        internal static void SymmetricExceptWith(IEnumerable<T> other, LinkedSet<T> set)
-        {
-            Monitor.Enter(set.SyncRoot);
-            try
-            {
-                throw new NotImplementedException();
-            }
-            finally { Monitor.Exit(set.SyncRoot); }
-        }
-
-        internal static void UnionWith(IEnumerable<T> other, LinkedSet<T> set)
-        {
-            Monitor.Enter(set.SyncRoot);
-            try
-            {
-                throw new NotImplementedException();
-            }
-            finally { Monitor.Exit(set.SyncRoot); }
         }
     }
 }
