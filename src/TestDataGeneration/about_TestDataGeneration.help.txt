@@ -25,6 +25,9 @@ EXPORTED COMMANDS
     Get-RandomInteger
         Generates random integer values.
 
+    Remove-NonPrintableChars
+        Removes non-printable characters from strings.
+
     Select-Random
         Randomly selects values(s) from input values.
 

@@ -69,10 +69,10 @@ Description = 'Provides utility commands and classes for data and code generatio
 NestedModules = @('TestDataGeneration.dll')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Select-Random')
+FunctionsToExport = @('Select-Random', 'Get-RandomIpV4Address')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Get-RandomInteger', 'Convert-RangePatternToRandomInt', 'Get-RandomCharacterSource', 'Remove-NonPrintableChars')
+CmdletsToExport = @('Get-RandomInteger', 'Convert-RangePatternToRandomInt', 'Get-RandomCharacterSource', 'Remove-NonPrintableChars', 'ConvertFrom-BinaryNotation', 'ConvertTo-BinaryNotation')
 
 # Variables to export from this module
 VariablesToExport = '*'
