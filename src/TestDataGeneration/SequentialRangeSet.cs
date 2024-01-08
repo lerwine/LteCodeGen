@@ -229,7 +229,7 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.S
     }
 
     /// <summary>
-    /// Tries to get the next item includign the specified value.
+    /// Tries to get the next item including the specified value.
     /// </summary>
     /// <param name="value">The value to look for.</param>
     /// <param name="start">The starting range.</param>
