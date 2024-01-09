@@ -8,38 +8,27 @@ public static partial class SequentialRangeSet
 
         private SByteRangeAccessors() { }
 
-        public sbyte MaxValue => throw new NotImplementedException();
+        public sbyte MaxValue => sbyte.MaxValue;
 
-        public sbyte MinValue => throw new NotImplementedException();
+        public sbyte MinValue => sbyte.MinValue;
 
-        public int Compare(sbyte x, sbyte y)
-        {
-            throw new NotImplementedException();
-        }
+        public int Compare(sbyte x, sbyte y) => x.CompareTo(y);
 
-        public int GetCountInRange(sbyte firstInclusive, sbyte lastInclusive)
-        {
-            throw new NotImplementedException();
-        }
+        public int GetCountInRange(sbyte firstInclusive, sbyte lastInclusive) => lastInclusive - firstInclusive + 1;
 
-        public sbyte GetDecrementedValue(sbyte value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public sbyte GetDecrementedValue(sbyte value, int count = 1) => (sbyte)(value - count);
 
-        public sbyte GetIncrementedValue(sbyte value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public sbyte GetIncrementedValue(sbyte value, int count = 1) => (sbyte)(value + count);
 
         public IEnumerable<sbyte> GetSequentialValuesInRange(sbyte firstInclusive, sbyte lastInclusive)
         {
-            throw new NotImplementedException();
+            for (var n = firstInclusive; n < lastInclusive; n++)
+                yield return n;
+            yield return lastInclusive;
         }
 
-        public bool IsSequentiallyAdjacent(sbyte previousValue, sbyte nextValue)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsInRange(sbyte value, sbyte start, sbyte end) => value >= start && value <= end;
+
+        public bool IsSequentiallyAdjacent(sbyte previousValue, sbyte nextValue) => previousValue < nextValue && previousValue + 1 == nextValue;
     }
 }

@@ -8,38 +8,32 @@ public static partial class SequentialRangeSet
 
         private Int64RangeAccessors() { }
 
-        public long MaxValue => throw new NotImplementedException();
+        public long MaxValue => long.MaxValue;
 
-        public long MinValue => throw new NotImplementedException();
+        public long MinValue => long.MinValue;
 
-        public int Compare(long x, long y)
-        {
-            throw new NotImplementedException();
-        }
+        public int Compare(long x, long y) => x.CompareTo(y);
 
         public int GetCountInRange(long firstInclusive, long lastInclusive)
         {
-            throw new NotImplementedException();
+            var result = lastInclusive - firstInclusive + 1L;
+            if (result < 0) return 0;
+            return (result > int.MaxValue) ? int.MaxValue : (int)result;
         }
 
-        public long GetDecrementedValue(long value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public long GetDecrementedValue(long value, int count = 1) => value - count;
 
-        public long GetIncrementedValue(long value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public long GetIncrementedValue(long value, int count = 1) => value + count;
 
         public IEnumerable<long> GetSequentialValuesInRange(long firstInclusive, long lastInclusive)
         {
-            throw new NotImplementedException();
+            for (var n = firstInclusive; n < lastInclusive; n++)
+                yield return n;
+            yield return lastInclusive;
         }
 
-        public bool IsSequentiallyAdjacent(long previousValue, long nextValue)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsInRange(long value, long start, long end) => value >= start && value <= end;
+
+        public bool IsSequentiallyAdjacent(long previousValue, long nextValue) => previousValue < nextValue && previousValue + 1 == nextValue;
     }
 }

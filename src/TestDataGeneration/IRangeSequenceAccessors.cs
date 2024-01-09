@@ -47,6 +47,16 @@ public interface IRangeSequenceAccessors<T> : IComparer<T>
     T GetDecrementedValue(T value, int count = 1);
 
     /// <summary>
+    /// Tests whether a value is within a specific inclusive range;
+    /// </summary>
+    /// <param name="value">The value to test.</param>
+    /// <param name="start">The inclusive range start value.</param>
+    /// <param name="end">The inclusive range end value.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> is greater than or equal to <paramref name="start"/> is less than or equal to <paramref name="end"/>;
+    /// otherwise, <see langword="false"/>.</returns>
+    bool IsInRange(T value, T start, T end);
+
+    /// <summary>
     /// Determines whether one value immediately precedes another.
     /// </summary>
     /// <param name="previousValue">The potential predecing value.</param>

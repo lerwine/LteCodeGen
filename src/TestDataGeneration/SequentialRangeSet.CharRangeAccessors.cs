@@ -8,38 +8,27 @@ public static partial class SequentialRangeSet
 
         private CharRangeAccessors() { }
 
-        public char MaxValue => throw new NotImplementedException();
+        public char MaxValue => char.MaxValue;
 
-        public char MinValue => throw new NotImplementedException();
+        public char MinValue => char.MinValue;
 
-        public int Compare(char x, char y)
-        {
-            throw new NotImplementedException();
-        }
+        public int Compare(char x, char y) => x.CompareTo(y);
 
-        public int GetCountInRange(char firstInclusive, char lastInclusive)
-        {
-            throw new NotImplementedException();
-        }
+        public int GetCountInRange(char firstInclusive, char lastInclusive) => lastInclusive - firstInclusive + 1;
 
-        public char GetDecrementedValue(char value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public char GetDecrementedValue(char value, int count = 1) => (char)(value - count);
 
-        public char GetIncrementedValue(char value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public char GetIncrementedValue(char value, int count = 1) => (char)(value + count);
 
         public IEnumerable<char> GetSequentialValuesInRange(char firstInclusive, char lastInclusive)
         {
-            throw new NotImplementedException();
+            for (var n = firstInclusive; n < lastInclusive; n++)
+                yield return n;
+            yield return lastInclusive;
         }
 
-        public bool IsSequentiallyAdjacent(char previousValue, char nextValue)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsInRange(char value, char start, char end) => value >= start && value <= end;
+
+        public bool IsSequentiallyAdjacent(char previousValue, char nextValue) => previousValue < nextValue && previousValue + 1 == nextValue;
     }
 }

@@ -8,38 +8,32 @@ public static partial class SequentialRangeSet
 
         private UInt32RangeAccessors() { }
 
-        public uint MaxValue => throw new NotImplementedException();
+        public uint MaxValue => uint.MaxValue;
 
-        public uint MinValue => throw new NotImplementedException();
+        public uint MinValue => uint.MinValue;
 
-        public int Compare(uint x, uint y)
-        {
-            throw new NotImplementedException();
-        }
+        public int Compare(uint x, uint y) => x.CompareTo(y);
 
         public int GetCountInRange(uint firstInclusive, uint lastInclusive)
         {
-            throw new NotImplementedException();
+            var result = lastInclusive - firstInclusive + 1u;
+            if (result < 0) return 0;
+            return (result > int.MaxValue) ? int.MaxValue : (int)result;
         }
 
-        public uint GetDecrementedValue(uint value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public uint GetDecrementedValue(uint value, int count = 1) => value - (uint)count;
 
-        public uint GetIncrementedValue(uint value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public uint GetIncrementedValue(uint value, int count = 1) => value + (uint)count;
 
         public IEnumerable<uint> GetSequentialValuesInRange(uint firstInclusive, uint lastInclusive)
         {
-            throw new NotImplementedException();
+            for (var n = firstInclusive; n < lastInclusive; n++)
+                yield return n;
+            yield return lastInclusive;
         }
 
-        public bool IsSequentiallyAdjacent(uint previousValue, uint nextValue)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsInRange(uint value, uint start, uint end) => value >= start && value <= end;
+
+        public bool IsSequentiallyAdjacent(uint previousValue, uint nextValue) => previousValue < nextValue && previousValue + 1 == nextValue;
     }
 }

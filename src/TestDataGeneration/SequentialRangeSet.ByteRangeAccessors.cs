@@ -8,38 +8,27 @@ public static partial class SequentialRangeSet
 
         private ByteRangeAccessors() { }
 
-        public byte MaxValue => throw new NotImplementedException();
+        public byte MaxValue => byte.MaxValue;
 
-        public byte MinValue => throw new NotImplementedException();
+        public byte MinValue => byte.MinValue;
 
-        public int Compare(byte x, byte y)
-        {
-            throw new NotImplementedException();
-        }
+        public int Compare(byte x, byte y) => x.CompareTo(y);
 
-        public int GetCountInRange(byte firstInclusive, byte lastInclusive)
-        {
-            throw new NotImplementedException();
-        }
+        public int GetCountInRange(byte firstInclusive, byte lastInclusive) => lastInclusive - firstInclusive + 1;
 
-        public byte GetDecrementedValue(byte value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public byte GetDecrementedValue(byte value, int count = 1) => (byte)(value - count);
 
-        public byte GetIncrementedValue(byte value, int count = 1)
-        {
-            throw new NotImplementedException();
-        }
+        public byte GetIncrementedValue(byte value, int count = 1) => (byte)(value + count);
 
         public IEnumerable<byte> GetSequentialValuesInRange(byte firstInclusive, byte lastInclusive)
         {
-            throw new NotImplementedException();
+            for (var n = firstInclusive; n < lastInclusive; n++)
+                yield return n;
+            yield return lastInclusive;
         }
 
-        public bool IsSequentiallyAdjacent(byte previousValue, byte nextValue)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsInRange(byte value, byte start, byte end) => value >= start && value <= end;
+
+        public bool IsSequentiallyAdjacent(byte previousValue, byte nextValue) => previousValue < nextValue && previousValue + 1 == nextValue;
     }
 }
