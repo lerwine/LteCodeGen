@@ -1,14 +1,8 @@
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Formats.Asn1;
 using System.Management.Automation;
-using System.Management.Automation.Provider;
 using System.Text;
-using static TestDataGeneration.CmdletStatic;
 
 namespace TestDataGeneration.Commands;
 
-// [Cmdlet(VerbsCommon.Remove, "NonPrintableChars", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSetName_WcPath)]
 [Cmdlet(VerbsCommon.Remove, "NonPrintableChars")]
 public partial class Remove_NonPrintableChars : PSCmdlet
 {
