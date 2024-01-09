@@ -1,37 +1,88 @@
 using System.Buffers;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TestDataGeneration;
+
 public partial class SequentialRangeSet<T>
 {
-    public class RangeItem : IReadOnlyCollection<T>, ICollection
+    /// <summary>
+    /// A linked node for a value range.
+    /// </summary>
+    public class RangeItem : IValueRange<T>, IReadOnlyCollection<T>, ICollection, IHasChangeToken
     {
+        #region Fields
+
         private const string ErrorMessage_InvalidRangeItemInsert = $"A {nameof(RangeItem)} which is immediately adjacent to or overlaps an existing item cannot be inserted.";
 
         private object _changeToken = new();
 
         private IRangeSequenceAccessors<T> _accessors;
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the inclusive start value for the range.
+        /// </summary>
+        public T Start { get; private set; }
+
+        /// <summary>
+        /// Gets the inclusive end value for the range.
+        /// </summary>
+        public T End { get; private set; }
+
+        /// <summary>
+        /// Returns a value indicating whether the range has only one value.
+        /// </summary>
+        /// <value><see langword="true"/> if <see cref="Start"/> is equal to <see cref="End"/>; otherwise, <see langword="false"/>.</value>
+        public bool IsSingleValue { get; private set; }
+
+        /// <summary>
+        /// Gets the preceding range in order.
+        /// </summary>
+        /// <value>The preceding range whose <see cref="End"/> value is at least 2 increments less than the current <see cref="Start"/> value or <see langword="null"/> if this is there is no lesser range set.</value>
+        public RangeItem? Previous { get; private set; }
+
+        /// <summary>
+        /// Gets the following range in order.
+        /// </summary>
+        /// <value>The following range whose <see cref="Start"/> value is at least 2 increments greater than the current <see cref="End"/> value or <see langword="null"/> if this is there is no greater range set.</value>
+        public RangeItem? Next { get; private set; }
+
+        /// <summary>
+        /// Gets the collection that this set belongs to.
+        /// </summary>
+        /// <value>The collection that this set belongs to or <see langword="null"/> if this has not been added to a <see cref="SequentialRangeSet{T}"/>.</value>
+        public SequentialRangeSet<T>? Owner { get; private set; }
+
+        /// <summary>
+        /// Gets the object that can be used to synchronize access.
+        /// </summary>
+        public object SyncRoot { get; } = new();
+
+        #region Explicit Properties
+
+        object IHasChangeToken.ChangeToken => _changeToken;
+
         int IReadOnlyCollection<T>.Count => _accessors.GetCountInRange(Start, End);
 
         int ICollection.Count => _accessors.GetCountInRange(Start, End);
 
-        public T End { get; private set; }
-
-        public bool IsSingleValue { get; private set; }
-
         bool ICollection.IsSynchronized => true;
 
-        public RangeItem? Next { get; private set; }
+        #endregion
 
-        public SequentialRangeSet<T>? Owner { get; private set; }
+        #endregion
 
-        public RangeItem? Previous { get; private set; }
+        #region Constructors
 
-        public T Start { get; private set; }
-
-        public object SyncRoot { get; } = new();
-
+        /// <summary>
+        /// Initialize a new <c>RangeItem</c> object from the properties of an existing object.
+        /// </summary>
+        /// <param name="copyFrom">The object to copy properties from.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="accessors"/> is <see langword="null"/>.</exception>
         public RangeItem(RangeItem copyFrom)
         {
             ArgumentNullException.ThrowIfNull(copyFrom);
@@ -41,6 +92,14 @@ public partial class SequentialRangeSet<T>
             IsSingleValue = copyFrom.IsSingleValue;
         }
 
+        /// <summary>
+        /// Initialize a new <c>RangeItem</c> object.
+        /// </summary>
+        /// <param name="start">The inclusive range start value.</param>
+        /// <param name="end">The inclusive range end value.</param>
+        /// <param name="accessors">The object used to test and manipulate <typeparamref name="T"/> values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="accessors"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="start"/> is greater than <paramref name="end"/>.</exception>
         public RangeItem(T start, T end, IRangeSequenceAccessors<T> accessors)
         {
             ArgumentNullException.ThrowIfNull(accessors);
@@ -51,6 +110,12 @@ public partial class SequentialRangeSet<T>
             IsSingleValue = diff == 0;
         }
 
+        /// <summary>
+        /// Initialize a new single-value <c>RangeItem</c> object.
+        /// </summary>
+        /// <param name="value">The single value for the value range.</param>
+        /// <param name="accessors">The object used to test and manipulate <typeparamref name="T"/> values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="accessors"/> is <see langword="null"/>.</exception>
         public RangeItem(T value, IRangeSequenceAccessors<T> accessors)
         {
             ArgumentNullException.ThrowIfNull(accessors);
@@ -83,14 +148,6 @@ public partial class SequentialRangeSet<T>
             IsSingleValue = diff == 0;
         }
 
-        // private RangeItem(T start, T end, SequentialRangeSet<T> owner, bool isSingleValue)
-        // {
-        //     _accessors = (Owner = owner).Accessors;
-        //     Start = start;
-        //     End = end;
-        //     IsSingleValue = isSingleValue;
-        // }
-
         private RangeItem(T value, SequentialRangeSet<T> owner)
         {
             _accessors = (Owner = owner).Accessors;
@@ -98,58 +155,9 @@ public partial class SequentialRangeSet<T>
             IsSingleValue = true;
         }
 
-        private void Add()
-        {
-            var previous = Owner!.First;
-            if (previous is null)
-            {
-                LinkAfter(null);
-                return;
-            }
-            int diff = _accessors.Compare(End, previous.Start);
-            if (diff == 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-            if (diff < 0)
-            {
-                if (_accessors.IsSequentiallyAdjacent(End, previous.Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                previous = null;
-            }
-            else if (IsSingleValue)
-            {
-                var next = previous.Next;
-                if (!previous.IsSingleValue && _accessors.Compare(Start, previous.End) <= 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                if (_accessors.IsSequentiallyAdjacent(previous.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                while (next is not null)
-                {
-                    if ((diff = _accessors.Compare(Start, next.Start)) < 0)
-                    {
-                        if (_accessors.IsSequentiallyAdjacent(Start, next.Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                        break;
-                    }
-                    if (diff == 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                    next = (previous = next).Next;
-                    if (!previous.IsSingleValue && _accessors.Compare(Start, previous.End) <= 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                    if (_accessors.IsSequentiallyAdjacent(previous.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                }
-            }
-            else
-            {
-                if (_accessors.Compare(Start, previous.End) <= 0 || _accessors.IsSequentiallyAdjacent(previous.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                var next = previous.Next;
-                while (next is not null)
-                {
-                    if ((diff = _accessors.Compare(End, next.End)) < 0)
-                    {
-                        if (_accessors.Compare(End, next.Start) >= 0 || _accessors.IsSequentiallyAdjacent(End, next.Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                        break;
-                    }
-                    else if (diff == 0)
-                        throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                    if (_accessors.Compare(Start, next.End) < 0 || _accessors.IsSequentiallyAdjacent(next.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
-                    next = (previous = next).Next;
-                }
-            }
-            LinkAfter(previous);
-        }
+        #endregion
+
+        #region Static Methods
 
         internal static void Add(RangeItem item, SequentialRangeSet<T> owner)
         {
@@ -339,6 +347,17 @@ public partial class SequentialRangeSet<T>
             previous.Previous = null;
         }
 
+        internal static bool Contains(T start, T end, SequentialRangeSet<T> rangeSet)
+        {
+            var accessors = rangeSet.Accessors;
+            var diff = accessors.Compare(start, end);
+            if (diff > 0) return false;
+            if (diff == 0) return Contains(start, rangeSet);
+            foreach (var item in GetRanges(rangeSet))
+                if (accessors.Compare(start, item.Start) >= 0) return accessors.Compare(end, item.End) <= 0;
+            return false;
+        }
+
         internal static bool Contains(T value, SequentialRangeSet<T> rangeSet)
         {
             var accessors = rangeSet.Accessors;
@@ -364,12 +383,6 @@ public partial class SequentialRangeSet<T>
             return false;
         }
 
-        void ICollection.CopyTo(Array array, int index) => GetValues().ToArray().CopyTo(array, index);
-
-        public IEnumerator<T> GetEnumerator() => GetValues().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetValues().GetEnumerator();
-
         internal static IEnumerable<RangeItem> GetRanges(SequentialRangeSet<T> rangeSet)
         {
             object changeToken = rangeSet._changeToken;
@@ -377,28 +390,6 @@ public partial class SequentialRangeSet<T>
             {
                 if (!ReferenceEquals(changeToken, rangeSet._changeToken)) throw new InvalidOperationException(ErrorMessage_SequentialRangeSetChanged);
                 yield return item;
-            }
-        }
-
-        internal IEnumerable<T> GetValues()
-        {
-            IRangeSequenceAccessors<T> accessors;
-            object changeToken;
-            Monitor.Enter(SyncRoot);
-            try
-            {
-                accessors = _accessors;
-                changeToken = _changeToken;
-            }
-            finally { Monitor.Exit(SyncRoot); }
-            if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
-            var value = Start;
-            yield return value;
-            while (accessors.Compare(value, End) > 0)
-            {
-                if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
-                value = accessors.GetIncrementedValue(value);
-                yield return value;
             }
         }
 
@@ -430,51 +421,6 @@ public partial class SequentialRangeSet<T>
             }
             return -1;
         }
-
-        private void LinkAfter(RangeItem? previous)
-        {
-            if (Owner is null) throw new InvalidOperationException();
-            Owner._changeToken = new();
-            if ((Previous = previous) is null)
-            {
-                if ((Next = Owner!.First) is null)
-                    Owner.Last = this;
-                Owner.First = this;
-            }
-            else
-            {
-                if ((Next = previous!.Next) is null)
-                    Owner.Last = this;
-                else
-                    Next.Previous = this;
-                Previous.Next = this;
-            }
-            Owner._changeToken = new();
-        }
-
-        private void MergeWithNext()
-        {
-            if (Next is null) throw new InvalidOperationException();
-            var end = Next.End;
-            Next.Remove();
-            _changeToken = new();
-            End = end;
-            IsSingleValue = false;
-            Next.Remove();
-        }
-
-        // private void MergeWithNext(T newStart)
-        // {
-        //     if (Next is null) throw new InvalidOperationException();
-        //     var end = Next.End;
-        //     int diff = _accessors.Compare(newStart, end);
-        //     if (diff < 0 || (Previous is not null && !_accessors.CanInsert(Previous.End, newStart))) throw new InvalidOperationException();
-        //     Next.Unlink();
-        //     _changeToken = new();
-        //     Start = newStart;
-        //     End = end;
-        //     IsSingleValue = diff == 0;
-        // }
 
         internal static bool Remove(T value, SequentialRangeSet<T> rangeSet)
         {
@@ -554,6 +500,117 @@ public partial class SequentialRangeSet<T>
                 }
             }
             return true;
+        }
+
+        #endregion
+
+        #region Non-Public Instance Methods
+
+        private void Add()
+        {
+            var previous = Owner!.First;
+            if (previous is null)
+            {
+                LinkAfter(null);
+                return;
+            }
+            int diff = _accessors.Compare(End, previous.Start);
+            if (diff == 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+            if (diff < 0)
+            {
+                if (_accessors.IsSequentiallyAdjacent(End, previous.Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                previous = null;
+            }
+            else if (IsSingleValue)
+            {
+                var next = previous.Next;
+                if (!previous.IsSingleValue && _accessors.Compare(Start, previous.End) <= 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                if (_accessors.IsSequentiallyAdjacent(previous.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                while (next is not null)
+                {
+                    if ((diff = _accessors.Compare(Start, next.Start)) < 0)
+                    {
+                        if (_accessors.IsSequentiallyAdjacent(Start, next.Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                        break;
+                    }
+                    if (diff == 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                    next = (previous = next).Next;
+                    if (!previous.IsSingleValue && _accessors.Compare(Start, previous.End) <= 0) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                    if (_accessors.IsSequentiallyAdjacent(previous.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                }
+            }
+            else
+            {
+                if (_accessors.Compare(Start, previous.End) <= 0 || _accessors.IsSequentiallyAdjacent(previous.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                var next = previous.Next;
+                while (next is not null)
+                {
+                    if ((diff = _accessors.Compare(End, next.End)) < 0)
+                    {
+                        if (_accessors.Compare(End, next.Start) >= 0 || _accessors.IsSequentiallyAdjacent(End, next.Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                        break;
+                    }
+                    else if (diff == 0)
+                        throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                    if (_accessors.Compare(Start, next.End) < 0 || _accessors.IsSequentiallyAdjacent(next.End, Start)) throw new InvalidOperationException(ErrorMessage_InvalidRangeItemInsert);
+                    next = (previous = next).Next;
+                }
+            }
+            LinkAfter(previous);
+        }
+
+        internal IEnumerable<T> GetValues()
+        {
+            IRangeSequenceAccessors<T> accessors;
+            object changeToken;
+            Monitor.Enter(SyncRoot);
+            try
+            {
+                accessors = _accessors;
+                changeToken = _changeToken;
+            }
+            finally { Monitor.Exit(SyncRoot); }
+            if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
+            var value = Start;
+            yield return value;
+            while (accessors.Compare(value, End) > 0)
+            {
+                if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
+                value = accessors.GetIncrementedValue(value);
+                yield return value;
+            }
+        }
+
+        private void LinkAfter(RangeItem? previous)
+        {
+            if (Owner is null) throw new InvalidOperationException();
+            Owner._changeToken = new();
+            if ((Previous = previous) is null)
+            {
+                if ((Next = Owner!.First) is null)
+                    Owner.Last = this;
+                Owner.First = this;
+            }
+            else
+            {
+                if ((Next = previous!.Next) is null)
+                    Owner.Last = this;
+                else
+                    Next.Previous = this;
+                Previous.Next = this;
+            }
+            Owner._changeToken = new();
+        }
+
+        private void MergeWithNext()
+        {
+            if (Next is null) throw new InvalidOperationException();
+            var end = Next.End;
+            Next.Remove();
+            _changeToken = new();
+            End = end;
+            IsSingleValue = false;
+            Next.Remove();
         }
 
         private void SetEnd(T end)
@@ -638,5 +695,77 @@ public partial class SequentialRangeSet<T>
             Owner._changeToken = new();
             Owner = null;
         }
+
+        #endregion
+
+        #region Public Instance Methods
+
+        public bool Contains(T value) => _accessors.IsInRange(value, Start, End);
+
+        public bool Contains(T start, T end)
+        {
+            var diff = _accessors.Compare(start, end);
+            if (diff > 0) return false;
+            if (diff == 0) return IsSingleValue ? _accessors.AreEqual(start, Start) : _accessors.IsInRange(start, Start, End);
+            return IsSingleValue ? _accessors.IsInRange(Start, start, end) :
+                (diff = _accessors.Compare(start, Start)) == 0 || (diff > 0 && _accessors.Compare(end, End) <= 0);
+        }
+
+        void ICollection.CopyTo(Array array, int index) => GetValues().ToArray().CopyTo(array, index);
+
+        public bool Equals(T value) => IsSingleValue && _accessors.AreEqual(value, Start);
+
+        public bool Equals(IValueRange<T>? other) => other is not null && _accessors.AreEqual(other.Start, Start) && _accessors.AreEqual(other.End, End);
+
+        public bool Equals(T start, T end) => _accessors.AreEqual(start, Start) && _accessors.AreEqual(end, End);
+
+        public override bool Equals([NotNullWhen(true)] object? obj) => obj is not null && ((obj is IValueRange<T> other) ? Equals(other) : obj is T value && Equals(value));
+
+        public bool Follows(T value) => _accessors.Compare(value, Start) < 0;
+
+        public bool Follows(IValueRange<T> item) => item is not null && _accessors.Compare(item.End, Start) < 0;
+
+        public bool FollowsWithGap(T value) => _accessors.CanInsert(value, Start);
+
+        public bool FollowsWithGap(IValueRange<T> item) => item is not null && _accessors.CanInsert(item.End, Start);
+
+        public override int GetHashCode() => HashCode.Combine(Start, End);
+
+        public IEnumerator<T> GetEnumerator() => GetValues().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetValues().GetEnumerator();
+
+        public bool ImmediatelyFollows(T value) => _accessors.IsSequentiallyAdjacent(value, Start);
+
+        public bool ImmediatelyFollows(IValueRange<T> item) => item is not null && _accessors.IsSequentiallyAdjacent(item.End, Start);
+
+        public bool ImmediatelyPrecedes(T value) => _accessors.IsSequentiallyAdjacent(End, value);
+
+        public bool ImmediatelyPrecedes(IValueRange<T> item) => item is not null && _accessors.IsSequentiallyAdjacent(End, item.Start);
+
+        public bool Overlaps(T start, T end)
+        {
+            int diff = _accessors.Compare(start, End);
+            return diff == 0 || (diff < 0 && _accessors.Compare(end, Start) >= 0);
+        }
+
+        public bool Overlaps(IValueRange<T> item)
+        {
+            if (item is null) return false;
+            int diff = _accessors.Compare(item.Start, End);
+            return diff == 0 || (diff < 0 && _accessors.Compare(item.End, Start) >= 0);
+        }
+
+        public bool Precedes(T value) => _accessors.Compare(value, End) > 0;
+
+        public bool Precedes(IValueRange<T> item) => item is not null && _accessors.Compare(item.Start, End) > 0;
+
+        public bool PrecedesWithGap(T value) => _accessors.CanInsert(End, value);
+
+        public bool PrecedesWithGap(IValueRange<T> item) => item is not null && _accessors.CanInsert(End, item.Start);
+
+        public override string ToString() => IsSingleValue ? $"[{Start}]" : $"[{Start}..{End}]";
+
+        #endregion
     }
 }
