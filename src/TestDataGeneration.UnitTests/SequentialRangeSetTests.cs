@@ -7,6 +7,12 @@ namespace TestDataGeneration.UnitTests
         {
         }
 
+        // TODO: Include testing for SequentialRangeSet.ContainsAllPossibleValues in test methods
+
+        // TODO: Include testing for SequentialRangeSet.IsEmpty in test methods
+
+        // TODO: Include testing for SequentialRangeSet.RangeItem.IsMaxRange in test methods
+
         [Test]
         public void AddValueTest()
         {

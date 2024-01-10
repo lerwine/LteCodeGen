@@ -26,6 +26,8 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
 
     object IHasChangeToken.ChangeToken => _changeToken;
 
+    public bool ContainsAllPossibleValues { get; private set; }
+
     int IReadOnlyCollection<RangeItem>.Count => Count();
 
     int ICollection<RangeItem>.Count => Count();
@@ -43,6 +45,8 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
     /// </summary>
     /// <value>The range with the higest <see cref="RangeItem.Start"/> and <see cref="RangeItem.End"/> values or <see langword="null"/> if this collection is empty.</value>
     public RangeItem? Last { get; private set; }
+
+    public bool IsEmpty => First is null;
 
     bool IList.IsReadOnly => true;
 

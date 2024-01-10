@@ -15,6 +15,8 @@ public partial class SequentialRangeSet<T>
 
         public T End { get; }
 
+        public bool IsMaxRange { get; }
+
         internal ValueRange(T start, T end, IRangeSequenceAccessors<T> accessors)
         {
             ArgumentNullException.ThrowIfNull(accessors);
@@ -22,7 +24,16 @@ public partial class SequentialRangeSet<T>
             if (diff > 0) throw new ArgumentOutOfRangeException(nameof(start));
             Start = start;
             End = end;
-            IsSingleValue = diff == 0;
+            if (diff == 0)
+            {
+                IsSingleValue = true;
+                IsMaxRange = false;
+            }
+            else
+            {
+                IsSingleValue = false;
+                IsMaxRange = accessors.AreEqual(start, accessors.MinValue) && accessors.AreEqual(end, accessors.MaxValue);
+            }
         }
 
         public bool Contains(T value) => _accessors.IsInRange(value, Start, End);
@@ -51,6 +62,8 @@ public partial class SequentialRangeSet<T>
         public bool FollowsWithGap(T value) => _accessors.CanInsert(value, Start);
 
         public bool FollowsWithGap(IValueRange<T> item) => item is not null && _accessors.CanInsert(item.End, Start);
+
+        public ulong GetCount() => IsSingleValue ? 1UL : IsMaxRange ? 0UL : _accessors.GetLongCountInRange(Start, End);
 
         public IEnumerator<T> GetEnumerator() => GetValues().GetEnumerator();
 

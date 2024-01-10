@@ -14,11 +14,12 @@ public static partial class SequentialRangeSet
 
         public int Compare(int x, int y) => x.CompareTo(y);
 
-        public int GetCountInRange(int firstInclusive, int lastInclusive) => lastInclusive - firstInclusive + 1;
-
         public int GetDecrementedValue(int value, int count = 1) => value - count;
 
         public int GetIncrementedValue(int value, int count = 1) => value + count;
+
+        public ulong GetLongCountInRange(int firstInclusive, int lastInclusive) => (firstInclusive > lastInclusive ||
+            (firstInclusive == int.MinValue && lastInclusive == int.MaxValue)) ? 0UL : (ulong)(lastInclusive - firstInclusive) + 1UL;
 
         public IEnumerable<int> GetSequentialValuesInRange(int firstInclusive, int lastInclusive)
         {
