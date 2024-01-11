@@ -1,4 +1,4 @@
-function Select-Random {
+Function Select-Random {
     [CmdletBinding(DefaultParameterSetName = "NoRepeat")]
     Param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -60,29 +60,23 @@ function Select-Random {
     }
     <#
         .SYNOPSIS
-
         Randomly select from input values.
 
         .DESCRIPTION
-
         Randomly selects one or more items from the provided input values.
 
         .INPUTS
-
         System.Object[]. Objects to randomly select from.
 
         .OUTPUTS
-
         System.Object[]. Returns the object or objects that have been randomly selected.
 
         .EXAMPLE
-
         PS> ('Cat', 'Dog', 'Parakeet', 'Hamster', 'Fish', 'Bearded Dragon', 'Rabbit', 'Ferret') | Select-Random;
 
         Dog
 
         .EXAMPLE
-
         PS> ('Cat', 'Dog') | Select-Random -Repeat 6;
 
         Dog
@@ -93,7 +87,6 @@ function Select-Random {
         Dog
 
         .EXAMPLE
-
         PS> ('Cat', 'Dog', 'Parakeet', 'Hamster', 'Fish', 'Bearded Dragon', 'Rabbit', 'Ferret') | Select-Random -MinRepeat 1 -MaxRepeat 10 -NoDuplicates;
 
         Bearded Dragon
@@ -102,7 +95,6 @@ function Select-Random {
         Fish
 
         .EXAMPLE
-
         PS> ('Cat', 'Dog') | Select-Random -Repeat 6 -NoDuplicates;
 
         Dog
