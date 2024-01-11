@@ -35,7 +35,7 @@
             "    #>",
             "}"
 		],
-        "description": "System.Management.Automation.PSCmdlet class using verb from System.Management.Automation.VerbsCommon."
+        "description": "PowerShell function using verb from System.Management.Automation.VerbsCommon."
 	},
 	"Communications PSCmdlet class": {
 		"prefix": "ps-function-communications",
@@ -74,7 +74,7 @@
             "    #>",
             "}"
         ],
-        "description": "System.Management.Automation.PSCmdlet class using verb from System.Management.Automation.VerbsCommunications."
+        "description": "PowerShell function using verb from System.Management.Automation.VerbsCommunications."
 	},
 	"Data PSCmdlet class": {
 		"prefix": "ps-function-data",
@@ -113,7 +113,7 @@
             "    #>",
             "}"
         ],
-        "description": "System.Management.Automation.PSCmdlet class using verb from System.Management.Automation.VerbsData."
+        "description": "PowerShell function using verb from System.Management.Automation.VerbsData."
 	},
 	"Diagnostic PSCmdlet class": {
 		"prefix": "ps-function-diagnostic",
@@ -152,7 +152,7 @@
             "    #>",
             "}"
         ],
-        "description": "System.Management.Automation.PSCmdlet class using verb from System.Management.Automation.VerbsDiagnostic."
+        "description": "PowerShell function using verb from System.Management.Automation.VerbsDiagnostic."
 	},
 	"Lifecycle PSCmdlet class": {
 		"prefix": "ps-function-lifecycle",
@@ -230,7 +230,7 @@
             "    #>",
             "}"
         ],
-        "description": "System.Management.Automation.PSCmdlet class using verb from System.Management.Automation.VerbsSecurity."
+        "description": "PowerShell function using verb from System.Management.Automation.VerbsSecurity."
 	},
 	"Use PSCmdlet class": {
 		"prefix": "ps-function-use",
@@ -269,6 +269,6 @@
             "    #>",
             "}"
         ],
-        "description": "System.Management.Automation.PSCmdlet class using the System.Management.Automation.VerbsOther.Use verb."
+        "description": "PowerShell function with the Use verb."
 	}
 }
