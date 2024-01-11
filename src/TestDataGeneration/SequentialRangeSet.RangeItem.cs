@@ -617,7 +617,10 @@ public partial class SequentialRangeSet<T>
                     Owner.ContainsAllPossibleValues = IsMaxRange;
                 }
                 else
+                {
+                    Next.Previous = this;
                     Owner.ContainsAllPossibleValues = false;
+                }
                 Owner.First = this;
             }
             else
