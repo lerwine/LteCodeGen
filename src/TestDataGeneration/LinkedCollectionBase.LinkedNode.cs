@@ -228,6 +228,7 @@ public partial class LinkedCollectionBase<TNode> where TNode : LinkedCollectionB
                 else
                 {
                     Next!.Previous = null;
+                    Next = null;
                     linkedCollection.Count--;
                 }
             }
@@ -240,6 +241,7 @@ public partial class LinkedCollectionBase<TNode> where TNode : LinkedCollectionB
                     Next!.Previous = Previous;
                     Next = null;
                 }
+                Previous = null;
                 linkedCollection.Count--;
             }
             Owner = null;

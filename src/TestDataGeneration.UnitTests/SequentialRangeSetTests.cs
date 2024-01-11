@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace TestDataGeneration.UnitTests
 {
     public class SequentialRangeSetTests
@@ -39,6 +41,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_x.Owner, Is.Not.Null);
                 Assert.That(item_x.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -81,6 +84,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_x.Owner, Is.Not.Null);
                 Assert.That(item_x.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -137,6 +141,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_z.Owner, Is.Not.Null);
                 Assert.That(item_z.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -193,6 +198,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_z.Owner, Is.Not.Null);
                 Assert.That(item_z.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -246,6 +252,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_z.Next, Is.Null);
                 Assert.That(item_z.Owner, Is.Null);
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -376,6 +383,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_o.Owner, Is.Not.Null);
                 Assert.That(item_l_o.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -412,6 +420,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_o.Owner, Is.Not.Null);
                 Assert.That(item_l_o.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -460,6 +469,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_s.Owner, Is.Not.Null);
                 Assert.That(item_s.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -507,6 +517,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -554,6 +565,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -642,6 +654,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -688,6 +701,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -745,6 +759,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -776,7 +791,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_Z_z.Previous, Is.Not.Null);
                 Assert.That(item_Z_z.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_Z_z.Next, Is.Null);
-                Assert.That(item_Z_z.Start, Is.EqualTo(item_Z_z_start));
+                Assert.That(item_Z_z.Start, Is.EqualTo(item_Z_z_start)); // BUG: Expected: 'Z', But was:  'b'
                 Assert.That(item_Z_z.End, Is.EqualTo(item_Z_z_end));
                 Assert.That(item_Z_z.IsSingleValue, Is.False);
                 Assert.That(item_Z_z.Owner, Is.Not.Null);
@@ -796,6 +811,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Null);
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -839,6 +855,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_Z_z.Owner, Is.Not.Null);
                 Assert.That(item_Z_z.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -948,6 +965,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_p.Owner, Is.Not.Null);
                 Assert.That(item_l_p.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -984,6 +1002,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_p.Owner, Is.Not.Null);
                 Assert.That(item_l_p.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -1210,6 +1229,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(last.Next, Is.Null);
                 Assert.That(last.Owner, Is.Null);
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -1478,7 +1498,6 @@ namespace TestDataGeneration.UnitTests
             {
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
             });
             var changeToken = ((IHasChangeToken)target).ChangeToken;
@@ -1490,7 +1509,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(actual, Is.False);
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
             });
@@ -1501,7 +1519,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(actual, Is.False);
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
             });
@@ -1512,7 +1529,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(actual, Is.False);
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
             });
@@ -1528,7 +1544,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(target.Last, Is.Not.Null);
                 Assert.That(target.Last, Is.SameAs(range_all));
                 Assert.That(target.ContainsAllPossibleValues, Is.True);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(range_all.Start, Is.EqualTo(char.MinValue));
                 Assert.That(range_all.End, Is.EqualTo(char.MaxValue));
                 Assert.That(range_all.IsSingleValue, Is.False);
@@ -1538,6 +1553,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_all.Owner, Is.Not.Null);
                 Assert.That(range_all.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -1552,7 +1568,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max, Is.Not.Null);
                 Assert.That(range_z_max, Is.Not.SameAs(range_min_x));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_min_x));
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
@@ -1579,6 +1594,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max.Owner, Is.Not.Null);
                 Assert.That(range_z_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -1594,7 +1610,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_x, Is.Not.SameAs(range_min_v));
                 Assert.That(range_x, Is.Not.SameAs(range_z_max));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_min_v));
                 Assert.That(target.Last, Is.Not.Null);
@@ -1634,6 +1649,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max.Owner, Is.Not.Null);
                 Assert.That(range_z_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -1651,7 +1667,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_s_v, Is.Not.SameAs(range_x));
                 Assert.That(range_s_v, Is.Not.SameAs(range_z_max));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_min_q));
                 Assert.That(target.Last, Is.Not.Null);
@@ -1702,6 +1717,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max.Owner, Is.Not.Null);
                 Assert.That(range_z_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -1713,7 +1729,6 @@ namespace TestDataGeneration.UnitTests
             {
                 Assert.That(actual, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_min_q));
                 Assert.That(target.Last, Is.Not.Null);
@@ -1764,6 +1779,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max.Owner, Is.Not.Null);
                 Assert.That(range_z_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -1781,7 +1797,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_u, Is.Not.SameAs(range_x));
                 Assert.That(range_u, Is.Not.SameAs(range_z_max));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_min_q));
                 Assert.That(target.Last, Is.Not.Null);
@@ -1843,6 +1858,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max.Owner, Is.Not.Null);
                 Assert.That(range_z_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -1856,7 +1872,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_u, Is.Not.SameAs(range_x));
                 Assert.That(range_u, Is.Not.SameAs(range_z_max));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
-                Assert.That(target.IsEmpty, Is.False);
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_min_q));
                 Assert.That(target.Last, Is.Not.Null);
@@ -1915,6 +1930,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_z_max.Owner, Is.Not.Null);
                 Assert.That(range_z_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -1930,7 +1946,6 @@ namespace TestDataGeneration.UnitTests
                     Assert.That(range_u, Is.Not.SameAs(range_x));
                     Assert.That(range_u, Is.Not.SameAs(range_z_max));
                     Assert.That(target.ContainsAllPossibleValues, Is.False);
-                    Assert.That(target.IsEmpty, Is.False);
                     Assert.That(target.First, Is.Not.Null);
                     Assert.That(target.First, Is.SameAs(range_min_q));
                     Assert.That(target.Last, Is.Not.Null);
@@ -2001,7 +2016,6 @@ namespace TestDataGeneration.UnitTests
             {
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
             });
             var changeToken = ((IHasChangeToken)target).ChangeToken;
@@ -2013,7 +2027,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(actual, Is.False);
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
             });
@@ -2024,7 +2037,6 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(actual, Is.False);
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
             });
@@ -2051,6 +2063,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_all.Owner, Is.Not.Null);
                 Assert.That(range_all.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -2076,6 +2089,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_B_max.Owner, Is.Not.Null);
                 Assert.That(range_B_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
@@ -2115,6 +2129,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_H_max.Owner, Is.Not.Null);
                 Assert.That(range_H_max.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -2152,6 +2167,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_H_W.Owner, Is.Not.Null);
                 Assert.That(range_H_W.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -2192,6 +2208,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_I_W.Owner, Is.Not.Null);
                 Assert.That(range_I_W.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -2223,6 +2240,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_I_W.Next, Is.Null);
                 Assert.That(range_I_W.Owner, Is.Null);
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
         }
@@ -2239,7 +2257,6 @@ namespace TestDataGeneration.UnitTests
             {
                 Assert.That(target.First, Is.Null);
                 Assert.That(target.Last, Is.Null);
-                Assert.That(target.IsEmpty, Is.True);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
             });
             var changeToken = ((IHasChangeToken)target).ChangeToken;
@@ -2287,6 +2304,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_p_z.Owner, Is.Not.Null);
                 Assert.That(item_p_z.Owner, Is.SameAs(target));
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -2350,6 +2368,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_p_z.Next, Is.Null);
                 Assert.That(item_p_z.Owner, Is.Null);
             });
+            ((IChangeTracking)target).AcceptChanges();
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             

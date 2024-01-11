@@ -8,53 +8,22 @@ namespace TestDataGeneration;
 /// </summary>
 /// <typeparam name="T">The value type.</typeparam>
 /// <remarks>In this class, ranges cannot overlap, and one range will never immediately follow another. Adjacent ranges will be joined as a single range.</remarks>
-public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.RangeItem>, IReadOnlyList<SequentialRangeSet<T>.RangeItem>, IList, IHasChangeToken
+public partial class SequentialRangeSet<T> : LinkedCollectionBase<SequentialRangeSet<T>.RangeItem>, ICollection<SequentialRangeSet<T>.RangeItem>, IReadOnlyList<SequentialRangeSet<T>.RangeItem>
     where T : struct
 {
+    [Obsolete("Use SetChanged()")]
     private object _changeToken = new();
 
     private const string ErrorMessage_SequentialRangeSetChanged = $"{nameof(SequentialRangeSet<T>)} has changed.";
 
     RangeItem IReadOnlyList<RangeItem>.this[int index] => GetItemAt(index, this);
 
-    object? IList.this[int index] { get => GetItemAt(index, this); set => throw new NotSupportedException(); }
-
     /// <summary>
     /// Gets the object that is used to compare and manipulate values of type <typeparamref name="T"/>.
     /// </summary>
     public IRangeEvaluator<T> RangeEvaluator { get; }
 
-    object IHasChangeToken.ChangeToken => _changeToken;
-
     public bool ContainsAllPossibleValues { get; private set; }
-
-    int IReadOnlyCollection<RangeItem>.Count => Count();
-
-    int ICollection<RangeItem>.Count => Count();
-
-    int ICollection.Count => Count();
-
-    /// <summary>
-    /// Gets the first range in the ordered collection.
-    /// </summary>
-    /// <value>The range with the lowest <see cref="RangeItem.Start"/> and <see cref="RangeItem.End"/> values or <see langword="null"/> if this collection is empty.</value>
-    public RangeItem? First { get; private set; }
-
-    /// <summary>
-    /// Gets the last range in the ordered collection.
-    /// </summary>
-    /// <value>The range with the higest <see cref="RangeItem.Start"/> and <see cref="RangeItem.End"/> values or <see langword="null"/> if this collection is empty.</value>
-    public RangeItem? Last { get; private set; }
-
-    public bool IsEmpty => First is null;
-
-    bool IList.IsReadOnly => true;
-
-    bool IList.IsFixedSize => false;
-
-    bool ICollection.IsSynchronized => true;
-
-    public object SyncRoot { get; } = new();
 
     bool ICollection<RangeItem>.IsReadOnly => throw new NotImplementedException();
 
@@ -111,10 +80,6 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
         finally { Monitor.Exit(SyncRoot); }
     }
 
-    int IList.Add(object? value) => throw new NotSupportedException();
-
-    public void Clear() => RangeItem.Clear(this);
-
     /// <summary>
     /// Returns a value indicating whether the specified value exists in any value ranges.
     /// </summary>
@@ -130,34 +95,7 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
     /// <returns><see langword="true"/> if all values from <paramref name="start"/>, up to and including <paramref name="end"/> exist in one of the ranges; otherwise <see langword="false"/>.</returns>
     public bool Contains(T start, T end) => RangeItem.Contains(start, end, this);
 
-    /// <summary>
-    /// Returns a value indicating whether the item exists in the current collection.
-    /// </summary>
-    /// <param name="item">The item to look for.</param>
-    /// <returns><see langword="true"/> if <paramref name="item"/> has been added to the current collection; otherwise <see langword="false"/>.</returns>
-    public bool Contains(RangeItem item) => RangeItem.Contains(item, this);
-
-    bool IList.Contains(object? value) => (value is T item) ? RangeItem.Contains(item, this) : value is RangeItem range && RangeItem.Contains(range, this);
-
-    void ICollection<RangeItem>.CopyTo(RangeItem[] array, int arrayIndex) => RangeItem.GetRanges(this).ToList().CopyTo(array, arrayIndex);
-
-    void ICollection.CopyTo(Array array, int index) => RangeItem.GetRanges(this).ToArray().CopyTo(array, index);
-    
-    /// <summary>
-    /// Gets the number of distinct value ranges.
-    /// </summary>
-    /// <returns>The number of distinct value ranges</returns>
-    public int Count()
-    {
-        var count = 0;
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            for (var item = First; item is not null; item = item.Next) count++;
-        }
-        finally { Monitor.Exit(SyncRoot); }
-        return count;
-    }
+    void ICollection<RangeItem>.CopyTo(RangeItem[] array, int arrayIndex) => ToList().CopyTo(array, arrayIndex);
 
     /// <summary>
     /// Gets all values from all ranges.
@@ -165,24 +103,12 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
     /// <returns>An enumeration of values from all ranges.</returns>
     public IEnumerable<T> GetAllValues()
     {
-        foreach (RangeItem item in RangeItem.GetRanges(this))
+        foreach (RangeItem item in GetAllNodes())
         {
             foreach (var value in item.GetValues())
                 yield return value;
         }
     }
-
-    /// <summary>
-    /// Gets an enumerator that iterates through all value ranges.
-    /// </summary>
-    /// <returns>An enumerator that iterates through all value ranges.</returns>
-    public IEnumerator<RangeItem> GetEnumerator() => RangeItem.GetRanges(this).GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => RangeItem.GetRanges(this).GetEnumerator();
-
-    int IList.IndexOf(object? value) => (value is RangeItem item) ? RangeItem.IndexOf(item, this) : -1;
-
-    void IList.Insert(int index, object? value) => throw new NotSupportedException();
 
     /// <summary>
     /// Removes a value from an existing range.
@@ -220,48 +146,10 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
         Monitor.Enter(SyncRoot);
         try
         {
-            if (item.Owner is null || !ReferenceEquals(item.Owner, this)) return false;
-            item.Remove();
+            if (item.Owner is not SequentialRangeSet<T> owner || !ReferenceEquals(owner, this)) return false;
+            owner.Remove(item);
         }
         finally { Monitor.Exit(SyncRoot); }
         return true;
     }
-
-    /// <summary>
-    /// Removes the lowest-value range in the collection
-    /// </summary>
-    /// <returns><see langword="true"/> if the first range removed; otherwise <see langword="false"/> if this collection is empty.</returns>
-    public bool RemoveFirst()
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            var item = First;
-            if (item is null) return false;
-            item.Remove();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-        return true;
-    }
-
-    /// <summary>
-    /// Removes the highest-value range in the collection
-    /// </summary>
-    /// <returns><see langword="true"/> if the last range removed; otherwise <see langword="false"/> if this collection is empty.</returns>
-    public bool RemoveLast()
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            var item = Last;
-            if (item is null) return false;
-            item.Remove();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-        return true;
-    }
-
-    void IList.Remove(object? value) => throw new NotSupportedException();
-
-    void IList.RemoveAt(int index) => throw new NotSupportedException();
 }

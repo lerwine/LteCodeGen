@@ -2,8 +2,57 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TestDataGeneration;
 
+public enum SequentialComparisonResult
+{
+    PrecedesWithGap,
+    ImmediatelyPrecedes,
+    EqualTo,
+    ImmediatelyFollows,
+    FollowsWithGap
+}
+
 public static partial class SequentialRangeSet
 {
+    public static SequentialComparisonResult CompareRangeValues<T>(this IRangeEvaluator<T> evaluator, T x, T y) where T : struct
+    {
+        ArgumentNullException.ThrowIfNull(evaluator);
+        int diff = evaluator.Compare(x, y);
+        return (diff == 0) ? SequentialComparisonResult.EqualTo :
+            (diff < 0) ? (evaluator.IsSequentiallyAdjacent(x, y) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap) :
+            evaluator.IsSequentiallyAdjacent(y, x) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
+    }
+
+    public static SequentialComparisonResult GetRangeDisposition<T>(this IRangeEvaluator<T> evaluator, T value, T start, T end) where T : struct
+    {
+        ArgumentNullException.ThrowIfNull(evaluator);
+        int diff = evaluator.Compare(start, end);
+        if (diff > 0) throw new InvalidOperationException($"{nameof(start)} cannot be greater than {nameof(end)}.");
+        if (diff == 0)
+            return ((diff = evaluator.Compare(value, start)) == 0) ? SequentialComparisonResult.EqualTo :
+                (diff < 0) ? (evaluator.IsSequentiallyAdjacent(value, start) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap) :
+                evaluator.IsSequentiallyAdjacent(start, value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
+        
+        if ((diff = evaluator.Compare(value, start)) == 0) return SequentialComparisonResult.EqualTo;
+        if (diff < 0)
+            return evaluator.IsSequentiallyAdjacent(value, start) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap;
+        if (evaluator.Compare(value, end) <= 0) return SequentialComparisonResult.EqualTo;
+        return evaluator.IsSequentiallyAdjacent(end, value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
+    }
+
+    public static SequentialComparisonResult GetRangeDisposition<T>(this IRangeEvaluator<T> evaluator, T value, IValueRange<T> range) where T : struct
+    {
+        ArgumentNullException.ThrowIfNull(evaluator);
+        if (range.IsMaxRange) return SequentialComparisonResult.EqualTo;
+        int diff;
+        if (range.IsSingleValue) return CompareRangeValues(evaluator, value, range.Start);
+        
+        if ((diff = evaluator.Compare(value, range.Start)) == 0) return SequentialComparisonResult.EqualTo;
+        if (diff < 0)
+            return evaluator.IsSequentiallyAdjacent(value, range.Start) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap;
+        if (evaluator.Compare(value, range.End) <= 0) return SequentialComparisonResult.EqualTo;
+        return evaluator.IsSequentiallyAdjacent(range.End, value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
+    }
+
     /// <summary>
     /// Asserts that one value can be the <see cref="SequentialRangeSet{T}.RangeItem.End"/> range value preceding the <see cref="SequentialRangeSet{T}.RangeItem.Start"/> of another range.
     /// </summary>
@@ -74,7 +123,7 @@ public static partial class SequentialRangeSet
         ArgumentNullException.ThrowIfNull(rangeSet);
         if (index < 0) throw new ArgumentOutOfRangeException(nameof(index));
         int pos = -1;
-        foreach (var item in SequentialRangeSet<T>.RangeItem.GetRanges(rangeSet))
+        foreach (var item in rangeSet)
         {
             pos++;
             if (pos == index) return item;

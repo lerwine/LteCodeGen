@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace TestDataGeneration;
 
 public partial class LinkedCollectionBase<TNode> : IList, IHasChangeToken where TNode : LinkedCollectionBase<TNode>.LinkedNode
 {
+    private object _beforeChangeToken = new();
     private object _changeToken = new();
 
     object? IList.this[int index] { get => GetNodeAt(index); set => throw new NotSupportedException(); }
@@ -26,6 +28,25 @@ public partial class LinkedCollectionBase<TNode> : IList, IHasChangeToken where 
     public object SyncRoot { get; } = new();
 
     object IHasChangeToken.ChangeToken => _changeToken;
+
+    bool IChangeTracking.IsChanged => !ReferenceEquals(_beforeChangeToken, _changeToken);
+
+    protected void SetChanged()
+    {
+        Monitor.Enter(SyncRoot);
+        try
+        {
+            if (ReferenceEquals(_beforeChangeToken, _changeToken)) _changeToken = new();
+        }
+        finally { Monitor.Exit(SyncRoot); }
+    }
+
+    void IChangeTracking.AcceptChanges()
+    {
+        Monitor.Enter(SyncRoot);
+        try { _beforeChangeToken = _changeToken; }
+        finally { Monitor.Exit(SyncRoot); }
+    }
 
     protected virtual void AddFirst(TNode item)
     {
