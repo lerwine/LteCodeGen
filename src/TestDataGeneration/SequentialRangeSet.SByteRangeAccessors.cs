@@ -14,11 +14,12 @@ public static partial class SequentialRangeSet
 
         public int Compare(sbyte x, sbyte y) => x.CompareTo(y);
 
-        public int GetCountInRange(sbyte firstInclusive, sbyte lastInclusive) => lastInclusive - firstInclusive + 1;
-
         public sbyte GetDecrementedValue(sbyte value, int count = 1) => (sbyte)(value - count);
 
         public sbyte GetIncrementedValue(sbyte value, int count = 1) => (sbyte)(value + count);
+
+        public ulong GetLongCountInRange(sbyte firstInclusive, sbyte lastInclusive) => (firstInclusive > lastInclusive ||
+            (firstInclusive == sbyte.MinValue && lastInclusive == sbyte.MaxValue)) ? 0UL : (ulong)(lastInclusive - firstInclusive) + 1UL;
 
         public IEnumerable<sbyte> GetSequentialValuesInRange(sbyte firstInclusive, sbyte lastInclusive)
         {

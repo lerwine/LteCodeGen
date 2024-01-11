@@ -33,6 +33,8 @@ public partial class SequentialRangeSet<T>
         /// </summary>
         public T End { get; private set; }
 
+        public bool IsMaxRange { get; private set; }
+
         /// <summary>
         /// Returns a value indicating whether the range has only one value.
         /// </summary>
@@ -66,9 +68,9 @@ public partial class SequentialRangeSet<T>
 
         object IHasChangeToken.ChangeToken => _changeToken;
 
-        int IReadOnlyCollection<T>.Count => _accessors.GetCountInRange(Start, End);
+        int IReadOnlyCollection<T>.Count => (int)_accessors.GetLongCountInRange(Start, End);
 
-        int ICollection.Count => _accessors.GetCountInRange(Start, End);
+        int ICollection.Count => (int)_accessors.GetLongCountInRange(Start, End);
 
         bool ICollection.IsSynchronized => true;
 
@@ -90,6 +92,7 @@ public partial class SequentialRangeSet<T>
             Start = copyFrom.Start;
             End = copyFrom.End;
             IsSingleValue = copyFrom.IsSingleValue;
+            IsMaxRange = copyFrom.IsMaxRange;
         }
 
         /// <summary>
@@ -107,7 +110,16 @@ public partial class SequentialRangeSet<T>
             if (diff > 0) throw new ArgumentOutOfRangeException(nameof(start), $"The {nameof(start)} range value cannot be greater than the {nameof(end)} value.");
             Start = start;
             End = end;
-            IsSingleValue = diff == 0;
+            if (diff == 0)
+            {
+                IsSingleValue = true;
+                IsMaxRange = false;
+            }
+            else
+            {
+                IsSingleValue = false;
+                IsMaxRange = accessors.AreEqual(start, accessors.MinValue) && accessors.AreEqual(end, accessors.MaxValue);
+            }
         }
 
         /// <summary>
@@ -135,7 +147,16 @@ public partial class SequentialRangeSet<T>
             {
                 int diff = (_accessors = (Owner = owner).Accessors).Compare(Start, End);
                 if (diff > 0) throw new ArgumentOutOfRangeException(nameof(copyFrom), $"The {nameof(copyFrom)} range {nameof(Start)} value cannot be greater than the {nameof(End)} value.");
-                IsSingleValue = diff == 0;
+                if (diff == 0)
+                {
+                    IsSingleValue = true;
+                    IsMaxRange = false;
+                }
+                else
+                {
+                    IsSingleValue = false;
+                    IsMaxRange = _accessors.AreEqual(Start, _accessors.MinValue) && _accessors.AreEqual(End, _accessors.MaxValue);
+                }
             }
         }
 
@@ -145,7 +166,16 @@ public partial class SequentialRangeSet<T>
             if (diff > 0) throw new ArgumentOutOfRangeException(nameof(start), $"The {nameof(start)} range value cannot be greater than the {nameof(end)} value.");
             Start = start;
             End = end;
-            IsSingleValue = diff == 0;
+            if (diff == 0)
+            {
+                IsSingleValue = true;
+                IsMaxRange = false;
+            }
+            else
+            {
+                IsSingleValue = false;
+                IsMaxRange = _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
+            }
         }
 
         private RangeItem(T value, SequentialRangeSet<T> owner)
@@ -352,6 +382,7 @@ public partial class SequentialRangeSet<T>
             var accessors = rangeSet.Accessors;
             var diff = accessors.Compare(start, end);
             if (diff > 0) return false;
+            if (rangeSet.ContainsAllPossibleValues) return true;
             if (diff == 0) return Contains(start, rangeSet);
             foreach (var item in GetRanges(rangeSet))
                 if (accessors.Compare(start, item.Start) >= 0) return accessors.Compare(end, item.End) <= 0;
@@ -360,6 +391,7 @@ public partial class SequentialRangeSet<T>
 
         internal static bool Contains(T value, SequentialRangeSet<T> rangeSet)
         {
+            if (rangeSet.ContainsAllPossibleValues) return true;
             var accessors = rangeSet.Accessors;
             foreach (var item in GetRanges(rangeSet))
             {
@@ -373,13 +405,20 @@ public partial class SequentialRangeSet<T>
 
         internal static bool Contains(RangeItem item, SequentialRangeSet<T> rangeSet)
         {
-            var accessors = rangeSet.Accessors;
-            foreach (var range in GetRanges(rangeSet))
+            Monitor.Enter(item.SyncRoot);
+            try
             {
-                int diff = accessors.Compare(item.Start, range.Start);
-                if (diff < 0) return false;
-                if (diff == 0) return accessors.AreEqual(item.End, range.End);
+                if (item.Owner is null || !ReferenceEquals(item.Owner, rangeSet)) return false;
+                if (rangeSet.ContainsAllPossibleValues) return true;
+                var accessors = rangeSet.Accessors;
+                foreach (var range in GetRanges(rangeSet))
+                {
+                    int diff = accessors.Compare(item.Start, range.Start);
+                    if (diff < 0) return false;
+                    if (diff == 0) return accessors.AreEqual(item.End, range.End);
+                }
             }
+            finally { Monitor.Exit(item.SyncRoot); }
             return false;
         }
 
@@ -403,21 +442,6 @@ public partial class SequentialRangeSet<T>
                 if (diff < 0) return -1;
                 if (diff == 0) return accessors.AreEqual(value.End, item.End) ? index : -1;
                 index++;
-            }
-            return -1;
-        }
-
-        internal static int IndexOf(T value, SequentialRangeSet<T> rangeSet)
-        {
-            int index = 0;
-            var accessors = rangeSet.Accessors;
-            foreach (var item in GetRanges(rangeSet))
-            {
-                int diff = accessors.Compare(value, item.Start);
-                if (diff == 0) return index;
-                if (diff < 0) return -1;
-                if (accessors.Compare(value, item.End) <= 0) return index + accessors.GetCountInRange(accessors.GetIncrementedValue(item.Start), value);
-                index += accessors.GetCountInRange(item.Start, item.End);
             }
             return -1;
         }
@@ -588,7 +612,12 @@ public partial class SequentialRangeSet<T>
             if ((Previous = previous) is null)
             {
                 if ((Next = Owner!.First) is null)
+                {
                     Owner.Last = this;
+                    Owner.ContainsAllPossibleValues = IsMaxRange;
+                }
+                else
+                    Owner.ContainsAllPossibleValues = false;
                 Owner.First = this;
             }
             else
@@ -610,7 +639,8 @@ public partial class SequentialRangeSet<T>
             _changeToken = new();
             End = end;
             IsSingleValue = false;
-            Next.Remove();
+            IsMaxRange = _accessors.AreEqual(Start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
+            Owner!.ContainsAllPossibleValues = IsMaxRange;
         }
 
         private void SetEnd(T end)
@@ -620,8 +650,21 @@ public partial class SequentialRangeSet<T>
             if (diff < 0 || (Next is not null && !_accessors.CanInsert(end, Next.Start))) throw new InvalidOperationException();
             _changeToken = new();
             End = end;
-            IsSingleValue = diff == 0;
-            if (Owner is not null) Owner._changeToken = new();
+            if (diff == 0)
+            {
+                IsSingleValue = true;
+                IsMaxRange = false;
+            }
+            else
+            {
+                IsSingleValue = false;
+                IsMaxRange = _accessors.AreEqual(Start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
+            }
+            if (Owner is not null)
+            {
+                Owner._changeToken = new();
+                Owner.ContainsAllPossibleValues = IsMaxRange;
+            }
         }
 
         private void SetRange(T start, T end)
@@ -632,8 +675,21 @@ public partial class SequentialRangeSet<T>
             _changeToken = new();
             Start = start;
             End = end;
-            IsSingleValue = diff == 0;
-            if (Owner is not null) Owner._changeToken = new();
+            if (diff == 0)
+            {
+                IsSingleValue = true;
+                IsMaxRange = false;
+            }
+            else
+            {
+                IsSingleValue = false;
+                IsMaxRange = _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
+            }
+            if (Owner is not null)
+            {
+                Owner._changeToken = new();
+                Owner.ContainsAllPossibleValues = IsMaxRange;
+            }
         }
 
         private void SetStart(T start)
@@ -643,8 +699,21 @@ public partial class SequentialRangeSet<T>
             if (diff < 0 || (Previous is not null && !_accessors.CanInsert(Previous.End, start))) throw new InvalidOperationException();
             _changeToken = new();
             Start = start;
-            IsSingleValue = diff == 0;
-            if (Owner is not null) Owner._changeToken = new();
+            if (diff == 0)
+            {
+                IsSingleValue = true;
+                IsMaxRange = false;
+            }
+            else
+            {
+                IsSingleValue = false;
+                IsMaxRange = _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(End, _accessors.MaxValue);
+            }
+            if (Owner is not null)
+            {
+                Owner._changeToken = new();
+                Owner.ContainsAllPossibleValues = IsMaxRange;
+            }
         }
 
         internal bool TryGetNextAvailableRange(out T start, out T end, out RangeItem? next)
@@ -677,7 +746,10 @@ public partial class SequentialRangeSet<T>
             if (Next is null)
             {
                 if ((Owner.Last = Previous) is null)
+                {
                     Owner.First = null;
+                    Owner.ContainsAllPossibleValues = false;
+                }
                 else
                     Previous = Previous!.Next = null;
             }
@@ -728,6 +800,8 @@ public partial class SequentialRangeSet<T>
         public bool FollowsWithGap(T value) => _accessors.CanInsert(value, Start);
 
         public bool FollowsWithGap(IValueRange<T> item) => item is not null && _accessors.CanInsert(item.End, Start);
+
+        public ulong GetCount() => IsSingleValue ? 1UL : IsMaxRange ? 0UL : _accessors.GetLongCountInRange(Start, End);
 
         public override int GetHashCode() => HashCode.Combine(Start, End);
 

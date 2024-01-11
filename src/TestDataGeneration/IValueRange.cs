@@ -25,6 +25,13 @@ public interface IValueRange<T> : IEnumerable<T>, IEquatable<IValueRange<T>> whe
     bool IsSingleValue { get; }
 
     /// <summary>
+    /// Gets a value indicating whether this range includes the minimum and maximum possible values.
+    /// </summary>
+    /// <value><see langword="true"/> if <see cref="Start"/> is equal to <see cref="IRangeSequenceAccessors{T}.MinValue"/> and <see cref="End"/> is equal to <see cref="IRangeSequenceAccessors{T}.MaxValue"/>;
+    /// otherwise, <see langword="false"/>.</value>
+    bool IsMaxRange { get; }
+
+    /// <summary>
     /// Indicates whether a specified value falls within the current value range.
     /// </summary>
     /// <param name="value">The value to check.</param>
@@ -81,6 +88,13 @@ public interface IValueRange<T> : IEnumerable<T>, IEquatable<IValueRange<T>> whe
     /// <param name="item">The range to check.</param>
     /// <value><see langword="true"/> if the <see cref="Start"/> value of the given <paramref name="item"/> is at least 2 increments greater than <see cref="End"/>; otherwise, <see langword="false"/>.</value>
     bool FollowsWithGap(IValueRange<T> item);
+
+    /// <summary>
+    /// Gets the number of sequential values in the current range.
+    /// </summary>
+    /// <returns>The number of sequential values starting from the <see cref="Start"/> value, up to and including the <see cref="End"/> value.</returns>
+    /// <remarks>This will return <c>0UL</c> if <see cref="IsMaxRange"/> is <see langword="true"/> to accomodate 64-bit values.</remarks>
+    ulong GetCount();
 
     /// <summary>
     /// Indicates whether the specified value is exactly one increment greater than the end of the current range.

@@ -20,13 +20,13 @@ public interface IRangeSequenceAccessors<T> : IComparer<T>
     T MinValue { get; }
 
     /// <summary>
+    /// <summary>
     /// Gets the number of incremental values in the specified inclusive range of values.
     /// </summary>
-    /// <param name="firstInclusive">The first value.</param>
-    /// <param name="lastInclusive">The last value.</param>
+    /// <param name="firstInclusive">The first inclusive value.</param>
+    /// <param name="lastInclusive">The last inclusive value.</param>
     /// <returns>The difference between <paramref name="firstInclusive"/> and <paramref name="lastInclusive"/> plus one or zero if <paramref name="firstInclusive"/> is greater than <paramref name="lastInclusive"/>.</returns>
-    /// <remarks>If the actual result value exceeds <see cref="int.MaxValue"/>, this should return <see cref="int.MaxValue"/>.</remarks>
-    int GetCountInRange(T firstInclusive, T lastInclusive);
+    ulong GetLongCountInRange(T firstInclusive, T lastInclusive);
 
     /// <summary>
     /// Gets an incremented value.
