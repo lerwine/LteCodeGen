@@ -70,8 +70,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_u.Owner, Is.Not.Null);
                 Assert.That(item_u.Owner, Is.SameAs(target));
             });
-            // Assert.Multiple(() =>
-            // {
+            Assert.Multiple(() =>
+            {
                 Assert.That(item_x.IsSingleValue, Is.True);
                 Assert.That(item_x.Start, Is.EqualTo(value_x));
                 Assert.That(item_x.End, Is.EqualTo(value_x));
@@ -80,7 +80,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_x.Next, Is.Null);
                 Assert.That(item_x.Owner, Is.Not.Null);
                 Assert.That(item_x.Owner, Is.SameAs(target));
-            // });
+            });
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -140,11 +140,13 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var value_w = 'w';
-            actual = target.Add(value_w);
+            var item_w_x_start = 'w';
+            actual = target.Add(item_w_x_start);
+            var item_w_x_end = value_x;
+            var item_w_x = item_x;
             // {
             //     item_u = { Start = 'u', End = 'u' },
-            //     item_x = { Start = 'w', End = 'x' },
+            //     item_w_x = { Start = 'w', End = 'x' },
             //     item_z = { Start = 'z', End = 'z' }
             // }
             Assert.Multiple(() =>
@@ -164,21 +166,21 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_u.End, Is.EqualTo(value_u));
                 Assert.That(item_u.Previous, Is.Null);
                 Assert.That(item_u.Next, Is.Not.Null);
-                Assert.That(item_u.Next, Is.SameAs(item_x));
+                Assert.That(item_u.Next, Is.SameAs(item_w_x));
                 Assert.That(item_u.Owner, Is.Not.Null);
                 Assert.That(item_u.Owner, Is.SameAs(target));
             });
             Assert.Multiple(() =>
             {
-                Assert.That(item_x.IsSingleValue, Is.True);
-                Assert.That(item_x.Start, Is.EqualTo(value_w));
-                Assert.That(item_x.End, Is.EqualTo(value_x));
-                Assert.That(item_x.Previous, Is.Not.Null);
-                Assert.That(item_x.Previous, Is.SameAs(item_u));
-                Assert.That(item_x.Next, Is.Not.Null);
-                Assert.That(item_x.Next, Is.SameAs(item_z));
-                Assert.That(item_x.Owner, Is.Not.Null);
-                Assert.That(item_x.Owner, Is.SameAs(target));
+                Assert.That(item_w_x.IsSingleValue, Is.False);
+                Assert.That(item_w_x.Start, Is.EqualTo(item_w_x_start));
+                Assert.That(item_w_x.End, Is.EqualTo(item_w_x_end));
+                Assert.That(item_w_x.Previous, Is.Not.Null);
+                Assert.That(item_w_x.Previous, Is.SameAs(item_u));
+                Assert.That(item_w_x.Next, Is.Not.Null);
+                Assert.That(item_w_x.Next, Is.SameAs(item_z));
+                Assert.That(item_w_x.Owner, Is.Not.Null);
+                Assert.That(item_w_x.Owner, Is.SameAs(target));
             });
             Assert.Multiple(() =>
             {
@@ -186,7 +188,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_z.Start, Is.EqualTo(value_z));
                 Assert.That(item_z.End, Is.EqualTo(value_z));
                 Assert.That(item_z.Previous, Is.Not.Null);
-                Assert.That(item_z.Previous, Is.SameAs(item_x));
+                Assert.That(item_z.Previous, Is.SameAs(item_w_x));
                 Assert.That(item_z.Next, Is.Null);
                 Assert.That(item_z.Owner, Is.Not.Null);
                 Assert.That(item_z.Owner, Is.SameAs(target));
@@ -196,9 +198,12 @@ namespace TestDataGeneration.UnitTests
 
             var value_y = 'y';
             actual = target.Add(value_y);
+            var item_w_z_start = item_w_x_start;
+            var item_w_z_end = value_z;
+            var item_w_z = item_w_x;
             // {
             //     item_u = { Start = 'u', End = 'u' },
-            //     item_x = { Start = 'w', End = 'z' }
+            //     item_w_z = { Start = 'w', End = 'z' }
             // }
             Assert.Multiple(() =>
             {
@@ -206,7 +211,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(item_u));
                 Assert.That(target.Last, Is.Not.Null);
-                Assert.That(target.Last, Is.SameAs(item_x));
+                Assert.That(target.Last, Is.SameAs(item_w_z));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
             });
@@ -217,26 +222,26 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_u.End, Is.EqualTo(value_u));
                 Assert.That(item_u.Previous, Is.Null);
                 Assert.That(item_u.Next, Is.Not.Null);
-                Assert.That(item_u.Next, Is.SameAs(item_x));
+                Assert.That(item_u.Next, Is.SameAs(item_w_z));
                 Assert.That(item_u.Owner, Is.Not.Null);
                 Assert.That(item_u.Owner, Is.SameAs(target));
             });
             Assert.Multiple(() =>
             {
-                Assert.That(item_x.IsSingleValue, Is.True);
-                Assert.That(item_x.Start, Is.EqualTo(value_w));
-                Assert.That(item_x.End, Is.EqualTo(value_z));
-                Assert.That(item_x.Previous, Is.Not.Null);
-                Assert.That(item_x.Previous, Is.SameAs(item_u));
-                Assert.That(item_x.Next, Is.Null);
-                Assert.That(item_x.Owner, Is.Not.Null);
-                Assert.That(item_x.Owner, Is.SameAs(target));
+                Assert.That(item_w_z.IsSingleValue, Is.False);
+                Assert.That(item_w_z.Start, Is.EqualTo(item_w_z_start));
+                Assert.That(item_w_z.End, Is.EqualTo(item_w_z_end));
+                Assert.That(item_w_z.Previous, Is.Not.Null);
+                Assert.That(item_w_z.Previous, Is.SameAs(item_u));
+                Assert.That(item_w_z.Next, Is.Null);
+                Assert.That(item_w_z.Owner, Is.Not.Null);
+                Assert.That(item_w_z.Owner, Is.SameAs(target));
             });
             Assert.Multiple(() =>
             {
                 Assert.That(item_z.IsSingleValue, Is.True);
-                Assert.That(item_z.Start, Is.EqualTo(value_z));
-                Assert.That(item_z.End, Is.EqualTo(value_z));
+                Assert.That(item_z.Start, Is.EqualTo(item_w_z_end));
+                Assert.That(item_z.End, Is.EqualTo(item_w_z_end));
                 Assert.That(item_z.Previous, Is.Null);
                 Assert.That(item_z.Next, Is.Null);
                 Assert.That(item_z.Owner, Is.Null);
@@ -244,7 +249,7 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
-            foreach (char c in new char[] { value_u, value_w, value_x, value_y, value_z })
+            foreach (char c in new char[] { value_u, item_w_z_start, item_w_z_end, value_y, item_w_z_end })
             {
                 actual = target.Add(c);
                 Assert.Multiple(() =>
@@ -253,7 +258,7 @@ namespace TestDataGeneration.UnitTests
                     Assert.That(target.First, Is.Not.Null);
                     Assert.That(target.First, Is.SameAs(item_u));
                     Assert.That(target.Last, Is.Not.Null);
-                    Assert.That(target.Last, Is.SameAs(item_x));
+                    Assert.That(target.Last, Is.SameAs(item_w_z));
                     Assert.That(target.ContainsAllPossibleValues, Is.False);
                     Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
                 });
@@ -264,20 +269,20 @@ namespace TestDataGeneration.UnitTests
                     Assert.That(item_u.End, Is.EqualTo(value_u));
                     Assert.That(item_u.Previous, Is.Null);
                     Assert.That(item_u.Next, Is.Not.Null);
-                    Assert.That(item_u.Next, Is.SameAs(item_x));
+                    Assert.That(item_u.Next, Is.SameAs(item_w_z));
                     Assert.That(item_u.Owner, Is.Not.Null);
                     Assert.That(item_u.Owner, Is.SameAs(target));
                 });
                 Assert.Multiple(() =>
                 {
-                    Assert.That(item_x.IsSingleValue, Is.True);
-                    Assert.That(item_x.Start, Is.EqualTo(value_w));
-                    Assert.That(item_x.End, Is.EqualTo(value_z));
-                    Assert.That(item_x.Previous, Is.Not.Null);
-                    Assert.That(item_x.Previous, Is.SameAs(item_u));
-                    Assert.That(item_x.Next, Is.Null);
-                    Assert.That(item_x.Owner, Is.Not.Null);
-                    Assert.That(item_x.Owner, Is.SameAs(target));
+                    Assert.That(item_w_z.IsSingleValue, Is.False);
+                    Assert.That(item_w_z.Start, Is.EqualTo(item_w_z_start));
+                    Assert.That(item_w_z.End, Is.EqualTo(item_w_z_end));
+                    Assert.That(item_w_z.Previous, Is.Not.Null);
+                    Assert.That(item_w_z.Previous, Is.SameAs(item_u));
+                    Assert.That(item_w_z.Next, Is.Null);
+                    Assert.That(item_w_z.Owner, Is.Not.Null);
+                    Assert.That(item_w_z.Owner, Is.SameAs(target));
                 });
             }
 
@@ -286,17 +291,17 @@ namespace TestDataGeneration.UnitTests
             // {
             //     item_Z = { Start = 'Z', End = 'Z' },
             //     item_u = { Start = 'u', End = 'u' },
-            //     item_x = { Start = 'w', End = 'z' }
+            //     item_w_z = { Start = 'w', End = 'z' }
             // }
             var item_Z = target.First!;
             Assert.Multiple(() =>
             {
-                Assert.That(actual, Is.False);
+                Assert.That(actual, Is.True);
                 Assert.That(item_Z, Is.Not.Null);
                 Assert.That(item_Z, Is.Not.SameAs(item_u));
-                Assert.That(item_Z, Is.Not.SameAs(item_x));
+                Assert.That(item_Z, Is.Not.SameAs(item_w_z));
                 Assert.That(target.Last, Is.Not.Null);
-                Assert.That(target.Last, Is.SameAs(item_x));
+                Assert.That(target.Last, Is.SameAs(item_w_z));
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
             });
@@ -316,23 +321,23 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_u.IsSingleValue, Is.True);
                 Assert.That(item_u.Start, Is.EqualTo(value_u));
                 Assert.That(item_u.End, Is.EqualTo(value_u));
-                Assert.That(item_x.Previous, Is.Not.Null);
-                Assert.That(item_x.Previous, Is.SameAs(item_Z));
+                Assert.That(item_u.Previous, Is.Not.Null);
+                Assert.That(item_u.Previous, Is.SameAs(item_Z));
                 Assert.That(item_u.Next, Is.Not.Null);
-                Assert.That(item_u.Next, Is.SameAs(item_x));
+                Assert.That(item_u.Next, Is.SameAs(item_w_z));
                 Assert.That(item_u.Owner, Is.Not.Null);
                 Assert.That(item_u.Owner, Is.SameAs(target));
             });
             Assert.Multiple(() =>
             {
-                Assert.That(item_x.IsSingleValue, Is.True);
-                Assert.That(item_x.Start, Is.EqualTo(value_w));
-                Assert.That(item_x.End, Is.EqualTo(value_z));
-                Assert.That(item_x.Previous, Is.Not.Null);
-                Assert.That(item_x.Previous, Is.SameAs(item_u));
-                Assert.That(item_x.Next, Is.Null);
-                Assert.That(item_x.Owner, Is.Not.Null);
-                Assert.That(item_x.Owner, Is.SameAs(target));
+                Assert.That(item_w_z.IsSingleValue, Is.False);
+                Assert.That(item_w_z.Start, Is.EqualTo(item_w_z_start));
+                Assert.That(item_w_z.End, Is.EqualTo(item_w_z_end));
+                Assert.That(item_w_z.Previous, Is.Not.Null);
+                Assert.That(item_w_z.Previous, Is.SameAs(item_u));
+                Assert.That(item_w_z.Next, Is.Null);
+                Assert.That(item_w_z.Owner, Is.Not.Null);
+                Assert.That(item_w_z.Owner, Is.SameAs(target));
             });
         }
 
@@ -348,9 +353,9 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(target.Last, Is.Null);
                 Assert.That(target.ContainsAllPossibleValues, Is.False);
             });
-            var char_l = 'l';
-            var char_o = 'o';
-            var actual = target.Add(char_l, char_o);
+            var item_l_o_start = 'l';
+            var item_l_o_end = 'o';
+            var actual = target.Add(item_l_o_start, item_l_o_end);
             var item_l_o = target.First!;
             Assert.Multiple(() =>
             {
@@ -365,8 +370,8 @@ namespace TestDataGeneration.UnitTests
             {
                 Assert.That(item_l_o.Previous, Is.Null);
                 Assert.That(item_l_o.Next, Is.Null);
-                Assert.That(item_l_o.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_o.End, Is.EqualTo(char_o));
+                Assert.That(item_l_o.Start, Is.EqualTo(item_l_o_start));
+                Assert.That(item_l_o.End, Is.EqualTo(item_l_o_end));
                 Assert.That(item_l_o.IsSingleValue, Is.False);
                 Assert.That(item_l_o.Owner, Is.Not.Null);
                 Assert.That(item_l_o.Owner, Is.SameAs(target));
@@ -374,8 +379,8 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_s = 's';
-            actual = target.Add(char_s, char_s);
+            var item_s_value = 's';
+            actual = target.Add(item_s_value, item_s_value);
             var item_s = target.Last!;
             Assert.Multiple(() =>
             {
@@ -392,8 +397,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_s.Previous, Is.Not.Null);
                 Assert.That(item_s.Previous, Is.SameAs(item_l_o));
                 Assert.That(item_s.Next, Is.Null);
-                Assert.That(item_s.Start, Is.EqualTo(char_s));
-                Assert.That(item_s.End, Is.EqualTo(char_s));
+                Assert.That(item_s.Start, Is.EqualTo(item_s_value));
+                Assert.That(item_s.End, Is.EqualTo(item_s_value));
                 Assert.That(item_s.IsSingleValue, Is.True);
                 Assert.That(item_s.Owner, Is.Not.Null);
                 Assert.That(item_s.Owner, Is.SameAs(target));
@@ -401,8 +406,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_o.Previous, Is.Null);
                 Assert.That(item_l_o.Next, Is.Not.Null);
                 Assert.That(item_l_o.Next, Is.SameAs(item_s));
-                Assert.That(item_l_o.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_o.End, Is.EqualTo(char_o));
+                Assert.That(item_l_o.Start, Is.EqualTo(item_l_o_start));
+                Assert.That(item_l_o.End, Is.EqualTo(item_l_o_end));
                 Assert.That(item_l_o.IsSingleValue, Is.False);
                 Assert.That(item_l_o.Owner, Is.Not.Null);
                 Assert.That(item_l_o.Owner, Is.SameAs(target));
@@ -410,9 +415,9 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_i = 'i';
-            var char_j = 'j';
-            actual = target.Add(char_i, char_j);
+            var item_i_j_start = 'i';
+            var item_i_j_end = 'j';
+            actual = target.Add(item_i_j_start, item_i_j_end);
             var item_i_j = target.First!;
             Assert.Multiple(() =>
             {
@@ -430,8 +435,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_j.Previous, Is.Null);
                 Assert.That(item_i_j.Next, Is.Not.Null);
                 Assert.That(item_i_j.Next, Is.SameAs(item_l_o));
-                Assert.That(item_i_j.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_j.End, Is.EqualTo(char_j));
+                Assert.That(item_i_j.Start, Is.EqualTo(item_i_j_start));
+                Assert.That(item_i_j.End, Is.EqualTo(item_i_j_end));
                 Assert.That(item_i_j.IsSingleValue, Is.False);
                 Assert.That(item_i_j.Owner, Is.Not.Null);
                 Assert.That(item_i_j.Owner, Is.SameAs(target));
@@ -440,8 +445,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_o.Previous, Is.SameAs(item_i_j));
                 Assert.That(item_l_o.Next, Is.Not.Null);
                 Assert.That(item_l_o.Next, Is.SameAs(item_s));
-                Assert.That(item_l_o.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_o.End, Is.EqualTo(char_o));
+                Assert.That(item_l_o.Start, Is.EqualTo(item_l_o_start));
+                Assert.That(item_l_o.End, Is.EqualTo(item_l_o_end));
                 Assert.That(item_l_o.IsSingleValue, Is.False);
                 Assert.That(item_l_o.Owner, Is.Not.Null);
                 Assert.That(item_l_o.Owner, Is.SameAs(target));
@@ -449,8 +454,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_s.Previous, Is.Not.Null);
                 Assert.That(item_s.Previous, Is.SameAs(item_l_o));
                 Assert.That(item_s.Next, Is.Null);
-                Assert.That(item_s.Start, Is.EqualTo(char_s));
-                Assert.That(item_s.End, Is.EqualTo(char_s));
+                Assert.That(item_s.Start, Is.EqualTo(item_s_value));
+                Assert.That(item_s.End, Is.EqualTo(item_s_value));
                 Assert.That(item_s.IsSingleValue, Is.True);
                 Assert.That(item_s.Owner, Is.Not.Null);
                 Assert.That(item_s.Owner, Is.SameAs(target));
@@ -458,9 +463,9 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_r = 'r';
-            var char_t = 't';
-            actual = target.Add(char_r, char_t);
+            var item_r_t_start = 'r';
+            var item_r_t_end = 't';
+            actual = target.Add(item_r_t_start, item_r_t_end);
             var item_r_t = item_s;
             Assert.Multiple(() =>
             {
@@ -477,8 +482,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_j.Previous, Is.Null);
                 Assert.That(item_i_j.Next, Is.Not.Null);
                 Assert.That(item_i_j.Next, Is.SameAs(item_l_o));
-                Assert.That(item_i_j.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_j.End, Is.EqualTo(char_j));
+                Assert.That(item_i_j.Start, Is.EqualTo(item_i_j_start));
+                Assert.That(item_i_j.End, Is.EqualTo(item_i_j_end));
                 Assert.That(item_i_j.IsSingleValue, Is.False);
                 Assert.That(item_i_j.Owner, Is.Not.Null);
                 Assert.That(item_i_j.Owner, Is.SameAs(target));
@@ -487,8 +492,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_o.Previous, Is.SameAs(item_i_j));
                 Assert.That(item_l_o.Next, Is.Not.Null);
                 Assert.That(item_l_o.Next, Is.SameAs(item_r_t));
-                Assert.That(item_l_o.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_o.End, Is.EqualTo(char_o));
+                Assert.That(item_l_o.Start, Is.EqualTo(item_l_o_start));
+                Assert.That(item_l_o.End, Is.EqualTo(item_l_o_end));
                 Assert.That(item_l_o.IsSingleValue, Is.False);
                 Assert.That(item_l_o.Owner, Is.Not.Null);
                 Assert.That(item_l_o.Owner, Is.SameAs(target));
@@ -496,8 +501,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Previous, Is.Not.Null);
                 Assert.That(item_r_t.Previous, Is.SameAs(item_l_o));
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
@@ -505,8 +510,9 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_p = 'p';
-            actual = target.Add('m', char_p);
+            var item_l_p_end = 'p';
+            actual = target.Add('m', item_l_p_end);
+            var item_l_p_start = item_l_o_start;
             var item_l_p = item_l_o;
             Assert.Multiple(() =>
             {
@@ -523,8 +529,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_j.Previous, Is.Null);
                 Assert.That(item_i_j.Next, Is.Not.Null);
                 Assert.That(item_i_j.Next, Is.SameAs(item_l_p));
-                Assert.That(item_i_j.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_j.End, Is.EqualTo(char_j));
+                Assert.That(item_i_j.Start, Is.EqualTo(item_i_j_start));
+                Assert.That(item_i_j.End, Is.EqualTo(item_i_j_end));
                 Assert.That(item_i_j.IsSingleValue, Is.False);
                 Assert.That(item_i_j.Owner, Is.Not.Null);
                 Assert.That(item_i_j.Owner, Is.SameAs(target));
@@ -533,8 +539,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_p.Previous, Is.SameAs(item_i_j));
                 Assert.That(item_l_p.Next, Is.Not.Null);
                 Assert.That(item_l_p.Next, Is.SameAs(item_r_t));
-                Assert.That(item_l_p.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_p.End, Is.EqualTo(char_p));
+                Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
+                Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
                 Assert.That(item_l_p.IsSingleValue, Is.False);
                 Assert.That(item_l_p.Owner, Is.Not.Null);
                 Assert.That(item_l_p.Owner, Is.SameAs(target));
@@ -542,8 +548,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Previous, Is.Not.Null);
                 Assert.That(item_r_t.Previous, Is.SameAs(item_l_p));
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
@@ -551,9 +557,9 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             
-            var char_b = 'b';
-            var char_c = 'c';
-            actual = target.Add(char_c, char_b);
+            var item_b_c_start = 'b';
+            var item_b_c_end = 'c';
+            actual = target.Add(item_b_c_end, item_b_c_start);
             Assert.Multiple(() =>
             {
                 Assert.That(actual, Is.False);
@@ -569,8 +575,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_j.Previous, Is.Null);
                 Assert.That(item_i_j.Next, Is.Not.Null);
                 Assert.That(item_i_j.Next, Is.SameAs(item_l_p));
-                Assert.That(item_i_j.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_j.End, Is.EqualTo(char_j));
+                Assert.That(item_i_j.Start, Is.EqualTo(item_i_j_start));
+                Assert.That(item_i_j.End, Is.EqualTo(item_i_j_end));
                 Assert.That(item_i_j.IsSingleValue, Is.False);
                 Assert.That(item_i_j.Owner, Is.Not.Null);
                 Assert.That(item_i_j.Owner, Is.SameAs(target));
@@ -579,8 +585,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_l_p.Previous, Is.SameAs(item_i_j));
                 Assert.That(item_l_p.Next, Is.Not.Null);
                 Assert.That(item_l_p.Next, Is.SameAs(item_r_t));
-                Assert.That(item_l_p.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_p.End, Is.EqualTo(char_p));
+                Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
+                Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
                 Assert.That(item_l_p.IsSingleValue, Is.False);
                 Assert.That(item_l_p.Owner, Is.Not.Null);
                 Assert.That(item_l_p.Owner, Is.SameAs(target));
@@ -588,14 +594,16 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Previous, Is.Not.Null);
                 Assert.That(item_r_t.Previous, Is.SameAs(item_l_p));
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
             });
 
-            actual = target.Add(char_j, 'n');
+            actual = target.Add(item_i_j_end, 'n');
+            var item_i_p_start = item_i_j_start;
+            var item_i_p_end = item_l_p_end;
             var item_i_p = item_i_j;
             Assert.Multiple(() =>
             {
@@ -612,24 +620,24 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_p.Previous, Is.Null);
                 Assert.That(item_i_p.Next, Is.Not.Null);
                 Assert.That(item_i_p.Next, Is.SameAs(item_r_t));
-                Assert.That(item_i_p.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_p.End, Is.EqualTo(char_p));
+                Assert.That(item_i_p.Start, Is.EqualTo(item_i_p_start));
+                Assert.That(item_i_p.End, Is.EqualTo(item_i_p_end));
                 Assert.That(item_i_p.IsSingleValue, Is.False);
                 Assert.That(item_i_p.Owner, Is.Not.Null);
                 Assert.That(item_i_p.Owner, Is.SameAs(target));
 
                 Assert.That(item_l_p.Previous, Is.Null);
                 Assert.That(item_l_p.Next, Is.Null);
-                Assert.That(item_l_p.Start, Is.EqualTo(char_l));
-                Assert.That(item_l_p.End, Is.EqualTo(char_p));
+                Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
+                Assert.That(item_l_p.End, Is.EqualTo(item_i_p_end));
                 Assert.That(item_l_p.IsSingleValue, Is.False);
                 Assert.That(item_l_p.Owner, Is.Null);
                 
                 Assert.That(item_r_t.Previous, Is.Not.Null);
                 Assert.That(item_r_t.Previous, Is.SameAs(item_i_p));
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
@@ -637,9 +645,9 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_A = 'A';
-            var char_X = 'X';
-            actual = target.Add(char_A, char_X);
+            var item_A_X_start = 'A';
+            var item_A_X_end = 'X';
+            actual = target.Add(item_A_X_start, item_A_X_end);
             var item_A_X = target.First!;
             Assert.Multiple(() =>
             {
@@ -655,8 +663,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_A_X.Previous, Is.Null);
                 Assert.That(item_A_X.Next, Is.Not.Null);
                 Assert.That(item_A_X.Next, Is.SameAs(item_i_p));
-                Assert.That(item_A_X.Start, Is.EqualTo(char_A));
-                Assert.That(item_A_X.End, Is.EqualTo(char_X));
+                Assert.That(item_A_X.Start, Is.EqualTo(item_A_X_start));
+                Assert.That(item_A_X.End, Is.EqualTo(item_A_X_end));
                 Assert.That(item_A_X.IsSingleValue, Is.False);
                 Assert.That(item_A_X.Owner, Is.Not.Null);
                 Assert.That(item_A_X.Owner, Is.SameAs(target));
@@ -665,8 +673,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_p.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_i_p.Next, Is.Not.Null);
                 Assert.That(item_i_p.Next, Is.SameAs(item_r_t));
-                Assert.That(item_i_p.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_p.End, Is.EqualTo(char_p));
+                Assert.That(item_i_p.Start, Is.EqualTo(item_i_p_start));
+                Assert.That(item_i_p.End, Is.EqualTo(item_i_p_end));
                 Assert.That(item_i_p.IsSingleValue, Is.False);
                 Assert.That(item_i_p.Owner, Is.Not.Null);
                 Assert.That(item_i_p.Owner, Is.SameAs(target));
@@ -674,8 +682,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Previous, Is.Not.Null);
                 Assert.That(item_r_t.Previous, Is.SameAs(item_i_p));
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
@@ -683,7 +691,7 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            actual = target.Add(char_b, char_c);
+            actual = target.Add(item_b_c_start, item_b_c_end);
             var item_b_c = item_A_X.Next!;
             Assert.Multiple(() =>
             {
@@ -702,8 +710,8 @@ namespace TestDataGeneration.UnitTests
             Assert.Multiple(() =>
             {
                 Assert.That(item_A_X.Previous, Is.Null);
-                Assert.That(item_A_X.Start, Is.EqualTo(char_A));
-                Assert.That(item_A_X.End, Is.EqualTo(char_X));
+                Assert.That(item_A_X.Start, Is.EqualTo(item_A_X_start));
+                Assert.That(item_A_X.End, Is.EqualTo(item_A_X_end));
                 Assert.That(item_A_X.IsSingleValue, Is.False);
                 Assert.That(item_A_X.Owner, Is.Not.Null);
                 Assert.That(item_A_X.Owner, Is.SameAs(target));
@@ -712,8 +720,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_b_c.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_b_c.Next, Is.Not.Null);
                 Assert.That(item_b_c.Next, Is.SameAs(item_i_p));
-                Assert.That(item_b_c.Start, Is.EqualTo(char_b));
-                Assert.That(item_b_c.End, Is.EqualTo(char_c));
+                Assert.That(item_b_c.Start, Is.EqualTo(item_b_c_start));
+                Assert.That(item_b_c.End, Is.EqualTo(item_b_c_end));
                 Assert.That(item_b_c.IsSingleValue, Is.False);
                 Assert.That(item_b_c.Owner, Is.Not.Null);
                 Assert.That(item_b_c.Owner, Is.SameAs(target));
@@ -722,8 +730,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_i_p.Previous, Is.SameAs(item_b_c));
                 Assert.That(item_i_p.Next, Is.Not.Null);
                 Assert.That(item_i_p.Next, Is.SameAs(item_r_t));
-                Assert.That(item_i_p.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_p.End, Is.EqualTo(char_p));
+                Assert.That(item_i_p.Start, Is.EqualTo(item_i_p_start));
+                Assert.That(item_i_p.End, Is.EqualTo(item_i_p_end));
                 Assert.That(item_i_p.IsSingleValue, Is.False);
                 Assert.That(item_i_p.Owner, Is.Not.Null);
                 Assert.That(item_i_p.Owner, Is.SameAs(target));
@@ -731,8 +739,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_r_t.Previous, Is.Not.Null);
                 Assert.That(item_r_t.Previous, Is.SameAs(item_i_p));
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Not.Null);
                 Assert.That(item_r_t.Owner, Is.SameAs(target));
@@ -740,9 +748,9 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_Z = 'z';
-            var char_z = 'z';
-            actual = target.Add(char_Z, char_z);
+            var item_Z_z_start = 'Z';
+            var item_Z_z_end = 'z';
+            actual = target.Add(item_Z_z_start, item_Z_z_end);
             var item_Z_z = item_b_c;
             Assert.Multiple(() =>
             {
@@ -759,8 +767,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_A_X.Previous, Is.Null);
                 Assert.That(item_A_X.Next, Is.Not.Null);
                 Assert.That(item_A_X.Next, Is.SameAs(item_Z_z));
-                Assert.That(item_A_X.Start, Is.EqualTo(char_A));
-                Assert.That(item_A_X.End, Is.EqualTo(char_X));
+                Assert.That(item_A_X.Start, Is.EqualTo(item_A_X_start));
+                Assert.That(item_A_X.End, Is.EqualTo(item_A_X_end));
                 Assert.That(item_A_X.IsSingleValue, Is.False);
                 Assert.That(item_A_X.Owner, Is.Not.Null);
                 Assert.That(item_A_X.Owner, Is.SameAs(target));
@@ -768,31 +776,31 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_Z_z.Previous, Is.Not.Null);
                 Assert.That(item_Z_z.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_Z_z.Next, Is.Null);
-                Assert.That(item_Z_z.Start, Is.EqualTo(char_Z));
-                Assert.That(item_Z_z.End, Is.EqualTo(char_z));
+                Assert.That(item_Z_z.Start, Is.EqualTo(item_Z_z_start));
+                Assert.That(item_Z_z.End, Is.EqualTo(item_Z_z_end));
                 Assert.That(item_Z_z.IsSingleValue, Is.False);
                 Assert.That(item_Z_z.Owner, Is.Not.Null);
                 Assert.That(item_Z_z.Owner, Is.SameAs(target));
 
                 Assert.That(item_i_p.Previous, Is.Null);
                 Assert.That(item_i_p.Next, Is.Null);
-                Assert.That(item_i_p.Start, Is.EqualTo(char_i));
-                Assert.That(item_i_p.End, Is.EqualTo(char_p));
+                Assert.That(item_i_p.Start, Is.EqualTo(item_i_p_start));
+                Assert.That(item_i_p.End, Is.EqualTo(item_i_p_end));
                 Assert.That(item_i_p.IsSingleValue, Is.False);
                 Assert.That(item_i_p.Owner, Is.Null);
 
                 Assert.That(item_r_t.Previous, Is.Null);
                 Assert.That(item_r_t.Next, Is.Null);
-                Assert.That(item_r_t.Start, Is.EqualTo(char_r));
-                Assert.That(item_r_t.End, Is.EqualTo(char_t));
+                Assert.That(item_r_t.Start, Is.EqualTo(item_r_t_start));
+                Assert.That(item_r_t.End, Is.EqualTo(item_r_t_end));
                 Assert.That(item_r_t.IsSingleValue, Is.False);
                 Assert.That(item_r_t.Owner, Is.Null);
             });
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var char_7 = '7';
-            actual = target.Add(char_7, char_7);
+            var item_7_value = '7';
+            actual = target.Add(item_7_value, item_7_value);
             var item_7 = target.First!;
             Assert.Multiple(() =>
             {
@@ -808,16 +816,16 @@ namespace TestDataGeneration.UnitTests
             Assert.Multiple(() =>
             {
                 Assert.That(item_7.Previous, Is.Null);
-                Assert.That(item_7.Start, Is.EqualTo(char_7));
-                Assert.That(item_7.End, Is.EqualTo(char_7));
+                Assert.That(item_7.Start, Is.EqualTo(item_7_value));
+                Assert.That(item_7.End, Is.EqualTo(item_7_value));
                 Assert.That(item_7.IsSingleValue, Is.True);
                 Assert.That(item_7.Owner, Is.Not.Null);
                 Assert.That(item_7.Owner, Is.SameAs(target));
 
                 Assert.That(item_A_X.Previous, Is.Not.Null);
                 Assert.That(item_A_X.Previous, Is.SameAs(item_7));
-                Assert.That(item_A_X.Start, Is.EqualTo(char_A));
-                Assert.That(item_A_X.End, Is.EqualTo(char_X));
+                Assert.That(item_A_X.Start, Is.EqualTo(item_A_X_start));
+                Assert.That(item_A_X.End, Is.EqualTo(item_A_X_end));
                 Assert.That(item_A_X.IsSingleValue, Is.False);
                 Assert.That(item_A_X.Owner, Is.Not.Null);
                 Assert.That(item_A_X.Owner, Is.SameAs(target));
@@ -825,8 +833,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_Z_z.Previous, Is.Not.Null);
                 Assert.That(item_Z_z.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_Z_z.Next, Is.Null);
-                Assert.That(item_Z_z.Start, Is.EqualTo(char_Z));
-                Assert.That(item_Z_z.End, Is.EqualTo(char_z));
+                Assert.That(item_Z_z.Start, Is.EqualTo(item_Z_z_start));
+                Assert.That(item_Z_z.End, Is.EqualTo(item_Z_z_end));
                 Assert.That(item_Z_z.IsSingleValue, Is.False);
                 Assert.That(item_Z_z.Owner, Is.Not.Null);
                 Assert.That(item_Z_z.Owner, Is.SameAs(target));
@@ -834,7 +842,7 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            actual = target.Add(char_Z, 'y');
+            actual = target.Add(item_Z_z_start, 'y');
             Assert.Multiple(() =>
             {
                 Assert.That(actual, Is.False);
@@ -848,16 +856,16 @@ namespace TestDataGeneration.UnitTests
             Assert.Multiple(() =>
             {
                 Assert.That(item_7.Previous, Is.Null);
-                Assert.That(item_7.Start, Is.EqualTo(char_7));
-                Assert.That(item_7.End, Is.EqualTo(char_7));
+                Assert.That(item_7.Start, Is.EqualTo(item_7_value));
+                Assert.That(item_7.End, Is.EqualTo(item_7_value));
                 Assert.That(item_7.IsSingleValue, Is.True);
                 Assert.That(item_7.Owner, Is.Not.Null);
                 Assert.That(item_7.Owner, Is.SameAs(target));
 
                 Assert.That(item_A_X.Previous, Is.Not.Null);
                 Assert.That(item_A_X.Previous, Is.SameAs(item_7));
-                Assert.That(item_A_X.Start, Is.EqualTo(char_A));
-                Assert.That(item_A_X.End, Is.EqualTo(char_X));
+                Assert.That(item_A_X.Start, Is.EqualTo(item_A_X_start));
+                Assert.That(item_A_X.End, Is.EqualTo(item_A_X_end));
                 Assert.That(item_A_X.IsSingleValue, Is.False);
                 Assert.That(item_A_X.Owner, Is.Not.Null);
                 Assert.That(item_A_X.Owner, Is.SameAs(target));
@@ -865,14 +873,14 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_Z_z.Previous, Is.Not.Null);
                 Assert.That(item_Z_z.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_Z_z.Next, Is.Null);
-                Assert.That(item_Z_z.Start, Is.EqualTo(char_Z));
-                Assert.That(item_Z_z.End, Is.EqualTo(char_z));
+                Assert.That(item_Z_z.Start, Is.EqualTo(item_Z_z_start));
+                Assert.That(item_Z_z.End, Is.EqualTo(item_Z_z_end));
                 Assert.That(item_Z_z.IsSingleValue, Is.False);
                 Assert.That(item_Z_z.Owner, Is.Not.Null);
                 Assert.That(item_Z_z.Owner, Is.SameAs(target));
             });
             
-            actual = target.Add(char_7, char_7);
+            actual = target.Add(item_7_value, item_7_value);
             Assert.Multiple(() =>
             {
                 Assert.That(actual, Is.False);
@@ -886,16 +894,16 @@ namespace TestDataGeneration.UnitTests
             Assert.Multiple(() =>
             {
                 Assert.That(item_7.Previous, Is.Null);
-                Assert.That(item_7.Start, Is.EqualTo(char_7));
-                Assert.That(item_7.End, Is.EqualTo(char_7));
+                Assert.That(item_7.Start, Is.EqualTo(item_7_value));
+                Assert.That(item_7.End, Is.EqualTo(item_7_value));
                 Assert.That(item_7.IsSingleValue, Is.True);
                 Assert.That(item_7.Owner, Is.Not.Null);
                 Assert.That(item_7.Owner, Is.SameAs(target));
 
                 Assert.That(item_A_X.Previous, Is.Not.Null);
                 Assert.That(item_A_X.Previous, Is.SameAs(item_7));
-                Assert.That(item_A_X.Start, Is.EqualTo(char_A));
-                Assert.That(item_A_X.End, Is.EqualTo(char_X));
+                Assert.That(item_A_X.Start, Is.EqualTo(item_A_X_start));
+                Assert.That(item_A_X.End, Is.EqualTo(item_A_X_end));
                 Assert.That(item_A_X.IsSingleValue, Is.False);
                 Assert.That(item_A_X.Owner, Is.Not.Null);
                 Assert.That(item_A_X.Owner, Is.SameAs(target));
@@ -903,8 +911,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_Z_z.Previous, Is.Not.Null);
                 Assert.That(item_Z_z.Previous, Is.SameAs(item_A_X));
                 Assert.That(item_Z_z.Next, Is.Null);
-                Assert.That(item_Z_z.Start, Is.EqualTo(char_Z));
-                Assert.That(item_Z_z.End, Is.EqualTo(char_z));
+                Assert.That(item_Z_z.Start, Is.EqualTo(item_Z_z_start));
+                Assert.That(item_Z_z.End, Is.EqualTo(item_Z_z_end));
                 Assert.That(item_Z_z.IsSingleValue, Is.False);
                 Assert.That(item_Z_z.Owner, Is.Not.Null);
                 Assert.That(item_Z_z.Owner, Is.SameAs(target));
