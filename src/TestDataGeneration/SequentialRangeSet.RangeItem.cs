@@ -649,20 +649,12 @@ public partial class SequentialRangeSet<T>
         private void SetEnd(T end)
         {
             if (_accessors.AreEqual(end, End)) return;
-            int diff = _accessors.Compare(Start, end);
-            if (diff < 0 || (Next is not null && !_accessors.CanInsert(end, Next.Start))) throw new InvalidOperationException();
+            bool isSingleValue = _accessors.AssertValidRange(Start, end);
+            if (Next is not null) _accessors.AssertCanInsert(end, Next.Start);
             _changeToken = new();
             End = end;
-            if (diff == 0)
-            {
-                IsSingleValue = true;
-                IsMaxRange = false;
-            }
-            else
-            {
-                IsSingleValue = false;
-                IsMaxRange = _accessors.AreEqual(Start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
-            }
+            IsSingleValue = isSingleValue;
+            IsMaxRange = !isSingleValue && _accessors.AreEqual(Start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
             if (Owner is not null)
             {
                 Owner._changeToken = new();
@@ -673,21 +665,14 @@ public partial class SequentialRangeSet<T>
         private void SetRange(T start, T end)
         {
             if (_accessors.AreEqual(start, Start) && _accessors.AreEqual(end, End)) return;
-            int diff = _accessors.Compare(start, end);
-            if (diff < 0 || (Previous is not null && !_accessors.CanInsert(Previous.End, start)) || (Next is not null && !_accessors.CanInsert(end, Next.Start))) throw new InvalidOperationException();
+            bool isSingleValue = _accessors.AssertValidRange(start, end);
+            if (Next is not null) _accessors.AssertCanInsert(end, Next.Start);
+            if (Previous is not null) _accessors.AssertCanInsert(Previous.End, start);
             _changeToken = new();
             Start = start;
             End = end;
-            if (diff == 0)
-            {
-                IsSingleValue = true;
-                IsMaxRange = false;
-            }
-            else
-            {
-                IsSingleValue = false;
-                IsMaxRange = _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
-            }
+            IsSingleValue = isSingleValue;
+            IsMaxRange = !isSingleValue && _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(end, _accessors.MaxValue);
             if (Owner is not null)
             {
                 Owner._changeToken = new();
@@ -698,20 +683,12 @@ public partial class SequentialRangeSet<T>
         private void SetStart(T start)
         {
             if (_accessors.AreEqual(start, Start)) return;
-            int diff = _accessors.Compare(start, End);
-            if (diff < 0 || (Previous is not null && !_accessors.CanInsert(Previous.End, start))) throw new InvalidOperationException();
+            bool isSingleValue = _accessors.AssertValidRange(start, End);
+            if (Previous is not null) _accessors.AssertCanInsert(Previous.End, start);
             _changeToken = new();
             Start = start;
-            if (diff == 0)
-            {
-                IsSingleValue = true;
-                IsMaxRange = false;
-            }
-            else
-            {
-                IsSingleValue = false;
-                IsMaxRange = _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(End, _accessors.MaxValue);
-            }
+            IsSingleValue = isSingleValue;
+            IsMaxRange = !isSingleValue && _accessors.AreEqual(start, _accessors.MinValue) && _accessors.AreEqual(End, _accessors.MaxValue);
             if (Owner is not null)
             {
                 Owner._changeToken = new();
