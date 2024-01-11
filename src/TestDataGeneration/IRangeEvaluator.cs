@@ -4,7 +4,7 @@ namespace TestDataGeneration;
 /// Sequential ordering methods and properties.
 /// </summary>
 /// <typeparam name="T">The type of value to be sequentially ordered.</typeparam>
-public interface IRangeSequenceAccessors<T> : IComparer<T>
+public interface IRangeEvaluator<T> : IComparer<T>
     where T : struct
 {
     /// <summary>

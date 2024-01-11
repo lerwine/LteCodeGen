@@ -22,7 +22,7 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
     /// <summary>
     /// Gets the object that is used to compare and manipulate values of type <typeparamref name="T"/>.
     /// </summary>
-    public IRangeSequenceAccessors<T> Accessors { get; }
+    public IRangeEvaluator<T> RangeEvaluator { get; }
 
     object IHasChangeToken.ChangeToken => _changeToken;
 
@@ -61,11 +61,11 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
     /// <summary>
     /// Initializes a new <c>SequentialRangeSet</c> object.
     /// </summary>
-    /// <param name="accessors">The object that is used to compare and manipulate values of type <typeparamref name="T"/>.</param>
-    public SequentialRangeSet(IRangeSequenceAccessors<T> accessors)
+    /// <param name="rangeEvaluator">The object that is used to compare and manipulate values of type <typeparamref name="T"/>.</param>
+    public SequentialRangeSet(IRangeEvaluator<T> rangeEvaluator)
     {
-        ArgumentNullException.ThrowIfNull(accessors);
-        Accessors = accessors;
+        ArgumentNullException.ThrowIfNull(rangeEvaluator);
+        RangeEvaluator = rangeEvaluator;
     }
 
     /// <summary>
@@ -99,9 +99,9 @@ public partial class SequentialRangeSet<T> : ICollection<SequentialRangeSet<T>.R
     /// Adds a new range item object to the range collection.
     /// </summary>
     /// <param name="item">The item to be added.</param>
-    /// <exception cref="ArgumentOutOfRangeException">The specified <paramref name="item"/> had a different <see cref="IRangeSequenceAccessors{T}"/> object
+    /// <exception cref="ArgumentOutOfRangeException">The specified <paramref name="item"/> had a different <see cref="IRangeEvaluator{T}"/> object
     /// which caused value comparisons to be interpreted differently, resulted in a start value that was considered to be larger than the end value, according to
-    /// the current <see cref="Accessors"/> object.</exception>
+    /// the current <see cref="RangeEvaluator"/> object.</exception>
     /// <exception cref="InvalidOperationException">The specified <paramref name="item"/> overlaps an existing range or is directly adjacent to an existing range,
     /// and could nto be added.</exception>
     public void Add(RangeItem item)

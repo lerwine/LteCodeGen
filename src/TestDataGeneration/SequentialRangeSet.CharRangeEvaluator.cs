@@ -2,11 +2,13 @@ namespace TestDataGeneration;
 
 public static partial class SequentialRangeSet
 {
-    public sealed class CharRangeAccessors : IRangeSequenceAccessors<char>
+    public static readonly CharRangeEvaluator Char = CharRangeEvaluator.Instance;
+    
+    public sealed class CharRangeEvaluator : IRangeEvaluator<char>
     {
-        public static readonly CharRangeAccessors Instance = new();
+        public static readonly CharRangeEvaluator Instance = new();
 
-        private CharRangeAccessors() { }
+        private CharRangeEvaluator() { }
 
         public char MaxValue => char.MaxValue;
 

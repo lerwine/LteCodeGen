@@ -2,11 +2,13 @@ namespace TestDataGeneration;
 
 public static partial class SequentialRangeSet
 {
-    public sealed class SByteRangeAccessors : IRangeSequenceAccessors<sbyte>
+    public static readonly SByteRangeEvaluator SByte = SByteRangeEvaluator.Instance;
+    
+    public sealed class SByteRangeEvaluator : IRangeEvaluator<sbyte>
     {
-        public static readonly SByteRangeAccessors Instance = new();
+        public static readonly SByteRangeEvaluator Instance = new();
 
-        private SByteRangeAccessors() { }
+        private SByteRangeEvaluator() { }
 
         public sbyte MaxValue => sbyte.MaxValue;
 

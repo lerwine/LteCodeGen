@@ -917,7 +917,7 @@ namespace TestDataGeneration.UnitTests
             var target = new SequentialRangeSet.CharRangeSet();
             var item_l_p_start = 'l';
             var item_l_p_end = 'p';
-            var item_l_p = new SequentialRangeSet<char>.RangeItem(item_l_p_start, item_l_p_end, SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_l_p = new SequentialRangeSet<char>.RangeItem(item_l_p_start, item_l_p_end, SequentialRangeSet.Char);
             var changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
             target.Add(item_l_p);
@@ -945,7 +945,7 @@ namespace TestDataGeneration.UnitTests
 
             var item_L_P_start = 'L';
             var item_L_P_end = 'P';
-            var item_L_P = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end, SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_L_P = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end, SequentialRangeSet.Char);
             target.Add(item_l_p);
             Assert.Multiple(() =>
             {
@@ -979,7 +979,7 @@ namespace TestDataGeneration.UnitTests
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
-            var cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end, SequentialRangeSet.CharRangeAccessors.Instance);
+            var cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end, SequentialRangeSet.Char);
             Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
             Assert.Multiple(() =>
             {
@@ -1018,7 +1018,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(cannot_add.Owner, Is.Null);
             });
             
-            cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_end, item_l_p_start, SequentialRangeSet.CharRangeAccessors.Instance);
+            cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_end, item_l_p_start, SequentialRangeSet.Char);
             Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
             Assert.Multiple(() =>
             {
@@ -1058,7 +1058,7 @@ namespace TestDataGeneration.UnitTests
             });
             
             var c = 'q';
-            cannot_add = new SequentialRangeSet<char>.RangeItem(item_l_p_start, c, SequentialRangeSet.CharRangeAccessors.Instance);
+            cannot_add = new SequentialRangeSet<char>.RangeItem(item_l_p_start, c, SequentialRangeSet.Char);
             Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
             Assert.Multiple(() =>
             {
@@ -1098,7 +1098,7 @@ namespace TestDataGeneration.UnitTests
             });
 
             c = 'K';
-            cannot_add = new SequentialRangeSet<char>.RangeItem(c, c, SequentialRangeSet.CharRangeAccessors.Instance);
+            cannot_add = new SequentialRangeSet<char>.RangeItem(c, c, SequentialRangeSet.Char);
             Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
             Assert.Multiple(() =>
             {
@@ -1280,15 +1280,15 @@ namespace TestDataGeneration.UnitTests
         [Test]
         public void ContainsItemTest()
         {
-            var item_c_g = new SequentialRangeSet<char>.RangeItem(start: 'c', end: 'g', SequentialRangeSet.CharRangeAccessors.Instance);
-            var orphaned_b_h = new SequentialRangeSet<char>.RangeItem(start: 'b', end: 'h', SequentialRangeSet.CharRangeAccessors.Instance);
-            var orphaned_d_f = new SequentialRangeSet<char>.RangeItem(start: 'd', end: 'f', SequentialRangeSet.CharRangeAccessors.Instance);
-            var orphaned_l_m = new SequentialRangeSet<char>.RangeItem(start: 'l', end: 'm', SequentialRangeSet.CharRangeAccessors.Instance);
-            var item_m = new SequentialRangeSet<char>.RangeItem(value: 'm', SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_c_g = new SequentialRangeSet<char>.RangeItem(start: 'c', end: 'g', SequentialRangeSet.Char);
+            var orphaned_b_h = new SequentialRangeSet<char>.RangeItem(start: 'b', end: 'h', SequentialRangeSet.Char);
+            var orphaned_d_f = new SequentialRangeSet<char>.RangeItem(start: 'd', end: 'f', SequentialRangeSet.Char);
+            var orphaned_l_m = new SequentialRangeSet<char>.RangeItem(start: 'l', end: 'm', SequentialRangeSet.Char);
+            var item_m = new SequentialRangeSet<char>.RangeItem(value: 'm', SequentialRangeSet.Char);
             var added_n = 'n';
-            var orphaned_m_n = new SequentialRangeSet<char>.RangeItem(start: 'm', end: added_n, SequentialRangeSet.CharRangeAccessors.Instance);
-            var item_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q', SequentialRangeSet.CharRangeAccessors.Instance);
-            var orphaned_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q', SequentialRangeSet.CharRangeAccessors.Instance);
+            var orphaned_m_n = new SequentialRangeSet<char>.RangeItem(start: 'm', end: added_n, SequentialRangeSet.Char);
+            var item_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q', SequentialRangeSet.Char);
+            var orphaned_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q', SequentialRangeSet.Char);
             var target = new SequentialRangeSet.CharRangeSet
             {
                 item_c_g,
@@ -2222,10 +2222,10 @@ namespace TestDataGeneration.UnitTests
         [Test]
         public void RemoveItemTest()
         {
-            var item_a_g = new SequentialRangeSet<char>.RangeItem('a', 'g', SequentialRangeSet.CharRangeAccessors.Instance);
-            var item_i_k = new SequentialRangeSet<char>.RangeItem('i', 'k', SequentialRangeSet.CharRangeAccessors.Instance);
-            var item_m_n = new SequentialRangeSet<char>.RangeItem('m', 'n', SequentialRangeSet.CharRangeAccessors.Instance);
-            var item_p_z = new SequentialRangeSet<char>.RangeItem('p', 'z', SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_a_g = new SequentialRangeSet<char>.RangeItem('a', 'g', SequentialRangeSet.Char);
+            var item_i_k = new SequentialRangeSet<char>.RangeItem('i', 'k', SequentialRangeSet.Char);
+            var item_m_n = new SequentialRangeSet<char>.RangeItem('m', 'n', SequentialRangeSet.Char);
+            var item_p_z = new SequentialRangeSet<char>.RangeItem('p', 'z', SequentialRangeSet.Char);
             var target = new SequentialRangeSet.CharRangeSet();
             Assert.Multiple(() =>
             {
