@@ -245,14 +245,16 @@ public partial class SequentialRangeSet<T>
                 previous.SetStart(start);
                 return true;
             }
-            // end > item.End
+            // end > previous.End
             var next = previous.Next;
             if (next is null)
             {
                 if (evaluator.Compare(start, previous.Start) < 0)
                     previous.SetRange(start, end);
-                else
+                else if (evaluator.Compare(previous.End, start) >= 0 || evaluator.IsSequentiallyAdjacent(previous.End, start))
                     previous.SetEnd(end);
+                else
+                    new RangeItem(start, end, isSingleValue, isMaxRange, owner).LinkAfter(previous);
                 return true;
             }
             while (evaluator.IsValidPrecedingRangeEnd(previous.End, start))
@@ -260,7 +262,7 @@ public partial class SequentialRangeSet<T>
                 next = (previous = next).Next;
                 if (next is null)
                 {
-                    new RangeItem(start, end, owner).LinkAfter(previous);
+                    new RangeItem(start, end, isSingleValue, isMaxRange, owner).LinkAfter(previous);
                     return true;
                 }
             }
@@ -278,8 +280,10 @@ public partial class SequentialRangeSet<T>
                         {
                             if (evaluator.Compare(start, previous.Start) < 0)
                                 previous.SetRange(start, end);
-                            else
+                            else if (evaluator.Compare(previous.End, start) <= 0 || evaluator.IsSequentiallyAdjacent(previous.End, start))
                                 previous.SetEnd(end);
+                            else
+                                new RangeItem(start, end, isSingleValue, isMaxRange, owner).LinkAfter(previous);
                         }
                         else if (evaluator.Compare(start, previous.Start) < 0)
                             previous.SetStart(start);
