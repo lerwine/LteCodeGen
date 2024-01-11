@@ -59,9 +59,9 @@ public partial class SequentialRangeSet<T>
 
         public bool Follows(IValueRange<T> item) => item is not null && _rangeEvaluator.Compare(item.End, Start) < 0;
 
-        public bool FollowsWithGap(T value) => _rangeEvaluator.CanInsert(value, Start);
+        public bool FollowsWithGap(T value) => _rangeEvaluator.IsValidPrecedingRangeEnd(value, Start);
 
-        public bool FollowsWithGap(IValueRange<T> item) => item is not null && _rangeEvaluator.CanInsert(item.End, Start);
+        public bool FollowsWithGap(IValueRange<T> item) => item is not null && _rangeEvaluator.IsValidPrecedingRangeEnd(item.End, Start);
 
         public ulong GetCount() => IsSingleValue ? 1UL : IsMaxRange ? 0UL : _rangeEvaluator.GetLongCountInRange(Start, End);
 
@@ -107,9 +107,9 @@ public partial class SequentialRangeSet<T>
 
         public bool Precedes(IValueRange<T> item) => item is not null && _rangeEvaluator.Compare(item.Start, End) > 0;
 
-        public bool PrecedesWithGap(T value) => _rangeEvaluator.CanInsert(End, value);
+        public bool PrecedesWithGap(T value) => _rangeEvaluator.IsValidPrecedingRangeEnd(End, value);
 
-        public bool PrecedesWithGap(IValueRange<T> item) => item is not null && _rangeEvaluator.CanInsert(End, item.Start);
+        public bool PrecedesWithGap(IValueRange<T> item) => item is not null && _rangeEvaluator.IsValidPrecedingRangeEnd(End, item.Start);
 
         public override string ToString() => IsSingleValue ? $"[{Start}]" : $"[{Start}..{End}]";
     }

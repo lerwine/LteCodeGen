@@ -32,9 +32,42 @@ public static partial class SequentialRangeSet
         return diff == 0;
     }
 
+    public static bool IsValidRange<T>(this IRangeEvaluator<T> evaluator, T start, T end, out bool isSingleValue, out bool isMaxRange) where T : struct
+    {
+        var diff = evaluator.Compare(start, end);
+        if (diff > 0)
+        {
+            isSingleValue = isMaxRange = false;
+            return false;
+        }
+        if (diff == 0)
+        {
+            isSingleValue = true;
+            isMaxRange = false;
+        }
+        else
+        {
+            isSingleValue = false;
+            isMaxRange = evaluator.AreEqual(start, evaluator.MinValue) && evaluator.AreEqual(end, evaluator.MaxValue);
+        }
+        return true;
+    }
+
+    // public static bool IsValidRange<T>(this IRangeEvaluator<T> evaluator, T start, T end, out bool isSingleValue) where T : struct
+    // {
+    //     var diff = evaluator.Compare(start, end);
+    //     if (diff > 0)
+    //     {
+    //         isSingleValue = false;
+    //         return false;
+    //     }
+    //     isSingleValue = diff == 0;
+    //     return true;
+    // }
+
     public static bool AreEqual<T>(this IRangeEvaluator<T> evaluator, T x, T y) where T : struct => evaluator.Compare(x, y) == 0;
 
-    public static bool CanInsert<T>(this IRangeEvaluator<T> evaluator, T previous, T next) where T : struct => evaluator.Compare(previous, next) < 0 && !evaluator.IsSequentiallyAdjacent(previous, next);
+    public static bool IsValidPrecedingRangeEnd<T>(this IRangeEvaluator<T> evaluator, T previous, T next) where T : struct => evaluator.Compare(previous, next) < 0 && !evaluator.IsSequentiallyAdjacent(previous, next);
 
     public static SequentialRangeSet<T>.RangeItem GetItemAt<T>(int index, SequentialRangeSet<T> rangeSet) where T : struct
     {
