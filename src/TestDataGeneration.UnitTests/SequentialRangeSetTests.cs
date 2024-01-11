@@ -7,10 +7,6 @@ namespace TestDataGeneration.UnitTests
         {
         }
 
-        // TODO: Include testing for SequentialRangeSet.ContainsAllPossibleValues in test methods
-
-        // TODO: Include testing for SequentialRangeSet.RangeItem.IsMaxRange in test methods
-
         [Test]
         public void AddValueTest()
         {
@@ -74,8 +70,8 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_u.Owner, Is.Not.Null);
                 Assert.That(item_u.Owner, Is.SameAs(target));
             });
-            Assert.Multiple(() =>
-            {
+            // Assert.Multiple(() =>
+            // {
                 Assert.That(item_x.IsSingleValue, Is.True);
                 Assert.That(item_x.Start, Is.EqualTo(value_x));
                 Assert.That(item_x.End, Is.EqualTo(value_x));
@@ -84,7 +80,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(item_x.Next, Is.Null);
                 Assert.That(item_x.Owner, Is.Not.Null);
                 Assert.That(item_x.Owner, Is.SameAs(target));
-            });
+            // });
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
 
@@ -2197,7 +2193,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(target.First, Is.Not.Null);
                 Assert.That(target.First, Is.SameAs(range_B_E));
                 Assert.That(target.Last, Is.Not.Null);
-                Assert.That(target.Last, Is.SameAs(range_I_W));
+                Assert.That(target.Last, Is.SameAs(range_B_E));
                 Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
             });
             Assert.Multiple(() =>
@@ -2207,8 +2203,7 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_B_E.IsSingleValue, Is.False);
                 Assert.That(range_B_E.IsMaxRange, Is.False);
                 Assert.That(range_B_E.Previous, Is.Null);
-                Assert.That(range_B_E.Next, Is.Not.Null);
-                Assert.That(range_B_E.Next, Is.SameAs(range_I_W));
+                Assert.That(range_B_E.Next, Is.Null);
                 Assert.That(range_B_E.Owner, Is.Not.Null);
                 Assert.That(range_B_E.Owner, Is.SameAs(target));
                 
@@ -2216,11 +2211,9 @@ namespace TestDataGeneration.UnitTests
                 Assert.That(range_I_W.End, Is.EqualTo(range_I_W_end));
                 Assert.That(range_I_W.IsSingleValue, Is.False);
                 Assert.That(range_I_W.IsMaxRange, Is.False);
-                Assert.That(range_I_W.Previous, Is.Not.Null);
-                Assert.That(range_I_W.Previous, Is.SameAs(range_B_E));
+                Assert.That(range_I_W.Previous, Is.Null);
                 Assert.That(range_I_W.Next, Is.Null);
-                Assert.That(range_I_W.Owner, Is.Not.Null);
-                Assert.That(range_I_W.Owner, Is.SameAs(target));
+                Assert.That(range_I_W.Owner, Is.Null);
             });
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
@@ -2229,6 +2222,10 @@ namespace TestDataGeneration.UnitTests
         [Test]
         public void RemoveItemTest()
         {
+            var item_a_g = new SequentialRangeSet<char>.RangeItem('a', 'g', SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_i_k = new SequentialRangeSet<char>.RangeItem('i', 'k', SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_m_n = new SequentialRangeSet<char>.RangeItem('m', 'n', SequentialRangeSet.CharRangeAccessors.Instance);
+            var item_p_z = new SequentialRangeSet<char>.RangeItem('p', 'z', SequentialRangeSet.CharRangeAccessors.Instance);
             var target = new SequentialRangeSet.CharRangeSet();
             Assert.Multiple(() =>
             {
@@ -2239,27 +2236,139 @@ namespace TestDataGeneration.UnitTests
             });
             var changeToken = ((IHasChangeToken)target).ChangeToken;
 
-            target = new SequentialRangeSet.CharRangeSet
-            {
-                { char.MinValue, char.MaxValue }
-            };
-            var range_all = target.First!;
+            var actual = target.Remove(item_a_g);
             Assert.Multiple(() =>
             {
-                Assert.That(range_all, Is.Not.Null);
+                Assert.That(actual, Is.False);
+                Assert.That(target.First, Is.Null);
+                Assert.That(target.Last, Is.Null);
+                Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
+            });
+
+            target = new SequentialRangeSet.CharRangeSet
+            {
+                item_a_g,
+                item_i_k,
+                item_p_z
+            };
+            Assert.Multiple(() =>
+            {
+                Assert.That(target.First, Is.Not.Null);
+                Assert.That(target.First, Is.SameAs(item_a_g));
                 Assert.That(target.Last, Is.Not.Null);
-                Assert.That(target.Last, Is.SameAs(range_all));
-                Assert.That(range_all.Start, Is.EqualTo(char.MinValue));
-                Assert.That(range_all.End, Is.EqualTo(char.MaxValue));
-                Assert.That(range_all.IsSingleValue, Is.False);
-                Assert.That(range_all.IsMaxRange, Is.True);
-                Assert.That(range_all.Previous, Is.Null);
-                Assert.That(range_all.Next, Is.Null);
-                Assert.That(range_all.Owner, Is.Not.Null);
-                Assert.That(range_all.Owner, Is.SameAs(target));
+                Assert.That(target.Last, Is.SameAs(item_p_z));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(item_a_g.Previous, Is.Null);
+                Assert.That(item_a_g.Next, Is.Not.Null);
+                Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
+                Assert.That(item_a_g.Owner, Is.Not.Null);
+                Assert.That(item_a_g.Owner, Is.SameAs(target));
+                
+                Assert.That(item_i_k.Previous, Is.Not.Null);
+                Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
+                Assert.That(item_i_k.Next, Is.Not.Null);
+                Assert.That(item_i_k.Next, Is.SameAs(item_p_z));
+                Assert.That(item_i_k.Owner, Is.Not.Null);
+                Assert.That(item_i_k.Owner, Is.SameAs(target));
+                
+                Assert.That(item_p_z.Previous, Is.Not.Null);
+                Assert.That(item_p_z.Previous, Is.SameAs(item_i_k));
+                Assert.That(item_p_z.Next, Is.Null);
+                Assert.That(item_p_z.Owner, Is.Not.Null);
+                Assert.That(item_p_z.Owner, Is.SameAs(target));
             });
             changeToken = ((IHasChangeToken)target).ChangeToken;
             Assert.That(changeToken, Is.Not.Null);
+
+            actual = target.Remove(item_m_n);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual, Is.False);
+                Assert.That(target.First, Is.Not.Null);
+                Assert.That(target.First, Is.SameAs(item_a_g));
+                Assert.That(target.Last, Is.Not.Null);
+                Assert.That(target.Last, Is.SameAs(item_p_z));
+                Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(item_a_g.Previous, Is.Null);
+                Assert.That(item_a_g.Next, Is.Not.Null);
+                Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
+                Assert.That(item_a_g.Owner, Is.Not.Null);
+                Assert.That(item_a_g.Owner, Is.SameAs(target));
+                
+                Assert.That(item_i_k.Previous, Is.Not.Null);
+                Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
+                Assert.That(item_i_k.Next, Is.Not.Null);
+                Assert.That(item_i_k.Next, Is.SameAs(item_p_z));
+                Assert.That(item_i_k.Owner, Is.Not.Null);
+                Assert.That(item_i_k.Owner, Is.SameAs(target));
+                
+                Assert.That(item_p_z.Previous, Is.Not.Null);
+                Assert.That(item_p_z.Previous, Is.SameAs(item_i_k));
+                Assert.That(item_p_z.Next, Is.Null);
+                Assert.That(item_p_z.Owner, Is.Not.Null);
+                Assert.That(item_p_z.Owner, Is.SameAs(target));
+            });
+
+            actual = target.Remove(item_p_z);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual, Is.True);
+                Assert.That(target.First, Is.Not.Null);
+                Assert.That(target.First, Is.SameAs(item_a_g));
+                Assert.That(target.Last, Is.Not.Null);
+                Assert.That(target.Last, Is.SameAs(item_i_k));
+                Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(item_a_g.Previous, Is.Null);
+                Assert.That(item_a_g.Next, Is.Not.Null);
+                Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
+                Assert.That(item_a_g.Owner, Is.Not.Null);
+                Assert.That(item_a_g.Owner, Is.SameAs(target));
+                
+                Assert.That(item_i_k.Previous, Is.Not.Null);
+                Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
+                Assert.That(item_i_k.Next, Is.Null);
+                Assert.That(item_i_k.Owner, Is.Not.Null);
+                Assert.That(item_i_k.Owner, Is.SameAs(target));
+                
+                Assert.That(item_p_z.Previous, Is.Null);
+                Assert.That(item_p_z.Next, Is.Null);
+                Assert.That(item_p_z.Owner, Is.Null);
+            });
+            changeToken = ((IHasChangeToken)target).ChangeToken;
+            Assert.That(changeToken, Is.Not.Null);
+            
+            actual = target.Remove(item_p_z);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual, Is.False);
+                Assert.That(target.First, Is.Not.Null);
+                Assert.That(target.First, Is.SameAs(item_a_g));
+                Assert.That(target.Last, Is.Not.Null);
+                Assert.That(target.Last, Is.SameAs(item_i_k));
+                Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(item_a_g.Previous, Is.Null);
+                Assert.That(item_a_g.Next, Is.Not.Null);
+                Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
+                Assert.That(item_a_g.Owner, Is.Not.Null);
+                Assert.That(item_a_g.Owner, Is.SameAs(target));
+                
+                Assert.That(item_i_k.Previous, Is.Not.Null);
+                Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
+                Assert.That(item_i_k.Next, Is.Null);
+                Assert.That(item_i_k.Owner, Is.Not.Null);
+                Assert.That(item_i_k.Owner, Is.SameAs(target));
+            });
         }
     }
 }
