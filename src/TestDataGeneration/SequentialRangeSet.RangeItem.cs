@@ -142,9 +142,12 @@ public partial class SequentialRangeSet<T>
                 var evaluator = owner.RangeEvaluator;
                 do
                 {
-                    if (evaluator.Compare(node.End, start) < 0)
+                    // c..g
+                    // o..q
+                    // m
+                    if (evaluator.Compare(start, node.Start) < 0)
                     {
-                        owner.InsertAfter(item, node);
+                        owner.InsertBefore(item, node);
                         return;
                     }
                     node = node.Next;
@@ -236,6 +239,13 @@ public partial class SequentialRangeSet<T>
                     }
                     return true;
                 default:
+                    switch (startDisposition)
+                    {
+                        case SequentialComparisonResult.PrecedesWithGap:
+                        case SequentialComparisonResult.ImmediatelyPrecedes:
+                            previous.SetStart(start);
+                            break;
+                    }
                     break;
             }
             
@@ -323,6 +333,8 @@ public partial class SequentialRangeSet<T>
                 }
                 _evaluator = evaluator;
             }
+            if (linkedCollection is SequentialRangeSet<T> rangeSet)
+                rangeSet.ContainsAllPossibleValues = before is null && after is null && IsMaxRange;
         }
 
         internal static bool Contains(T start, T end, SequentialRangeSet<T> rangeSet)
@@ -414,10 +426,9 @@ public partial class SequentialRangeSet<T>
                 }
                 if ((diff = evaluator.Compare(value, item.End)) < 0)
                 {
-                    value = evaluator.GetIncrementedValue(value);
                     var end = item.End;
                     item.SetEnd(evaluator.GetDecrementedValue(value));
-                    rangeSet.InsertAfter(new RangeItem(value, end, evaluator), item);
+                    rangeSet.InsertAfter(new RangeItem(evaluator.GetIncrementedValue(value), end, evaluator), item);
                     return true;
                 }
                 else if (diff == 0)
@@ -425,6 +436,7 @@ public partial class SequentialRangeSet<T>
                     item.SetEnd(evaluator.GetDecrementedValue(value));
                     return true;
                 }
+                item = item.Next;
             }
             return false;
         }
@@ -494,7 +506,7 @@ public partial class SequentialRangeSet<T>
             if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
             var value = Start;
             yield return value;
-            while (evaluator.Compare(value, End) > 0)
+            while (evaluator.Compare(value, End) < 0)
             {
                 if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
                 value = evaluator.GetIncrementedValue(value);
