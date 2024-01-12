@@ -2,11 +2,13 @@ namespace TestDataGeneration;
 
 public static partial class SequentialRangeSet
 {
-    public sealed class Int16RangeAccessors : IRangeSequenceAccessors<short>
+    public static readonly Int16RangeEvaluator Int16 = Int16RangeEvaluator.Instance;
+    
+    public sealed class Int16RangeEvaluator : IRangeEvaluator<short>
     {
-        public static readonly Int16RangeAccessors Instance = new();
+        public static readonly Int16RangeEvaluator Instance = new();
 
-        private Int16RangeAccessors() { }
+        private Int16RangeEvaluator() { }
 
         public short MaxValue => short.MaxValue;
 

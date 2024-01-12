@@ -12,6 +12,7 @@ The purpose of this project is to provide ways to generate test data and source 
 ### Pester Issues
 
 You may see errors such as `The BeforeAll command may only be used inside a Describe block.` or `RuntimeException: '-Be' is not a valid Should operator.`.
+Additionally, you may see a VS code extension error stating `Test Discovery failed: A terminating error was received from PowerShell: Pester 5.2.0 or greater is required`.
 This may occur if version 3 or older is installed. To check the version of Pester, execute the following command to make sure you're using at least version 4:
 
 ```powershell

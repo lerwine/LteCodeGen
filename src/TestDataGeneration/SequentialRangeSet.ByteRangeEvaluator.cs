@@ -2,11 +2,13 @@ namespace TestDataGeneration;
 
 public static partial class SequentialRangeSet
 {
-    public sealed class ByteRangeAccessors : IRangeSequenceAccessors<byte>
+    public static readonly ByteRangeEvaluator Byte = ByteRangeEvaluator.Instance;
+    
+    public sealed class ByteRangeEvaluator : IRangeEvaluator<byte>
     {
-        public static readonly ByteRangeAccessors Instance = new();
+        public static readonly ByteRangeEvaluator Instance = new();
 
-        private ByteRangeAccessors() { }
+        private ByteRangeEvaluator() { }
 
         public byte MaxValue => byte.MaxValue;
 

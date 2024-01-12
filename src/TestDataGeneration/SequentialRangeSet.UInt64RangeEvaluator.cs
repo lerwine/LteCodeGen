@@ -2,11 +2,13 @@ namespace TestDataGeneration;
 
 public static partial class SequentialRangeSet
 {
-    public sealed class UInt64RangeAccessors : IRangeSequenceAccessors<ulong>
+    public static readonly UInt64RangeEvaluator UInt64 = UInt64RangeEvaluator.Instance;
+    
+    public sealed class UInt64RangeEvaluator : IRangeEvaluator<ulong>
     {
-        public static readonly UInt64RangeAccessors Instance = new();
+        public static readonly UInt64RangeEvaluator Instance = new();
 
-        private UInt64RangeAccessors() { }
+        private UInt64RangeEvaluator() { }
 
         public ulong MaxValue => ulong.MaxValue;
 

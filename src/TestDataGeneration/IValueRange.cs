@@ -27,7 +27,7 @@ public interface IValueRange<T> : IEnumerable<T>, IEquatable<IValueRange<T>> whe
     /// <summary>
     /// Gets a value indicating whether this range includes the minimum and maximum possible values.
     /// </summary>
-    /// <value><see langword="true"/> if <see cref="Start"/> is equal to <see cref="IRangeSequenceAccessors{T}.MinValue"/> and <see cref="End"/> is equal to <see cref="IRangeSequenceAccessors{T}.MaxValue"/>;
+    /// <value><see langword="true"/> if <see cref="Start"/> is equal to <see cref="IRangeEvaluator{T}.MinValue"/> and <see cref="End"/> is equal to <see cref="IRangeEvaluator{T}.MaxValue"/>;
     /// otherwise, <see langword="false"/>.</value>
     bool IsMaxRange { get; }
 

@@ -1,6 +1,8 @@
+using System.ComponentModel;
+
 namespace TestDataGeneration;
 
-public interface IHasChangeToken
+public interface IHasChangeToken : IChangeTracking
 {
     object ChangeToken { get; }
 }
