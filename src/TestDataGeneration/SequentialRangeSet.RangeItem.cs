@@ -444,47 +444,75 @@ public partial class SequentialRangeSet<T>
         internal static bool Remove(T start, T end, SequentialRangeSet<T> rangeSet)
         {
             var evaluator = rangeSet.RangeEvaluator;
-            int diff = evaluator.Compare(start, end);
-            if (diff > 0) return false;
-            if (diff == 0) return Remove(start, rangeSet);
             var item = rangeSet.First;
-            if (item is null) return false;
-            while (evaluator.Compare(start, item.End) > 0)
+            if (item is null || !evaluator.IsValidRange(start, end, out bool isSingleValue, out bool isMaxRange)) return false;
+            if (isMaxRange)
+            {
+                Clear(rangeSet);
+                return true;
+            }
+            if (isSingleValue) return Remove(start, rangeSet);
+            
+            int diff;
+            while ((diff = evaluator.Compare(start, item.End)) > 0)
             {
                 item = item.Next;
                 if (item is null) return false;
             }
-            if ((diff = evaluator.Compare(end, item.Start)) < 0) return false;
             if (diff == 0)
             {
+                // start == item.End
                 if (item.IsSingleValue)
-                    Unlink(item, rangeSet);
+                {
+                    var next = item.Next;
+                    item.Unlink();
+                    item = next;
+                }
                 else
-                    item.SetStart(evaluator.GetIncrementedValue(end));
+                {
+                    item.SetEnd(evaluator.GetDecrementedValue(start));
+                    item = item.Next;
+                }
+            }
+            else if (evaluator.Compare(start, item.Start) > 0)
+            {
+                var oldEnd = item.End;
+                item.SetEnd(evaluator.GetDecrementedValue(start));
+                if (evaluator.Compare(end, oldEnd) < 0)
+                {
+                    InsertAfter(new RangeItem(evaluator.GetIncrementedValue(end), oldEnd, evaluator), item, rangeSet);
+                    return true;
+                }
+                item = item.Next;
             }
             else
             {
-                while (evaluator.Compare(end, item.End) > 0)
+                if ((diff = evaluator.Compare(end, item.End)) == 0)
                 {
-                    item.MergeWithNext();
-                    if (item.Next is null) break;
+                    item.Unlink();
+                    return true;
                 }
-                if (evaluator.Compare(start, item.Start) <= 0)
+                if (diff < 0)
                 {
-                    if (evaluator.Compare(end, item.End) >= 0)
-                        Unlink(item, rangeSet);
-                    else
-                        item.SetStart(evaluator.GetIncrementedValue(end));
+                    item.SetStart(evaluator.GetIncrementedValue(end));
+                    return true;
                 }
-                else if (evaluator.Compare(end, item.End) >= 0)
-                    item.SetEnd(evaluator.GetDecrementedValue(start));
-                else
-                {
-                    var nextEnd = item.End;
-                    item.SetEnd(evaluator.GetDecrementedValue(start));
-                    rangeSet.InsertAfter(new RangeItem(evaluator.GetIncrementedValue(end), nextEnd, evaluator), item);
-                }
+                var next = item.Next;
+                item.Unlink();
+                item = next;
             }
+            if (item is null) return true;
+            while ((diff = evaluator.Compare(end, item.End)) > 0)
+            {
+                var next = item.Next;
+                item.Unlink();
+                item = next;
+                if (item is null) return true;
+            }
+            if (diff == 0)
+                item.Unlink();
+            else if (evaluator.Compare(end, item.Start) >= 0)
+                item.SetStart(evaluator.GetIncrementedValue(end));
             return true;
         }
 
