@@ -382,18 +382,6 @@ public partial class SequentialRangeSet<T>
             return false;
         }
 
-        [Obsolete("Use GetAllNodes")]
-        internal static IEnumerable<RangeItem> GetRanges(SequentialRangeSet<T> rangeSet)
-        {
-            IHasChangeToken ct = rangeSet;
-            object changeToken =  ct.ChangeToken;
-            for (var item = rangeSet.First; item is not null; item = item.Next)
-            {
-                if (!ReferenceEquals(changeToken, ct.ChangeToken)) throw new InvalidOperationException(ErrorMessage_SequentialRangeSetChanged);
-                yield return item;
-            }
-        }
-
         internal static int IndexOf(RangeItem value, SequentialRangeSet<T> rangeSet)
         {
             int index = 0;
@@ -626,12 +614,6 @@ public partial class SequentialRangeSet<T>
             start = Start;
             end = End;
             return false;
-        }
-
-        [Obsolete("Use methods on base class")]
-        internal void Remove()
-        {
-            throw new NotSupportedException();
         }
 
         #endregion

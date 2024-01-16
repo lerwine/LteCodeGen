@@ -11,9 +11,6 @@ namespace TestDataGeneration;
 public partial class SequentialRangeSet<T> : LinkedCollectionBase<SequentialRangeSet<T>.RangeItem>, ICollection<SequentialRangeSet<T>.RangeItem>, IReadOnlyList<SequentialRangeSet<T>.RangeItem>
     where T : struct
 {
-    [Obsolete("Use SetChanged()")]
-    private object _changeToken = new();
-
     private const string ErrorMessage_SequentialRangeSetChanged = $"{nameof(SequentialRangeSet<T>)} has changed.";
 
     RangeItem IReadOnlyList<RangeItem>.this[int index] => GetItemAt(index, this);
@@ -23,6 +20,10 @@ public partial class SequentialRangeSet<T> : LinkedCollectionBase<SequentialRang
     /// </summary>
     public IRangeEvaluator<T> RangeEvaluator { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this range contains all possible values.
+    /// </summary>
+    /// <value><see langword="true"/> if this contains all values from <see cref="IRangeEvaluator{T}.MinValue"/>, up to and including <see cref="IRangeEvaluator{T}.MaxValue"/>; otherwise, <see langword="false"/></value>
     public bool ContainsAllPossibleValues { get; private set; }
 
     bool ICollection<RangeItem>.IsReadOnly => throw new NotImplementedException();
