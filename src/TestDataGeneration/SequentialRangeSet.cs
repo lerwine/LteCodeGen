@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Numerics;
 using static TestDataGeneration.SequentialRangeSet;
 
 namespace TestDataGeneration;
@@ -9,16 +10,11 @@ namespace TestDataGeneration;
 /// <typeparam name="T">The value type.</typeparam>
 /// <remarks>In this class, ranges cannot overlap, and one range will never immediately follow another. Adjacent ranges will be joined as a single range.</remarks>
 public partial class SequentialRangeSet<T> : LinkedCollectionBase<SequentialRangeSet<T>.RangeItem>, ICollection<SequentialRangeSet<T>.RangeItem>, IReadOnlyList<SequentialRangeSet<T>.RangeItem>
-    where T : struct
+    where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
 {
     private const string ErrorMessage_SequentialRangeSetChanged = $"{nameof(SequentialRangeSet<T>)} has changed.";
 
     RangeItem IReadOnlyList<RangeItem>.this[int index] => GetItemAt(index, this);
-
-    /// <summary>
-    /// Gets the object that is used to compare and manipulate values of type <typeparamref name="T"/>.
-    /// </summary>
-    public IRangeEvaluator<T> RangeEvaluator { get; }
 
     /// <summary>
     /// Gets a value indicating whether this range contains all possible values.
@@ -27,16 +23,6 @@ public partial class SequentialRangeSet<T> : LinkedCollectionBase<SequentialRang
     public bool ContainsAllPossibleValues { get; private set; }
 
     bool ICollection<RangeItem>.IsReadOnly => throw new NotImplementedException();
-
-    /// <summary>
-    /// Initializes a new <c>SequentialRangeSet</c> object.
-    /// </summary>
-    /// <param name="rangeEvaluator">The object that is used to compare and manipulate values of type <typeparamref name="T"/>.</param>
-    public SequentialRangeSet(IRangeEvaluator<T> rangeEvaluator)
-    {
-        ArgumentNullException.ThrowIfNull(rangeEvaluator);
-        RangeEvaluator = rangeEvaluator;
-    }
 
     /// <summary>
     /// Adds a value to the range collection.

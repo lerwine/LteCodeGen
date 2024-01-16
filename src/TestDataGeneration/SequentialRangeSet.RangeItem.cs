@@ -2,6 +2,7 @@ using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using static TestDataGeneration.SequentialRangeSet;
 
 namespace TestDataGeneration;
 
@@ -10,7 +11,7 @@ public partial class SequentialRangeSet<T>
     /// <summary>
     /// A linked node for a value range.
     /// </summary>
-    public class RangeItem : LinkedCollectionBase<RangeItem>.LinkedNode, IValueRange<T>, IReadOnlyCollection<T>, ICollection, IHasChangeToken
+    public class RangeItem : LinkedCollectionBase<RangeItem>.LinkedNode, IRangeExtents<T>, IReadOnlyCollection<T>, ICollection, IHasChangeToken
     {
         #region Fields
 
@@ -18,8 +19,6 @@ public partial class SequentialRangeSet<T>
 
         private object _beforeChangeToken = new();
         private object _changeToken = new();
-
-        private IRangeEvaluator<T> _evaluator;
 
         #endregion
 
@@ -39,19 +38,15 @@ public partial class SequentialRangeSet<T>
 
         public bool IsMaxRange { get; private set; }
 
-        /// <summary>
-        /// Returns a value indicating whether the range has only one value.
-        /// </summary>
-        /// <value><see langword="true"/> if <see cref="Start"/> is equal to <see cref="End"/>; otherwise, <see langword="false"/>.</value>
-        public bool IsSingleValue { get; private set; }
+        public bool IsMultiValue { get; private set; }
 
         #region Explicit Properties
 
         object IHasChangeToken.ChangeToken => _changeToken;
 
-        int IReadOnlyCollection<T>.Count => (int)_evaluator.GetLongCountInRange(Start, End);
+        int IReadOnlyCollection<T>.Count => (int)SequentialRangeSet.GetCount(this);
 
-        int ICollection.Count => (int)_evaluator.GetLongCountInRange(Start, End);
+        int ICollection.Count => (int)SequentialRangeSet.GetCount(this);
 
         bool ICollection.IsSynchronized => true;
 
@@ -71,10 +66,9 @@ public partial class SequentialRangeSet<T>
         public RangeItem(RangeItem copyFrom)
         {
             ArgumentNullException.ThrowIfNull(copyFrom);
-            _evaluator = copyFrom._evaluator;
             Start = copyFrom.Start;
             End = copyFrom.End;
-            IsSingleValue = copyFrom.IsSingleValue;
+            IsMultiValue = copyFrom.IsMultiValue;
             IsMaxRange = copyFrom.IsMaxRange;
         }
 
@@ -83,17 +77,15 @@ public partial class SequentialRangeSet<T>
         /// </summary>
         /// <param name="start">The inclusive range start value.</param>
         /// <param name="end">The inclusive range end value.</param>
-        /// <param name="evaluator">The object used to test and manipulate <typeparamref name="T"/> values.</param>
         /// <exception cref="ArgumentNullException"><paramref name="evaluator"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="start"/> is greater than <paramref name="end"/>.</exception>
-        public RangeItem(T start, T end, IRangeEvaluator<T> evaluator)
+        public RangeItem(T start, T end)
         {
-            ArgumentNullException.ThrowIfNull(evaluator);
-            if (!(_evaluator = evaluator).IsValidRange(start, end, out bool isSingleValue, out bool isMaxRange))
+            if (!start.IsValidStartFrom(end, out bool isMultiValue, out bool isMaxRange))
                 throw new ArgumentOutOfRangeException(nameof(start), $"The {nameof(start)} range value cannot be greater than the {nameof(end)} value.");
             Start = start;
             End = end;
-            IsSingleValue = isSingleValue;
+            IsMultiValue = isMultiValue;
             IsMaxRange = isMaxRange;
         }
 
@@ -103,20 +95,17 @@ public partial class SequentialRangeSet<T>
         /// <param name="value">The single value for the value range.</param>
         /// <param name="evaluator">The object used to test and manipulate <typeparamref name="T"/> values.</param>
         /// <exception cref="ArgumentNullException"><paramref name="evaluator"/> is <see langword="null"/>.</exception>
-        public RangeItem(T value, IRangeEvaluator<T> evaluator)
+        public RangeItem(T value)
         {
-            ArgumentNullException.ThrowIfNull(evaluator);
-            _evaluator = evaluator;
             Start = End = value;
-            IsSingleValue = true;
+            IsMultiValue = false;
         }
 
-        private RangeItem(T start, T end, bool isSingleValue, bool isMaxRange, IRangeEvaluator<T> evaluator)
+        private RangeItem(T start, T end, bool isMultiValue, bool isMaxRange)
         {
-            _evaluator = evaluator;
             Start = start;
             End = end;
-            IsSingleValue = isSingleValue;
+            IsMultiValue = isMultiValue;
             IsMaxRange = isMaxRange;
         }
 
@@ -134,18 +123,17 @@ public partial class SequentialRangeSet<T>
         internal static void Add(RangeItem item, SequentialRangeSet<T> owner)
         {
             var node = owner.First;
-            if (node is null || owner.RangeEvaluator.Compare(item.End, node.Start) < 0)
+            if (node is null || item.End < node.Start)
                 owner.AddFirst(item);
             else
             {
                 var start = item.Start;
-                var evaluator = owner.RangeEvaluator;
                 do
                 {
                     // c..g
                     // o..q
                     // m
-                    if (evaluator.Compare(start, node.Start) < 0)
+                    if (start < node.Start)
                     {
                         owner.InsertBefore(item, node);
                         return;
@@ -159,33 +147,32 @@ public partial class SequentialRangeSet<T>
 
         internal static bool Add(T start, T end, SequentialRangeSet<T> owner)
         {
-            var evaluator = owner.RangeEvaluator;
-            if (!evaluator.IsValidRange(start, end, out bool isSingleValue, out bool isMaxRange)) return false;
+            if (start.IsValidStartFrom(end, out bool isMultiValue, out bool isMaxRange)) return false;
             var previous = owner.First;
             if (previous is null)
             {
-                owner.AddLast(new RangeItem(start, end, isSingleValue, isMaxRange, evaluator));
+                owner.AddLast(new RangeItem(start, end, isMultiValue, isMaxRange));
                 return true; 
             }
             if (isMaxRange || previous.IsMaxRange) return false;
             var next = previous.Next;
-            var startDisposition = evaluator.GetRangeDisposition(start, previous);
+            var startDisposition = previous.GetDispositionOf(start);
             while (startDisposition == SequentialComparisonResult.FollowsWithGap)
             {
                 if (next is null)
                 {
-                    owner.AddLast(new RangeItem(start, end, isSingleValue, isMaxRange, evaluator));
+                    owner.AddLast(new RangeItem(start, end, isMultiValue, isMaxRange));
                     return true; 
                 }
                 next = (previous = next).Next;
-                startDisposition = evaluator.GetRangeDisposition(start, previous);
+                startDisposition = previous.GetDispositionOf(start);
             }
-            if (isSingleValue)
+            if (!isMultiValue)
             {
                 switch (startDisposition)
                 {
                     case SequentialComparisonResult.PrecedesWithGap:
-                        owner.InsertBefore(new RangeItem(start, evaluator), previous);
+                        owner.InsertBefore(new RangeItem(start), previous);
                         break;
                     case SequentialComparisonResult.ImmediatelyPrecedes:
                         previous.SetStart(start);
@@ -198,11 +185,11 @@ public partial class SequentialRangeSet<T>
                 }
                 return true;
             }
-            var endDisposition = evaluator.GetRangeDisposition(end, previous);
+            var endDisposition = previous.GetDispositionOf(end);
             switch (endDisposition)
             {
                 case SequentialComparisonResult.PrecedesWithGap:
-                    owner.InsertBefore(new RangeItem(start, end, isSingleValue, isMaxRange, evaluator), previous);
+                    owner.InsertBefore(new RangeItem(start, end, isMultiValue, isMaxRange), previous);
                     return true;
                 case SequentialComparisonResult.ImmediatelyPrecedes:
                     previous.SetStart(start);
@@ -222,7 +209,7 @@ public partial class SequentialRangeSet<T>
                     {
                         case SequentialComparisonResult.PrecedesWithGap:
                         case SequentialComparisonResult.ImmediatelyPrecedes:
-                            if (next is null || evaluator.IsValidPrecedingRangeEnd(end, next.Start))
+                            if (next is null || end.IsValidPrecedingRangeEnd(next.Start))
                                 previous.SetRange(start, end);
                             else
                             {
@@ -231,7 +218,7 @@ public partial class SequentialRangeSet<T>
                             }
                             break;
                         default:
-                            if (next is null || evaluator.IsValidPrecedingRangeEnd(end, next.Start))
+                            if (next is null || end.IsValidPrecedingRangeEnd(next.Start))
                                 previous.SetEnd(end);
                             else
                                 previous.MergeWithNext();
@@ -252,10 +239,10 @@ public partial class SequentialRangeSet<T>
             previous.MergeWithNext();
             while ((next = previous.Next) is not null)
             {
-                switch (evaluator.GetRangeDisposition(end, next))
+                switch (next.GetDispositionOf(end))
                 {
                     case SequentialComparisonResult.ImmediatelyFollows:
-                        if (next.Next is null || evaluator.IsValidPrecedingRangeEnd(end, next.Next.Start))
+                        if (next.Next is null || end.IsValidPrecedingRangeEnd(next.Next.Start))
                             previous.SetEnd(end);
                         else
                             previous.MergeWithNext();
@@ -273,35 +260,34 @@ public partial class SequentialRangeSet<T>
 
         internal static bool Add(T value, SequentialRangeSet<T> owner)
         {
-            var evaluator = owner.RangeEvaluator;
             var item = owner.First;
             if (item is null)
             {
-                owner.AddFirst(new RangeItem(value, evaluator));
+                owner.AddFirst(new RangeItem(value));
                 return true;
             }
             
-            var startDisposition = evaluator.GetRangeDisposition(value, item);
+            var startDisposition = item.GetDispositionOf(value);
             while (startDisposition == SequentialComparisonResult.FollowsWithGap)
             {
                 if (item.Next is null)
                 {
-                    owner.InsertAfter(new RangeItem(value, evaluator), item);
+                    owner.InsertAfter(new RangeItem(value), item);
                     return true;
                 }
                 item = item.Next;
-                startDisposition = evaluator.GetRangeDisposition(value, item);
+                startDisposition = item.GetDispositionOf(value);
             }
             switch (startDisposition)
             {
                 case SequentialComparisonResult.PrecedesWithGap:
-                    owner.InsertBefore(new RangeItem(value, evaluator), item);
+                    owner.InsertBefore(new RangeItem(value), item);
                     break;
                 case SequentialComparisonResult.ImmediatelyPrecedes:
                     item.SetStart(value);
                     break;
                 case SequentialComparisonResult.ImmediatelyFollows:
-                    if (item.Next is null || evaluator.IsValidPrecedingRangeEnd(value, item.Next.Start))
+                    if (item.Next is null || value.IsValidPrecedingRangeEnd(item.Next.Start))
                         item.SetEnd(value);
                     else
                         item.MergeWithNext();
@@ -316,49 +302,34 @@ public partial class SequentialRangeSet<T>
         {
             base.AssertCanInsert(after, before, linkedCollection);
             if (linkedCollection is not SequentialRangeSet<T> owner) return;
-            var evaluator = owner.RangeEvaluator;
             if (after is not null)
-                evaluator.AssertCanInsert(after.End, Start);
+                after.End.AssertCanInsertAfter(Start);
             if (before is not null)
-                evaluator.AssertCanInsert(End, before.Start);
-            if (!ReferenceEquals(_evaluator, evaluator))
-            {
-                if (!evaluator.IsValidRange(Start, End, out bool isSingleValue, out bool isMaxRange))
-                    throw new InvalidOperationException($"The range {nameof(Start)} value cannot be greater than the {nameof(End)} value.");
-                if (IsSingleValue != isSingleValue || IsMaxRange != isMaxRange)
-                {
-                    IsSingleValue = isSingleValue;
-                    IsMaxRange = isMaxRange;
-                    _changeToken = new();
-                }
-                _evaluator = evaluator;
-            }
+                End.AssertCanInsertBefore(before.Start);
             if (linkedCollection is SequentialRangeSet<T> rangeSet)
                 rangeSet.ContainsAllPossibleValues = before is null && after is null && IsMaxRange;
         }
 
         internal static bool Contains(T start, T end, SequentialRangeSet<T> rangeSet)
         {
-            var evaluator = rangeSet.RangeEvaluator;
-            var diff = evaluator.Compare(start, end);
+            var diff = start.CompareTo(end);
             if (diff > 0) return false;
             if (rangeSet.ContainsAllPossibleValues) return true;
             if (diff == 0) return Contains(start, rangeSet);
             foreach (var item in rangeSet.GetAllNodes())
-                if (evaluator.Compare(start, item.Start) >= 0) return evaluator.Compare(end, item.End) <= 0;
+                if (start.CompareTo(item.Start) >= 0) return end.CompareTo(item.End) <= 0;
             return false;
         }
 
         internal static bool Contains(T value, SequentialRangeSet<T> rangeSet)
         {
             if (rangeSet.ContainsAllPossibleValues) return true;
-            var evaluator = rangeSet.RangeEvaluator;
             foreach (var item in rangeSet.GetAllNodes())
             {
-                int diff = evaluator.Compare(value, item.Start);
+                int diff = value.CompareTo(item.Start);
                 if (diff == 0) return true;
                 if (diff < 0) return false;
-                if (evaluator.Compare(value, item.End) <= 0) return true;
+                if (value.CompareTo(item.End) <= 0) return true;
             }
             return false;
         }
@@ -370,12 +341,11 @@ public partial class SequentialRangeSet<T>
             {
                 if (item.Owner is null || !ReferenceEquals(item.Owner, rangeSet)) return false;
                 if (rangeSet.ContainsAllPossibleValues) return true;
-                var evaluator = rangeSet.RangeEvaluator;
                 foreach (var range in rangeSet.GetAllNodes())
                 {
-                    int diff = evaluator.Compare(item.Start, range.Start);
+                    int diff = item.Start.CompareTo(range.Start);
                     if (diff < 0) return false;
-                    if (diff == 0) return evaluator.AreEqual(item.End, range.End);
+                    if (diff == 0) return item.End.Equals(range.End);
                 }
             }
             finally { Monitor.Exit(item.SyncRoot); }
@@ -385,12 +355,11 @@ public partial class SequentialRangeSet<T>
         internal static int IndexOf(RangeItem value, SequentialRangeSet<T> rangeSet)
         {
             int index = 0;
-            var evaluator = rangeSet.RangeEvaluator;
             foreach (var item in rangeSet.GetAllNodes())
             {
-                int diff = evaluator.Compare(value.Start, item.Start);
+                int diff = value.Start.CompareTo(item.Start);
                 if (diff < 0) return -1;
-                if (diff == 0) return evaluator.AreEqual(value.End, item.End) ? index : -1;
+                if (diff == 0) return value.End.Equals(item.End) ? index : -1;
                 index++;
             }
             return -1;
@@ -399,29 +368,29 @@ public partial class SequentialRangeSet<T>
         internal static bool Remove(T value, SequentialRangeSet<T> rangeSet)
         {
             var item = rangeSet.First;
-            var evaluator = rangeSet.RangeEvaluator;
             while (item is not null)
             {
-                int diff = evaluator.Compare(value, item.Start);
+                int diff = value.CompareTo(item.Start);
                 if (diff < 0) return false;
                 if (diff == 0)
                 {
-                    if (item.IsSingleValue)
-                        Unlink(item, rangeSet);
+                    if (item.IsMultiValue)
+                        item.SetStart(++value);
                     else
-                        item.SetStart(evaluator.GetIncrementedValue(value));
+                        Unlink(item, rangeSet);
                     return true;
                 }
-                if ((diff = evaluator.Compare(value, item.End)) < 0)
+                if ((diff = value.CompareTo(item.End)) < 0)
                 {
                     var end = item.End;
-                    item.SetEnd(evaluator.GetDecrementedValue(value));
-                    rangeSet.InsertAfter(new RangeItem(evaluator.GetIncrementedValue(value), end, evaluator), item);
+                    var vMinus1 = value;
+                    item.SetEnd(--vMinus1);
+                    rangeSet.InsertAfter(new RangeItem(++value, end), item);
                     return true;
                 }
                 else if (diff == 0)
                 {
-                    item.SetEnd(evaluator.GetDecrementedValue(value));
+                    item.SetEnd(--value);
                     return true;
                 }
                 item = item.Next;
@@ -431,18 +400,17 @@ public partial class SequentialRangeSet<T>
 
         internal static bool Remove(T start, T end, SequentialRangeSet<T> rangeSet)
         {
-            var evaluator = rangeSet.RangeEvaluator;
             var item = rangeSet.First;
-            if (item is null || !evaluator.IsValidRange(start, end, out bool isSingleValue, out bool isMaxRange)) return false;
+            if (item is null || !start.IsValidStartFrom(end, out bool isMultiValue, out bool isMaxRange)) return false;
             if (isMaxRange)
             {
                 Clear(rangeSet);
                 return true;
             }
-            if (isSingleValue) return Remove(start, rangeSet);
+            if (!isMultiValue) return Remove(start, rangeSet);
             
             int diff;
-            while ((diff = evaluator.Compare(start, item.End)) > 0)
+            while ((diff = start.CompareTo(item.End)) > 0)
             {
                 item = item.Next;
                 if (item is null) return false;
@@ -450,39 +418,39 @@ public partial class SequentialRangeSet<T>
             if (diff == 0)
             {
                 // start == item.End
-                if (item.IsSingleValue)
+                if (item.IsMultiValue)
+                {
+                    item.SetEnd(--start);
+                    item = item.Next;
+                }
+                else
                 {
                     var next = item.Next;
                     item.Unlink();
                     item = next;
                 }
-                else
-                {
-                    item.SetEnd(evaluator.GetDecrementedValue(start));
-                    item = item.Next;
-                }
             }
-            else if (evaluator.Compare(start, item.Start) > 0)
+            else if (start.CompareTo(item.Start) > 0)
             {
                 var oldEnd = item.End;
-                item.SetEnd(evaluator.GetDecrementedValue(start));
-                if (evaluator.Compare(end, oldEnd) < 0)
+                item.SetEnd(--start);
+                if (end.CompareTo(oldEnd) < 0)
                 {
-                    InsertAfter(new RangeItem(evaluator.GetIncrementedValue(end), oldEnd, evaluator), item, rangeSet);
+                    InsertAfter(new RangeItem(++end, oldEnd), item, rangeSet);
                     return true;
                 }
                 item = item.Next;
             }
             else
             {
-                if ((diff = evaluator.Compare(end, item.End)) == 0)
+                if ((diff = end.CompareTo(item.End)) == 0)
                 {
                     item.Unlink();
                     return true;
                 }
                 if (diff < 0)
                 {
-                    item.SetStart(evaluator.GetIncrementedValue(end));
+                    item.SetStart(++end);
                     return true;
                 }
                 var next = item.Next;
@@ -490,7 +458,7 @@ public partial class SequentialRangeSet<T>
                 item = next;
             }
             if (item is null) return true;
-            while ((diff = evaluator.Compare(end, item.End)) > 0)
+            while ((diff = end.CompareTo(item.End)) > 0)
             {
                 var next = item.Next;
                 item.Unlink();
@@ -499,8 +467,8 @@ public partial class SequentialRangeSet<T>
             }
             if (diff == 0)
                 item.Unlink();
-            else if (evaluator.Compare(end, item.Start) >= 0)
-                item.SetStart(evaluator.GetIncrementedValue(end));
+            else if (end.CompareTo(item.Start) >= 0)
+                item.SetStart(++end);
             return true;
         }
 
@@ -510,22 +478,17 @@ public partial class SequentialRangeSet<T>
 
         internal IEnumerable<T> GetValues()
         {
-            IRangeEvaluator<T> evaluator;
             object changeToken;
             Monitor.Enter(SyncRoot);
-            try
-            {
-                evaluator = _evaluator;
-                changeToken = _changeToken;
-            }
+            try { changeToken = _changeToken; }
             finally { Monitor.Exit(SyncRoot); }
             if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
             var value = Start;
             yield return value;
-            while (evaluator.Compare(value, End) < 0)
+            while (value.CompareTo(End) < 0)
             {
                 if (!ReferenceEquals(changeToken, _changeToken)) throw new InvalidOperationException("Collection has changed.");
-                value = evaluator.GetIncrementedValue(value);
+                value++;
                 yield return value;
             }
         }
@@ -537,20 +500,20 @@ public partial class SequentialRangeSet<T>
             Unlink(Next, Owner!);
             _changeToken = new();
             End = end;
-            IsSingleValue = false;
-            IsMaxRange = _evaluator.AreEqual(Start, _evaluator.MinValue) && _evaluator.AreEqual(end, _evaluator.MaxValue);
+            IsMultiValue = true;
+            IsMaxRange = Start.Equals(T.MinValue) && end.Equals(T.MaxValue);
             if (Owner is SequentialRangeSet<T> owner) owner.ContainsAllPossibleValues = IsMaxRange;
         }
 
         private void SetEnd(T end)
         {
-            if (_evaluator.AreEqual(end, End)) return;
-            bool isSingleValue = _evaluator.AssertValidRange(Start, end);
-            if (Next is not null) _evaluator.AssertCanInsert(end, Next.Start);
+            if (end.Equals(End)) return;
+            bool isMultiValue = Start.AssertLessThanOrEquals(end);
+            if (Next is not null) end.AssertCanInsertBefore(Next.Start);
             _changeToken = new();
             End = end;
-            IsSingleValue = isSingleValue;
-            IsMaxRange = !isSingleValue && _evaluator.AreEqual(Start, _evaluator.MinValue) && _evaluator.AreEqual(end, _evaluator.MaxValue);
+            IsMultiValue = isMultiValue;
+            IsMaxRange = isMultiValue && Start.Equals(T.MinValue) && end.Equals(T.MaxValue);
             if (Owner is SequentialRangeSet<T> owner)
             {
                 owner.SetChanged();
@@ -560,15 +523,15 @@ public partial class SequentialRangeSet<T>
 
         private void SetRange(T start, T end)
         {
-            if (_evaluator.AreEqual(start, Start) && _evaluator.AreEqual(end, End)) return;
-            bool isSingleValue = _evaluator.AssertValidRange(start, end);
-            if (Next is not null) _evaluator.AssertCanInsert(end, Next.Start);
-            if (Previous is not null) _evaluator.AssertCanInsert(Previous.End, start);
+            if (start.Equals(Start) && end.Equals(End)) return;
+            bool isMultiValue = start.AssertLessThanOrEquals(end);
+            if (Next is not null) end.AssertCanInsertBefore(Next.Start);
+            if (Previous is not null) start.AssertCanInsertAfter(Previous.End);
             _changeToken = new();
             Start = start;
             End = end;
-            IsSingleValue = isSingleValue;
-            IsMaxRange = !isSingleValue && _evaluator.AreEqual(start, _evaluator.MinValue) && _evaluator.AreEqual(end, _evaluator.MaxValue);
+            IsMultiValue = isMultiValue;
+            IsMaxRange = isMultiValue && start.Equals(T.MinValue) && end.Equals(T.MaxValue);
             if (Owner is SequentialRangeSet<T> owner)
             {
                 owner.SetChanged();
@@ -578,13 +541,13 @@ public partial class SequentialRangeSet<T>
 
         private void SetStart(T start)
         {
-            if (_evaluator.AreEqual(start, Start)) return;
-            bool isSingleValue = _evaluator.AssertValidRange(start, End);
-            if (Previous is not null) _evaluator.AssertCanInsert(Previous.End, start);
+            if (start.Equals(Start)) return;
+            bool isMultiValue = start.AssertLessThanOrEquals(End);
+            if (Previous is not null) start.AssertCanInsertAfter(Previous.End);
             _changeToken = new();
             Start = start;
-            IsSingleValue = isSingleValue;
-            IsMaxRange = !isSingleValue && _evaluator.AreEqual(start, _evaluator.MinValue) && _evaluator.AreEqual(End, _evaluator.MaxValue);
+            IsMultiValue = isMultiValue;
+            IsMaxRange = isMultiValue && start.Equals(T.MinValue) && End.Equals(T.MaxValue);
             if (Owner is SequentialRangeSet<T> owner)
             {
                 owner.SetChanged();
@@ -597,18 +560,23 @@ public partial class SequentialRangeSet<T>
             next = Next;
             if (next is not null)
             {
-                start = _evaluator.GetIncrementedValue(End);
-                if (_evaluator.IsValidPrecedingRangeEnd(start, next.Start))
+                start = End;
+                start++;
+                if (start.IsValidPrecedingRangeEnd(next.Start))
                 {
-                    end = _evaluator.GetDecrementedValue(next.Start, 2);
+                    end = next.Start;
+                    end--;
+                    end--;
                     return true;
                 }
                 return next.TryGetNextAvailableRange(out start, out end, out next);
             }
-            if (_evaluator.IsValidPrecedingRangeEnd(End, _evaluator.MaxValue))
+            if (End.IsValidPrecedingRangeEnd(T.MaxValue))
             {
-                start = _evaluator.GetIncrementedValue(End, 2);
-                end = _evaluator.MaxValue;
+                start = End;
+                start++;
+                start++;
+                end = T.MaxValue;
                 return true;
             }
             start = Start;
@@ -620,36 +588,22 @@ public partial class SequentialRangeSet<T>
 
         #region Public Instance Methods
 
-        public bool Contains(T value) => _evaluator.IsInRange(value, Start, End);
+        public bool Contains(T value) => value.IsIncludedInExtents(Start, End);
 
         public bool Contains(T start, T end)
         {
-            var diff = _evaluator.Compare(start, end);
+            var diff = start.CompareTo(end);
             if (diff > 0) return false;
-            if (diff == 0) return IsSingleValue ? _evaluator.AreEqual(start, Start) : _evaluator.IsInRange(start, Start, End);
-            return IsSingleValue ? _evaluator.IsInRange(Start, start, end) :
-                (diff = _evaluator.Compare(start, Start)) == 0 || (diff > 0 && _evaluator.Compare(end, End) <= 0);
+            if (!IsMultiValue) return diff == 0 && start.Equals(Start);
+            if (diff == 0) return (diff = start.CompareTo(Start)) == 0 || (diff > 0 && start <= End);
+            return start >= Start && end <= End;
         }
 
         void ICollection.CopyTo(Array array, int index) => GetValues().ToArray().CopyTo(array, index);
 
-        public bool Equals(T value) => IsSingleValue && _evaluator.AreEqual(value, Start);
+        public bool Equals(IRangeExtents<T>? other) => other is not null && other.Start.Equals(Start) && other.End.Equals(End);
 
-        public bool Equals(IValueRange<T>? other) => other is not null && _evaluator.AreEqual(other.Start, Start) && _evaluator.AreEqual(other.End, End);
-
-        public bool Equals(T start, T end) => _evaluator.AreEqual(start, Start) && _evaluator.AreEqual(end, End);
-
-        public override bool Equals([NotNullWhen(true)] object? obj) => obj is not null && ((obj is IValueRange<T> other) ? Equals(other) : obj is T value && Equals(value));
-
-        public bool Follows(T value) => _evaluator.Compare(value, Start) < 0;
-
-        public bool Follows(IValueRange<T> item) => item is not null && _evaluator.Compare(item.End, Start) < 0;
-
-        public bool FollowsWithGap(T value) => _evaluator.IsValidPrecedingRangeEnd(value, Start);
-
-        public bool FollowsWithGap(IValueRange<T> item) => item is not null && _evaluator.IsValidPrecedingRangeEnd(item.End, Start);
-
-        public ulong GetCount() => IsSingleValue ? 1UL : IsMaxRange ? 0UL : _evaluator.GetLongCountInRange(Start, End);
+        public override bool Equals([NotNullWhen(true)] object? obj) => obj is not null && ((obj is IRangeExtents<T> other) ? Equals(other) : obj is T value && Equals(value));
 
         public override int GetHashCode() => HashCode.Combine(Start, End);
 
@@ -657,36 +611,7 @@ public partial class SequentialRangeSet<T>
 
         IEnumerator IEnumerable.GetEnumerator() => GetValues().GetEnumerator();
 
-        public bool ImmediatelyFollows(T value) => _evaluator.IsSequentiallyAdjacent(value, Start);
-
-        public bool ImmediatelyFollows(IValueRange<T> item) => item is not null && _evaluator.IsSequentiallyAdjacent(item.End, Start);
-
-        public bool ImmediatelyPrecedes(T value) => _evaluator.IsSequentiallyAdjacent(End, value);
-
-        public bool ImmediatelyPrecedes(IValueRange<T> item) => item is not null && _evaluator.IsSequentiallyAdjacent(End, item.Start);
-
-        public bool Overlaps(T start, T end)
-        {
-            int diff = _evaluator.Compare(start, End);
-            return diff == 0 || (diff < 0 && _evaluator.Compare(end, Start) >= 0);
-        }
-
-        public bool Overlaps(IValueRange<T> item)
-        {
-            if (item is null) return false;
-            int diff = _evaluator.Compare(item.Start, End);
-            return diff == 0 || (diff < 0 && _evaluator.Compare(item.End, Start) >= 0);
-        }
-
-        public bool Precedes(T value) => _evaluator.Compare(value, End) > 0;
-
-        public bool Precedes(IValueRange<T> item) => item is not null && _evaluator.Compare(item.Start, End) > 0;
-
-        public bool PrecedesWithGap(T value) => _evaluator.IsValidPrecedingRangeEnd(End, value);
-
-        public bool PrecedesWithGap(IValueRange<T> item) => item is not null && _evaluator.IsValidPrecedingRangeEnd(End, item.Start);
-
-        public override string ToString() => IsSingleValue ? $"[{Start}]" : $"[{Start}..{End}]";
+        public override string ToString() => IsMultiValue ? $"[{Start}..{End}]" : $"[{Start}]";
 
         #endregion
     }

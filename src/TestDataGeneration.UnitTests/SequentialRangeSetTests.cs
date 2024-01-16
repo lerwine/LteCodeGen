@@ -13,7 +13,7 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void AddValueTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         Assert.That(target.ContainsAllPossibleValues, Is.False);
         var value_x = 'x';
         var changeToken = ((IHasChangeToken)target).ChangeToken;
@@ -353,7 +353,7 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void AddRangeValuesTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         var changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.Multiple(() =>
         {
@@ -942,10 +942,10 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void AddRangeItemTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         var item_l_p_start = 'l';
         var item_l_p_end = 'p';
-        var item_l_p = new SequentialRangeSet<char>.RangeItem(item_l_p_start, item_l_p_end, SequentialRangeSet.Char);
+        var item_l_p = new SequentialRangeSet<char>.RangeItem(item_l_p_start, item_l_p_end);
         var changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
         target.Add(item_l_p);
@@ -974,7 +974,7 @@ public class SequentialRangeSetTests
 
         var item_L_P_start = 'L';
         var item_L_P_end = 'P';
-        var item_L_P = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end, SequentialRangeSet.Char);
+        var item_L_P = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end);
         target.Add(item_L_P);
         Assert.Multiple(() =>
         {
@@ -1009,7 +1009,7 @@ public class SequentialRangeSetTests
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
 
-        var cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end, SequentialRangeSet.Char);
+        var cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_start, item_L_P_end);
         Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
         Assert.Multiple(() =>
         {
@@ -1048,7 +1048,7 @@ public class SequentialRangeSetTests
             Assert.That(cannot_add.Owner, Is.Null);
         });
         
-        cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_end, item_l_p_start, SequentialRangeSet.Char);
+        cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_end, item_l_p_start);
         Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
         Assert.Multiple(() =>
         {
@@ -1088,7 +1088,7 @@ public class SequentialRangeSetTests
         });
         
         var c = 'q';
-        cannot_add = new SequentialRangeSet<char>.RangeItem(item_l_p_start, c, SequentialRangeSet.Char);
+        cannot_add = new SequentialRangeSet<char>.RangeItem(item_l_p_start, c);
         Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
         Assert.Multiple(() =>
         {
@@ -1128,7 +1128,7 @@ public class SequentialRangeSetTests
         });
 
         c = 'K';
-        cannot_add = new SequentialRangeSet<char>.RangeItem(c, c, SequentialRangeSet.Char);
+        cannot_add = new SequentialRangeSet<char>.RangeItem(c, c);
         Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
         Assert.Multiple(() =>
         {
@@ -1172,7 +1172,7 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void ClearTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet
+        var target = new SequentialRangeSet<char>
         {
             { 'a', 'f' },
             'm',
@@ -1268,7 +1268,7 @@ public class SequentialRangeSetTests
         var contains_x = 'x';
         var end_y = 'y';
         var not_contains_z = 'z';
-        var target = new SequentialRangeSet.CharRangeSet
+        var target = new SequentialRangeSet<char>
         {
             { start_C, end_G },
             value_m,
@@ -1314,13 +1314,13 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void ContainsItemTest()
     {
-        var item_c_g = new SequentialRangeSet<char>.RangeItem(start: 'c', end: 'g', SequentialRangeSet.Char);
-        var item_m = new SequentialRangeSet<char>.RangeItem(value: 'm', SequentialRangeSet.Char);
-        var item_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q', SequentialRangeSet.Char);
-        var duplicate_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q', SequentialRangeSet.Char);
-        var item_s_t = new SequentialRangeSet<char>.RangeItem(start: 's', end: 't', SequentialRangeSet.Char);
+        var item_c_g = new SequentialRangeSet<char>.RangeItem(start: 'c', end: 'g');
+        var item_m = new SequentialRangeSet<char>.RangeItem(value: 'm');
+        var item_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q');
+        var duplicate_o_q = new SequentialRangeSet<char>.RangeItem(start: 'o', end: 'q');
+        var item_s_t = new SequentialRangeSet<char>.RangeItem(start: 's', end: 't');
 
-        var target = new SequentialRangeSet.CharRangeSet
+        var target = new SequentialRangeSet<char>
         {
             item_c_g,
             item_m,
@@ -1341,7 +1341,7 @@ public class SequentialRangeSetTests
         actual = target.Contains(item_s_t);
         Assert.That(actual, Is.True);
 
-        target = new SequentialRangeSet.CharRangeSet();
+        target = new SequentialRangeSet<char>();
         actual = target.Contains(item_c_g);
         Assert.That(actual, Is.False);
     }
@@ -1350,11 +1350,11 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void CountTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         var actual = target.Count();
         Assert.That(actual, Is.EqualTo(0));
 
-        target = new SequentialRangeSet.CharRangeSet
+        target = new SequentialRangeSet<char>
         {
             { 'a', 'f' },
             'm',
@@ -1368,12 +1368,12 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void GetAllValuesTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         var actual = target.GetAllValues();
         Assert.That(actual, Is.Not.Null);
         Assert.That(actual.Any(), Is.False);
 
-        target = new SequentialRangeSet.CharRangeSet
+        target = new SequentialRangeSet<char>
         {
             { 'a', 'f' },
             'm',
@@ -1389,7 +1389,7 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void GetEnumeratorTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         var actual = target.GetEnumerator();
         Assert.That(actual, Is.Not.Null);
         using (actual)
@@ -1400,7 +1400,7 @@ public class SequentialRangeSetTests
         var second_value = 'm';
         var third_start = 'p';
         var third_end = 's';
-        target = new SequentialRangeSet.CharRangeSet
+        target = new SequentialRangeSet<char>
         {
             { first_start, first_end },
             second_value,
@@ -1477,7 +1477,7 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void RemoveValueTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         Assert.Multiple(() =>
         {
             Assert.That(target.First, Is.Null);
@@ -1517,7 +1517,7 @@ public class SequentialRangeSetTests
             Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
         });
 
-        target = new SequentialRangeSet.CharRangeSet
+        target = new SequentialRangeSet<char>
         {
             { char.MinValue, char.MaxValue }
         };
@@ -1995,7 +1995,7 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void RemoveRangeValuesTest()
     {
-        var target = new SequentialRangeSet.CharRangeSet();
+        var target = new SequentialRangeSet<char>();
         Assert.Multiple(() =>
         {
             Assert.That(target.First, Is.Null);
@@ -2025,7 +2025,7 @@ public class SequentialRangeSetTests
             Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
         });
 
-        target = new SequentialRangeSet.CharRangeSet
+        target = new SequentialRangeSet<char>
         {
             { char.MinValue, char.MaxValue }
         };
@@ -2233,11 +2233,11 @@ public class SequentialRangeSetTests
     [MaxTime(2000)]
     public void RemoveItemTest()
     {
-        var item_a_g = new SequentialRangeSet<char>.RangeItem('a', 'g', SequentialRangeSet.Char);
-        var item_i_k = new SequentialRangeSet<char>.RangeItem('i', 'k', SequentialRangeSet.Char);
-        var item_m_n = new SequentialRangeSet<char>.RangeItem('m', 'n', SequentialRangeSet.Char);
-        var item_p_z = new SequentialRangeSet<char>.RangeItem('p', 'z', SequentialRangeSet.Char);
-        var target = new SequentialRangeSet.CharRangeSet();
+        var item_a_g = new SequentialRangeSet<char>.RangeItem('a', 'g');
+        var item_i_k = new SequentialRangeSet<char>.RangeItem('i', 'k');
+        var item_m_n = new SequentialRangeSet<char>.RangeItem('m', 'n');
+        var item_p_z = new SequentialRangeSet<char>.RangeItem('p', 'z');
+        var target = new SequentialRangeSet<char>();
         Assert.Multiple(() =>
         {
             Assert.That(target.First, Is.Null);
@@ -2255,7 +2255,7 @@ public class SequentialRangeSetTests
             Assert.That(((IHasChangeToken)target).ChangeToken, Is.SameAs(changeToken));
         });
 
-        target = new SequentialRangeSet.CharRangeSet
+        target = new SequentialRangeSet<char>
         {
             item_a_g,
             item_i_k,
