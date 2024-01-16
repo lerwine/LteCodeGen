@@ -35,7 +35,8 @@ public class CharacterTypesTests
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.PunctuationChars,
             CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        // BUG: Where flag is AsciiControlChars: NotSpecified does not exist in neither the expectedValues nor the notExpectedValues array
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target: {target:F}");
@@ -52,7 +53,7 @@ public class CharacterTypesTests
             CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
             CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.PunctuationChars, CharacterType.Symbols,
             CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars,
-            CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target: {target:F}");
@@ -69,7 +70,7 @@ public class CharacterTypesTests
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.PunctuationChars,
             CharacterType.Symbols, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -86,7 +87,7 @@ public class CharacterTypesTests
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.AsciiChars,
             CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValue, notExpectedValues);
         Assert.That(expectedValue.HasFlag(flag), Is.True);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -103,7 +104,7 @@ public class CharacterTypesTests
             CharacterType.AsciiPunctuation, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower,
             CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde, CharacterType.AsciiSymbols,
             CharacterType.ControlChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -120,7 +121,7 @@ public class CharacterTypesTests
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.UriDataChars, CharacterType.ControlChars, CharacterType.PunctuationChars,
             CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -137,7 +138,7 @@ public class CharacterTypesTests
             CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
             CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
             CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates,
-            CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -154,7 +155,7 @@ public class CharacterTypesTests
             CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
             CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
             CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates,
-            CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -170,7 +171,7 @@ public class CharacterTypesTests
             CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
             CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde,
             CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits,
-            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -186,8 +187,8 @@ public class CharacterTypesTests
             CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation,
             CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower,
             CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.PunctuationChars,
-            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates
-            };
+            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates,
+            CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -204,7 +205,7 @@ public class CharacterTypesTests
             CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
             CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols,
             CharacterType.ControlChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -220,8 +221,8 @@ public class CharacterTypesTests
             CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation,
             CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
             CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.PunctuationChars,
-            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates
-            };
+            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates,
+            CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -238,7 +239,7 @@ public class CharacterTypesTests
             CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
             CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols,
             CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -255,7 +256,7 @@ public class CharacterTypesTests
             CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -272,7 +273,7 @@ public class CharacterTypesTests
             CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
             CharacterType.AsciiLettersAndDigits, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits,
             CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates,
-            CharacterType.Surrogates };
+            CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -289,7 +290,7 @@ public class CharacterTypesTests
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.Symbols,
             CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -320,7 +321,8 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
             CharacterType.AsciiLetters, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits,
-            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
+            CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -336,7 +338,8 @@ public class CharacterTypesTests
             CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.VowelsLower, CharacterType.Vowels,
             CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
+            CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -353,7 +356,7 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde,
             CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -370,7 +373,7 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.Tilde, CharacterType.AsciiSymbols,
             CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -387,7 +390,8 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers,
-            CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
+            CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -420,7 +424,7 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde,
             CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -437,7 +441,7 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.Tilde, CharacterType.AsciiSymbols,
             CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -454,7 +458,7 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower,
             CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -471,7 +475,7 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -487,7 +491,8 @@ public class CharacterTypesTests
             CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers,
-            CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
+            CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -504,7 +509,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
             CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates,
-            CharacterType.Surrogates };
+            CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -521,7 +526,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols,
             CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -538,7 +543,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.PunctuationChars, CharacterType.WhiteSpaceChars,
             CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars,
-            CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -555,7 +560,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.UriDataChars,
             CharacterType.PunctuationChars, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -572,7 +577,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols,
             CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -588,7 +593,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -603,7 +608,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -618,7 +623,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -633,7 +638,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -649,7 +654,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -665,7 +670,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -681,7 +686,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -698,7 +703,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -715,7 +720,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -731,7 +736,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -747,7 +752,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.ControlChars, CharacterType.LowSurrogates };
+            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -763,7 +768,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates };
+            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -779,7 +784,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars };
+            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -795,7 +800,7 @@ public class CharacterTypesTests
             CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
             CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
             CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates };
+            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
