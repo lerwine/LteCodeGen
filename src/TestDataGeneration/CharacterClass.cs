@@ -2,9 +2,8 @@ using static TestDataGeneration.CharacterTypes;
 
 namespace TestDataGeneration;
 
-// TODO: Rename to CharacterClass
 [Flags]
-public enum CharacterType : ulong
+public enum CharacterClass : ulong
 {
     /// <summary>
     /// No character type is not specified.

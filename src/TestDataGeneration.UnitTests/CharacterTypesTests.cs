@@ -27,15 +27,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiControlCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiControlChars;
-        var expectedValues = new[] { CharacterType.AsciiChars, CharacterType.ControlChars };
-        var notExpectedValues = new[] { CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash, CharacterType.Period,
-            CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.PunctuationChars,
-            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiControlChars;
+        var expectedValues = new[] { CharacterClass.AsciiChars, CharacterClass.ControlChars };
+        var notExpectedValues = new[] { CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash, CharacterClass.Period,
+            CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars, CharacterClass.PunctuationChars,
+            CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits,
+            CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         // BUG: Where flag is AsciiControlChars: NotSpecified does not exist in neither the expectedValues nor the notExpectedValues array
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target: {target:F}");
@@ -45,15 +45,15 @@ public class CharacterTypesTests
     [Test]
     public void SpaceCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Space;
-        var expectedValues = new[] { CharacterType.Separators, CharacterType.AsciiChars, CharacterType.WhiteSpaceChars, CharacterType.AsciiWhiteSpace };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash, CharacterType.Period, CharacterType.AsciiHexDigitsUpper,
-            CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.Underscore,
-            CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-            CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
-            CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.PunctuationChars, CharacterType.Symbols,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars,
-            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Space;
+        var expectedValues = new[] { CharacterClass.Separators, CharacterClass.AsciiChars, CharacterClass.WhiteSpaceChars, CharacterClass.AsciiWhiteSpace };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash, CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper,
+            CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper, CharacterClass.Underscore,
+            CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower,
+            CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters,
+            CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars, CharacterClass.PunctuationChars, CharacterClass.Symbols,
+            CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars,
+            CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target: {target:F}");
@@ -62,15 +62,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiWhiteSpaceCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiWhiteSpace;
-        var expectedValues = new[] { CharacterType.AsciiChars, CharacterType.WhiteSpaceChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash, CharacterType.Period,
-            CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.PunctuationChars,
-            CharacterType.Symbols, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiWhiteSpace;
+        var expectedValues = new[] { CharacterClass.AsciiChars, CharacterClass.WhiteSpaceChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash, CharacterClass.Period,
+            CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars, CharacterClass.PunctuationChars,
+            CharacterClass.Symbols, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates,
+            CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -79,15 +79,15 @@ public class CharacterTypesTests
     [Test]
     public void SeparatorsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Separators;
-        var expectedValue = CharacterType.WhiteSpaceChars;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash, CharacterType.Period,
-            CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.AsciiChars,
-            CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Separators;
+        var expectedValue = CharacterClass.WhiteSpaceChars;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash, CharacterClass.Period,
+            CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars, CharacterClass.AsciiChars,
+            CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValue, notExpectedValues);
         Assert.That(expectedValue.HasFlag(flag), Is.True);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -96,15 +96,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiDigitsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiDigits;
-        var expectedValues = new[] { CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigitsUpper, CharacterType.AsciiHexDigits, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars,
-            CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.Plus, CharacterType.Dash, CharacterType.Period,
-            CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.Underscore,
-            CharacterType.AsciiPunctuation, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower,
-            CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde, CharacterType.AsciiSymbols,
-            CharacterType.ControlChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiDigits;
+        var expectedValues = new[] { CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigitsUpper, CharacterClass.AsciiHexDigits, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars,
+            CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.Plus, CharacterClass.Dash, CharacterClass.Period,
+            CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper, CharacterClass.Underscore,
+            CharacterClass.AsciiPunctuation, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower,
+            CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.Tilde, CharacterClass.AsciiSymbols,
+            CharacterClass.ControlChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -113,15 +113,15 @@ public class CharacterTypesTests
     [Test]
     public void PlusCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Plus;
-        var expectedValues = new[] { CharacterType.AsciiSymbols, CharacterType.AsciiChars, CharacterType.Symbols };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Dash, CharacterType.Period,
-            CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.UriDataChars, CharacterType.ControlChars, CharacterType.PunctuationChars,
-            CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Plus;
+        var expectedValues = new[] { CharacterClass.AsciiSymbols, CharacterClass.AsciiChars, CharacterClass.Symbols };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Dash, CharacterClass.Period,
+            CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.UriDataChars, CharacterClass.ControlChars, CharacterClass.PunctuationChars,
+            CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits,
+            CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -130,15 +130,15 @@ public class CharacterTypesTests
     [Test]
     public void DashCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Dash;
-        var expectedValues = new[] { CharacterType.AsciiPunctuation, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.PunctuationChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Period,
-            CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.Underscore, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
-            CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
-            CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates,
-            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Dash;
+        var expectedValues = new[] { CharacterClass.AsciiPunctuation, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.PunctuationChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Period,
+            CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels,
+            CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters,
+            CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.ControlChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars,
+            CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates,
+            CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -147,15 +147,15 @@ public class CharacterTypesTests
     [Test]
     public void PeriodCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Period;
-        var expectedValues = new[] { CharacterType.AsciiPunctuation, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.PunctuationChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.Underscore, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
-            CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
-            CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates,
-            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Period;
+        var expectedValues = new[] { CharacterClass.AsciiPunctuation, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.PunctuationChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels,
+            CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters,
+            CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.ControlChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars,
+            CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates,
+            CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -164,14 +164,14 @@ public class CharacterTypesTests
     [Test]
     public void AsciiHexDigitsUpperCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiHexDigitsUpper;
-        var expectedValues = new[] { CharacterType.AsciiHexDigits, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.AsciiLettersUpper, CharacterType.Underscore,
-            CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
-            CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde,
-            CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits,
-            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiHexDigitsUpper;
+        var expectedValues = new[] { CharacterClass.AsciiHexDigits, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.AsciiLettersUpper, CharacterClass.Underscore,
+            CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels,
+            CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.Tilde,
+            CharacterClass.AsciiSymbols, CharacterClass.ControlChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits,
+            CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -180,15 +180,15 @@ public class CharacterTypesTests
     [Test]
     public void HardConsonantsUpperCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.HardConsonantsUpper;
-        var expectedValues = new[] { CharacterType.AsciiLettersUpper, CharacterType.ConsonantsUpper, CharacterType.HardConsonants, CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-            CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation,
-            CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower,
-            CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.PunctuationChars,
-            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates,
-            CharacterType.NotSpecified };
+        var flag = CharacterClass.HardConsonantsUpper;
+        var expectedValues = new[] { CharacterClass.AsciiLettersUpper, CharacterClass.ConsonantsUpper, CharacterClass.HardConsonants, CharacterClass.Consonants, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits,
+            CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.UpperChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation,
+            CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower,
+            CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.AsciiLettersLower, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.ControlChars, CharacterClass.PunctuationChars,
+            CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates,
+            CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -197,15 +197,15 @@ public class CharacterTypesTests
     [Test]
     public void VowelsUpperCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.VowelsUpper;
-        var expectedValues = new[] { CharacterType.Vowels, CharacterType.AsciiLettersUpper, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper, CharacterType.Underscore,
-            CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-            CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols,
-            CharacterType.ControlChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.VowelsUpper;
+        var expectedValues = new[] { CharacterClass.Vowels, CharacterClass.AsciiLettersUpper, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.UpperChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper, CharacterClass.Underscore,
+            CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower,
+            CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.Tilde, CharacterClass.AsciiSymbols,
+            CharacterClass.ControlChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LowerChars,
+            CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -214,15 +214,15 @@ public class CharacterTypesTests
     [Test]
     public void SoftConsonantsUpperCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.SoftConsonantsUpper;
-        var expectedValues = new[] { CharacterType.AsciiLettersUpper, CharacterType.ConsonantsUpper, CharacterType.SoftConsonants, CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-            CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation,
-            CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
-            CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.ControlChars, CharacterType.PunctuationChars,
-            CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates,
-            CharacterType.NotSpecified };
+        var flag = CharacterClass.SoftConsonantsUpper;
+        var expectedValues = new[] { CharacterClass.AsciiLettersUpper, CharacterClass.ConsonantsUpper, CharacterClass.SoftConsonants, CharacterClass.Consonants, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits,
+            CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.UpperChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation,
+            CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels,
+            CharacterClass.SoftConsonantsLower, CharacterClass.ConsonantsLower, CharacterClass.AsciiLettersLower, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.ControlChars, CharacterClass.PunctuationChars,
+            CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates,
+            CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -231,15 +231,15 @@ public class CharacterTypesTests
     [Test]
     public void ConsonantsUpperCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.ConsonantsUpper;
-        var expectedValues = new[] { CharacterType.AsciiLettersUpper, CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.UpperChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.Underscore,
-            CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-            CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols,
-            CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.ConsonantsUpper;
+        var expectedValues = new[] { CharacterClass.AsciiLettersUpper, CharacterClass.Consonants, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.UpperChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.Underscore,
+            CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower,
+            CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.AsciiLettersLower, CharacterClass.Tilde, CharacterClass.AsciiSymbols,
+            CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LowerChars, CharacterClass.HighSurrogates,
+            CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -248,15 +248,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiLettersUpperCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiLettersUpper;
-        var expectedValues = new[] { CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.UpperChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiLettersUpper;
+        var expectedValues = new[] { CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.UpperChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LowerChars,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -265,15 +265,15 @@ public class CharacterTypesTests
     [Test]
     public void UnderscoreCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Underscore;
-        var expectedValues = new[] { CharacterType.AsciiPunctuation, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.PunctuationChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower,
-            CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters,
-            CharacterType.AsciiLettersAndDigits, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits,
-            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates,
-            CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Underscore;
+        var expectedValues = new[] { CharacterClass.AsciiPunctuation, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.PunctuationChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower,
+            CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters,
+            CharacterClass.AsciiLettersAndDigits, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits,
+            CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates,
+            CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -282,15 +282,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiPunctuationCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiPunctuation;
-        var expectedValues = new[] { CharacterType.AsciiChars, CharacterType.PunctuationChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars, CharacterType.Symbols,
-            CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiPunctuation;
+        var expectedValues = new[] { CharacterClass.AsciiChars, CharacterClass.PunctuationChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars, CharacterClass.Symbols,
+            CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -299,14 +299,14 @@ public class CharacterTypesTests
     [Test]
     public void AsciiHexDigitsLowerCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiHexDigitsLower;
-        var expectedValues = new[] { CharacterType.AsciiHexDigits, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.AsciiLettersUpper,
-            CharacterType.ConsonantsUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.HardConsonantsLower, CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels,
-            CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde,
-            CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates };
+        var flag = CharacterClass.AsciiHexDigitsLower;
+        var expectedValues = new[] { CharacterClass.AsciiHexDigits, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.AsciiLettersUpper,
+            CharacterClass.ConsonantsUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels,
+            CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.Tilde,
+            CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars,
+            CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates };
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -314,15 +314,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiHexDigitsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiHexDigits;
-        var expectedValues = new[] { CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.HardConsonantsLower, CharacterType.HardConsonants,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower,
-            CharacterType.AsciiLetters, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits,
-            CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
-            CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiHexDigits;
+        var expectedValues = new[] { CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.HardConsonantsLower, CharacterClass.HardConsonants,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower,
+            CharacterClass.AsciiLetters, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits,
+            CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates,
+            CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -331,15 +331,15 @@ public class CharacterTypesTests
     [Test]
     public void HardConsonantsLowerCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.HardConsonantsLower;
-        var expectedValues = new[] { CharacterType.HardConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-            CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.VowelsLower, CharacterType.Vowels,
-            CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
-            CharacterType.NotSpecified };
+        var flag = CharacterClass.HardConsonantsLower;
+        var expectedValues = new[] { CharacterClass.HardConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits,
+            CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.VowelsLower, CharacterClass.Vowels,
+            CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars,
+            CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates,
+            CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -348,15 +348,15 @@ public class CharacterTypesTests
     [Test]
     public void HardConsonantsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.HardConsonants;
-        var expectedValues = new[] { CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde,
-            CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.HardConsonants;
+        var expectedValues = new[] { CharacterClass.Consonants, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.AsciiLettersLower, CharacterClass.Tilde,
+            CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars,
+            CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -365,15 +365,15 @@ public class CharacterTypesTests
     [Test]
     public void VowelsLowerCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.VowelsLower;
-        var expectedValues = new[] { CharacterType.Vowels, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.Tilde, CharacterType.AsciiSymbols,
-            CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.VowelsLower;
+        var expectedValues = new[] { CharacterClass.Vowels, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.Tilde, CharacterClass.AsciiSymbols,
+            CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.HighSurrogates,
+            CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -382,16 +382,16 @@ public class CharacterTypesTests
     [Test]
     public void VowelsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Vowels;
-        var expectedValues = new[] { CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers,
-            CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
-            CharacterType.NotSpecified };
+        var flag = CharacterClass.Vowels;
+        var expectedValues = new[] { CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers,
+            CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates,
+            CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -400,15 +400,15 @@ public class CharacterTypesTests
     [Test]
     public void SoftConsonantsLowerCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.SoftConsonantsLower;
-        var expectedValues = new[] { CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits,
-            CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols,
-            CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates,
-            CharacterType.Surrogates };
+        var flag = CharacterClass.SoftConsonantsLower;
+        var expectedValues = new[] { CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits,
+            CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols,
+            CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates,
+            CharacterClass.Surrogates };
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -416,15 +416,15 @@ public class CharacterTypesTests
     [Test]
     public void SoftConsonantsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.SoftConsonants;
-        var expectedValues = new[] { CharacterType.Consonants, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower, CharacterType.Tilde,
-            CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.SoftConsonants;
+        var expectedValues = new[] { CharacterClass.Consonants, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.ConsonantsLower, CharacterClass.AsciiLettersLower, CharacterClass.Tilde,
+            CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars,
+            CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -433,15 +433,15 @@ public class CharacterTypesTests
     [Test]
     public void ConsonantsLowerCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.ConsonantsLower;
-        var expectedValues = new[] { CharacterType.Consonants, CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.Tilde, CharacterType.AsciiSymbols,
-            CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.HighSurrogates,
-            CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.ConsonantsLower;
+        var expectedValues = new[] { CharacterClass.Consonants, CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.Tilde, CharacterClass.AsciiSymbols,
+            CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.HighSurrogates,
+            CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -450,15 +450,15 @@ public class CharacterTypesTests
     [Test]
     public void ConsonantsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Consonants;
-        var expectedValues = new[] { CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.AsciiLettersLower,
-            CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Consonants;
+        var expectedValues = new[] { CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.AsciiLettersLower,
+            CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars,
+            CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -467,15 +467,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiLettersLowerCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiLettersLower;
-        var expectedValues = new[] { CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiLettersLower;
+        var expectedValues = new[] { CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LowerChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -484,15 +484,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiLettersCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiLetters;
-        var expectedValues = new[] { CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers,
-            CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates,
-            CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiLetters;
+        var expectedValues = new[] { CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers,
+            CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates,
+            CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -501,15 +501,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiLettersAndDigitsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiLettersAndDigits;
-        var expectedValues = new[] { CharacterType.CsIdentifierChars, CharacterType.UriDataChars, CharacterType.AsciiChars, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates,
-            CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiLettersAndDigits;
+        var expectedValues = new[] { CharacterClass.CsIdentifierChars, CharacterClass.UriDataChars, CharacterClass.AsciiChars, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars,
+            CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates,
+            CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -518,15 +518,15 @@ public class CharacterTypesTests
     [Test]
     public void CsIdentifierCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.CsIdentifierChars;
-        var expectedValues = new[] { CharacterType.UriDataChars, CharacterType.AsciiChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.PunctuationChars, CharacterType.Symbols,
-            CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.CsIdentifierChars;
+        var expectedValues = new[] { CharacterClass.UriDataChars, CharacterClass.AsciiChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.PunctuationChars, CharacterClass.Symbols,
+            CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -535,15 +535,15 @@ public class CharacterTypesTests
     [Test]
     public void TildeCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Tilde;
-        var expectedValues = new[] { CharacterType.AsciiSymbols, CharacterType.AsciiChars, CharacterType.UriDataChars, CharacterType.Symbols };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.PunctuationChars, CharacterType.WhiteSpaceChars,
-            CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars,
-            CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Tilde;
+        var expectedValues = new[] { CharacterClass.AsciiSymbols, CharacterClass.AsciiChars, CharacterClass.UriDataChars, CharacterClass.Symbols };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.PunctuationChars, CharacterClass.WhiteSpaceChars,
+            CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars,
+            CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -552,15 +552,15 @@ public class CharacterTypesTests
     [Test]
     public void AsciiSymbolsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiSymbols;
-        var expectedValues = new[] { CharacterType.AsciiChars, CharacterType.Symbols };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.UriDataChars,
-            CharacterType.PunctuationChars, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiSymbols;
+        var expectedValues = new[] { CharacterClass.AsciiChars, CharacterClass.Symbols };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.UriDataChars,
+            CharacterClass.PunctuationChars, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -569,15 +569,15 @@ public class CharacterTypesTests
     [Test]
     public void UriDataCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.UriDataChars;
-        var expectedValues = new[] { CharacterType.AsciiChars };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols,
-            CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.UriDataChars;
+        var expectedValues = new[] { CharacterClass.AsciiChars };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols,
+            CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -586,14 +586,14 @@ public class CharacterTypesTests
     [Test]
     public void AsciiCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.AsciiChars;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.AsciiChars;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -601,14 +601,14 @@ public class CharacterTypesTests
     [Test]
     public void PunctuationCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.PunctuationChars;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.PunctuationChars;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -616,14 +616,14 @@ public class CharacterTypesTests
     [Test]
     public void SymbolsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Symbols;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Symbols;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -631,14 +631,14 @@ public class CharacterTypesTests
     [Test]
     public void WhiteSpaceCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.WhiteSpaceChars;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.WhiteSpaceChars;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -646,15 +646,15 @@ public class CharacterTypesTests
     [Test]
     public void NumbersCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Numbers;
-        var expectedValues = new[] { CharacterType.Digits, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Numbers;
+        var expectedValues = new[] { CharacterClass.Digits, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -663,14 +663,14 @@ public class CharacterTypesTests
     [Test]
     public void DigitsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Digits;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.UpperChars, CharacterType.LowerChars, CharacterType.Letters,
-            CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Digits;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.UpperChars, CharacterClass.LowerChars, CharacterClass.Letters,
+            CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -678,15 +678,15 @@ public class CharacterTypesTests
     [Test]
     public void UpperCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.UpperChars;
-        var expectedValues = new[] { CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.UpperChars;
+        var expectedValues = new[] { CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.LowerChars,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -695,15 +695,15 @@ public class CharacterTypesTests
     [Test]
     public void LowerCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.LowerChars;
-        var expectedValues = new[] { CharacterType.Letters, CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.LowerChars;
+        var expectedValues = new[] { CharacterClass.Letters, CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -712,15 +712,15 @@ public class CharacterTypesTests
     [Test]
     public void LettersCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Letters;
-        var expectedValues = new[] { CharacterType.LettersAndDigits };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Letters;
+        var expectedValues = new[] { CharacterClass.LettersAndDigits };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars,
+            CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -729,14 +729,14 @@ public class CharacterTypesTests
     [Test]
     public void LettersAndDigitsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.LettersAndDigits;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.LettersAndDigits;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars,
+            CharacterClass.Letters, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -744,15 +744,15 @@ public class CharacterTypesTests
     [Test]
     public void HighSurrogatesCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.HighSurrogates;
-        var expectedValues = new[] { CharacterType.Surrogates };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.HighSurrogates;
+        var expectedValues = new[] { CharacterClass.Surrogates };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -761,14 +761,14 @@ public class CharacterTypesTests
     [Test]
     public void ControlCharsCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.ControlChars;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.LowSurrogates, CharacterType.Surrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.ControlChars;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.LowSurrogates, CharacterClass.Surrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }
@@ -776,15 +776,15 @@ public class CharacterTypesTests
     [Test]
     public void LowSurrogatesCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.LowSurrogates;
-        var expectedValues = new[] { CharacterType.Surrogates };
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.NotSpecified };
+        var flag = CharacterClass.LowSurrogates;
+        var expectedValues = new[] { CharacterClass.Surrogates };
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, expectedValues, notExpectedValues);
         foreach (var target in expectedValues) Assert.That(target.HasFlag(flag), Is.True, $"Target Value: {target:F}");
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
@@ -793,14 +793,14 @@ public class CharacterTypesTests
     [Test]
     public void SurrogatesCharacterTypeEnumFlagsTest()
     {
-        var flag = CharacterType.Surrogates;
-        var notExpectedValues = new[] { CharacterType.AsciiControlChars, CharacterType.Space, CharacterType.AsciiWhiteSpace, CharacterType.Separators, CharacterType.AsciiDigits, CharacterType.Plus, CharacterType.Dash,
-            CharacterType.Period, CharacterType.AsciiHexDigitsUpper, CharacterType.HardConsonantsUpper, CharacterType.VowelsUpper, CharacterType.SoftConsonantsUpper, CharacterType.ConsonantsUpper,
-            CharacterType.AsciiLettersUpper, CharacterType.Underscore, CharacterType.AsciiPunctuation, CharacterType.AsciiHexDigitsLower, CharacterType.AsciiHexDigits, CharacterType.HardConsonantsLower,
-            CharacterType.HardConsonants, CharacterType.VowelsLower, CharacterType.Vowels, CharacterType.SoftConsonantsLower, CharacterType.SoftConsonants, CharacterType.ConsonantsLower, CharacterType.Consonants,
-            CharacterType.AsciiLettersLower, CharacterType.AsciiLetters, CharacterType.AsciiLettersAndDigits, CharacterType.CsIdentifierChars, CharacterType.Tilde, CharacterType.AsciiSymbols, CharacterType.UriDataChars,
-            CharacterType.AsciiChars, CharacterType.PunctuationChars, CharacterType.Symbols, CharacterType.WhiteSpaceChars, CharacterType.Numbers, CharacterType.Digits, CharacterType.UpperChars, CharacterType.LowerChars,
-            CharacterType.Letters, CharacterType.LettersAndDigits, CharacterType.HighSurrogates, CharacterType.ControlChars, CharacterType.LowSurrogates, CharacterType.NotSpecified };
+        var flag = CharacterClass.Surrogates;
+        var notExpectedValues = new[] { CharacterClass.AsciiControlChars, CharacterClass.Space, CharacterClass.AsciiWhiteSpace, CharacterClass.Separators, CharacterClass.AsciiDigits, CharacterClass.Plus, CharacterClass.Dash,
+            CharacterClass.Period, CharacterClass.AsciiHexDigitsUpper, CharacterClass.HardConsonantsUpper, CharacterClass.VowelsUpper, CharacterClass.SoftConsonantsUpper, CharacterClass.ConsonantsUpper,
+            CharacterClass.AsciiLettersUpper, CharacterClass.Underscore, CharacterClass.AsciiPunctuation, CharacterClass.AsciiHexDigitsLower, CharacterClass.AsciiHexDigits, CharacterClass.HardConsonantsLower,
+            CharacterClass.HardConsonants, CharacterClass.VowelsLower, CharacterClass.Vowels, CharacterClass.SoftConsonantsLower, CharacterClass.SoftConsonants, CharacterClass.ConsonantsLower, CharacterClass.Consonants,
+            CharacterClass.AsciiLettersLower, CharacterClass.AsciiLetters, CharacterClass.AsciiLettersAndDigits, CharacterClass.CsIdentifierChars, CharacterClass.Tilde, CharacterClass.AsciiSymbols, CharacterClass.UriDataChars,
+            CharacterClass.AsciiChars, CharacterClass.PunctuationChars, CharacterClass.Symbols, CharacterClass.WhiteSpaceChars, CharacterClass.Numbers, CharacterClass.Digits, CharacterClass.UpperChars, CharacterClass.LowerChars,
+            CharacterClass.Letters, CharacterClass.LettersAndDigits, CharacterClass.HighSurrogates, CharacterClass.ControlChars, CharacterClass.LowSurrogates, CharacterClass.NotSpecified };
         AssertCompleteEnumTestCoverage(flag, null, notExpectedValues);
         foreach (var target in notExpectedValues) Assert.That(target.HasFlag(flag), Is.False, $"Target Value: {target:F}");
     }

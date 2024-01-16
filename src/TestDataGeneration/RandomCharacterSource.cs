@@ -7,178 +7,178 @@ public class RandomCharacterSource
     private readonly IEnumerable<char> _getValues;
     private readonly Func<char, bool> _test;
 
-    public CharacterType Type { get; }
+    public CharacterClass Type { get; }
 
     public bool Test(char c) => _test(c);
 
     public IEnumerable<char> GetValues() => _getValues;
 
-    public RandomCharacterSource(IEnumerable<CharacterType> types)
+    public RandomCharacterSource(IEnumerable<CharacterClass> types)
     {
-        Type = types?.Aggregate(CharacterType.NotSpecified, (a, b) => a | b) ?? CharacterType.NotSpecified;
+        Type = types?.Aggregate(CharacterClass.NotSpecified, (a, b) => a | b) ?? CharacterClass.NotSpecified;
         switch (Type)
         {
-            case CharacterType.NotSpecified:
+            case CharacterClass.NotSpecified:
                 _getValues = GetAllCharacters();
                 _test = c => true;
                 return;
-            case CharacterType.AsciiControlChars:
+            case CharacterClass.AsciiControlChars:
                 _test = c => char.IsAscii(c) && char.IsControl(c);
                 break;
-            case CharacterType.Space:
+            case CharacterClass.Space:
                 _test = c => c == ' ';
                 _getValues = new char[] { ' ' };
                 return;
-            case CharacterType.AsciiWhiteSpace:
+            case CharacterClass.AsciiWhiteSpace:
                 _test = c => char.IsAscii(c) && char.IsWhiteSpace(c);
                 break;
-            case CharacterType.Separators:
+            case CharacterClass.Separators:
                 _test = char.IsSeparator;
                 break;
-            case CharacterType.AsciiDigits:
+            case CharacterClass.AsciiDigits:
                 _test = char.IsAsciiDigit;
                 break;
-            case CharacterType.Plus:
+            case CharacterClass.Plus:
                 _test = c => c == '+';
                 _getValues = new char[] { '+' };
                 return;
-            case CharacterType.Dash:
+            case CharacterClass.Dash:
                 _test = c => c == '-';
                 _getValues = new char[] { '-' };
                 return;
-            case CharacterType.Period:
+            case CharacterClass.Period:
                 _test = c => c == '.';
                 _getValues = new char[] { '.' };
                 return;
-            case CharacterType.AsciiHexDigitsUpper:
+            case CharacterClass.AsciiHexDigitsUpper:
                 _test = char.IsAsciiHexDigitUpper;
                 break;
-            case CharacterType.HardConsonantsUpper:
+            case CharacterClass.HardConsonantsUpper:
                 _test = IsHardConsonantUpper;
                 _getValues = GetAllHardConsonantsUpper();
                 return;
-            case CharacterType.VowelsUpper:
+            case CharacterClass.VowelsUpper:
                 _test = IsVowelUpper;
                 _getValues = GetAllVowelsUpper();
                 return;
-            case CharacterType.SoftConsonantsUpper:
+            case CharacterClass.SoftConsonantsUpper:
                 _test = IsSoftConsonantUpper;
                 _getValues = GetAllSoftConsonantsUpper();
                 return;
-            case CharacterType.ConsonantsUpper:
+            case CharacterClass.ConsonantsUpper:
                 _test = IsConsonantUpper;
                 _getValues = GetAllConsonantsUpper();
                 return;
-            case CharacterType.AsciiLettersUpper:
+            case CharacterClass.AsciiLettersUpper:
                 _test = char.IsAsciiLetterUpper;
                 break;
-            case CharacterType.Underscore:
+            case CharacterClass.Underscore:
                 _test = c => c == '_';
                 _getValues = new char[] { '_' };
                 return;
-            case CharacterType.AsciiPunctuation:
+            case CharacterClass.AsciiPunctuation:
                 _test = c => char.IsAscii(c) && char.IsPunctuation(c);
                 break;
-            case CharacterType.AsciiHexDigitsLower:
+            case CharacterClass.AsciiHexDigitsLower:
                 _test = char.IsAsciiHexDigitLower;
                 break;
-            case CharacterType.AsciiHexDigits:
+            case CharacterClass.AsciiHexDigits:
                 _test = char.IsAsciiHexDigit;
                 break;
-            case CharacterType.HardConsonantsLower:
+            case CharacterClass.HardConsonantsLower:
                 _test = IsHardConsonantLower;
                 _getValues = GetAllHardConsonantsLower();
                 return;
-            case CharacterType.HardConsonants:
+            case CharacterClass.HardConsonants:
                 _test = IsHardConsonant;
                 _getValues = GetAllHardConsonants();
                 return;
-            case CharacterType.VowelsLower:
+            case CharacterClass.VowelsLower:
                 _test = IsVowelLower;
                 _getValues = GetAllVowelsLower();
                 return;
-            case CharacterType.Vowels:
+            case CharacterClass.Vowels:
                 _test = IsVowel;
                 _getValues = GetAllVowels();
                 return;
-            case CharacterType.SoftConsonantsLower:
+            case CharacterClass.SoftConsonantsLower:
                 _test = IsSoftConsonantLower;
                 _getValues = GetAllSoftConsonantsLower();
                 return;
-            case CharacterType.SoftConsonants:
+            case CharacterClass.SoftConsonants:
                 _test = IsSoftConsonant;
                 _getValues = GetAllSoftConsonants();
                 return;
-            case CharacterType.ConsonantsLower:
+            case CharacterClass.ConsonantsLower:
                 _test = IsConsonantLower;
                 _getValues = GetAllConsonantsLower();
                 return;
-            case CharacterType.Consonants:
+            case CharacterClass.Consonants:
                 _test = IsConsonant;
                 _getValues = GetAllConsonants();
                 return;
-            case CharacterType.AsciiLettersLower:
+            case CharacterClass.AsciiLettersLower:
                 _test = char.IsAsciiLetterLower;
                 break;
-            case CharacterType.AsciiLetters:
+            case CharacterClass.AsciiLetters:
                 _test = char.IsAsciiLetter;
                 break;
-            case CharacterType.AsciiLettersAndDigits:
+            case CharacterClass.AsciiLettersAndDigits:
                 _test = char.IsAsciiLetterOrDigit;
                 break;
-            case CharacterType.CsIdentifierChars:
+            case CharacterClass.CsIdentifierChars:
                 // TODO: Implement for CsIdentifierChars
                 throw new NotImplementedException();
-            case CharacterType.Tilde:
+            case CharacterClass.Tilde:
                 _test = c => c == '~';
                 _getValues = new char[] { '~' };
                 return;
-            case CharacterType.AsciiSymbols:
+            case CharacterClass.AsciiSymbols:
                 _test = c => char.IsAscii(c) && char.IsSymbol(c);
                 break;
-            case CharacterType.UriDataChars:
+            case CharacterClass.UriDataChars:
                 // TODO: Implement for UriDataChars
                 throw new NotImplementedException();
-            case CharacterType.AsciiChars:
+            case CharacterClass.AsciiChars:
                 _test = char.IsAscii;
                 break;
-            case CharacterType.PunctuationChars:
+            case CharacterClass.PunctuationChars:
                 _test = char.IsPunctuation;
                 break;
-            case CharacterType.Symbols:
+            case CharacterClass.Symbols:
                 _test = char.IsSymbol;
                 break;
-            case CharacterType.WhiteSpaceChars:
+            case CharacterClass.WhiteSpaceChars:
                 _test = char.IsWhiteSpace;
                 break;
-            case CharacterType.Numbers:
+            case CharacterClass.Numbers:
                 _test = char.IsNumber;
                 break;
-            case CharacterType.Digits:
+            case CharacterClass.Digits:
                 _test = char.IsDigit;
                 break;
-            case CharacterType.UpperChars:
+            case CharacterClass.UpperChars:
                 _test = char.IsUpper;
                 break;
-            case CharacterType.LowerChars:
+            case CharacterClass.LowerChars:
                 _test = char.IsLower;
                 break;
-            case CharacterType.Letters:
+            case CharacterClass.Letters:
                 _test = char.IsLetter;
                 break;
-            case CharacterType.LettersAndDigits:
+            case CharacterClass.LettersAndDigits:
                 _test = char.IsLetterOrDigit;
                 break;
-            case CharacterType.HighSurrogates:
+            case CharacterClass.HighSurrogates:
                 _test = char.IsHighSurrogate;
                 break;
-            case CharacterType.ControlChars:
+            case CharacterClass.ControlChars:
                 _test = char.IsControl;
                 break;
-            case CharacterType.LowSurrogates:
+            case CharacterClass.LowSurrogates:
                 _test = char.IsLowSurrogate;
                 break;
-            case CharacterType.Surrogates:
+            case CharacterClass.Surrogates:
                 _test = char.IsSurrogate;
                 break;
             default:
