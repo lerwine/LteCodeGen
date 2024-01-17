@@ -147,7 +147,7 @@ public partial class SequentialRangeSet<T>
 
         internal static bool Add(T start, T end, SequentialRangeSet<T> owner)
         {
-            if (start.IsValidStartFrom(end, out bool isMultiValue, out bool isMaxRange)) return false;
+            if (!start.IsValidStartFrom(end, out bool isMultiValue, out bool isMaxRange)) return false;
             var previous = owner.First;
             if (previous is null)
             {
@@ -303,7 +303,7 @@ public partial class SequentialRangeSet<T>
             base.AssertCanInsert(after, before, linkedCollection);
             if (linkedCollection is not SequentialRangeSet<T> owner) return;
             if (after is not null)
-                after.End.AssertCanInsertAfter(Start);
+                Start.AssertCanInsertAfter(after.End);
             if (before is not null)
                 End.AssertCanInsertBefore(before.Start);
             if (linkedCollection is SequentialRangeSet<T> rangeSet)
@@ -611,7 +611,7 @@ public partial class SequentialRangeSet<T>
 
         IEnumerator IEnumerable.GetEnumerator() => GetValues().GetEnumerator();
 
-        public override string ToString() => IsMultiValue ? $"[{Start}..{End}]" : $"[{Start}]";
+        public override string ToString() => IsMultiValue ? $"{{{Start}..{End}}}" : $"{{{Start}}}";
 
         #endregion
     }

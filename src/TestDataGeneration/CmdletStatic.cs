@@ -1,4 +1,7 @@
+using System.Formats.Tar;
 using System.Management.Automation;
+using System.Management.Automation.Language;
+using System.Text;
 
 namespace TestDataGeneration;
 
@@ -9,6 +12,15 @@ public static class CmdletStatic
     public const string ErrorId_PathIsInvalid = "PathIsInvalid";
     public const string ErrorId_ItemNotFound = "ItemNotFound";
     public const string ErrorId_PathCannotBeReadAsText = "PathCannotBeReadAsText";
+    private const char Suffix_Long_UC = 'L';
+    private const char Suffix_Long_LC = 'l';
+    private const char Suffix_Unsigned_UC = 'U';
+    private const char Suffix_Unsigned_LC = 'u';
+    private const char Char_Underscore = '_';
+    private const char Char_Zero = '0';
+    private const char Char_One = '1';
+    private const char Prefix_Binary_UC = 'B';
+    private const char Prefix_Binary_LC = 'b';
 
     internal static object EnsureBaseObject(object value) => (value is PSObject psObject) ? psObject.BaseObject : value;
 
@@ -41,7 +53,7 @@ public static class CmdletStatic
         while (start < end)
         {
             result <<= 1;
-            if (pattern[start] == '1') result |= 1;
+            if (pattern[start] == Char_One) result |= 1;
             start++;
         }
         return result;
@@ -53,7 +65,7 @@ public static class CmdletStatic
         while (start < end)
         {
             result <<= 1;
-            if (pattern[start] == '1') result |= 1;
+            if (pattern[start] == Char_One) result |= 1;
             start++;
         }
         return result;
@@ -65,7 +77,7 @@ public static class CmdletStatic
         while (start < pattern.Length)
         {
             result <<= 1;
-            if (pattern[start] == '1') result |= 1;
+            if (pattern[start] == Char_One) result |= 1;
             start++;
         }
         return result;
@@ -77,148 +89,564 @@ public static class CmdletStatic
         while (start < pattern.Length)
         {
             result <<= 1;
-            if (pattern[start] == '1') result |= 1;
+            if (pattern[start] == Char_One) result |= 1;
             start++;
         }
         return result;
     }
 
-    internal static string ConvertUInt64ToBinaryNotation(ulong value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    private static string FormatBits(IEnumerable<bool> bits, BinaryNotationFormat format, bool noPrefix)
     {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertInt64ToBinaryNotation(long value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertUInt32ToBinaryNotation(uint value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertInt32ToBinaryNotation(int value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertUInt16ToBinaryNotation(ushort value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertInt16ToBinaryNotation(short value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertByteToBinaryNotation(byte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static string ConvertSByteToBinaryNotation(sbyte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal static ulong ConvertFromBinary64BitNotation(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static long ConvertFromBinary64BitNotationAsSigned(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static uint ConvertFromBinary32BitNotation(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static int ConvertFromBinary32BitNotationAsSigned(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static ushort ConvertFromBinary16BitNotation(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static short ConvertFromBinary16BitNotationAsSigned(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static byte ConvertFromBinary8BitNotation(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static sbyte ConvertFromBinary8BitNotationAsSigned(string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    
-    internal static object ConvertFromBinaryNotation(string pattern)
-    {
-        int startIndex = pattern.LastIndexOf('1') + 1;
-        if (startIndex < 1)
-            return pattern[^1] switch
+        var bitArr = bits.ToList();
+        var length = bitArr.Count;
+        var step = format switch
+        {
+            BinaryNotationFormat.SplitBit => 4,
+            BinaryNotationFormat.SplitByte => 8,
+            BinaryNotationFormat.SplitWord => 16,
+            BinaryNotationFormat.SplitDWord => 32,
+            _ => length,
+        };
+        if (length >= step) return noPrefix ? new string(bitArr.Select(b => b ? Char_One : Char_Zero).ToArray()) : "0b" + new string(bitArr.Select(b => b ? Char_One : Char_Zero).ToArray());
+        var position = length % step;
+        if (position == 0) position = step;
+        var sb = new StringBuilder();
+        if (!noPrefix) sb.Append("0b");
+        for (var i = 0; i < position; i++) sb.Append(bitArr[i] ? Char_One : Char_Zero);
+        do
+        {
+            sb.Append(Char_Underscore);
+            for (var i = 0; i < step; i++)
             {
-                'l' or 'L' => (pattern.Length == 2) ? 0L : pattern[^2] switch
-                {
-                    'U' or 'u' => 0UL,
-                    _ => 0L,
-                },
-                'U' or 'u' => 0U,
-                _ => 0,
-            };
+                position++;
+                sb.Append(bitArr[position] ? Char_One : Char_Zero);
+            }
+        }
+        while (position < length);
+        return sb.ToString();
+    }
+
+    public static string ConvertUInt64ToBinaryNotation(ulong value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        foreach (byte b in BitConverter.GetBytes(value))
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertInt64ToBinaryNotation(long value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        foreach (byte b in BitConverter.GetBytes(value))
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertUInt32ToBinaryNotation(uint value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        foreach (byte b in BitConverter.GetBytes(value))
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertInt32ToBinaryNotation(int value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        foreach (byte b in BitConverter.GetBytes(value))
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertUInt16ToBinaryNotation(ushort value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        foreach (byte b in BitConverter.GetBytes(value))
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertInt16ToBinaryNotation(short value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        foreach (byte b in BitConverter.GetBytes(value))
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertByteToBinaryNotation(byte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((value & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static string ConvertSByteToBinaryNotation(sbyte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    {
+        if (minBits < 1) minBits = 1;
+        LinkedList<bool> bits = new();
+        if (value < 0)
+        {
+            bits.AddFirst((value & 1) != 0);
+            for (var i = 1; i < 8; i++) bits.AddFirst((sbyte.RotateRight(value, i) & 1) != 0);
+        }
+        else
+            for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((value & i) != 0);
+        while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
+        return FormatBits(bits, format, noPrefix);
+    }
+
+    public static void AssertValidPattern(string pattern, int maxBits = 0)
+    {
+        if (string.IsNullOrWhiteSpace(pattern)) throw new ArgumentException($"'{nameof(pattern)}' cannot be null or whitespace.", nameof(pattern));
+        if (maxBits > 64) maxBits = 64;
         int endIndex = pattern.Length;
         switch (pattern[^1])
         {
-            case 'L':
-            case 'l':
+            case Suffix_Long_UC:
+            case Suffix_Long_LC:
+                if (pattern.Length == 1) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                if (maxBits == 0)
+                    maxBits = 64;
+                else if (maxBits < 64)
+                    throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
                 switch (pattern[^2])
                 {
-                    case 'U':
-                    case 'u':
-                        return ParseBinary64Bit(pattern, startIndex, endIndex - 2);
+                    case Suffix_Unsigned_UC:
+                    case Suffix_Unsigned_LC:
+                        if (pattern.Length == 2) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                        endIndex -= 2;
+                        break;
+                    case Char_Underscore:
+                    case Char_Zero:
+                    case Char_One:
+                        endIndex--;
+                        break;
                     default:
-                        unchecked { return (long)ParseBinary64Bit(pattern, startIndex, endIndex - 1); }
+                        throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
                 }
-            case 'U':
-            case 'u':
-                return ParseBinary32Bit(pattern, startIndex, endIndex - 1);
+                break;
+            case Suffix_Unsigned_UC:
+            case Suffix_Unsigned_LC:
+                if (pattern.Length == 1) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                if (maxBits == 0 || maxBits > 32)
+                    maxBits = 32;
+                else if (maxBits < 32)
+                    throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                endIndex--;
+                break;
+            case Char_Underscore:
+            case Char_Zero:
+            case Char_One:
+                break;
             default:
-                int end = pattern.Length;
-                int remainingBits = end - startIndex;
-                if (remainingBits == 32)
-                    return ParseBinary32Bit(pattern, startIndex, end);
-                if (remainingBits == 64)
-                    return ParseBinary64Bit(pattern, startIndex, end);
-                if (remainingBits > 32)
-                {
-                    long result8 = 1L;
-                    do
-                    {
-                        result8 <<= 1;
-                        if (pattern[startIndex++] == '1') result8 |= 1;
-                    }
-                    while (startIndex < end);
-                    return result8;
-                }
-                int result = 1;
-                do
-                {
-                    result <<= 1;
-                    if (pattern[startIndex++] == '1') result |= 1;
-                }
-                while (startIndex < end);
-                return result;
+                throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
         }
+        int startIndex = 0;
+        // 1
+        bool moveToFirstOne()
+        {
+            do
+            {
+                switch (pattern[startIndex])
+                {
+                    case Char_One:
+                        return true;
+                    case Char_Zero:
+                    case Char_Underscore:
+                        startIndex++;
+                        break;
+                }
+            }
+            while (startIndex < endIndex);
+            return false;
+        }
+        char c;
+        switch (pattern[startIndex])
+        {
+            case Char_One:
+                break;
+            case Char_Underscore:
+                startIndex++;
+                if (startIndex == endIndex) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                c = pattern[startIndex];
+                while (c == Char_Underscore)
+                {
+                    startIndex++;
+                    if (startIndex == endIndex) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                    c = pattern[startIndex];
+                }
+                switch (c)
+                {
+                    case Char_One:
+                        break;
+                    case Char_Zero:
+                        startIndex++;
+                        if (startIndex == endIndex || !moveToFirstOne()) return;
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                }
+                break;
+            case Char_Zero:
+                startIndex++;
+                if (startIndex == endIndex) return;
+                c = pattern[startIndex];
+                switch (c)
+                {
+                    case Char_One:
+                        break;
+                    case Prefix_Binary_UC:
+                    case Prefix_Binary_LC:
+                        startIndex++;
+                        if (startIndex == endIndex) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                        switch (pattern[startIndex])
+                        {
+                            case Char_One:
+                                break;
+                            case Char_Zero:
+                                startIndex++;
+                                if (startIndex == endIndex || !moveToFirstOne()) return;
+                                break;
+                            default:
+                                throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                        }
+                        break;
+                    case Char_Zero:
+                        startIndex++;
+                        if (startIndex == endIndex || !moveToFirstOne()) return;
+                        break;
+                }
+                break;
+            default:
+                throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+        }
+        // Character at startIndex is '1';
+        int bits = 1;
+        startIndex++;
+        if (startIndex == endIndex) return;
+        c = pattern[startIndex];
+        while (bits <= maxBits)
+        {
+            while (c == Char_Underscore)
+            {
+                startIndex++;
+                if (startIndex == endIndex) return;
+                c = pattern[startIndex];
+            }
+            switch (c)
+            {
+                case Char_Zero:
+                case Char_One:
+                    bits++;
+                    startIndex++;
+                    if (startIndex == endIndex) return;
+                    c = pattern[startIndex];
+                    break;
+                default:
+                    throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+            }
+        }
+        throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+    }
+
+    private static List<bool> ParseBits(string pattern, out bool unsigned, out bool longValue)
+    {
+        if (string.IsNullOrWhiteSpace(pattern)) throw new ArgumentException($"'{nameof(pattern)}' cannot be null or whitespace.", nameof(pattern));
+        int endIndex = pattern.Length;
+        switch (pattern[^1])
+        {
+            case Suffix_Long_UC:
+            case Suffix_Long_LC:
+                longValue = true;
+                switch (pattern[^2])
+                {
+                    case Suffix_Unsigned_UC:
+                    case Suffix_Unsigned_LC:
+                        unsigned = true;
+                        endIndex -= 2;
+                        break;
+                    default:
+                        unsigned = false;
+                        endIndex--;
+                        break;
+                }
+                break;
+            case Suffix_Unsigned_UC:
+            case Suffix_Unsigned_LC:
+                longValue = false;
+                unsigned = true;
+                endIndex--;
+                break;
+            default:
+                longValue = false;
+                unsigned = false;
+                break;
+        }
+        List<bool> result = new();
+        for (var i = 0; i < endIndex; i++)
+        {
+            switch (pattern[i])
+            {
+                case Char_One:
+                    result.Add(true);
+                    break;
+                case Char_Zero:
+                    result.Add(false);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    private static List<bool> ParseBits(string pattern, out bool unsigned)
+    {
+        if (string.IsNullOrWhiteSpace(pattern)) throw new ArgumentException($"'{nameof(pattern)}' cannot be null or whitespace.", nameof(pattern));
+        int endIndex = pattern.Length;
+        switch (pattern[^1])
+        {
+            case Suffix_Long_UC:
+            case Suffix_Long_LC:
+                switch (pattern[^2])
+                {
+                    case Suffix_Unsigned_UC:
+                    case Suffix_Unsigned_LC:
+                        unsigned = true;
+                        endIndex -= 2;
+                        break;
+                    default:
+                        unsigned = false;
+                        endIndex--;
+                        break;
+                }
+                break;
+            case Suffix_Unsigned_UC:
+            case Suffix_Unsigned_LC:
+                unsigned = true;
+                endIndex--;
+                break;
+            default:
+                unsigned = false;
+                break;
+        }
+        List<bool> result = new();
+        for (var i = 0; i < endIndex; i++)
+        {
+            switch (pattern[i])
+            {
+                case Char_One:
+                    result.Add(true);
+                    break;
+                case Char_Zero:
+                    result.Add(false);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    private static List<bool> ParseBits(string pattern)
+    {
+        if (string.IsNullOrWhiteSpace(pattern)) throw new ArgumentException($"'{nameof(pattern)}' cannot be null or whitespace.", nameof(pattern));
+        int endIndex = pattern.Length;
+        switch (pattern[^1])
+        {
+            case Suffix_Long_UC:
+            case Suffix_Long_LC:
+                switch (pattern[^2])
+                {
+                    case Suffix_Unsigned_UC:
+                    case Suffix_Unsigned_LC:
+                        endIndex -= 2;
+                        break;
+                    default:
+                        endIndex--;
+                        break;
+                }
+                break;
+            case Suffix_Unsigned_UC:
+            case Suffix_Unsigned_LC:
+                endIndex--;
+                break;
+        }
+        List<bool> result = new();
+        for (var i = 0; i < endIndex; i++)
+        {
+            switch (pattern[i])
+            {
+                case Char_One:
+                    result.Add(true);
+                    break;
+                case Char_Zero:
+                    result.Add(false);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    private static ulong ConvertFromBinary64Bits(List<bool> bits)
+    {
+        ulong results = 0UL;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1UL;
+        }
+        return results;
+    }
+
+    public static ulong ConvertFromBinary64BitNotation(string pattern)
+    {
+        AssertValidPattern(pattern, 64);
+        return ConvertFromBinary64Bits(ParseBits(pattern));
+    }
+
+    private static long ConvertFromBinary64BitsAsSigned(List<bool> bits, bool forceUnsigned)
+    {
+        if (forceUnsigned) return (long)ConvertFromBinary64Bits(bits);
+        long results = 0L;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1L;
+        }
+        return results;
+    }
+
+    public static long ConvertFromBinary64BitNotationAsSigned(string pattern)
+    {
+        AssertValidPattern(pattern, 64);
+        var bits = ParseBits(pattern, out bool forceUnsigned);
+        return ConvertFromBinary64BitsAsSigned(ParseBits(pattern), forceUnsigned);
+    }
+
+    private static uint ConvertFromBinary32its(List<bool> bits)
+    {
+        uint results = 0;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1;
+        }
+        return results;
+    }
+
+    public static uint ConvertFromBinary32BitNotation(string pattern)
+    {
+        AssertValidPattern(pattern, 32);
+        return ConvertFromBinary32its(ParseBits(pattern));
+    }
+
+    private static int ConvertFromBinary32BitsAsSigned(List<bool> bits, bool forceUnsigned)
+    {
+        if (forceUnsigned) return (int)ConvertFromBinary32its(bits);
+        int results = 0;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1;
+        }
+        return results;
+    }
+
+    public static int ConvertFromBinary32BitNotationAsSigned(string pattern)
+    {
+        AssertValidPattern(pattern, 32);
+        var bits = ParseBits(pattern, out bool forceUnsigned);
+        return ConvertFromBinary32BitsAsSigned(bits, forceUnsigned);
+    }
+
+    private static ushort ConvertFromBinary16Bits(List<bool> bits)
+    {
+        ushort results = 0;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1;
+        }
+        return results;
+    }
+
+    public static ushort ConvertFromBinary16BitNotation(string pattern)
+    {
+        AssertValidPattern(pattern, 16);
+        return ConvertFromBinary16Bits(ParseBits(pattern));
+    }
+
+    public static short ConvertFromBinary16BitNotationAsSigned(string pattern)
+    {
+        AssertValidPattern(pattern, 16);
+        var bits = ParseBits(pattern, out bool forceUnsigned);
+        if (forceUnsigned) return (short)ConvertFromBinary16Bits(bits);
+        short results = 0;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1;
+        }
+        return results;
+    }
+    
+    private static byte ConvertFromBinary8Bits(List<bool> bits)
+    {
+        byte results = 0;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1;
+        }
+        return results;
+    }
+
+    public static byte ConvertFromBinary8BitNotation(string pattern)
+    {
+        AssertValidPattern(pattern, 8);
+        return ConvertFromBinary8Bits(ParseBits(pattern));
+    }
+
+    public static sbyte ConvertFromBinary8BitNotationAsSigned(string pattern)
+    {
+        AssertValidPattern(pattern, 8);
+        var bits = ParseBits(pattern, out bool forceUnsigned);
+        if (forceUnsigned) return (sbyte)ConvertFromBinary8Bits(bits);
+        sbyte results = 0;
+        foreach (var b in bits)
+        {
+            results <<= 1;
+            if (b) results |= 1;
+        }
+        return results;
+    }
+    
+    public static object ConvertFromBinaryNotation(string pattern)
+    {
+        AssertValidPattern(pattern);
+        var bits = ParseBits(pattern, out bool unsigned, out bool longValue);
+        if (longValue)
+        {
+            if (unsigned) return ConvertFromBinary64Bits(bits);
+            return ConvertFromBinary64BitsAsSigned(bits, false);
+        }
+        if (unsigned) return ConvertFromBinary32its(bits);
+        int i = bits.IndexOf(true);
+        if (i < 0 || (i = bits.Count - i) < 32) return ConvertFromBinary32BitsAsSigned(bits, false);
+        if (i == 32) return ConvertFromBinary32its(bits);
+        if (i < 64) return ConvertFromBinary64BitsAsSigned(bits, false);
+        return ConvertFromBinary64Bits(bits);
     }
 }

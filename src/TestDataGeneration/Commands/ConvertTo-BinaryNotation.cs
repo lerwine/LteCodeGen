@@ -3,7 +3,7 @@ using static TestDataGeneration.CmdletStatic;
 
 namespace TestDataGeneration.Commands;
 
-[Cmdlet(VerbsData.ConvertFrom, "BinaryNotation", DefaultParameterSetName = ParameterSetName_AutoDetect)]
+[Cmdlet(VerbsData.ConvertTo, "BinaryNotation", DefaultParameterSetName = ParameterSetName_AutoDetect)]
 public class ConvertTo_BinaryNotation : PSCmdlet
 {
     public const string ParameterSetName_AutoDetect = "AutoDetect";
@@ -17,7 +17,7 @@ public class ConvertTo_BinaryNotation : PSCmdlet
     public const string ParameterSetName_SByte = "SByte";
 
     
-    [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "Value to convert.", ParameterSetName = ParameterSetName_AutoDetect)]
+    [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, HelpMessage = "Value to convert.", ParameterSetName = ParameterSetName_AutoDetect)]
     [ValidateWholeNumber()]
     public object[] InputObject { get; set; } = null!;
 

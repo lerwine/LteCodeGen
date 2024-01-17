@@ -30,23 +30,17 @@ public static partial class SequentialRangeSet
         return IsSequentiallyAdjacent(end, value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
     }
 
-    public static bool IsMaxRange<T>(this IRangeExtents<T> extents) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && extents.Start.Equals(T.MaxValue);
-    
-    public static bool IsSingleValue<T>(this IRangeExtents<T> extents) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && extents.Start.Equals(extents.End);
-    
     public static SequentialComparisonResult GetDispositionOf<T>(this IRangeExtents<T> extents, T value) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
     {
         ArgumentNullException.ThrowIfNull(extents);
-        throw new NotImplementedException();
+        int diff = value.CompareTo(extents.Start);
+        if (diff == 0) return SequentialComparisonResult.EqualTo;
+        if (diff < 0)
+            return extents.Start.Equals(++value) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap;
+        return (value <= extents.End) ? SequentialComparisonResult.EqualTo : extents.End.Equals(--value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
     }
-    public static bool IsIncludedInExtents<T>(this T value, T start, T end)where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => value >= start && value <= end;
 
-    /// <summary>
-    /// Indicates whether a specified value falls within the current range extents.
-    /// </summary>
-    /// <param name="value">The value to check.</param>
-    /// <returns><see langword="true"/> if <paramref name="value"/> is not less than <see cref="Start"/> and is not greater than <see cref="End"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool Contains<T>(this IRangeExtents<T> extents, T value) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && value >= extents.Start && value <= extents.End;
+    public static bool IsIncludedInExtents<T>(this T value, T start, T end)where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => value >= start && value <= end;
 
     /// <summary>
     /// Indicates whether the specified range extents do not fall outside of the current range extents.
@@ -78,29 +72,29 @@ public static partial class SequentialRangeSet
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> is greater than <see cref="End"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool Follows<T>(this IRangeExtents<T> extents, T value) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && value > extents.End;
+    public static bool Follows<T>(this IRangeExtents<T> extents, T value) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && value < extents.Start;
 
     /// <summary>
     /// Indicates whether the specified range extents begin after the end of the current range extents.
     /// </summary>
-    /// <param name="item">The range extents to check.</param>
-    /// <returns><see langword="true"/> if the <see cref="Start"/> extent of the given <paramref name="item"/> is greater than <see cref="End"/> etent; otherwise, <see langword="false"/>.</returns>
-    public static bool Follows<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => item is not null && Follows(extents, item.End);
+    /// <param name="other">The range extents to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="Start"/> extent of the given <paramref name="other"/> is greater than <see cref="End"/> etent; otherwise, <see langword="false"/>.</returns>
+    public static bool Follows<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => other is not null && Follows(extents, other.End);
 
     /// <summary>
     /// Indicates whether a specified value is at least two increments greater than the current ending extent.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> is at least two increments greater than <see cref="End"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool FollowsWithGap<T>(this IRangeExtents<T> extents, T value) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && value > extents.End && --value > extents.End;
+    public static bool FollowsWithGap<T>(this IRangeExtents<T> extents, T value) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => extents is not null && value < extents.Start && ++value < extents.Start;
 
     /// <summary>
     /// Indicates whether the specified range extents start at least 1 additional increment after the end of the current range extents.
     /// </summary>
-    /// <param name="item">The range to check.</param>
-    /// <returns><see langword="true"/> if the <see cref="Start"/> value of the given <paramref name="item"/> is at least 2 increments greater than the <see cref="End"/> of the current extents;
+    /// <param name="other">The range to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="Start"/> value of the given <paramref name="other"/> is at least 2 increments greater than the <see cref="End"/> of the current extents;
     /// otherwise, <see langword="false"/>.</returns>
-    public static bool FollowsWithGap<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => item is not null && FollowsWithGap(extents, item.End);
+    public static bool FollowsWithGap<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => other is not null && FollowsWithGap(extents, other.End);
 
     /// <summary>
     /// Gets the number of sequential values included within the current extents.
@@ -123,9 +117,9 @@ public static partial class SequentialRangeSet
     /// <summary>
     /// Indicates whether the range starts immediately after the end of the current range.
     /// </summary>
-    /// <param name="item">The range to check.</param>
-    /// <returns><see langword="true"/> if the <see cref="Start"/> value of the given <paramref name="item"/> is exactly on increment greater than <see cref="End"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool ImmediatelyFollows<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => item is not null && ImmediatelyFollows(extents, item.End);
+    /// <param name="other">The range to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="Start"/> value of the given <paramref name="other"/> is exactly on increment greater than <see cref="End"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool ImmediatelyFollows<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => other is not null && ImmediatelyFollows(extents, other.End);
 
     /// <summary>
     /// Indicates whether the specified value is exactly one increment lesser than the start of the current range.
@@ -137,23 +131,23 @@ public static partial class SequentialRangeSet
     /// <summary>
     /// Indicates whether the range ends immediately before the start of the current range.
     /// </summary>
-    /// <param name="item">The range to check.</param>
-    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="item"/> is exactly on increment lesser than <see cref="Start"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool ImmediatelyPrecedes<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => item is not null && ImmediatelyPrecedes(extents, item.Start);
+    /// <param name="other">The range to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="other"/> is exactly on increment lesser than <see cref="Start"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool ImmediatelyPrecedes<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => other is not null && ImmediatelyPrecedes(extents, other.Start);
 
     /// <summary>
     /// Indicates whether a given range overlaps the current range.
     /// </summary>
-    /// <param name="item">The range to compare.</param>
-    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="item"/> not lesser than the current <see cref="Start"/> value,
-    /// and the <see cref="Start"/> value of the given <paramref name="item"/> is not greater than the current <see cref="End"/> value; otherwise, <see langword="false"/>.</returns>
-    public static bool Overlaps<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
+    /// <param name="other">The range to compare.</param>
+    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="other"/> not lesser than the current <see cref="Start"/> value,
+    /// and the <see cref="Start"/> value of the given <paramref name="other"/> is not greater than the current <see cref="End"/> value; otherwise, <see langword="false"/>.</returns>
+    public static bool Overlaps<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
     {
-        if (extents is null) return item is null;
-        if (item is null) return false;
-        int diff = item.Start.CompareTo(extents.End);
+        if (extents is null) return other is null;
+        if (other is null) return false;
+        int diff = other.Start.CompareTo(extents.End);
         if (diff == 0) return true;
-        return diff < 0 && item.End >= extents.Start;
+        return diff < 0 && other.End >= extents.Start;
     }
 
     /// <summary>
@@ -181,9 +175,9 @@ public static partial class SequentialRangeSet
     /// <summary>
     /// Indicates whether the specified range extents end before the start of the current range extents.
     /// </summary>
-    /// <param name="item">The range to check.</param>
-    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="item"/> is lesser than <see cref="Start"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool Precedes<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => item is not null && Precedes(extents, item.Start);
+    /// <param name="other">The range to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="other"/> is lesser than <see cref="Start"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool Precedes<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => other is not null && Precedes(extents, other.Start);
 
     /// <summary>
     /// Indicates whether a specified value is at least two increments less than the current starting extent.
@@ -195,10 +189,10 @@ public static partial class SequentialRangeSet
     /// <summary>
     /// Indicates whether the specified range extents end at least 1 additional increment before the start of the current range extents.
     /// </summary>
-    /// <param name="item">The range to check.</param>
-    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="item"/> is at least 2 increments lesser than <see cref="Start"/> of the current extents;
+    /// <param name="other">The range to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="End"/> value of the given <paramref name="other"/> is at least 2 increments lesser than <see cref="Start"/> of the current extents;
     /// otherwise, <see langword="false"/>.</returns>
-    public static bool PrecedesWithGap<T>(this IRangeExtents<T> extents, IRangeExtents<T> item) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => item is not null && PrecedesWithGap(extents, item.Start);
+    public static bool PrecedesWithGap<T>(this IRangeExtents<T> extents, IRangeExtents<T> other) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => other is not null && PrecedesWithGap(extents, other.Start);
 
     /// <summary>
     /// Asserts that one value can be the <see cref="SequentialRangeSet{T}.RangeItem.End"/> range extent preceding the <see cref="SequentialRangeSet{T}.RangeItem.Start"/> of another range.
@@ -227,13 +221,13 @@ public static partial class SequentialRangeSet
     /// <summary>
     /// Asserts that a range start value is not greater than an end range value
     /// </summary>
-    /// <param name="start">The potential range <see cref="SequentialRangeSet{T}.RangeItem.Start"/> value.</param>
-    /// <param name="end">The potential following range <see cref="SequentialRangeSet{T}.RangeItem.End"/> value.</param>
-    /// <returns><see langword="true"/> if <paramref name="start"/> is less than <paramref name="end"/>; otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="InvalidOperationException"><paramref name="start"/> is greater than <paramref name="end"/>.</exception>
-    public static bool AssertLessThanOrEquals<T>(this T start, T end) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
+    /// <param name="lValue">The potential range <see cref="SequentialRangeSet{T}.RangeItem.Start"/> value.</param>
+    /// <param name="rValue">The potential following range <see cref="SequentialRangeSet{T}.RangeItem.End"/> value.</param>
+    /// <returns><see langword="true"/> if <paramref name="lValue"/> is less than <paramref name="rValue"/>; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="InvalidOperationException"><paramref name="lValue"/> is greater than <paramref name="rValue"/>.</exception>
+    public static bool AssertLessThanOrEquals<T>(this T lValue, T rValue) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
     {
-        var diff = start.CompareTo(end);
+        var diff = lValue.CompareTo(rValue);
         if (diff > 0) throw new InvalidOperationException("Start range value cannot be greater than the end range value.");
         return diff < 0;
     }
@@ -241,13 +235,13 @@ public static partial class SequentialRangeSet
     /// <summary>
     /// Asserts that a range start value is not greater than an end range value
     /// </summary>
-    /// <param name="end">The potential following range <see cref="SequentialRangeSet{T}.RangeItem.End"/> value.</param>
-    /// <param name="start">The potential range <see cref="SequentialRangeSet{T}.RangeItem.Start"/> value.</param>
-    /// <returns><see langword="true"/> if <paramref name="end"/> is greater than <paramref name="start"/>; otherwise, <see langword="false"/>.</returns>
-    /// <exception cref="InvalidOperationException"><paramref name="end"/> is less than <paramref name="start"/>.</exception>
-    public static bool AssertGreaterThanOrEquals<T>(this T end, T start) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
+    /// <param name="lValue">The potential following range <see cref="SequentialRangeSet{T}.RangeItem.End"/> value.</param>
+    /// <param name="rValue">The potential range <see cref="SequentialRangeSet{T}.RangeItem.Start"/> value.</param>
+    /// <returns><see langword="true"/> if <paramref name="lValue"/> is greater than <paramref name="rValue"/>; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="InvalidOperationException"><paramref name="lValue"/> is less than <paramref name="rValue"/>.</exception>
+    public static bool AssertGreaterThanOrEquals<T>(this T lValue, T rValue) where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
     {
-        var diff = start.CompareTo(end);
+        var diff = rValue.CompareTo(lValue);
         if (diff > 0) throw new InvalidOperationException("End range value cannot be less than the start range value.");
         return diff < 0;
     }

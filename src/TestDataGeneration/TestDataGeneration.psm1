@@ -27,7 +27,7 @@ Function Select-Random {
         # Ensures that the same input item is not emitted more than once.
         [switch]$NoDuplicates
     )
-    
+
     Begin {
         $AllValues = [System.Collections.ObjectModel.Collection[object]]::new();
         switch ($PSCmdlet.ParameterSetName) {
@@ -45,17 +45,36 @@ Function Select-Random {
             }
         }
     }
-    
+
     Process {
         foreach ($obj in $InputObject) { $AllValues.Add($obj) }
     }
-    
+
     End {
-        if ($AllValues.Count -lt 2) {
-            $obj = $AllValues[0];
-            for ($i = 0; $i -lt $Repeat; $i++) { Write-Output -InputObject $obj -NoEnumerate }
+        if ($NoDuplicates.IsPresent) {
+            if ($AllValues.Count -lt 2) {
+                Write-Output -InputObject $AllValues[0] -NoEnumerate
+            } else {
+                [System.Collections.ObjectModel.Collection[int]]$CanEmit = @([System.Linq.Enumerable]::Range(0, $AllValues.Count));
+                for ($i = 0; $i -lt $Repeat; $i++) {
+                    if ($CanEmit.Count -lt 2) {
+                        Write-Output -InputObject $AllValues[$CanEmit[0]] -NoEnumerate;
+                        break;
+                    }
+                    $n = $CanEmit[(Get-RandomInteger -MinValue 0 -Maxvalue $CanEmit.Count)];
+                    $CanEmit.Remove($n) | Out-Null;
+                    Write-Output -InputObject $AllValues[$n] -NoEnumerate;
+                }
+            }
         } else {
-            Write-Output -InputObject $AllValues[(Get-RandomInteger -MinValue 0 -Maxvalue $AllValues.Count)] -NoEnumerate;
+            if ($AllValues.Count -lt 2) {
+                $obj = $AllValues[0];
+                for ($i = 0; $i -lt $Repeat; $i++) { Write-Output -InputObject $obj -NoEnumerate }
+            } else {
+                for ($i = 0; $i -lt $Repeat; $i++) {
+                    Write-Output -InputObject $AllValues[(Get-RandomInteger -MinValue 0 -Maxvalue $AllValues.Count)] -NoEnumerate;
+                }
+            }
         }
     }
     <#
