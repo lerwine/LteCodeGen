@@ -30,6 +30,10 @@ You can run the following command to install the latest version:
 Install-Module -Name Pester -Force -SkipPublisherCheck
 ```
 
+## TODO
+
+- [ ] Import [FsInfoCat.Numerics](https://github.com/lerwine/FsInfoCat/tree/main/src/FsInfoCat/Numerics)
+
 ## References
 
 General development reference links
