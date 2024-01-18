@@ -1,6 +1,4 @@
-using System.Formats.Tar;
 using System.Management.Automation;
-using System.Management.Automation.Language;
 using System.Text;
 
 namespace TestDataGeneration;
@@ -40,7 +38,7 @@ public static class CmdletStatic
 
     internal static ErrorRecord CreateInvalidOperationErrorRecord(Exception exception, string errorId, object targetObject, string targetName, string reason)
     {
-        
+
         var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.InvalidOperation, targetObject);
         errorRecord.CategoryInfo.TargetName = targetName;
         errorRecord.CategoryInfo.Reason = reason;
@@ -601,7 +599,7 @@ public static class CmdletStatic
         }
         return results;
     }
-    
+
     private static byte ConvertFromBinary8Bits(List<bool> bits)
     {
         byte results = 0;
@@ -632,7 +630,7 @@ public static class CmdletStatic
         }
         return results;
     }
-    
+
     public static object ConvertFromBinaryNotation(string pattern)
     {
         AssertValidPattern(pattern);

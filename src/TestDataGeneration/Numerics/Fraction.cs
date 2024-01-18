@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using System.Text.RegularExpressions;
-using Microsoft.PowerShell.Commands;
 
 namespace TestDataGeneration.Numerics;
 
@@ -41,7 +39,7 @@ public class Fraction
     private const char NumberChar_9 = '9';
 
     private static ImmutableArray<char> _numberchars = new char[] { NumberChar_0, NumberChar_1, NumberChar_2, NumberChar_3, NumberChar_4, NumberChar_5, NumberChar_6, NumberChar_7, NumberChar_8, NumberChar_9 }.ToImmutableArray();
-    
+
     internal static bool TryParseFractionComponents(string pattern, [NotNullWhen(true)] out string? wholeNumber, [NotNullWhen(true)] out string? numerator, [NotNullWhen(true)] out string? denominator,
         out bool isNegative)
     {
@@ -401,11 +399,11 @@ public class Fraction
 
         if (T.IsNegative(d))
         {
-            
+
             d = T.Zero - d;
             n = T.Zero - n;
         }
-        T gcd = GetGCD( n, d);
+        T gcd = GetGCD(n, d);
         denominator = d / gcd;
         return n / gcd;
     }

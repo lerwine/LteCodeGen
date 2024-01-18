@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Numerics;
 using static TestDataGeneration.SequentialRangeSet;
 

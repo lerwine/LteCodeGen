@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Specialized;
 using System.ComponentModel;
 
 namespace TestDataGeneration;
@@ -12,11 +11,11 @@ public partial class LinkedCollectionBase<TNode> : IList, IHasChangeToken where 
     object? IList.this[int index] { get => GetNodeAt(index); set => throw new NotSupportedException(); }
 
     public TNode? First { get; private set; }
-    
+
     public TNode? Last { get; private set; }
-    
+
     public int Count { get; private set; }
-    
+
     protected virtual bool IsReadOnly { get; } = false;
 
     bool IList.IsReadOnly => IsReadOnly;

@@ -174,7 +174,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(lValue)}.CompareForRangeValues({ToCharCodeString(rValue)})");
         actual = rValue.CompareForRangeValues(lValue);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(lValue)}.CompareForRangeValues({ToCharCodeString(rValue)})");
-        
+
         lValue = char.MaxValue;
         rValue = char.MinValue;
         actual = lValue.CompareForRangeValues(rValue);
@@ -218,7 +218,7 @@ public class SequentialRangeSetTests
         value = char.MaxValue;
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
-        
+
         start = 'c';
         var start_uc = char.ToUpper(start);
         end = 'g';
@@ -264,7 +264,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'i');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -285,7 +285,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'b');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyPrecedes), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -295,7 +295,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'c');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -305,7 +305,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'd');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -315,7 +315,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'e');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyFollows), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -325,7 +325,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'f');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -346,7 +346,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'b');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyPrecedes), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -356,7 +356,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'c');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -366,7 +366,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'd');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyFollows), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -376,7 +376,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(value_uc)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.GetDispositionInRangeExtents(start_uc, end_uc);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'e');
         actual = value.GetDispositionInRangeExtents(start, end);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(value)}.GetDispositionInRangeExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -486,7 +486,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         target_uc = new RangeExtents<char>(char.ToUpper((target = new('c', 'd')).Start), char.ToUpper(target.End));
         value_uc = char.ToUpper(value = 'a');
         actual = target.GetDispositionOf(value);
@@ -497,7 +497,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'b');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyPrecedes), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -507,7 +507,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'c');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -517,7 +517,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'd');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -527,7 +527,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'e');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyFollows), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -537,7 +537,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'f');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -547,7 +547,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         target_uc = new RangeExtents<char>(char.ToUpper((target = new('c')).Start), char.ToUpper(target.End));
         value_uc = char.ToUpper(value = 'a');
         actual = target.GetDispositionOf(value);
@@ -558,7 +558,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'b');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyPrecedes), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -568,7 +568,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'c');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.EqualTo), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -578,7 +578,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'd');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.ImmediatelyFollows), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -588,7 +588,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.PrecedesWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value_uc)})");
         actual = target_uc.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target_uc)}.GetDispositionOf({ToCharCodeString(value)})");
-        
+
         value_uc = char.ToUpper(value = 'e');
         actual = target.GetDispositionOf(value);
         Assert.That(actual, Is.EqualTo(SequentialComparisonResult.FollowsWithGap), $"{ToCharCodeString(target)}.GetDispositionOf({ToCharCodeString(value)})");
@@ -615,7 +615,7 @@ public class SequentialRangeSetTests
         value = char.MaxValue;
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.True, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
-        
+
         start = 'c';
         var start_uc = char.ToUpper(start);
         end = 'g';
@@ -661,7 +661,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'i');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -682,7 +682,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'b');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -692,7 +692,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'c');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.True, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -702,7 +702,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'd');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.True, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -712,7 +712,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'e');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -722,7 +722,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'f');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -743,7 +743,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'b');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -753,7 +753,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'c');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.True, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -763,7 +763,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'd');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -773,7 +773,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(value_uc)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
         actual = value.IsIncludedInExtents(start_uc, end_uc);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start_uc)}, {ToCharCodeString(end_uc)})");
-        
+
         value_uc = char.ToUpper(value = 'e');
         actual = value.IsIncludedInExtents(start, end);
         Assert.That(actual, Is.False, $"{ToCharCodeString(value)}.IsIncludedInExtents({ToCharCodeString(start)}, {ToCharCodeString(end)})");
@@ -919,7 +919,7 @@ public class SequentialRangeSetTests
 
         actual = target.Equals(char_max);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Equals({ToCharCodeString(char_max)})");
-        
+
         var char_a = 'a';
         actual = target.Equals(char_max);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Equals({ToCharCodeString(char_max)})");
@@ -929,13 +929,13 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Equals({ToCharCodeString(char_min)})");
         actual = target.Equals(char_max);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Equals({ToCharCodeString(char_max)})");
-        
+
         target = new RangeExtents<char>(char_max, char_max);
         actual = target.Equals(char_max);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Equals({ToCharCodeString(char_max)})");
         actual = target.Equals(char_min);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Equals({ToCharCodeString(char_min)})");
-        
+
         var char_b = 'b';
         target = new RangeExtents<char>(char_a, char_b);
         actual = target.Equals(char_a);
@@ -1058,7 +1058,7 @@ public class SequentialRangeSetTests
         var char_a = 'a';
         actual = target.Follows(char_a);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(char_a)})");
-        
+
         target = new RangeExtents<char>(_char_min_plus_one, char_max);
         actual = target.Follows(char_min);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(char_min)})");
@@ -1154,11 +1154,11 @@ public class SequentialRangeSetTests
         other = new RangeExtents<char>(char_min);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(_char_min_plus_two, char_max);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         other = new RangeExtents<char>(char_min, _char_min_plus_one);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
@@ -1167,22 +1167,22 @@ public class SequentialRangeSetTests
         other = new RangeExtents<char>(char_min, _char_max_minus_one);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(_char_max_minus_one, char_max);
         other = new RangeExtents<char>(char_min, _char_max_minus_two);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(char_max);
         other = new RangeExtents<char>(char_min, _char_max_minus_two);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(char_max);
         other = new RangeExtents<char>(char_min);
         actual = target.Follows(other);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         var char_a = 'a';
         target = new RangeExtents<char>(char_a, char_max);
         other = new RangeExtents<char>(char_min, char_max);
@@ -1194,7 +1194,7 @@ public class SequentialRangeSetTests
         other = new RangeExtents<char>(char_min, char_a);
         actual = target.Follows(other);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(char_min, char_a);
         other = new RangeExtents<char>(char_min, char_max);
         actual = target.Follows(other);
@@ -1427,7 +1427,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
         actual = target.Follows(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_b, char_d);
         actual = target.Follows(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a)})");
@@ -1437,17 +1437,17 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
         actual = target.Follows(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_b, char_e);
         actual = target.Follows(other_a_c);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
         actual = target.Follows(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_b, char_f);
         actual = target.Follows(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_c);
         actual = target.Follows(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a)})");
@@ -1460,7 +1460,7 @@ public class SequentialRangeSetTests
         var other_a_e = new RangeExtents<char>(char_a, char_e);
         actual = target.Follows(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_d);
         actual = target.Follows(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a)})");
@@ -1472,7 +1472,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
         actual = target.Follows(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_e);
         actual = target.Follows(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a)})");
@@ -1484,23 +1484,23 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
         actual = target.Follows(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_f);
         actual = target.Follows(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_d)})");
         actual = target.Follows(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_g);
         actual = target.Follows(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_d);
         actual = target.Follows(other_a_b);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_b)})");
         actual = target.Follows(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_d, char_e);
         actual = target.Follows(other_a_b);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_b)})");
@@ -1512,15 +1512,15 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_b)})");
         actual = target.Follows(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_e);
         actual = target.Follows(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_e, char_f);
         actual = target.Follows(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_e, char_g);
         actual = target.Follows(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.Follows({ToCharCodeString(other_a_c)})");
@@ -1626,7 +1626,7 @@ public class SequentialRangeSetTests
         other = new RangeExtents<char>(char_min, char_a);
         actual = target.FollowsWithGap(other);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(char_min, char_a);
         other = new RangeExtents<char>(char_min, char_max);
         actual = target.FollowsWithGap(other);
@@ -1859,7 +1859,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
         actual = target.FollowsWithGap(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_b, char_d);
         actual = target.FollowsWithGap(other_a);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a)})");
@@ -1869,17 +1869,17 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
         actual = target.FollowsWithGap(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_b, char_e);
         actual = target.FollowsWithGap(other_a_c);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
         actual = target.FollowsWithGap(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_b, char_f);
         actual = target.FollowsWithGap(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
-        
+
         target = new RangeExtents<char>(char_c);
         actual = target.FollowsWithGap(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a)})");
@@ -1892,7 +1892,7 @@ public class SequentialRangeSetTests
         var other_a_e = new RangeExtents<char>(char_a, char_e);
         actual = target.FollowsWithGap(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_d);
         actual = target.FollowsWithGap(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a)})");
@@ -1904,7 +1904,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
         actual = target.FollowsWithGap(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_e);
         actual = target.FollowsWithGap(other_a);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a)})");
@@ -1916,23 +1916,23 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
         actual = target.FollowsWithGap(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_f);
         actual = target.FollowsWithGap(other_a_d);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_d)})");
         actual = target.FollowsWithGap(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_c, char_g);
         actual = target.FollowsWithGap(other_a_e);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_e)})");
-        
+
         target = new RangeExtents<char>(char_d);
         actual = target.FollowsWithGap(other_a_b);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_b)})");
         actual = target.FollowsWithGap(other_a_c);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_d, char_e);
         actual = target.FollowsWithGap(other_a_b);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_b)})");
@@ -1944,15 +1944,15 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_b)})");
         actual = target.FollowsWithGap(other_a_c);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_e);
         actual = target.FollowsWithGap(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_e, char_f);
         actual = target.FollowsWithGap(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
-        
+
         target = new RangeExtents<char>(char_e, char_g);
         actual = target.FollowsWithGap(other_a_c);
         Assert.That(actual, Is.True, $"{ToCharCodeString(target)}.FollowsWithGap({ToCharCodeString(other_a_c)})");
@@ -1984,7 +1984,7 @@ public class SequentialRangeSetTests
         var value = char.MinValue;
         var actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
-        
+
         value = char.MaxValue;
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
@@ -1992,8 +1992,8 @@ public class SequentialRangeSetTests
         target = new RangeExtents<char>(char.MaxValue, char.MaxValue);
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
-        
-        
+
+
         value = char.MinValue;
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
@@ -2002,7 +2002,7 @@ public class SequentialRangeSetTests
         value = 'b';
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
-        
+
         value = 'a';
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.True);
@@ -2016,11 +2016,11 @@ public class SequentialRangeSetTests
         value = 'a';
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
-        
+
         target = new RangeExtents<char>('b', 'c');
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.True);
-        
+
         value = 'A';
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
@@ -2032,7 +2032,7 @@ public class SequentialRangeSetTests
         value = 'c';
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
-        
+
         value = 'd';
         actual = target.ImmediatelyFollows(value);
         Assert.That(actual, Is.False);
@@ -2109,11 +2109,11 @@ public class SequentialRangeSetTests
         var other = new RangeExtents<char>(char_min, char_max);
         var actual = target.Precedes(other);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Precedes({ToCharCodeString(other)})");
-        
+
         other = new RangeExtents<char>(char_min, char_min);
         actual = target.Precedes(other);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Precedes({ToCharCodeString(other)})");
-        
+
         other = new RangeExtents<char>(char_max, char_max);
         actual = target.Precedes(other);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Precedes({ToCharCodeString(other)})");
@@ -2131,7 +2131,7 @@ public class SequentialRangeSetTests
         other = new RangeExtents<char>(char_min, char_a);
         actual = target.Precedes(other);
         Assert.That(actual, Is.False, $"{ToCharCodeString(target)}.Precedes({ToCharCodeString(other)})");
-        
+
         target = new RangeExtents<char>(char_min, char_a);
         other = new RangeExtents<char>(char_min, char_max);
         actual = target.Precedes(other);
@@ -2552,7 +2552,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         foreach (char c in new char[] { value_u, item_w_z_start, item_w_z_end, value_y, item_w_z_end })
         {
             actual = target.Add(c);
@@ -2664,12 +2664,12 @@ public class SequentialRangeSetTests
         var item_l_o = target.First!;
         // Assert.Multiple(() =>
         // {
-            Assert.That(actual, Is.True);
-            Assert.That(item_l_o, Is.Not.Null);
-            Assert.That(target.Last, Is.Not.Null);
-            Assert.That(target.Last, Is.SameAs(item_l_o));
-            Assert.That(target.ContainsAllPossibleValues, Is.False);
-            Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
+        Assert.That(actual, Is.True);
+        Assert.That(item_l_o, Is.Not.Null);
+        Assert.That(target.Last, Is.Not.Null);
+        Assert.That(target.Last, Is.SameAs(item_l_o));
+        Assert.That(target.ContainsAllPossibleValues, Is.False);
+        Assert.That(((IHasChangeToken)target).ChangeToken, Is.Not.SameAs(changeToken));
         // });
         Assert.Multiple(() =>
         {
@@ -2757,7 +2757,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_o.IsMultiValue, Is.True);
             Assert.That(item_l_o.Owner, Is.Not.Null);
             Assert.That(item_l_o.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_s.Previous, Is.Not.Null);
             Assert.That(item_s.Previous, Is.SameAs(item_l_o));
             Assert.That(item_s.Next, Is.Null);
@@ -2805,7 +2805,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_o.IsMultiValue, Is.True);
             Assert.That(item_l_o.Owner, Is.Not.Null);
             Assert.That(item_l_o.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_r_t.Previous, Is.Not.Null);
             Assert.That(item_r_t.Previous, Is.SameAs(item_l_o));
             Assert.That(item_r_t.Next, Is.Null);
@@ -2853,7 +2853,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.IsMultiValue, Is.True);
             Assert.That(item_l_p.Owner, Is.Not.Null);
             Assert.That(item_l_p.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_r_t.Previous, Is.Not.Null);
             Assert.That(item_r_t.Previous, Is.SameAs(item_l_p));
             Assert.That(item_r_t.Next, Is.Null);
@@ -2866,7 +2866,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         var item_b_c_start = 'b';
         var item_b_c_end = 'c';
         actual = target.Add(item_b_c_end, item_b_c_start);
@@ -2900,7 +2900,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.IsMultiValue, Is.True);
             Assert.That(item_l_p.Owner, Is.Not.Null);
             Assert.That(item_l_p.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_r_t.Previous, Is.Not.Null);
             Assert.That(item_r_t.Previous, Is.SameAs(item_l_p));
             Assert.That(item_r_t.Next, Is.Null);
@@ -2942,7 +2942,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.End, Is.EqualTo(item_i_p_end));
             Assert.That(item_l_p.IsMultiValue, Is.True);
             Assert.That(item_l_p.Owner, Is.Null);
-            
+
             Assert.That(item_r_t.Previous, Is.Not.Null);
             Assert.That(item_r_t.Previous, Is.SameAs(item_i_p));
             Assert.That(item_r_t.Next, Is.Null);
@@ -3194,7 +3194,7 @@ public class SequentialRangeSetTests
             Assert.That(item_Z_z.Owner, Is.Not.Null);
             Assert.That(item_Z_z.Owner, Is.SameAs(target));
         });
-        
+
         actual = target.Add(item_7_value, item_7_value);
         Assert.Multiple(() =>
         {
@@ -3291,7 +3291,7 @@ public class SequentialRangeSetTests
             Assert.That(item_L_P.Next, Is.SameAs(item_l_p));
             Assert.That(item_L_P.Owner, Is.Not.Null);
             Assert.That(item_L_P.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
             Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
             Assert.That(item_l_p.IsMultiValue, Is.True);
@@ -3329,7 +3329,7 @@ public class SequentialRangeSetTests
             Assert.That(item_L_P.Next, Is.SameAs(item_l_p));
             Assert.That(item_L_P.Owner, Is.Not.Null);
             Assert.That(item_L_P.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
             Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
             Assert.That(item_l_p.IsMultiValue, Is.True);
@@ -3338,7 +3338,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.Next, Is.Null);
             Assert.That(item_l_p.Owner, Is.Not.Null);
             Assert.That(item_l_p.Owner, Is.SameAs(target));
-            
+
             Assert.That(cannot_add.Start, Is.EqualTo(item_L_P_start));
             Assert.That(cannot_add.End, Is.EqualTo(item_L_P_end));
             Assert.That(cannot_add.IsMultiValue, Is.True);
@@ -3346,7 +3346,7 @@ public class SequentialRangeSetTests
             Assert.That(cannot_add.Next, Is.Null);
             Assert.That(cannot_add.Owner, Is.Null);
         });
-        
+
         cannot_add = new SequentialRangeSet<char>.RangeItem(item_L_P_end, item_l_p_start);
         Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
         Assert.Multiple(() =>
@@ -3368,7 +3368,7 @@ public class SequentialRangeSetTests
             Assert.That(item_L_P.Next, Is.SameAs(item_l_p));
             Assert.That(item_L_P.Owner, Is.Not.Null);
             Assert.That(item_L_P.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
             Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
             Assert.That(item_l_p.IsMultiValue, Is.True);
@@ -3377,7 +3377,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.Next, Is.Null);
             Assert.That(item_l_p.Owner, Is.Not.Null);
             Assert.That(item_l_p.Owner, Is.SameAs(target));
-            
+
             Assert.That(cannot_add.Start, Is.EqualTo(item_L_P_end));
             Assert.That(cannot_add.End, Is.EqualTo(item_l_p_start));
             Assert.That(cannot_add.IsMultiValue, Is.True);
@@ -3385,7 +3385,7 @@ public class SequentialRangeSetTests
             Assert.That(cannot_add.Next, Is.Null);
             Assert.That(cannot_add.Owner, Is.Null);
         });
-        
+
         var c = 'q';
         cannot_add = new SequentialRangeSet<char>.RangeItem(item_l_p_start, c);
         Assert.Throws<InvalidOperationException>(() => target.Add(cannot_add));
@@ -3408,7 +3408,7 @@ public class SequentialRangeSetTests
             Assert.That(item_L_P.Next, Is.SameAs(item_l_p));
             Assert.That(item_L_P.Owner, Is.Not.Null);
             Assert.That(item_L_P.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
             Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
             Assert.That(item_l_p.IsMultiValue, Is.True);
@@ -3417,7 +3417,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.Next, Is.Null);
             Assert.That(item_l_p.Owner, Is.Not.Null);
             Assert.That(item_l_p.Owner, Is.SameAs(target));
-            
+
             Assert.That(cannot_add.Start, Is.EqualTo(item_l_p_start));
             Assert.That(cannot_add.End, Is.EqualTo(c));
             Assert.That(cannot_add.IsMultiValue, Is.True);
@@ -3448,7 +3448,7 @@ public class SequentialRangeSetTests
             Assert.That(item_L_P.Next, Is.SameAs(item_l_p));
             Assert.That(item_L_P.Owner, Is.Not.Null);
             Assert.That(item_L_P.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_l_p.Start, Is.EqualTo(item_l_p_start));
             Assert.That(item_l_p.End, Is.EqualTo(item_l_p_end));
             Assert.That(item_l_p.IsMultiValue, Is.True);
@@ -3457,7 +3457,7 @@ public class SequentialRangeSetTests
             Assert.That(item_l_p.Next, Is.Null);
             Assert.That(item_l_p.Owner, Is.Not.Null);
             Assert.That(item_l_p.Owner, Is.SameAs(target));
-            
+
             Assert.That(cannot_add.Start, Is.EqualTo(c));
             Assert.That(cannot_add.End, Is.EqualTo(c));
             Assert.That(cannot_add.IsMultiValue, Is.False);
@@ -3527,7 +3527,7 @@ public class SequentialRangeSetTests
             Assert.That(middle.Previous, Is.Null);
             Assert.That(middle.Next, Is.Null);
             Assert.That(middle.Owner, Is.Null);
-            
+
             Assert.That(last.Previous, Is.Null);
             Assert.That(last.Next, Is.Null);
             Assert.That(last.Owner, Is.Null);
@@ -3681,7 +3681,7 @@ public class SequentialRangeSetTests
 
         actual = target.GetAllValues();
         Assert.That(actual, Is.Not.Null);
-        Assert.That(actual.ToArray(), Is.EqualTo(new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'm', 'p', 'q', 'r', 's'}));
+        Assert.That(actual.ToArray(), Is.EqualTo(new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'm', 'p', 'q', 'r', 's' }));
     }
 
     [Test]
@@ -3693,7 +3693,7 @@ public class SequentialRangeSetTests
         Assert.That(actual, Is.Not.Null);
         using (actual)
             Assert.That(actual.MoveNext(), Is.False);
-        
+
         var first_start = 'a';
         var first_end = 'f';
         var second_value = 'm';
@@ -3866,7 +3866,7 @@ public class SequentialRangeSetTests
             Assert.That(range_min_x.Next, Is.SameAs(range_z_max));
             Assert.That(range_min_x.Owner, Is.Not.Null);
             Assert.That(range_min_x.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
             Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -3880,7 +3880,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         actual = target.Remove('w');
         var range_min_v_end = 'v';
         var range_min_v = range_min_x;
@@ -3910,7 +3910,7 @@ public class SequentialRangeSetTests
             Assert.That(range_min_v.Next, Is.SameAs(range_x));
             Assert.That(range_min_v.Owner, Is.Not.Null);
             Assert.That(range_min_v.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_x.Start, Is.EqualTo(range_x_value));
             Assert.That(range_x.End, Is.EqualTo(range_x_value));
             Assert.That(range_x.IsMultiValue, Is.False);
@@ -3921,7 +3921,7 @@ public class SequentialRangeSetTests
             Assert.That(range_x.Next, Is.SameAs(range_z_max));
             Assert.That(range_x.Owner, Is.Not.Null);
             Assert.That(range_x.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
             Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -3967,7 +3967,7 @@ public class SequentialRangeSetTests
             Assert.That(range_min_q.Next, Is.SameAs(range_s_v));
             Assert.That(range_min_q.Owner, Is.Not.Null);
             Assert.That(range_min_q.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_s_v.Start, Is.EqualTo(range_s_v_start));
             Assert.That(range_s_v.End, Is.EqualTo(range_s_v_end));
             Assert.That(range_s_v.IsMultiValue, Is.True);
@@ -3978,7 +3978,7 @@ public class SequentialRangeSetTests
             Assert.That(range_s_v.Next, Is.SameAs(range_x));
             Assert.That(range_s_v.Owner, Is.Not.Null);
             Assert.That(range_s_v.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_x.Start, Is.EqualTo(range_x_value));
             Assert.That(range_x.End, Is.EqualTo(range_x_value));
             Assert.That(range_x.IsMultiValue, Is.False);
@@ -3989,7 +3989,7 @@ public class SequentialRangeSetTests
             Assert.That(range_x.Next, Is.SameAs(range_z_max));
             Assert.That(range_x.Owner, Is.Not.Null);
             Assert.That(range_x.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
             Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -4029,7 +4029,7 @@ public class SequentialRangeSetTests
             Assert.That(range_min_q.Next, Is.SameAs(range_s_u));
             Assert.That(range_min_q.Owner, Is.Not.Null);
             Assert.That(range_min_q.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_s_u.Start, Is.EqualTo(range_s_u_start));
             Assert.That(range_s_u.End, Is.EqualTo(range_s_u_end));
             Assert.That(range_s_u.IsMultiValue, Is.True);
@@ -4040,7 +4040,7 @@ public class SequentialRangeSetTests
             Assert.That(range_s_u.Next, Is.SameAs(range_x));
             Assert.That(range_s_u.Owner, Is.Not.Null);
             Assert.That(range_s_u.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_x.Start, Is.EqualTo(range_x_value));
             Assert.That(range_x.End, Is.EqualTo(range_x_value));
             Assert.That(range_x.IsMultiValue, Is.False);
@@ -4051,7 +4051,7 @@ public class SequentialRangeSetTests
             Assert.That(range_x.Next, Is.SameAs(range_z_max));
             Assert.That(range_x.Owner, Is.Not.Null);
             Assert.That(range_x.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
             Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -4065,7 +4065,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         actual = target.Remove('t');
         var range_s_value = 's';
         var range_s = range_s_u;
@@ -4097,7 +4097,7 @@ public class SequentialRangeSetTests
             Assert.That(range_min_q.Next, Is.SameAs(range_s));
             Assert.That(range_min_q.Owner, Is.Not.Null);
             Assert.That(range_min_q.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_s.Start, Is.EqualTo(range_s_value));
             Assert.That(range_s.End, Is.EqualTo(range_s_value));
             Assert.That(range_s.IsMultiValue, Is.False);
@@ -4108,7 +4108,7 @@ public class SequentialRangeSetTests
             Assert.That(range_s.Next, Is.SameAs(range_u));
             Assert.That(range_s.Owner, Is.Not.Null);
             Assert.That(range_s.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_u.Start, Is.EqualTo(range_u_value));
             Assert.That(range_u.End, Is.EqualTo(range_u_value));
             Assert.That(range_u.IsMultiValue, Is.False);
@@ -4119,7 +4119,7 @@ public class SequentialRangeSetTests
             Assert.That(range_u.Next, Is.SameAs(range_x));
             Assert.That(range_u.Owner, Is.Not.Null);
             Assert.That(range_u.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_x.Start, Is.EqualTo(range_x_value));
             Assert.That(range_x.End, Is.EqualTo(range_x_value));
             Assert.That(range_x.IsMultiValue, Is.False);
@@ -4130,7 +4130,7 @@ public class SequentialRangeSetTests
             Assert.That(range_x.Next, Is.SameAs(range_z_max));
             Assert.That(range_x.Owner, Is.Not.Null);
             Assert.That(range_x.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
             Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -4144,7 +4144,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         actual = target.Remove(range_u_value);
         Assert.Multiple(() =>
         {
@@ -4172,7 +4172,7 @@ public class SequentialRangeSetTests
             Assert.That(range_min_q.Next, Is.SameAs(range_s));
             Assert.That(range_min_q.Owner, Is.Not.Null);
             Assert.That(range_min_q.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_s.Start, Is.EqualTo(range_s_value));
             Assert.That(range_s.End, Is.EqualTo(range_s_value));
             Assert.That(range_s.IsMultiValue, Is.False);
@@ -4183,7 +4183,7 @@ public class SequentialRangeSetTests
             Assert.That(range_s.Next, Is.SameAs(range_x));
             Assert.That(range_s.Owner, Is.Not.Null);
             Assert.That(range_s.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_u.Start, Is.EqualTo(range_u_value));
             Assert.That(range_u.End, Is.EqualTo(range_u_value));
             Assert.That(range_u.IsMultiValue, Is.False);
@@ -4191,7 +4191,7 @@ public class SequentialRangeSetTests
             Assert.That(range_u.Previous, Is.Null);
             Assert.That(range_u.Next, Is.Null);
             Assert.That(range_u.Owner, Is.Null);
-            
+
             Assert.That(range_x.Start, Is.EqualTo(range_x_value));
             Assert.That(range_x.End, Is.EqualTo(range_x_value));
             Assert.That(range_x.IsMultiValue, Is.False);
@@ -4202,7 +4202,7 @@ public class SequentialRangeSetTests
             Assert.That(range_x.Next, Is.SameAs(range_z_max));
             Assert.That(range_x.Owner, Is.Not.Null);
             Assert.That(range_x.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
             Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -4216,8 +4216,8 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
-        foreach (var c in new char[] {  range_s_v_end, 'w', 'y' })
+
+        foreach (var c in new char[] { range_s_v_end, 'w', 'y' })
         {
             actual = target.Remove(c);
             Assert.Multiple(() =>
@@ -4246,7 +4246,7 @@ public class SequentialRangeSetTests
                 Assert.That(range_min_q.Next, Is.SameAs(range_s));
                 Assert.That(range_min_q.Owner, Is.Not.Null);
                 Assert.That(range_min_q.Owner, Is.SameAs(target));
-                
+
                 Assert.That(range_s.Start, Is.EqualTo(range_s_value));
                 Assert.That(range_s.End, Is.EqualTo(range_s_value));
                 Assert.That(range_s.IsMultiValue, Is.False);
@@ -4257,7 +4257,7 @@ public class SequentialRangeSetTests
                 Assert.That(range_s.Next, Is.SameAs(range_x));
                 Assert.That(range_s.Owner, Is.Not.Null);
                 Assert.That(range_s.Owner, Is.SameAs(target));
-                
+
                 Assert.That(range_u.Start, Is.EqualTo(range_u_value));
                 Assert.That(range_u.End, Is.EqualTo(range_u_value));
                 Assert.That(range_u.IsMultiValue, Is.False);
@@ -4265,7 +4265,7 @@ public class SequentialRangeSetTests
                 Assert.That(range_u.Previous, Is.Null);
                 Assert.That(range_u.Next, Is.Null);
                 Assert.That(range_u.Owner, Is.Null);
-                
+
                 Assert.That(range_x.Start, Is.EqualTo(range_x_value));
                 Assert.That(range_x.End, Is.EqualTo(range_x_value));
                 Assert.That(range_x.IsMultiValue, Is.False);
@@ -4276,7 +4276,7 @@ public class SequentialRangeSetTests
                 Assert.That(range_x.Next, Is.SameAs(range_z_max));
                 Assert.That(range_x.Owner, Is.Not.Null);
                 Assert.That(range_x.Owner, Is.SameAs(target));
-                
+
                 Assert.That(range_z_max.Start, Is.EqualTo(range_z_max_min));
                 Assert.That(range_z_max.End, Is.EqualTo(char.MaxValue));
                 Assert.That(range_z_max.IsMultiValue, Is.True);
@@ -4375,7 +4375,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         actual = target.Remove('G', 'g');
         var range_B_F_start = range_B_max_start;
         var range_B_F_end = 'F';
@@ -4401,7 +4401,7 @@ public class SequentialRangeSetTests
             Assert.That(range_B_F.Next, Is.SameAs(range_h_max));
             Assert.That(range_B_F.Owner, Is.Not.Null);
             Assert.That(range_B_F.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_h_max.Start, Is.EqualTo(range_h_max_start));
             Assert.That(range_h_max.End, Is.EqualTo(char.MaxValue));
             Assert.That(range_h_max.IsMultiValue, Is.True);
@@ -4439,7 +4439,7 @@ public class SequentialRangeSetTests
             Assert.That(range_B_F.Next, Is.SameAs(range_h_w));
             Assert.That(range_B_F.Owner, Is.Not.Null);
             Assert.That(range_B_F.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_h_w.Start, Is.EqualTo(range_h_w_start));
             Assert.That(range_h_w.End, Is.EqualTo(range_h_w_end));
             Assert.That(range_h_w.IsMultiValue, Is.True);
@@ -4480,7 +4480,7 @@ public class SequentialRangeSetTests
             Assert.That(range_B_E.Next, Is.SameAs(range_i_w));
             Assert.That(range_B_E.Owner, Is.Not.Null);
             Assert.That(range_B_E.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_i_w.Start, Is.EqualTo(range_i_w_start));
             Assert.That(range_i_w.End, Is.EqualTo(range_i_w_end));
             Assert.That(range_i_w.IsMultiValue, Is.True);
@@ -4514,7 +4514,7 @@ public class SequentialRangeSetTests
             Assert.That(range_B_E.Next, Is.Null);
             Assert.That(range_B_E.Owner, Is.Not.Null);
             Assert.That(range_B_E.Owner, Is.SameAs(target));
-            
+
             Assert.That(range_i_w.Start, Is.EqualTo(range_i_w_start));
             Assert.That(range_i_w.End, Is.EqualTo(range_i_w_end));
             Assert.That(range_i_w.IsMultiValue, Is.True);
@@ -4574,14 +4574,14 @@ public class SequentialRangeSetTests
             Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
             Assert.That(item_a_g.Owner, Is.Not.Null);
             Assert.That(item_a_g.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_i_k.Previous, Is.Not.Null);
             Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
             Assert.That(item_i_k.Next, Is.Not.Null);
             Assert.That(item_i_k.Next, Is.SameAs(item_p_z));
             Assert.That(item_i_k.Owner, Is.Not.Null);
             Assert.That(item_i_k.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_p_z.Previous, Is.Not.Null);
             Assert.That(item_p_z.Previous, Is.SameAs(item_i_k));
             Assert.That(item_p_z.Next, Is.Null);
@@ -4609,14 +4609,14 @@ public class SequentialRangeSetTests
             Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
             Assert.That(item_a_g.Owner, Is.Not.Null);
             Assert.That(item_a_g.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_i_k.Previous, Is.Not.Null);
             Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
             Assert.That(item_i_k.Next, Is.Not.Null);
             Assert.That(item_i_k.Next, Is.SameAs(item_p_z));
             Assert.That(item_i_k.Owner, Is.Not.Null);
             Assert.That(item_i_k.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_p_z.Previous, Is.Not.Null);
             Assert.That(item_p_z.Previous, Is.SameAs(item_i_k));
             Assert.That(item_p_z.Next, Is.Null);
@@ -4641,13 +4641,13 @@ public class SequentialRangeSetTests
             Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
             Assert.That(item_a_g.Owner, Is.Not.Null);
             Assert.That(item_a_g.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_i_k.Previous, Is.Not.Null);
             Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
             Assert.That(item_i_k.Next, Is.Null);
             Assert.That(item_i_k.Owner, Is.Not.Null);
             Assert.That(item_i_k.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_p_z.Previous, Is.Null);
             Assert.That(item_p_z.Next, Is.Null);
             Assert.That(item_p_z.Owner, Is.Null);
@@ -4655,7 +4655,7 @@ public class SequentialRangeSetTests
         ((IChangeTracking)target).AcceptChanges();
         changeToken = ((IHasChangeToken)target).ChangeToken;
         Assert.That(changeToken, Is.Not.Null);
-        
+
         actual = target.Remove(item_p_z);
         Assert.Multiple(() =>
         {
@@ -4673,7 +4673,7 @@ public class SequentialRangeSetTests
             Assert.That(item_a_g.Next, Is.SameAs(item_i_k));
             Assert.That(item_a_g.Owner, Is.Not.Null);
             Assert.That(item_a_g.Owner, Is.SameAs(target));
-            
+
             Assert.That(item_i_k.Previous, Is.Not.Null);
             Assert.That(item_i_k.Previous, Is.SameAs(item_a_g));
             Assert.That(item_i_k.Next, Is.Null);

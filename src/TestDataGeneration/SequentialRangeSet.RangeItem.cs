@@ -2,7 +2,6 @@ using System.Buffers;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using static TestDataGeneration.SequentialRangeSet;
 
 namespace TestDataGeneration;
 
@@ -152,7 +151,7 @@ public partial class SequentialRangeSet<T>
             if (previous is null)
             {
                 owner.AddLast(new RangeItem(start, end, isMultiValue, isMaxRange));
-                return true; 
+                return true;
             }
             if (isMaxRange || previous.IsMaxRange) return false;
             var next = previous.Next;
@@ -162,7 +161,7 @@ public partial class SequentialRangeSet<T>
                 if (next is null)
                 {
                     owner.AddLast(new RangeItem(start, end, isMultiValue, isMaxRange));
-                    return true; 
+                    return true;
                 }
                 next = (previous = next).Next;
                 startDisposition = previous.GetDispositionOf(start);
@@ -235,7 +234,7 @@ public partial class SequentialRangeSet<T>
                     }
                     break;
             }
-            
+
             previous.MergeWithNext();
             while ((next = previous.Next) is not null)
             {
@@ -266,7 +265,7 @@ public partial class SequentialRangeSet<T>
                 owner.AddFirst(new RangeItem(value));
                 return true;
             }
-            
+
             var startDisposition = item.GetDispositionOf(value);
             while (startDisposition == SequentialComparisonResult.FollowsWithGap)
             {
@@ -408,7 +407,7 @@ public partial class SequentialRangeSet<T>
                 return true;
             }
             if (!isMultiValue) return Remove(start, rangeSet);
-            
+
             int diff;
             while ((diff = start.CompareTo(item.End)) > 0)
             {

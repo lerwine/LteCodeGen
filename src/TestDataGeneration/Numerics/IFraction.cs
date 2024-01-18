@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace TestDataGeneration.Numerics;
 
@@ -16,13 +12,13 @@ public interface IFraction : IFractionBase
     /// </summary>
     /// <value>The numerator for the current fractional value.</value>
     IConvertible Numerator { get; }
-    
+
     /// <summary>
     /// Gets the denominator value.
     /// </summary>
     /// <value>The denominator for the current fractional value.</value>
     IConvertible Denominator { get; }
-    
+
     /// <summary>
     /// Gets the fractional value as a decimal value.
     /// </summary>
@@ -73,7 +69,7 @@ public interface IFraction<TSelf, TFractional, TWholeNumber> : IFraction<TSelf>,
     /// </summary>
     /// <value>The numerator for the current fractional value.</value>
     new TFractional Numerator { get; }
-    
+
     /// <summary>
     /// Gets the denominator value.
     /// </summary>
@@ -87,7 +83,7 @@ public interface IFraction<TSelf, TFractional, TWholeNumber> : IFraction<TSelf>,
     /// <param name="fraction">The fractional value to invert.</param>
     /// <returns>A fraction normalized from inverted <paramref name="wholeNumber"/>, <see cref="Denominator"/>, and <see cref="Numerator"/> values.</returns>
     static abstract TSelf Invert(TWholeNumber wholeNumber, TSelf fraction);
-    
+
     /// <summary>
     /// Gets an inverted fraction value.
     /// </summary>

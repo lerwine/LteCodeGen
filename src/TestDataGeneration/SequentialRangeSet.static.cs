@@ -22,7 +22,7 @@ public static partial class SequentialRangeSet
             return ((diff = value.CompareTo(start)) == 0) ? SequentialComparisonResult.EqualTo :
                 (diff < 0) ? (IsSequentiallyAdjacent(value, start) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap) :
                 IsSequentiallyAdjacent(start, value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
-        
+
         if ((diff = value.CompareTo(start)) == 0) return SequentialComparisonResult.EqualTo;
         if (diff < 0)
             return IsSequentiallyAdjacent(value, start) ? SequentialComparisonResult.ImmediatelyPrecedes : SequentialComparisonResult.PrecedesWithGap;
@@ -40,7 +40,7 @@ public static partial class SequentialRangeSet
         return (value <= extents.End) ? SequentialComparisonResult.EqualTo : extents.End.Equals(--value) ? SequentialComparisonResult.ImmediatelyFollows : SequentialComparisonResult.FollowsWithGap;
     }
 
-    public static bool IsIncludedInExtents<T>(this T value, T start, T end)where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => value >= start && value <= end;
+    public static bool IsIncludedInExtents<T>(this T value, T start, T end) where T : struct, IBinaryInteger<T>, IMinMaxValue<T> => value >= start && value <= end;
 
     /// <summary>
     /// Indicates whether the specified range extents do not fall outside of the current range extents.
