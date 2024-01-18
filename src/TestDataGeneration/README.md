@@ -34,10 +34,30 @@ Install-Module -Name Pester -Force -SkipPublisherCheck
 
 - [ ] Import [FsInfoCat.Numerics](https://github.com/lerwine/FsInfoCat/tree/main/src/FsInfoCat/Numerics)
 
+### Calculating 'E'
+
+```csharp
+public const double EPSILON = 1.0e-15;
+
+ulong fact = 1;
+double e = 2.0;
+double e0;
+uint n = 2;
+
+do
+{
+    e0 = e;
+    fact *= n++;
+    e += 1.0 / fact;
+}
+while (Math.Abs(e - e0) >= EPSILON);
+```
+
 ## References
 
 General development reference links
 
+- [Math Class in C#](https://code-maze.com/csharp-math/)
 - [Character Name Index - unicode.org](https://www.unicode.org/charts/charindex.html)
 - [UTF-8, UTF-16, UTF-32 & BOM - unicode.org](https://www.unicode.org/faq/utf_bom.html)
 - [U0000.pdf: C0 Controls and Basic Latin - unicode.org](Resources/U0000.pdf)
