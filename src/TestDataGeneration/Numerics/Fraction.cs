@@ -1,10 +1,11 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public class Fraction
+public static class Fraction
 {
     public const char Separator_Numerator_Denominator = '∕';
 
@@ -382,8 +383,7 @@ public class Fraction
     internal static T GetSimplifiedRational<T>(T n, T d, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
-        if (T.IsZero(d))
-            throw new DivideByZeroException();
+        if (T.IsZero(d)) throw new DivideByZeroException();
 
         if (T.IsZero(n))
         {
@@ -408,44 +408,84 @@ public class Fraction
         return n / gcd;
     }
 
-    internal static T GetNormalizedRational<T>(T w, T n, T d, out T numerator, out T denominator)
+    internal static T GetProperRational<T>(T wholeNumber, T numerator, T denominator,
+            out T properNumerator)
         where T : struct, IBinaryNumber<T>
     {
-        n = GetSimplifiedRational(n, d, out denominator);
+        if (T.IsZero(denominator)) throw new DivideByZeroException();
 
-        if (T.IsZero(n))
+        if (T.IsZero(numerator))
         {
-            numerator = n;
-            return w;
+            properNumerator = numerator;
+            return wholeNumber;
         }
 
         if (denominator.Equals(T.One))
         {
-            numerator = T.Zero;
-            return w + n;
+            properNumerator = T.Zero;
+            return wholeNumber + numerator;
         }
 
-        if (n.CompareTo(denominator) > 0)
+        if (numerator > denominator)
         {
-            numerator = n % denominator;
-            w = T.IsNegative(w)
-                ? w - ((n - numerator) / denominator)
-                : w + ((n - numerator) / denominator);
-            numerator = GetSimplifiedRational(numerator, denominator, out denominator);
+            properNumerator = numerator % denominator;
+            wholeNumber = T.IsNegative(wholeNumber)
+                ? wholeNumber - ((numerator - properNumerator) / denominator)
+                : wholeNumber + ((numerator - properNumerator) / denominator);
         }
         else
-            numerator = n;
+            properNumerator = numerator;
 
-        if (T.IsZero(w))
-            return w;
+        if (T.IsZero(wholeNumber))
+            return wholeNumber;
 
-        if (T.IsNegative(numerator))
+        if (T.IsNegative(properNumerator))
         {
-            w = T.IsNegative(w) ? w + T.One : w - T.One;
-            numerator += denominator;
+            wholeNumber = T.IsNegative(wholeNumber) ? wholeNumber + T.One : wholeNumber - T.One;
+            properNumerator += denominator;
         }
 
-        return w;
+        return wholeNumber;
+    }
+
+    internal static T GetNormalizedRational<T>(T wholeNumber, T numerator, T denominator, out T properNumerator, out T properDenominator)
+        where T : struct, IBinaryNumber<T>
+    {
+        numerator = GetSimplifiedRational(numerator, denominator, out properDenominator);
+
+        if (T.IsZero(numerator))
+        {
+            properNumerator = numerator;
+            return wholeNumber;
+        }
+
+        if (properDenominator.Equals(T.One))
+        {
+            properNumerator = T.Zero;
+            return wholeNumber + numerator;
+        }
+
+        if (numerator > properDenominator)
+        {
+            properNumerator = numerator % properDenominator;
+            wholeNumber = T.IsNegative(wholeNumber)
+                ? wholeNumber - ((numerator - properNumerator) / properDenominator)
+                : wholeNumber + ((numerator - properNumerator) / properDenominator);
+            properNumerator = GetSimplifiedRational(properNumerator, properDenominator, out properDenominator);
+        }
+        else
+            properNumerator = numerator;
+
+        if (T.IsZero(wholeNumber))
+            return wholeNumber;
+
+        if (T.IsNegative(properNumerator))
+        {
+            wholeNumber = T.IsNegative(wholeNumber) ? wholeNumber + T.One : wholeNumber - T.One;
+            properNumerator += properDenominator;
+        }
+
+        return wholeNumber;
     }
 
     internal static T GetInvertedRational<T>(T w, T n, T d, out T numerator, out T denominator)
@@ -455,8 +495,7 @@ public class Fraction
 
         if (T.IsZero(numerator))
         {
-            if (T.IsZero(w))
-                return w;
+            if (T.IsZero(w)) return w;
             numerator = T.One;
             denominator = w;
             return T.Zero;
@@ -468,33 +507,71 @@ public class Fraction
         return GetNormalizedRational(T.Zero, d, n + d * w, out numerator, out denominator);
     }
 
-    internal static void ToCommonDenominator<T>(ref T n1, ref T d1, ref T n2, ref T d2)
+    internal static void ToCommonDenominator<T>(ref T numerator1, ref T denominator1, ref T numerator2, ref T denominator2)
         where T : struct, IBinaryNumber<T>
     {
-        if (T.IsZero(d1) || T.IsZero(d2))
-            throw new DivideByZeroException();
+        if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
 
-        if (T.IsZero(n1))
-            d1 = d2;
-        else if (T.IsZero(n2))
-            d2 = d1;
-        else if (!d1.Equals(d2))
+        if (T.IsZero(numerator1))
+            denominator1 = denominator2;
+        else if (T.IsZero(numerator2))
+            denominator2 = denominator1;
+        else if (!denominator1.Equals(denominator2))
         {
-            n1 = GetSimplifiedRational(n1, d1, out d1);
-            n2 = GetSimplifiedRational(n2, d2, out d2);
+            numerator1 = GetSimplifiedRational(numerator1, denominator1, out denominator1);
+            numerator2 = GetSimplifiedRational(numerator2, denominator2, out denominator2);
 
-            if (d1.Equals(T.One))
-                n1 *= d2;
-            else if (d2.Equals(T.One))
-                n2 *= d1;
-            else if (!d1.Equals(d2))
+            if (denominator1.Equals(T.One))
+                numerator1 *= denominator2;
+            else if (denominator2.Equals(T.One))
+                numerator2 *= denominator1;
+            else if (!denominator1.Equals(denominator2))
             {
-                T m1 = GetLCM(d1, d2, out _);
-                n1 *= m1;
-                d1 *= m1;
-                n2 *= m1;
-                d2 *= m1;
+                T m1 = GetLCM(denominator1, denominator2, out _);
+                numerator1 *= m1;
+                denominator1 *= m1;
+                numerator2 *= m1;
+                denominator2 *= m1;
             }
         }
+    }
+
+    internal static int Compare<T>(T numerator1, T denominator1, T numerator2, T denominator2)
+        where T : struct, IBinaryNumber<T>
+    {;
+        if (T.IsZero(numerator1) || T.IsZero(numerator2) || denominator1 == denominator2)
+        {
+            if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
+        }
+        else
+            ToCommonDenominator(ref numerator1, ref denominator1, ref numerator2, ref denominator2);
+        return numerator1.CompareTo(numerator2);
+    }
+
+    internal static int Compare<T>(T wholeNumber1, T numerator1, T denominator1, T wholeNumber2, T numerator2, T denominator2)
+        where T : struct, IBinaryNumber<T>
+    {
+        wholeNumber1 = GetNormalizedRational(wholeNumber1, numerator1, denominator1, out numerator1, out denominator1);
+        wholeNumber2 = GetNormalizedRational(wholeNumber2, numerator2, denominator2, out numerator2, out denominator2);
+        int diff = wholeNumber1.CompareTo(wholeNumber2);
+        if (diff != 0) return diff;
+        
+        if (T.IsZero(wholeNumber1))
+        {
+            if (T.IsZero(numerator1) || T.IsZero(numerator2) || denominator1 == denominator2)
+            {
+                if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
+            }
+            else
+                ToCommonDenominator(ref numerator1, ref denominator1, ref numerator2, ref denominator2);
+        }
+        else
+        {
+            if (T.IsZero(numerator1)) return T.Sign(numerator2);
+            if (T.IsZero(numerator2)) return T.Sign(numerator1);
+            ToCommonDenominator(ref numerator1, ref denominator1, ref numerator2, ref denominator2);
+        }
+
+        return numerator1.CompareTo(numerator2);
     }
 }

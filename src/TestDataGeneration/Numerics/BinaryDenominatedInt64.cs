@@ -4,93 +4,224 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<BinaryDenominatedInt64, double, long>, IConvertible
+public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<BinaryDenominatedInt64, double, long>
 {
     #region Static Properties
 
-    public static BinaryDenominatedInt64 E => throw new NotImplementedException();
+    public static BinaryDenominatedInt64 One { get; } = new(1L);
 
-    public static BinaryDenominatedInt64 Pi => throw new NotImplementedException();
+    static int INumberBase<BinaryDenominatedInt64>.Radix => 10;
 
-    public static BinaryDenominatedInt64 Tau => throw new NotImplementedException();
-
-    public static BinaryDenominatedInt64 One => new(1L);
-
-    public static int Radix => throw new NotImplementedException();
-
-    public static BinaryDenominatedInt64 Zero => new(0L);
+    public static BinaryDenominatedInt64 Zero { get; } = new(0L);
 
     static BinaryDenominatedInt64 IAdditiveIdentity<BinaryDenominatedInt64, BinaryDenominatedInt64>.AdditiveIdentity => Zero;
 
     static BinaryDenominatedInt64 IMultiplicativeIdentity<BinaryDenominatedInt64, BinaryDenominatedInt64>.MultiplicativeIdentity => One;
 
-    public static BinaryDenominatedInt64 MaxValue => throw new NotImplementedException();
+    public static BinaryDenominatedInt64 MaxValue { get; } = new(long.MaxValue);
 
-    public static BinaryDenominatedInt64 MinValue => throw new NotImplementedException();
-
-    public static BinaryDenominatedInt64 NegativeOne => throw new NotImplementedException();
+    public static BinaryDenominatedInt64 MinValue { get; } = new(long.MinValue);
 
     #endregion
-
-    #region Instance Properties
-
-    public double Value { get; }
     
-    double IFraction<BinaryDenominatedInt64, double, long>.Numerator => Value;
-
-    IConvertible IFraction.Numerator => Value;
-
-    public BinaryDenomination Denomination { get; }
-
-    double IFraction<BinaryDenominatedInt64, double, long>.Denominator => (double)Denomination;
-
-    IConvertible IFraction.Denominator => Denomination;
+    #region Instance Properties
 
     public long WholeValue { get; }
 
+    double IMixedFraction<BinaryDenominatedInt64, double>.WholeNumber => WholeValue;
+
+    public double Value { get; }
+
+    public BinaryDenomination Denomination { get; }
+
+    double IFraction<BinaryDenominatedInt64, double>.Numerator => Value;
+
+    double IFraction<BinaryDenominatedInt64, double>.Denominator => (ulong)Denomination;
+
     #endregion
-
-    #region Constructors
     
-    public BinaryDenominatedInt64(double numerator, BinaryDenomination denomination)
-    {
-        if (denomination == BinaryDenomination.Bytes)
-        {
-            WholeValue = Convert.ToInt64(numerator);
-            Value = WholeValue;
-        }
-        else
-        {
-            WholeValue = Convert.ToInt64(numerator * (double)denomination);
-            Value = WholeValue / (double)Denomination;
-        }
-        Denomination = denomination;
-    }
+    #region Constructors
 
-    public BinaryDenominatedInt64(long value)
+    public BinaryDenominatedInt64(long wholeValue)
     {
-        WholeValue = value;
-        if (value > (long)BinaryDenomination.Petabytes)
+        WholeValue = wholeValue;
+        ulong abs = (ulong)Math.Abs(wholeValue);
+        if (abs > (ulong)BinaryDenomination.Terabytes + (ulong)BinaryDenomination.Gigabytes)
             Denomination = BinaryDenomination.Petabytes;
-        else if (value > (long)BinaryDenomination.Terabytes)
-            Denomination = BinaryDenomination.Terabytes;
-        else if (value > (long)BinaryDenomination.Gigabytes)
-            Denomination = BinaryDenomination.Terabytes;
-        else if (value > (long)BinaryDenomination.Megabytes)
-            Denomination = BinaryDenomination.Terabytes;
-        else if (value > (long)BinaryDenomination.Kilobytes)
-            Denomination = BinaryDenomination.Terabytes;
+        else if (abs > (ulong)BinaryDenomination.Gigabytes + (ulong)BinaryDenomination.Megabytes)
+            Denomination = BinaryDenomination.Gigabytes;
+        else if (abs > (ulong)BinaryDenomination.Megabytes + (ulong)BinaryDenomination.Kilobytes)
+            Denomination = BinaryDenomination.Megabytes;
+        else if (abs > (ulong)BinaryDenomination.Kilobytes + (ulong)BinaryDenomination.Bytes)
+            Denomination = BinaryDenomination.Kilobytes;
         else
         {
             Denomination = BinaryDenomination.Bytes;
-            Value = value;
+            Value = wholeValue;
             return;
         }
-        Value = value / (double)Denomination;
+        Value = double.CreateChecked(wholeValue) / double.CreateChecked((ulong)Denomination);
+    }
+
+    public BinaryDenominatedInt64(long wholeValue, BinaryDenomination denomination)
+    {
+        WholeValue = wholeValue;
+        Denomination = denomination;
+        if (denomination == BinaryDenomination.Bytes)
+            Value = wholeValue;
+        else
+            Value = double.CreateChecked(wholeValue) / double.CreateChecked((ulong)denomination);
+    }
+
+    public BinaryDenominatedInt64(BinaryDenominationResult64 denominationResult)
+    {
+        Denomination = denominationResult.Denomination;
+        WholeValue = long.CreateChecked(denominationResult.Value * double.CreateChecked((ulong)Denomination));
+        Value = denominationResult.Value;
     }
 
     #endregion
+    
+    #region Instance Methods
 
+    public BinaryDenominatedInt64 Add(BinaryDenominatedInt64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int CompareTo(BinaryDenominatedInt64 other)
+    {
+        throw new NotImplementedException();
+    }
+
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is BinaryDenominatedInt64 other) ? CompareTo(other) : -1;
+
+    public BinaryDenominatedInt64 Divide(BinaryDenominatedInt64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Equals(BinaryDenominatedInt64 other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is BinaryDenominatedInt64 other && Equals(other);
+
+    public override int GetHashCode() => WholeValue.GetHashCode();
+
+    TypeCode IConvertible.GetTypeCode()
+    {
+        throw new NotImplementedException();
+    }
+
+    public BinaryDenominatedInt64 Multiply(BinaryDenominatedInt64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public BinaryDenominatedInt64 Subtract(BinaryDenominatedInt64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    bool IConvertible.ToBoolean(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    byte IConvertible.ToByte(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    char IConvertible.ToChar(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    decimal IConvertible.ToDecimal(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    double IConvertible.ToDouble(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    short IConvertible.ToInt16(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    int IConvertible.ToInt32(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    long IConvertible.ToInt64(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    sbyte IConvertible.ToSByte(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    float IConvertible.ToSingle(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public override string ToString()
+    {
+        return base.ToString() ?? string.Empty;
+    }
+
+    string IConvertible.ToString(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
+    {
+        throw new NotImplementedException();
+    }
+
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    ushort IConvertible.ToUInt16(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    uint IConvertible.ToUInt32(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    ulong IConvertible.ToUInt64(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+    
     #region Static Methods
     
     public static BinaryDenominatedInt64 Abs(BinaryDenominatedInt64 value)
@@ -98,42 +229,27 @@ public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<B
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Acosh(BinaryDenominatedInt64 x)
+    public static BinaryDenominatedInt64 Add(double wholeNumber, BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Asinh(BinaryDenominatedInt64 x)
+    public static BinaryDenominatedInt64 Divide(double wholeNumber, BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Atanh(BinaryDenominatedInt64 x)
+    static BinaryDenominatedInt64 IMixedFraction<BinaryDenominatedInt64, double>.Invert(BinaryDenominatedInt64 fraction, bool doNotReduce, bool doNotMakeProper)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Cosh(BinaryDenominatedInt64 x)
+    public static BinaryDenominatedInt64 Invert(BinaryDenominatedInt64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Invert(long wholeNumber, BinaryDenominatedInt64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominatedInt64 Invert(long wholeNumber, BinaryDenominatedInt64 fraction, bool doNotNormalize)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominatedInt64 Invert(long wholeNumber, BinaryDenominatedInt64 fraction, out long fromInverted)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNormalized(BinaryDenominatedInt64 value)
+    public static BinaryDenominatedInt64 Invert(BinaryDenominatedInt64 fraction, bool doNotReduce)
     {
         throw new NotImplementedException();
     }
@@ -213,7 +329,22 @@ public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<B
         throw new NotImplementedException();
     }
 
+    public static bool IsProperFraction(BinaryDenominatedInt64 value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool IsProperSimplestForm(BinaryDenominatedInt64 value)
+    {
+        throw new NotImplementedException();
+    }
+
     public static bool IsRealNumber(BinaryDenominatedInt64 value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool IsSimplestForm(BinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
@@ -253,12 +384,7 @@ public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<B
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Normalize(BinaryDenominatedInt64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    static BinaryDenominatedInt64 IFraction<BinaryDenominatedInt64, double, long>.Normalize(BinaryDenominatedInt64 fraction, out long wholeNumber)
+    public static BinaryDenominatedInt64 Multiply(double wholeNumber, BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -283,12 +409,42 @@ public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<B
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Sinh(BinaryDenominatedInt64 x)
+    public static BinaryDenominatedInt64 Subtract(double wholeNumber, BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Tanh(BinaryDenominatedInt64 x)
+    static BinaryDenominatedInt64 IMixedFraction<BinaryDenominatedInt64, double>.ToProperFraction(BinaryDenominatedInt64 value)
+    {
+        throw new NotImplementedException();
+    }
+
+    static BinaryDenominatedInt64 IMixedFraction<BinaryDenominatedInt64, double>.ToProperSimplestForm(BinaryDenominatedInt64 value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static BinaryDenominatedInt64 ToSimplestForm(BinaryDenominatedInt64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
     {
         throw new NotImplementedException();
     }
@@ -323,173 +479,9 @@ public readonly struct BinaryDenominatedInt64 : ISignedBinaryDenominatedNumber<B
         throw new NotImplementedException();
     }
 
-    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
     #endregion
-
-    #region Instance Methods
-
-    public int CompareTo(BinaryDenominatedInt64 other)
-    {
-        throw new NotImplementedException();
-    }
-
-    int IComparable.CompareTo(object? obj)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Equals(BinaryDenominatedInt64 other)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        return base.Equals(obj);
-    }
-
-    public override int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
-
-    TypeCode IConvertible.GetTypeCode()
-    {
-        throw new NotImplementedException();
-    }
-
-    bool IConvertible.ToBoolean(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    byte IConvertible.ToByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    char IConvertible.ToChar(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public decimal ToDecimal()
-    {
-        throw new NotImplementedException();
-    }
-
-    decimal IConvertible.ToDecimal(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public double ToDouble()
-    {
-        throw new NotImplementedException();
-    }
-
-    double IConvertible.ToDouble(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    short IConvertible.ToInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    int IConvertible.ToInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    long IConvertible.ToInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    sbyte IConvertible.ToSByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public float ToSingle()
-    {
-        throw new NotImplementedException();
-    }
-
-    float IConvertible.ToSingle(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string ToString()
-    {
-        return base.ToString() ?? string.Empty;
-    }
-
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
-    {
-        throw new NotImplementedException();
-    }
-
-    string IConvertible.ToString(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ushort IConvertible.ToUInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    uint IConvertible.ToUInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ulong IConvertible.ToUInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    #endregion
-
-    #region Static operators
+    
+    #region Static Operators
 
     public static BinaryDenominatedInt64 operator +(BinaryDenominatedInt64 value)
     {

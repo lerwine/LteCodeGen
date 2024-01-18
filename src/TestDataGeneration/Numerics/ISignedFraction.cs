@@ -2,19 +2,24 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
-/// <summary>
-/// Base interface for signed fractional values.
-/// </summary>
-/// <typeparam name="TSelf">The type that implements the interface.</typeparam>
-public interface ISignedFraction<TSelf> : IFraction<TSelf>, ISignedNumber<TSelf> where TSelf : ISignedFraction<TSelf>? { }
+public interface ISignedFraction<TSelf, TValue> : IFraction<TSelf, TValue>
+    where TSelf : ISignedFraction<TSelf, TValue>?
+    where TValue : IBinaryNumber<TValue>, ISignedNumber<TValue>
+{ }
 
-/// <summary>
-/// Interface for a signed, strongly-typed fractional value.
-/// </summary>
-/// <typeparam name="TSelf">The type that implements the interface.</typeparam>
-/// <typeparam name="TFractional">The type of signed value for the <see cref="IFraction{TSelf, TFractional, TWholeNumber}.Numerator"/> and <see cref="IFraction{TSelf, TFractional, TWholeNumber}.Numerator"/>.</typeparam>
-/// <typeparam name="TWholeNumber">The whole number type to use with fraction operations.</typeparam>
-public interface ISignedFraction<TSelf, TFractional, TWholeNumber> : IFraction<TSelf, TFractional, TWholeNumber>, ISignedFraction<TSelf>
-    where TSelf : ISignedFraction<TSelf, TFractional, TWholeNumber>?
+public interface ISignedFraction<TSelf, TValue, TMixed, TFraction> : ISignedFraction<TSelf, TValue>, IFraction<TSelf, TValue, TMixed, TFraction>
+    where TSelf : ISignedFraction<TSelf, TValue, TMixed, TFraction>?
+    where TValue : IBinaryNumber<TValue>, ISignedNumber<TValue>
+    where TMixed : IMixedSignedFraction<TMixed, TValue, TFraction>?
+    where TFraction : ISimpleSignedFraction<TFraction, TValue, TMixed>?
+{ }
+
+[Obsolete("Use ISignedFraction<TSelf, TFractional, TMixed, TFraction>")]
+public interface ISignedFraction<TSelf, TFractional, TWholeNumber, TMixed, TFraction> : IConvertible, IBinaryNumber<TSelf>, IMinMaxValue<TSelf>,
+        IFraction<TSelf, TFractional, TWholeNumber, TMixed, TFraction>
+    where TSelf : ISignedFraction<TSelf, TFractional, TWholeNumber, TMixed, TFraction>?
     where TFractional : IBinaryNumber<TFractional>, ISignedNumber<TFractional>
-    where TWholeNumber : IBinaryNumber<TWholeNumber> { }
+    where TWholeNumber : IBinaryNumber<TWholeNumber>, ISignedNumber<TWholeNumber>
+    where TMixed : IMixedSignedFraction<TMixed, TFractional, TWholeNumber, TFraction>?
+    where TFraction : ISimpleSignedFraction<TFraction, TFractional, TWholeNumber, TMixed>?
+{ }

@@ -9,7 +9,11 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TSelf">The type that implements the interface.</typeparam>
 /// <typeparam name="TFloatingPoint">The denominated value type.</typeparam>
 /// <typeparam name="TWholeValue">The actual numerical value.</typeparam>
-public interface ISignedBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue> : IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>, ISignedFraction<TSelf, TFloatingPoint, TWholeValue>
+/// <typeparam name="TResult">The denominated value without the original whole value.</typeparam>
+public interface ISignedBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue> : IMixedSignedFraction<TSelf, TFloatingPoint>,
+        ISignedBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>,
+        IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>
     where TSelf : ISignedBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>?
-    where TFloatingPoint : IBinaryFloatingPointIeee754<TFloatingPoint>
-    where TWholeValue : IBinaryNumber<TWholeValue>, ISignedNumber<TWholeValue> { }
+    where TFloatingPoint : IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
+    where TWholeValue : IBinaryNumber<TWholeValue>, ISignedNumber<TWholeValue>
+{ }
