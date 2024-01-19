@@ -170,8 +170,7 @@ public static class Fraction
         return numerator / gcd;
     }
 
-    public static T GetProperRational<T>(T wholeNumber, T numerator, T denominator,
-            out T properNumerator)
+    public static T GetProperRational<T>(T wholeNumber, T numerator, T denominator, out T properNumerator)
         where T : struct, IBinaryNumber<T>
     {
         if (T.IsZero(denominator)) throw new DivideByZeroException();
@@ -306,18 +305,35 @@ public static class Fraction
         if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
 
         if (T.IsZero(numerator1))
-            denominator1 = denominator2;
+        {
+            if (T.IsZero(numerator2)) // 0/3, 6/8 => 3/4
+                denominator1 = denominator2 = T.One;
+            else
+            {
+                numerator2 = GetSimplifiedRational(numerator2, denominator2, out denominator2);
+                denominator1 = denominator2;
+            }
+        }
         else if (T.IsZero(numerator2))
+        {
+            numerator1 = GetSimplifiedRational(numerator1, denominator1, out denominator1);
             denominator2 = denominator1;
+        }
         else if (!denominator1.Equals(denominator2))
         {
             numerator1 = GetSimplifiedRational(numerator1, denominator1, out denominator1);
             numerator2 = GetSimplifiedRational(numerator2, denominator2, out denominator2);
 
             if (denominator1.Equals(T.One))
+            {
+                denominator1 = denominator2;
                 numerator1 *= denominator2;
+            }
             else if (denominator2.Equals(T.One))
+            {
+                denominator2 = denominator1;
                 numerator2 *= denominator1;
+            }
             else if (!denominator1.Equals(denominator2))
             {
                 T lcm = GetLCM(denominator1, denominator2);
