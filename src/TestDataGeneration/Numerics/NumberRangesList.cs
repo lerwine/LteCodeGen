@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
-public class NumericRangeList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList<NumberExtents<T>>, ICollection<NumberExtents<T>>, IList
+public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList<NumberExtents<T>>, ICollection<NumberExtents<T>>, IList
     where T : IBinaryNumber<T>, IMinMaxValue<T>
 {
     private readonly LinkedList<NumberExtents<T>> _backingList = new();
