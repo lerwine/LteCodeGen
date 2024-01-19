@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
@@ -538,7 +537,8 @@ public static class Fraction
 
     internal static int Compare<T>(T numerator1, T denominator1, T numerator2, T denominator2)
         where T : struct, IBinaryNumber<T>
-    {;
+    {
+        ;
         if (T.IsZero(numerator1) || T.IsZero(numerator2) || denominator1 == denominator2)
         {
             if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
@@ -555,7 +555,7 @@ public static class Fraction
         wholeNumber2 = GetNormalizedRational(wholeNumber2, numerator2, denominator2, out numerator2, out denominator2);
         int diff = wholeNumber1.CompareTo(wholeNumber2);
         if (diff != 0) return diff;
-        
+
         if (T.IsZero(wholeNumber1))
         {
             if (T.IsZero(numerator1) || T.IsZero(numerator2) || denominator1 == denominator2)

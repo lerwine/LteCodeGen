@@ -11,20 +11,14 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     public static UnsignedFraction16 One { get; } = new(1, 1);
 
-    static int INumberBase<UnsignedFraction16>.Radix => 10;
-
     public static UnsignedFraction16 Zero { get; } = new(0, 1);
-
-    static UnsignedFraction16 IAdditiveIdentity<UnsignedFraction16, UnsignedFraction16>.AdditiveIdentity => Zero;
-
-    static UnsignedFraction16 IMultiplicativeIdentity<UnsignedFraction16, UnsignedFraction16>.MultiplicativeIdentity => One;
 
     public static UnsignedFraction16 MaxValue { get; } = new(byte.MaxValue, 1);
 
     public static UnsignedFraction16 MinValue { get; } = new(byte.MinValue, 1);
 
     #endregion
-    
+
     #region Instance Properties
 
     public byte Numerator { get; }
@@ -32,7 +26,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
     public byte Denominator { get; } = (byte)1;
 
     #endregion
-    
+
     #region Constructors
 
     public UnsignedFraction16(byte numerator, byte denominator, bool doNotReduce = false)
@@ -48,7 +42,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
     }
 
     #endregion
-    
+
     #region Instance Methods
 
     public UnsignedMixedFraction32 Add(byte wholeNumber1, byte wholeNumber2, UnsignedFraction16 fraction2)
@@ -66,8 +60,6 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedFraction16 other) ? CompareTo(other) : -1;
-    
     public UnsignedMixedFraction32 Divide(byte wholeDividend, byte wholeDivisor, UnsignedFraction16 divisorFraction)
     {
         throw new NotImplementedException();
@@ -86,11 +78,6 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is UnsignedFraction16 other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
-
-    TypeCode IConvertible.GetTypeCode()
-    {
-        throw new NotImplementedException();
-    }
 
     public UnsignedMixedFraction32 Join(byte wholeNumber)
     {
@@ -117,94 +104,9 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    bool IConvertible.ToBoolean(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    byte IConvertible.ToByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    char IConvertible.ToChar(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    decimal IConvertible.ToDecimal(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    double IConvertible.ToDouble(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    short IConvertible.ToInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    int IConvertible.ToInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    long IConvertible.ToInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    sbyte IConvertible.ToSByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    float IConvertible.ToSingle(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-    
     public override string ToString()
     {
         return base.ToString() ?? string.Empty;
-    }
-
-    string IConvertible.ToString(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
-    {
-        throw new NotImplementedException();
-    }
-
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ushort IConvertible.ToUInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    uint IConvertible.ToUInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ulong IConvertible.ToUInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
@@ -213,9 +115,9 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
     }
 
     #endregion
-    
+
     #region Static Methods
-    
+
     public static UnsignedFraction16 Abs(UnsignedFraction16 value)
     {
         throw new NotImplementedException();
@@ -506,6 +408,118 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
+    #endregion
+
+    #region Implicit Members
+
+    #region Static Properties
+
+    static int INumberBase<UnsignedFraction16>.Radix => 10;
+
+    static UnsignedFraction16 IAdditiveIdentity<UnsignedFraction16, UnsignedFraction16>.AdditiveIdentity => Zero;
+
+    static UnsignedFraction16 IMultiplicativeIdentity<UnsignedFraction16, UnsignedFraction16>.MultiplicativeIdentity => One;
+
+    #endregion
+
+    #region Instance Methods
+
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedFraction16 other) ? CompareTo(other) : -1;
+
+    TypeCode IConvertible.GetTypeCode()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool IConvertible.ToBoolean(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    byte IConvertible.ToByte(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    char IConvertible.ToChar(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    decimal IConvertible.ToDecimal(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    double IConvertible.ToDouble(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    short IConvertible.ToInt16(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    int IConvertible.ToInt32(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    long IConvertible.ToInt64(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    sbyte IConvertible.ToSByte(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    float IConvertible.ToSingle(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    string IConvertible.ToString(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
+    {
+        throw new NotImplementedException();
+    }
+
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    ushort IConvertible.ToUInt16(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    uint IConvertible.ToUInt32(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    ulong IConvertible.ToUInt64(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Static Methods
+
     static bool INumberBase<UnsignedFraction16>.TryConvertFromChecked<TOther>(TOther value, out UnsignedFraction16 result)
     {
         throw new NotImplementedException();
@@ -537,7 +551,9 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
     }
 
     #endregion
-    
+
+    #endregion
+
     #region Static Operators
 
     public static UnsignedFraction16 operator +(UnsignedFraction16 value)

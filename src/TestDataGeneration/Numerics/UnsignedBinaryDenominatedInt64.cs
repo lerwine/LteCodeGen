@@ -10,36 +10,24 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
 
     public static UnsignedBinaryDenominatedInt64 One { get; } = new(1UL);
 
-    static int INumberBase<UnsignedBinaryDenominatedInt64>.Radix => 10;
-
     public static UnsignedBinaryDenominatedInt64 Zero { get; } = new(0UL);
-
-    static UnsignedBinaryDenominatedInt64 IAdditiveIdentity<UnsignedBinaryDenominatedInt64, UnsignedBinaryDenominatedInt64>.AdditiveIdentity => Zero;
-
-    static UnsignedBinaryDenominatedInt64 IMultiplicativeIdentity<UnsignedBinaryDenominatedInt64, UnsignedBinaryDenominatedInt64>.MultiplicativeIdentity => One;
 
     public static UnsignedBinaryDenominatedInt64 MaxValue { get; } = new(ulong.MaxValue);
 
     public static UnsignedBinaryDenominatedInt64 MinValue { get; } = new(ulong.MinValue);
 
     #endregion
-    
+
     #region Instance Properties
 
     public ulong WholeValue { get; }
 
-    double IMixedFraction<UnsignedBinaryDenominatedInt64, double>.WholeNumber => WholeValue;
-
     public double Value { get; }
-
-    double IFraction<UnsignedBinaryDenominatedInt64, double>.Numerator => Value;
 
     public BinaryDenomination Denomination { get; }
 
-    double IFraction<UnsignedBinaryDenominatedInt64, double>.Denominator => (ulong)Denomination;
-
     #endregion
-    
+
     #region Constructors
 
     public UnsignedBinaryDenominatedInt64(ulong wholeValue)
@@ -80,7 +68,7 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
     }
 
     #endregion
-    
+
     #region Instance Methods
 
     public UnsignedBinaryDenominatedInt64 Add(UnsignedBinaryDenominatedInt64 fraction)
@@ -89,13 +77,6 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
     }
 
     public int CompareTo(UnsignedBinaryDenominatedInt64 other)
-    {
-        throw new NotImplementedException();
-    }
-
-    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedBinaryDenominatedInt64 other) ? CompareTo(other) : -1;
-    
-    public UnsignedBinaryDenominatedInt64 Divide(UnsignedBinaryDenominatedInt64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -109,22 +90,104 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
 
     public override int GetHashCode() => WholeValue.GetHashCode();
 
+    public UnsignedBinaryDenominatedInt64 Subtract(UnsignedBinaryDenominatedInt64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() ?? string.Empty;
+    }
+
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Static Methods
+
+    public static UnsignedBinaryDenominatedInt64 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static UnsignedBinaryDenominatedInt64 Parse(string s, NumberStyles style, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static UnsignedBinaryDenominatedInt64 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static UnsignedBinaryDenominatedInt64 Parse(string s, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Implicit Members
+
+    #region Static Properties
+
+    static int INumberBase<UnsignedBinaryDenominatedInt64>.Radix => 10;
+
+    static UnsignedBinaryDenominatedInt64 IAdditiveIdentity<UnsignedBinaryDenominatedInt64, UnsignedBinaryDenominatedInt64>.AdditiveIdentity => Zero;
+
+    static UnsignedBinaryDenominatedInt64 IMultiplicativeIdentity<UnsignedBinaryDenominatedInt64, UnsignedBinaryDenominatedInt64>.MultiplicativeIdentity => One;
+
+    #endregion
+
+    #region Instance Properties
+
+    double IMixedFraction<UnsignedBinaryDenominatedInt64, double>.WholeNumber => WholeValue;
+
+    double IFraction<UnsignedBinaryDenominatedInt64, double>.Numerator => Value;
+
+    double IFraction<UnsignedBinaryDenominatedInt64, double>.Denominator => (ulong)Denomination;
+
+    #endregion
+
+    #region Instance Methods
+
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedBinaryDenominatedInt64 other) ? CompareTo(other) : -1;
+
     TypeCode IConvertible.GetTypeCode()
     {
         throw new NotImplementedException();
     }
 
-    public UnsignedBinaryDenominatedInt64 Multiply(UnsignedBinaryDenominatedInt64 fraction)
+    UnsignedBinaryDenominatedInt64 IFraction<UnsignedBinaryDenominatedInt64, double>.Divide(UnsignedBinaryDenominatedInt64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public double Split(out UnsignedBinaryDenominationResult64 properFraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public UnsignedBinaryDenominatedInt64 Subtract(UnsignedBinaryDenominatedInt64 fraction)
+    UnsignedBinaryDenominatedInt64 IFraction<UnsignedBinaryDenominatedInt64, double>.Multiply(UnsignedBinaryDenominatedInt64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -183,11 +246,6 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
     {
         throw new NotImplementedException();
     }
-    
-    public override string ToString()
-    {
-        return base.ToString() ?? string.Empty;
-    }
 
     string IConvertible.ToString(IFormatProvider? provider)
     {
@@ -219,236 +277,171 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
         throw new NotImplementedException();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
     #endregion
-    
+
     #region Static Methods
-    
-    public static UnsignedBinaryDenominatedInt64 Abs(UnsignedBinaryDenominatedInt64 value)
+
+    static UnsignedBinaryDenominatedInt64 IMixedFraction<UnsignedBinaryDenominatedInt64, double>.Invert(UnsignedBinaryDenominatedInt64 fraction, bool doNotReduce, bool doNotMakeProper)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Add(double wholeNumber, UnsignedBinaryDenominationResult64 fraction)
+    static UnsignedBinaryDenominatedInt64 IMixedFraction<UnsignedBinaryDenominatedInt64, double>.ToProperFraction(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Divide(double wholeNumber, UnsignedBinaryDenominationResult64 fraction)
+    static UnsignedBinaryDenominatedInt64 IMixedFraction<UnsignedBinaryDenominatedInt64, double>.ToProperSimplestForm(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Invert(UnsignedBinaryDenominatedInt64 fraction, bool doNotReduce, bool doNotMakeProper)
+    static UnsignedBinaryDenominatedInt64 IFraction<UnsignedBinaryDenominatedInt64, double>.Invert(UnsignedBinaryDenominatedInt64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Invert(UnsignedBinaryDenominatedInt64 fraction)
+    static UnsignedBinaryDenominatedInt64 IFraction<UnsignedBinaryDenominatedInt64, double>.Invert(UnsignedBinaryDenominatedInt64 fraction, bool doNotReduce)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Invert(UnsignedBinaryDenominatedInt64 fraction, bool doNotReduce)
+    static bool IFraction<UnsignedBinaryDenominatedInt64, double>.IsProperFraction(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(UnsignedBinaryDenominatedInt64 value)
+    static bool IFraction<UnsignedBinaryDenominatedInt64, double>.IsProperSimplestForm(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsComplexNumber(UnsignedBinaryDenominatedInt64 value)
+    static bool IFraction<UnsignedBinaryDenominatedInt64, double>.IsSimplestForm(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsEvenInteger(UnsignedBinaryDenominatedInt64 value)
+    static UnsignedBinaryDenominatedInt64 IFraction<UnsignedBinaryDenominatedInt64, double>.ToSimplestForm(UnsignedBinaryDenominatedInt64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsFinite(UnsignedBinaryDenominatedInt64 value)
+    static bool IBinaryNumber<UnsignedBinaryDenominatedInt64>.IsPow2(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsImaginaryNumber(UnsignedBinaryDenominatedInt64 value)
+    static UnsignedBinaryDenominatedInt64 IBinaryNumber<UnsignedBinaryDenominatedInt64>.Log2(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInfinity(UnsignedBinaryDenominatedInt64 value)
+    static UnsignedBinaryDenominatedInt64 INumberBase<UnsignedBinaryDenominatedInt64>.Abs(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInteger(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsCanonical(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsComplexNumber(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegative(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsEvenInteger(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegativeInfinity(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsFinite(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNormal(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsImaginaryNumber(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsOddInteger(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsInfinity(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositive(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsInteger(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositiveInfinity(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsNaN(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPow2(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsNegative(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperFraction(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsNegativeInfinity(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperSimplestForm(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsNormal(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsOddInteger(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSimplestForm(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsPositive(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsPositiveInfinity(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsZero(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsRealNumber(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Log2(UnsignedBinaryDenominatedInt64 value)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsSubnormal(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 MaxMagnitude(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
+    static bool INumberBase<UnsignedBinaryDenominatedInt64>.IsZero(UnsignedBinaryDenominatedInt64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 MaxMagnitudeNumber(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
+    static UnsignedBinaryDenominatedInt64 INumberBase<UnsignedBinaryDenominatedInt64>.MaxMagnitude(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 MinMagnitude(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
+    static UnsignedBinaryDenominatedInt64 INumberBase<UnsignedBinaryDenominatedInt64>.MaxMagnitudeNumber(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 MinMagnitudeNumber(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
+    static UnsignedBinaryDenominatedInt64 INumberBase<UnsignedBinaryDenominatedInt64>.MinMagnitude(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedBinaryDenominatedInt64 Multiply(double wholeNumber, UnsignedBinaryDenominationResult64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 Parse(string s, NumberStyles style, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 Parse(string s, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 Subtract(double wholeNumber, UnsignedBinaryDenominationResult64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 ToProperFraction(UnsignedBinaryDenominatedInt64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 ToProperSimplestForm(UnsignedBinaryDenominatedInt64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static UnsignedBinaryDenominatedInt64 ToSimplestForm(UnsignedBinaryDenominatedInt64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedBinaryDenominatedInt64 result)
+    static UnsignedBinaryDenominatedInt64 INumberBase<UnsignedBinaryDenominatedInt64>.MinMagnitudeNumber(UnsignedBinaryDenominatedInt64 x, UnsignedBinaryDenominatedInt64 y)
     {
         throw new NotImplementedException();
     }
@@ -484,7 +477,9 @@ public readonly struct UnsignedBinaryDenominatedInt64 : IBinaryDenominatedNumber
     }
 
     #endregion
-    
+
+    #endregion
+
     #region Static Operators
 
     public static UnsignedBinaryDenominatedInt64 operator +(UnsignedBinaryDenominatedInt64 value)

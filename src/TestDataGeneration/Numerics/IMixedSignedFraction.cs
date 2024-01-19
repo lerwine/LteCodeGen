@@ -13,12 +13,3 @@ public interface IMixedSignedFraction<TSelf, TValue, TFraction> : ISignedFractio
     where TValue : IBinaryNumber<TValue>, ISignedNumber<TValue>
     where TFraction : ISimpleSignedFraction<TFraction, TValue, TSelf>?
 { }
-
-[Obsolete("Use IMixedSignedFraction<TSelf, TFractional, TFraction>")]
-public interface IMixedSignedFraction<TSelf, TFractional, TWholeNumber, TFraction> : ISignedFraction<TSelf, TFractional, TWholeNumber, TSelf, TFraction>,
-        IMixedFraction<TSelf, TFractional, TWholeNumber, TFraction>
-    where TSelf : IMixedSignedFraction<TSelf, TFractional, TWholeNumber, TFraction>?
-    where TFractional : IBinaryNumber<TFractional>, ISignedNumber<TFractional>
-    where TWholeNumber : IBinaryNumber<TWholeNumber>, ISignedNumber<TWholeNumber>
-    where TFraction : ISimpleSignedFraction<TFraction, TFractional, TWholeNumber, TSelf>?
-{ }

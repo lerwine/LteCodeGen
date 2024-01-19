@@ -10,31 +10,22 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
 
     public static BinaryDenominationResult64 One { get; } = new(1L);
 
-    static int INumberBase<BinaryDenominationResult64>.Radix => 10;
-
     public static BinaryDenominationResult64 Zero { get; } = new(0L);
-    static BinaryDenominationResult64 IAdditiveIdentity<BinaryDenominationResult64, BinaryDenominationResult64>.AdditiveIdentity => Zero;
-
-    static BinaryDenominationResult64 IMultiplicativeIdentity<BinaryDenominationResult64, BinaryDenominationResult64>.MultiplicativeIdentity => One;
 
     public static BinaryDenominationResult64 MaxValue { get; } = new(long.MaxValue);
 
     public static BinaryDenominationResult64 MinValue { get; } = new(long.MinValue);
 
     #endregion
-    
+
     #region Instance Properties
 
     public double Value { get; }
 
-    double IFraction<BinaryDenominationResult64, double>.Numerator => Value;
-
     public BinaryDenomination Denomination { get; }
 
-    double IFraction<BinaryDenominationResult64, double>.Denominator => (ulong)Denomination;
-
     #endregion
-    
+
     #region Constructors
 
     public BinaryDenominationResult64(long wholeValue)
@@ -70,13 +61,8 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
     }
 
     #endregion
-    
-    #region Instance Methods
 
-    public BinaryDenominatedInt64 Add(double wholeNumber1, double wholeNumber2, BinaryDenominationResult64 fraction2)
-    {
-        throw new NotImplementedException();
-    }
+    #region Instance Methods
 
     public BinaryDenominationResult64 Add(BinaryDenominationResult64 fraction)
     {
@@ -84,18 +70,6 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
     }
 
     public int CompareTo(BinaryDenominationResult64 other)
-    {
-        throw new NotImplementedException();
-    }
-
-    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is BinaryDenominationResult64 other) ? CompareTo(other) : -1;
-
-    public BinaryDenominatedInt64 Divide(double wholeDividend, double wholeDivisor, BinaryDenominationResult64 divisorFraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public BinaryDenominationResult64 Divide(BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -109,32 +83,102 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
 
     public override int GetHashCode() => HashCode.Combine(Value, Denomination);
 
+    public BinaryDenominationResult64 Subtract(BinaryDenominationResult64 fraction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() ?? string.Empty;
+    }
+
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Static Methods
+
+    public static BinaryDenominationResult64 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static BinaryDenominationResult64 Parse(string s, NumberStyles style, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static BinaryDenominationResult64 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static BinaryDenominationResult64 Parse(string s, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Implicit Members
+
+    #region Static Properties
+
+    static int INumberBase<BinaryDenominationResult64>.Radix => 10;
+
+    static BinaryDenominationResult64 IAdditiveIdentity<BinaryDenominationResult64, BinaryDenominationResult64>.AdditiveIdentity => Zero;
+
+    static BinaryDenominationResult64 IMultiplicativeIdentity<BinaryDenominationResult64, BinaryDenominationResult64>.MultiplicativeIdentity => One;
+
+    #endregion
+
+    #region Instance Properties
+
+    double IFraction<BinaryDenominationResult64, double>.Numerator => Value;
+
+    double IFraction<BinaryDenominationResult64, double>.Denominator => (ulong)Denomination;
+
+    #endregion
+
+    #region Instance Methods
+
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is BinaryDenominationResult64 other) ? CompareTo(other) : -1;
+
     TypeCode IConvertible.GetTypeCode()
     {
         throw new NotImplementedException();
     }
 
-    public BinaryDenominatedInt64 Join(double wholeNumber)
+    BinaryDenominationResult64 IFraction<BinaryDenominationResult64, double>.Divide(BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public BinaryDenominatedInt64 Multiply(double wholeMultiplier, double wholeMultiplicand, BinaryDenominationResult64 multiplicandFraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public BinaryDenominationResult64 Multiply(BinaryDenominationResult64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public BinaryDenominatedInt64 Subtract(double wholeMinuend, double wholeSubtrahend, BinaryDenominationResult64 subtrahendFraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public BinaryDenominationResult64 Subtract(BinaryDenominationResult64 fraction)
+    BinaryDenominationResult64 IFraction<BinaryDenominationResult64, double>.Multiply(BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -193,11 +237,6 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
     {
         throw new NotImplementedException();
     }
-    
-    public override string ToString()
-    {
-        return base.ToString() ?? string.Empty;
-    }
 
     string IConvertible.ToString(IFormatProvider? provider)
     {
@@ -229,301 +268,186 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
         throw new NotImplementedException();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
     #endregion
-    
+
     #region Static Methods
-    
-    public static BinaryDenominationResult64 Abs(BinaryDenominationResult64 value)
+
+    static BinaryDenominationResult64 ISimpleFraction<BinaryDenominationResult64, double>.Add(double wholeNumber1, BinaryDenominationResult64 fraction1, double wholeNumber2, BinaryDenominationResult64 fraction2, out double sum)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Add(double wholeNumber1, BinaryDenominationResult64 fraction1, double wholeNumber2, BinaryDenominationResult64 fraction2, out double sum)
+    static BinaryDenominationResult64 ISimpleFraction<BinaryDenominationResult64, double>.Subtract(double wholeMinuend, BinaryDenominationResult64 minuendFraction, double wholeSubtrahend, BinaryDenominationResult64 subtrahendFraction, out double difference)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Add(BinaryDenominatedInt64 fraction1, double wholeNumber2, BinaryDenominationResult64 fraction2, out double sum)
+    static BinaryDenominationResult64 ISimpleFraction<BinaryDenominationResult64, double>.Multiply(double wholeMultiplier, BinaryDenominationResult64 multiplierFraction, double wholeMultiplicand, BinaryDenominationResult64 multiplicandFraction, out double product)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Add(double wholeNumber1, BinaryDenominationResult64 fraction1, BinaryDenominatedInt64 fraction2, out double sum)
+    static BinaryDenominationResult64 ISimpleFraction<BinaryDenominationResult64, double>.Divide(double wholeDividend, BinaryDenominationResult64 dividendFraction, double wholeDivisor, BinaryDenominationResult64 divisorFraction, out double quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Add(double wholeNumber, BinaryDenominationResult64 fraction)
+    static BinaryDenominationResult64 ISimpleFraction<BinaryDenominationResult64, double>.ToProperFraction(BinaryDenominationResult64 value, out double wholeNumber)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Divide(double wholeDividend, BinaryDenominationResult64 dividendFraction, double wholeDivisor, BinaryDenominationResult64 divisorFraction, out double quotient)
+    static BinaryDenominationResult64 ISimpleFraction<BinaryDenominationResult64, double>.ToProperSimplestForm(BinaryDenominationResult64 value, out double wholeNumber)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Divide(BinaryDenominatedInt64 dividend, double wholeDivisor, BinaryDenominationResult64 divisorFraction, out double quotient)
+    static BinaryDenominationResult64 IFraction<BinaryDenominationResult64, double>.Invert(BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Divide(double wholeDividend, BinaryDenominationResult64 dividendFraction, BinaryDenominatedInt64 divisor, out double quotient)
+    static BinaryDenominationResult64 IFraction<BinaryDenominationResult64, double>.Invert(BinaryDenominationResult64 fraction, bool doNotReduce)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominatedInt64 Divide(double wholeNumber, BinaryDenominationResult64 fraction)
+    static bool IFraction<BinaryDenominationResult64, double>.IsProperFraction(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Invert(BinaryDenominationResult64 fraction)
+    static bool IFraction<BinaryDenominationResult64, double>.IsProperSimplestForm(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Invert(BinaryDenominationResult64 fraction, bool doNotReduce)
+    static bool IFraction<BinaryDenominationResult64, double>.IsSimplestForm(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(BinaryDenominationResult64 value)
+    static BinaryDenominationResult64 IFraction<BinaryDenominationResult64, double>.ToSimplestForm(BinaryDenominationResult64 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsComplexNumber(BinaryDenominationResult64 value)
+    static bool IBinaryNumber<BinaryDenominationResult64>.IsPow2(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsEvenInteger(BinaryDenominationResult64 value)
+    static BinaryDenominationResult64 IBinaryNumber<BinaryDenominationResult64>.Log2(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsFinite(BinaryDenominationResult64 value)
+    static BinaryDenominationResult64 INumberBase<BinaryDenominationResult64>.Abs(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsImaginaryNumber(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsCanonical(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInfinity(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsComplexNumber(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInteger(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsEvenInteger(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsFinite(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegative(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsImaginaryNumber(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegativeInfinity(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsInfinity(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNormal(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsInteger(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsOddInteger(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsNaN(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositive(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsNegative(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositiveInfinity(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsNegativeInfinity(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPow2(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsNormal(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperFraction(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsOddInteger(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperSimplestForm(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsPositive(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsPositiveInfinity(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSimplestForm(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsRealNumber(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsSubnormal(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsZero(BinaryDenominationResult64 value)
+    static bool INumberBase<BinaryDenominationResult64>.IsZero(BinaryDenominationResult64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 Log2(BinaryDenominationResult64 value)
+    static BinaryDenominationResult64 INumberBase<BinaryDenominationResult64>.MaxMagnitude(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 MaxMagnitude(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
+    static BinaryDenominationResult64 INumberBase<BinaryDenominationResult64>.MaxMagnitudeNumber(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 MaxMagnitudeNumber(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
+    static BinaryDenominationResult64 INumberBase<BinaryDenominationResult64>.MinMagnitude(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
     {
         throw new NotImplementedException();
     }
 
-    public static BinaryDenominationResult64 MinMagnitude(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 MinMagnitudeNumber(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Multiply(double wholeMultiplier, BinaryDenominationResult64 multiplierFraction, double wholeMultiplicand, BinaryDenominationResult64 multiplicandFraction, out double product)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Multiply(BinaryDenominatedInt64 multiplier, double wholeMultiplicand, BinaryDenominationResult64 multiplicandFraction, out double product)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Multiply(double wholeMultiplier, BinaryDenominationResult64 multiplierFraction, BinaryDenominatedInt64 multiplicand, out double product)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominatedInt64 Multiply(double wholeNumber, BinaryDenominationResult64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Parse(string s, NumberStyles style, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Parse(string s, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Subtract(double wholeMinuend, BinaryDenominationResult64 minuendFraction, double wholeSubtrahend, BinaryDenominationResult64 subtrahendFraction, out double difference)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Subtract(BinaryDenominatedInt64 minuend, double wholeSubtrahend, BinaryDenominationResult64 subtrahendFraction, out double difference)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 Subtract(double wholeMinuend, BinaryDenominationResult64 minuendFraction, BinaryDenominatedInt64 subtrahend, out double difference)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominatedInt64 Subtract(double wholeNumber, BinaryDenominationResult64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 ToProperFraction(BinaryDenominationResult64 value, out double wholeNumber)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominatedInt64 ToProperFraction(BinaryDenominationResult64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 ToProperSimplestForm(BinaryDenominationResult64 value, out double wholeNumber)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominatedInt64 ToProperSimplestForm(BinaryDenominationResult64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static BinaryDenominationResult64 ToSimplestForm(BinaryDenominationResult64 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out BinaryDenominationResult64 result)
+    static BinaryDenominationResult64 INumberBase<BinaryDenominationResult64>.MinMagnitudeNumber(BinaryDenominationResult64 x, BinaryDenominationResult64 y)
     {
         throw new NotImplementedException();
     }
@@ -559,7 +483,9 @@ public readonly struct BinaryDenominationResult64 : ISignedBinaryDenominationRes
     }
 
     #endregion
-    
+
+    #endregion
+
     #region Static Operators
 
     public static BinaryDenominationResult64 operator +(BinaryDenominationResult64 value)

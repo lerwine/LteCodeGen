@@ -13,20 +13,14 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     public static Fraction64 One { get; } = new(1, 1);
 
-    static int INumberBase<Fraction64>.Radix => 10;
-
     public static Fraction64 Zero { get; } = new(0, 1);
-
-    static Fraction64 IAdditiveIdentity<Fraction64, Fraction64>.AdditiveIdentity => Zero;
-
-    static Fraction64 IMultiplicativeIdentity<Fraction64, Fraction64>.MultiplicativeIdentity => One;
 
     public static Fraction64 MaxValue { get; } = new(int.MaxValue, 1);
 
     public static Fraction64 MinValue { get; } = new(int.MinValue, 1);
 
     #endregion
-    
+
     #region Instance Properties
 
     public int Numerator { get; }
@@ -34,7 +28,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
     public int Denominator { get; } = 1;
 
     #endregion
-    
+
     #region Constructors
 
     public Fraction64(int numerator, int denominator, bool doNotReduce = false)
@@ -50,7 +44,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
     }
 
     #endregion
-    
+
     #region Instance Methods
 
     public MixedFraction128 Add(int wholeNumber1, int wholeNumber2, Fraction64 fraction2)
@@ -68,8 +62,6 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is Fraction64 other) ? CompareTo(other) : -1;
-    
     public MixedFraction128 Divide(int wholeDividend, int wholeDivisor, Fraction64 divisorFraction)
     {
         throw new NotImplementedException();
@@ -88,11 +80,6 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Fraction64 other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
-
-    TypeCode IConvertible.GetTypeCode()
-    {
-        throw new NotImplementedException();
-    }
 
     public MixedFraction128 Join(int wholeNumber)
     {
@@ -119,105 +106,15 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    bool IConvertible.ToBoolean(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    byte IConvertible.ToByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    char IConvertible.ToChar(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    decimal IConvertible.ToDecimal(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    double IConvertible.ToDouble(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    short IConvertible.ToInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    int IConvertible.ToInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    long IConvertible.ToInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    sbyte IConvertible.ToSByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    float IConvertible.ToSingle(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public override string ToString()
-    {
-        return base.ToString() ?? string.Empty;
-    }
-
-    string IConvertible.ToString(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
-    {
-        throw new NotImplementedException();
-    }
-
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ushort IConvertible.ToUInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    uint IConvertible.ToUInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ulong IConvertible.ToUInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
     #endregion
-    
+
     #region Static Methods
-    
+
     public static Fraction64 Abs(Fraction64 value)
     {
         throw new NotImplementedException();
@@ -508,6 +405,123 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
+    #endregion
+
+    #region Implicit Members
+
+    #region Static Properties
+
+    static int INumberBase<Fraction64>.Radix => 10;
+
+    static Fraction64 IAdditiveIdentity<Fraction64, Fraction64>.AdditiveIdentity => Zero;
+
+    static Fraction64 IMultiplicativeIdentity<Fraction64, Fraction64>.MultiplicativeIdentity => One;
+
+    #endregion
+
+    #region Instance Methods
+
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is Fraction64 other) ? CompareTo(other) : -1;
+
+    TypeCode IConvertible.GetTypeCode()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool IConvertible.ToBoolean(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    byte IConvertible.ToByte(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    char IConvertible.ToChar(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    decimal IConvertible.ToDecimal(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    double IConvertible.ToDouble(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    short IConvertible.ToInt16(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    int IConvertible.ToInt32(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    long IConvertible.ToInt64(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    sbyte IConvertible.ToSByte(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    float IConvertible.ToSingle(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() ?? string.Empty;
+    }
+
+    string IConvertible.ToString(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
+    {
+        throw new NotImplementedException();
+    }
+
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    ushort IConvertible.ToUInt16(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    uint IConvertible.ToUInt32(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    ulong IConvertible.ToUInt64(IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Static Methods
+
     static bool INumberBase<Fraction64>.TryConvertFromChecked<TOther>(TOther value, out Fraction64 result)
     {
         throw new NotImplementedException();
@@ -539,7 +553,9 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
     }
 
     #endregion
-    
+
+    #endregion
+
     #region Static Operators
 
     public static Fraction64 operator +(Fraction64 value)

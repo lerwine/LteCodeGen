@@ -31,30 +31,3 @@ public interface IMixedFraction<TSelf, TValue, TFraction> : IFraction<TSelf, TVa
 {
     TValue Split(out TFraction properFraction);
 }
-
-[Obsolete("Use IMixedFraction<TSelf, TFractional, TFraction>")]
-public interface IMixedFraction<TSelf, TFractional, TWholeNumber, TFraction> : IFraction<TSelf, TFractional, TWholeNumber, TSelf, TFraction>
-    where TSelf : IMixedFraction<TSelf, TFractional, TWholeNumber, TFraction>?
-    where TFractional : IBinaryNumber<TFractional>
-    where TWholeNumber : IBinaryNumber<TWholeNumber>
-    where TFraction : ISimpleFraction<TFraction, TFractional, TWholeNumber, TSelf>?
-{
-    TWholeNumber WholeNumber { get; }
-
-    /// <summary>
-    /// Gets an inverted fraction value.
-    /// </summary>
-    /// <param name="fraction">The fractional value to invert.</param>
-    /// <param name="doNotReduce">If <see langword="true"/>, the return value will have the <see cref="Denominator"/> and <see cref="Numerator"/> inverted
-    /// without being reduced to its simplest form; otherwise, the returned fraction will be reduced to its simplest form.</param>
-    /// <param name="doNotMakeProper">If <see langword="true"/>, the return value will have the <see cref="Denominator"/> and <see cref="Numerator"/> inverted
-    /// and may result in an improper fraction; otherwise, the returned fraction will be will be a proper fraction.</param>
-    /// <returns>A fraction from the inverted <see cref="Numerator"/> and <see cref="Denominator"/> values.</returns>
-    static abstract TSelf Invert(TSelf fraction, bool doNotReduce, bool doNotMakeProper);
-
-    TWholeNumber Split(out TFraction properFraction);
-
-    static abstract TSelf ToProperFraction(TSelf value);
-
-    static abstract TSelf ToProperSimplestForm(TSelf value);
-}
