@@ -4,17 +4,41 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct NumberExtents<T> : INumberExtents<NumberExtents<T>, T>
-    where T : IBinaryNumber<T>, IMinMaxValue<T>
+/// <summary>
+/// Represents the extents of a range of numbers.
+/// </summary>
+/// <typeparam name="T">The type of numbers represented.</typeparam>
+/// <remarks>The explicitly-defined <see cref=" IReadOnlyCollection{T}.Count"/> property calls <see cref="INumberBase{TSelf}.CreateSaturating{TOther}(TOther)"/>
+/// to convert the results from <see cref="GetCount()"/> to an integer value.</remarks>
+public readonly struct NumberExtents<T> : IEquatable<NumberExtents<T>>, IComparable<NumberExtents<T>>, IComparable, IReadOnlyCollection<T>
+    where T : INumber<T>, IMinMaxValue<T>
 {
+    /// <summary>
+    /// Gets the maximum range of values.
+    /// </summary>
+    /// <returns>A <see cref="NumberExtents{T}"/> value where <see cref="First"/> is <see cref="IMinMaxValue{TSelf}.MinValue"/> and <see cref="Last"/> is <see cref="IMinMaxValue{TSelf}.MaxValue"/>.</returns>
     public static NumberExtents<T> MaxExtents { get; } = new(T.MinValue, T.MaxValue);
 
+    /// <summary>
+    /// Gets the inclusive starting value for this range of values.
+    /// </summary>
+    /// <value>The lowest extent value for the current <see cref="NumberExtents{T}"/>.</value>
     public T First { get; }
 
+    /// /// <summary>
+    /// Gets the inclusive ending value for this range of values.
+    /// </summary>
+    /// <value>The highest extent value for the current <see cref="NumberExtents{T}"/>.</value>
     public T Last { get; }
 
-    int IReadOnlyCollection<T>.Count => (int)GetCount();
+    int IReadOnlyCollection<T>.Count => int.CreateSaturating(GetCount());
 
+    /// <summary>
+    /// Creates a new <c>NumberExtents&lt;c&gt;</c> object.
+    /// </summary>
+    /// <param name="first">The lowest extent value.</param>
+    /// <param name="last">The higest extent value.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="first"/> is greater than <paramref name="last"/>.</exception>
     public NumberExtents(T first, T last)
     {
         if (first > last) throw new ArgumentOutOfRangeException(nameof(first));
@@ -22,88 +46,263 @@ public readonly struct NumberExtents<T> : INumberExtents<NumberExtents<T>, T>
         Last = last;
     }
 
-    public NumberExtents(T value)
+    /// <summary>
+    /// Creates a new <c>NumberExtents&lt;c&gt;</c> object with only one value.
+    /// </summary>
+    /// <param name="number">The value for the lowest and highest extent values.</param>
+    public NumberExtents(T number)
     {
-        First = Last = value;
+        First = Last = number;
     }
 
+    /// <summary>
+    /// Gets all values covered by the current extents in forward order.
+    /// </summary>
+    /// <returns>All sequential values from the <see cref="First"/>, up to and including the <see cref="Last"/> value.</returns>
+    public IEnumerable<T> AsEnumerable()
+    {
+        for (var value = First; value < Last; value++)
+            yield return value;
+        yield return Last;
+    }
+
+    /// <summary>
+    /// Compares the current extents with another and returns an integer that indicates whether the current object precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// </summary>
+    /// <param name="other">A <see cref="NumberExtents{T}"/> to compare to.</param>
+    /// <returns>Less than <c>0</c> if the current extents is less than the other object; greater than <c>0</c> if the other object is greater;
+    /// otherwise <c>0</c> if both extents are equal.</returns>
     public int CompareTo(NumberExtents<T> other)
     {
-        throw new NotImplementedException();
+        int diff = First.CompareTo(other.First);
+        return (diff == 0) ? Last.CompareTo(other.Last) : diff;
     }
 
-    public int CompareTo(object? obj)
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is NumberExtents<T> other) ? CompareTo(other) : -1;
+
+    /// <summary>
+    /// Gets a value indicating whether a specified value is covered by the current extents.
+    /// </summary>
+    /// <param name="number">The value to check.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> not less than the <see cref="First"/> extent and not greater than <see cref="Last"/>; otherwise, <see langword="false"/>.</returns>
+    public bool Contains(T number)
     {
-        throw new NotImplementedException();
+        int result = First.CompareTo(number);
+        return result == 0 || (result > 0 && number <= Last);
     }
 
-    public bool Equals(NumberExtents<T> other)
+    /// <summary>
+    /// Gets a value indicating whether a number immediately precedes the <see cref="First"/> extent value.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> is exactly one increment less than the <see cref="First"/> extent; otherwise, <see langword="false"/>.</returns>
+    public bool IsAdjacentToFirst(T number) => number < First && ++number == First;
+
+    /// <summary>
+    /// Gets a value indicating whether a number immediately follows the <see cref="Last"/> extent value.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> is exactly one increment greater than the <see cref="Last"/> extent; otherwise, <see langword="false"/>.</returns>
+    public bool IsAdjacentToLast(T number) => number > Last && --number == Last;
+
+    /// <summary>
+    /// Gets a value indicating whetehr a number is less than the <see cref="First"/> extent value.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> is less than the <see cref="First"/> extent value; otherwise, <see langword="false"/>.</returns>
+    public bool IsBefore(T number) => number < First;
+
+    /// <summary>
+    /// Gets a value indicating whetehr a number is more than one increment less than the <see cref="First"/> extent value.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> is at least 2 increments less than the <see cref="First"/> extent value; otherwise, <see langword="false"/>.</returns>
+    public bool IsMoreThanOneBefore(T number) => number < First && ++number < First;
+
+    /// /// <summary>
+    /// Gets a value indicating whetehr a number is greater than the <see cref="Last"/> extent value.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> is greater than the <see cref="Last"/> extent value; otherwise, <see langword="false"/>.</returns>
+    public bool IsAfter(T number) => number > Last;
+
+    /// <summary>
+    /// Gets a value indicating whetehr a number is more than one increment greater than the <see cref="Last"/> extent value.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns><see langword="true"/> if the specified <paramref name="number"/> is at least 2 increments greater than the <see cref="Last"/> extent value; otherwise, <see langword="false"/>.</returns>
+    public bool IsMoreThanOneAfter(T number) => number > Last && --number > Last;
+
+    /// <summary>
+    /// Compares the current extents with another and returns a value indicating if they are equal.
+    /// </summary>
+    /// <param name="other">A <see cref="NumberExtents{T}"/> to compare to.</param>
+    /// <returns><see langword="true"/> if <paramref name="other"/> is the same as the current extents; otherwise, <see langword="false"/>.</returns>
+    public bool Equals(NumberExtents<T> other) => First == other.First && Last == other.Last;
+
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is NumberExtents<T> other && Equals(other);
+
+    /// <summary>
+    /// Gets the count of numbers from the <see cref="First"/> value, up to and including the <see cref="Last"/> value.
+    /// </summary>
+    /// <returns>The value of <see cref="First"/> subtracted from <see cref="Last"/>, plus <c>1</c>.</returns>
+    public BigInteger GetCount() => BigInteger.CreateSaturating(Last - First) + BigInteger.One;
+
+    /// <summary>
+    /// Returns a value indicating how a specified number relates to the current extents.
+    /// </summary>
+    /// <param name="number">The number to compare.</param>
+    /// <returns>A <see cref="ExtentValueRelativity"/> value indicating how the specified <paramref name="number"/> relates to the current extents.</returns>
+    public ExtentValueRelativity GetRelationOf(T number)
     {
-        throw new NotImplementedException();
+        int diff = number.CompareTo(First);
+        if (diff == 0) return ExtentValueRelativity.IsIncluded;
+        if (diff < 0)
+            return (++number == First) ? ExtentValueRelativity.ImmediatelyPrecedes : ExtentValueRelativity.PrecedesWithGap;
+        return (number <= Last) ? ExtentValueRelativity.IsIncluded : (--number == Last) ? ExtentValueRelativity.ImmediatelyFollows : ExtentValueRelativity.FollowsWithGap;
     }
 
-    public BigInteger GetCount()
+    /// <summary>
+    /// Returns a value indicating how the current extents relates to another.
+    /// </summary>
+    /// <param name="other">The extents to compare to.</param>
+    /// <returns>A <see cref="ExtentRelativity"/> value indicating how the current extents relates to another extent pair.</returns>
+    public ExtentRelativity GetRelationTo(NumberExtents<T> other)
     {
-        throw new NotImplementedException();
+        int diff = Last.CompareTo(other.First);
+        if (diff < 0)
+            return ((Last + T.One) == other.First) ? ExtentRelativity.ImmediatelyPrecedes : ExtentRelativity.PrecedesWithGap;
+        if (diff == 0)
+        {
+            if (First == Last)
+                return (Last == other.Last) ? ExtentRelativity.EqualTo : ExtentRelativity.ContainedBy;
+            return (other.First == other.Last) ? ExtentRelativity.Contains : ExtentRelativity.Overlaps;
+        }
+        if ((diff = Last.CompareTo(other.Last)) < 0)
+            return (First < other.First) ? ExtentRelativity.Overlaps : ExtentRelativity.ContainedBy;
+        if (diff == 0)
+            return ((diff = First.CompareTo(other.First)) == 0) ? ExtentRelativity.EqualTo : (diff < 0) ? ExtentRelativity.Contains : ExtentRelativity.ContainedBy;
+        if (First < other.First) return ExtentRelativity.Contains;
+        if (other.Last < First)
+            return ((First - T.One) == other.Last) ? ExtentRelativity.ImmediatelyFollows : ExtentRelativity.FollowsWithGap;
+        return (First == other.First) ? ExtentRelativity.Contains : ExtentRelativity.Overlaps;
     }
 
-    public IEnumerator<T> GetEnumerator()
+    /// <summary>
+    /// Gets all values covered by the current extents in reverse order.
+    /// </summary>
+    /// <returns>All sequential values in reverse order, starting from the <see cref="Last"/>, down to and including the <see cref="First"/> value.</returns>
+    public IEnumerable<T> Reverse()
     {
-        throw new NotImplementedException();
+        for (var value = Last; value > First; value++)
+            yield return value;
+        yield return First;
     }
 
-    public bool IsSingleValue()
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// Gets an enumerator that iterates through all the values covered by the current extents.
+    /// </summary>
+    /// <returns>An enumerator that iterates through all sequential values from the <see cref="First"/>, up to and including the <see cref="Last"/> value.</returns>
+    public IEnumerator<T> GetEnumerator() => AsEnumerable().GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        throw new NotImplementedException();
-    }
+    public override int GetHashCode() => HashCode.Combine(First, Last);
 
-    public override int GetHashCode()
-    {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// Gets a value indicating whether the current extents covers only one value.
+    /// </summary>
+    /// <returns><see langword="true"/> if <see cref="First"/> is equal to <see cref="Last"/>; otherwise, <see langword="false"/> to indicate that <see cref="Last"/> is greater than <see cref="First"/>.</returns>
+    public bool IsSingleValue() => First == Last;
 
-    public override string ToString()
-    {
-        return base.ToString() ?? "";
-    }
+    public override string ToString() => (First == Last) ? $"{{{First}}}" : $"{{{First}..{Last}}}";
 
-    public static bool operator ==(NumberExtents<T> left, NumberExtents<T> right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(NumberExtents<T> left, NumberExtents<T> right) => left.Equals(right);
 
-    public static bool operator !=(NumberExtents<T> left, NumberExtents<T> right)
-    {
-        return !(left == right);
-    }
+    public static bool operator !=(NumberExtents<T> left, NumberExtents<T> right) => !(left == right);
 
-    public static bool operator <(NumberExtents<T> left, NumberExtents<T> right)
-    {
-        return left.CompareTo(right) < 0;
-    }
+    public static bool operator <(NumberExtents<T> left, NumberExtents<T> right) => left.CompareTo(right) < 0;
 
-    public static bool operator <=(NumberExtents<T> left, NumberExtents<T> right)
-    {
-        return left.CompareTo(right) <= 0;
-    }
+    public static bool operator <=(NumberExtents<T> left, NumberExtents<T> right) => left.CompareTo(right) <= 0;
 
-    public static bool operator >(NumberExtents<T> left, NumberExtents<T> right)
-    {
-        return left.CompareTo(right) > 0;
-    }
+    public static bool operator >(NumberExtents<T> left, NumberExtents<T> right) => left.CompareTo(right) > 0;
 
-    public static bool operator >=(NumberExtents<T> left, NumberExtents<T> right)
-    {
-        return left.CompareTo(right) >= 0;
-    }
+    public static bool operator >=(NumberExtents<T> left, NumberExtents<T> right) => left.CompareTo(right) >= 0;
+}
+
+/// /// <summary>
+/// Indicates how one <see cref="NumberExtents{T}"/> value relates to a another <see cref="NumberExtents{T}"/> value.
+/// </summary>
+public enum ExtentRelativity
+{
+    /// <summary>
+    /// The <see cref="NumberExtents{T}.Last"/> value of the current <see cref="NumberExtents{T}"/> is more than one increment less than the <see cref="NumberExtents{T}.First"/> value of the other.
+    /// </summary>
+    PrecedesWithGap,
+
+    /// <summary>
+    /// The <see cref="NumberExtents{T}.Last"/> value of the current <see cref="NumberExtents{T}"/> is exactly one increment less than the <see cref="NumberExtents{T}.First"/> value of the other.
+    /// </summary>
+    ImmediatelyPrecedes,
+
+    /// <summary>
+    /// Both extent values share the same number values, and both also have values that are not included by each other.
+    /// </summary>
+    Overlaps,
+
+    /// <summary>
+    /// All number values in the other extent are included in the current extent, while both corresponding extent values are not equal.
+    /// </summary>
+    Contains,
+
+    /// <summary>
+    /// All number values in the current extent are included in the other extent, while both corresponding extent values are not equal.
+    /// </summary>
+    ContainedBy,
+
+    /// <summary>
+    /// The current extents include the exact same number values as the other extents.
+    /// </summary>
+    EqualTo,
+
+    /// <summary>
+    /// The <see cref="NumberExtents{T}.First"/> value of the current <see cref="NumberExtents{T}"/> is exactly one increment greater than the <see cref="NumberExtents{T}.Last"/> value of the other.
+    /// </summary>
+    ImmediatelyFollows,
+
+    /// <summary>
+    /// The <see cref="NumberExtents{T}.First"/> value of the current <see cref="NumberExtents{T}"/> is more than one increment greater than the <see cref="NumberExtents{T}.Last"/> value of the other.
+    /// </summary>
+    FollowsWithGap
+}
+
+/// <summary>
+/// Indicates how a number value relates to a specific <see cref="NumberExtents{T}"/> value.
+/// </summary>
+public enum ExtentValueRelativity
+{
+    /// <summary>
+    /// The number value is less than the <see cref="NumberExtents{T}.First"/> extent by at least 2 increments.
+    /// </summary>
+    PrecedesWithGap,
+
+    /// <summary>
+    /// The number value is exactly one increment less than the <see cref="NumberExtents{T}.First"/> extent.
+    /// </summary>
+    ImmediatelyPrecedes,
+
+    /// <summary>
+    /// The number value is not less than the <see cref="NumberExtents{T}.First"/> extent and not greater than the <see cref="NumberExtents{T}.Last"/> extent.
+    /// </summary>
+    IsIncluded,
+
+    /// <summary>
+    /// The number value is exactly one increment greater than the <see cref="NumberExtents{T}.Last"/> extent.
+    /// </summary>
+    ImmediatelyFollows,
+
+    /// <summary>
+    /// The number value is greater than the <see cref="NumberExtents{T}.Last"/> extent by at least 2 increments.
+    /// </summary>
+    FollowsWithGap
 }
