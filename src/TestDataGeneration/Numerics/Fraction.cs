@@ -1,413 +1,176 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace TestDataGeneration.Numerics;
 
+/// <summary>
+/// Helper class for fractional values.
+/// </summary>
 public static class Fraction
 {
     public const char Separator_Numerator_Denominator = '∕';
 
-    public const char AltSeparator_Numerator_Denominator = '/';
-
-    public const char Positive_Prefix_Char = '+';
-
     public const char Negative_Prefix_Char = '-';
 
-    public const char Negative_Prefix_Decimal = '.';
-
-    public const char AltNegative_Prefix_Char = '−';
-
-    private const char NumberChar_0 = '0';
-
-    private const char NumberChar_1 = '1';
-
-    private const char NumberChar_2 = '2';
-
-    private const char NumberChar_3 = '3';
-
-    private const char NumberChar_4 = '4';
-
-    private const char NumberChar_5 = '5';
-
-    private const char NumberChar_6 = '6';
-
-    private const char NumberChar_7 = '7';
-
-    private const char NumberChar_8 = '8';
-
-    private const char NumberChar_9 = '9';
-
-    private static ImmutableArray<char> _numberchars = new char[] { NumberChar_0, NumberChar_1, NumberChar_2, NumberChar_3, NumberChar_4, NumberChar_5, NumberChar_6, NumberChar_7, NumberChar_8, NumberChar_9 }.ToImmutableArray();
-
-    internal static bool TryParseFractionComponents(string pattern, [NotNullWhen(true)] out string? wholeNumber, [NotNullWhen(true)] out string? numerator, [NotNullWhen(true)] out string? denominator,
+    public static string ToFractionString<T>(T wholeNumber, T numerator, T denominator)
+        where T : struct, IBinaryNumber<T>
+    {
+        if (T.IsZero(numerator)) return $"{wholeNumber}";
+        if (T.IsZero(wholeNumber)) return $"{numerator}{Separator_Numerator_Denominator}{denominator}";
+        return $"{wholeNumber} {numerator}{Separator_Numerator_Denominator}{denominator}";
+    }
+    
+    public static string ToFractionString<T>(T numerator, T denominator)
+        where T : struct, IBinaryNumber<T>
+    {
+        if (T.IsZero(numerator)) return $"{numerator}";
+        return $"{numerator}{Separator_Numerator_Denominator}{denominator}";
+    }
+    
+    public static readonly Regex FractionStringRegex = new(@"^(?:(?<wn>[−-])|\+)?(?<wh>\d+)([∕/](?:(?<dn0>[−-])|\+)?0*(?<d0>[1-9]\d*)|(\s+(?:(?<nn0>[−-])|\+)?|(?<nn1>[−-])|\+)(?<n>\d+)[∕/](?:(?<dn1>[−-])|\+)?0*(?<d1>[1-9]\d*))?$", RegexOptions.Compiled);
+    
+    /// <summary>
+    /// Parses the fraction component tokens from a string representation of a fraction.
+    /// </summary>
+    /// <param name="fractionString">A string representation of a fraction.</param>
+    /// <returns><see langword="true"/> if the components could be parsed; ottherwise, <see langword="false"/> if <paramref name="fractionString"/> was not properly formatted.</returns>
+    public static bool TryGetFractionTokens(string fractionString, [NotNullWhen(true)] out string? wholeNumber, [NotNullWhen(true)] out string? numerator, [NotNullWhen(true)] out string? denominator,
         out bool isNegative)
     {
-        if (string.IsNullOrEmpty(pattern))
+        if (!string.IsNullOrEmpty(fractionString))
         {
-            isNegative = false;
-            wholeNumber = numerator = denominator = null;
-            return false;
-        }
-
-        bool incrementNext(ref int value)
-        {
-            return ++value < pattern.Length;
-        }
-
-        bool moveToEndOfNumber(int start, out int end)
-        {
-            end = start;
-            if (!char.IsNumber(pattern[end])) return false;
-            do
+            Match match = FractionStringRegex.Match(fractionString);
+            if (match.Success)
             {
-                if (!incrementNext(ref end)) return true;
+                var g = match.Groups["d0"];
+                if (g.Success)
+                {
+                    isNegative = match.Groups["wn"].Success != match.Groups["dn0"].Success;
+                    wholeNumber = string.Empty;
+                    numerator = match.Groups["wh"].Value;
+                    denominator = g.Value;
+                    return true;
+                }
+                wholeNumber = match.Groups["wh"].Value;
+                if ((g = match.Groups["n"]).Success)
+                {
+                    numerator = g.Value;
+                    denominator = match.Groups["d1"].Value;
+                    isNegative = (match.Groups["nn0"].Success || match.Groups["nn1"].Success) ? match.Groups["wn"].Success == match.Groups["dn1"].Success : match.Groups["wn"].Success != match.Groups["dn1"].Success;
+                }
+                else
+                {
+                    numerator = denominator = string.Empty;
+                    isNegative = match.Groups["wn"].Success;
+                }
+                return true;
             }
-            while (char.IsNumber(pattern[end]));
-            if (pattern[end] != Negative_Prefix_Decimal) return true;
-            if (!(incrementNext(ref end) && char.IsNumber(pattern[end]))) return false;
-            do
-            {
-                if (!incrementNext(ref end)) break;
-            }
-            while (char.IsNumber(pattern[end]));
-            return true;
         }
-
-        bool moveToEndOfWhiteSpace(int start, out int end)
-        {
-            end = start;
-            if (!char.IsWhiteSpace(pattern[start])) return false;
-            do
-            {
-                if (!incrementNext(ref end)) return false;
-            }
-            while (char.IsWhiteSpace(pattern[start]));
-            return true;
-        }
-
-        int wholeNumberStart, wholeNumberEnd;
-        switch (pattern[0])
-        {
-            case Negative_Prefix_Char:
-            case AltNegative_Prefix_Char:
-                isNegative = true;
-                wholeNumberStart = 1;
-                if (pattern.Length == 1 || !moveToEndOfNumber(wholeNumberStart, out wholeNumberEnd))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                // ^-\d+(\.\d+)?\D
-                break;
-            case Positive_Prefix_Char:
-                isNegative = false;
-                wholeNumberStart = 1;
-                if (pattern.Length == 1 || !moveToEndOfNumber(wholeNumberStart, out wholeNumberEnd))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                // ^\+\d+(\.\d+)?\D
-                break;
-            default:
-                isNegative = false;
-                wholeNumberStart = 0;
-                if (!moveToEndOfNumber(wholeNumberStart, out wholeNumberEnd))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                // ^\d+(\.\d+)?\D
-                break;
-        }
-        int numeratorStart, numeratorEnd, denominatorStart;
-        // ^[+-]?\d+(\.\d+)?\D
-        switch (pattern[wholeNumberEnd])
-        {
-            case Negative_Prefix_Char:
-            case AltNegative_Prefix_Char:
-                isNegative = !isNegative;
-                numeratorStart = wholeNumberEnd;
-                if (!(incrementNext(ref numeratorStart) && moveToEndOfNumber(numeratorStart, out numeratorEnd) && pattern[numeratorEnd] switch
-                {
-                    Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
-                    _ => false,
-                }))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                denominatorStart = numeratorEnd;
-                // ^[+-]?\d+(\.\d+)?-\d+(\.\d+)?/
-                break;
-            case Positive_Prefix_Char:
-                // ^[+-?]\d+(\.\d+)?\+
-                numeratorStart = wholeNumberEnd;
-                if (!incrementNext(ref numeratorStart))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                if (char.IsWhiteSpace(pattern[numeratorStart]))
-                {
-                    if (!moveToEndOfWhiteSpace(numeratorStart, out numeratorStart))
-                    {
-                        wholeNumber = numerator = denominator = null;
-                        return false;
-                    }
-                }
-                switch (pattern[numeratorStart])
-                {
-                    case Negative_Prefix_Char:
-                    case AltNegative_Prefix_Char:
-                        isNegative = !isNegative;
-                        if (!incrementNext(ref numeratorStart))
-                        {
-                            wholeNumber = numerator = denominator = null;
-                            return false;
-                        }
-                        break;
-                }
-                if (!(moveToEndOfNumber(numeratorStart, out numeratorEnd) && pattern[numeratorEnd] switch
-                {
-                    Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
-                    _ => false,
-                }))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                denominatorStart = numeratorEnd;
-                // ^[+-?]\d+(\.\d+)?\+\s*-?\d+(\.\d+)?/
-                break;
-            case Separator_Numerator_Denominator:
-            case AltSeparator_Numerator_Denominator:
-                numeratorEnd = denominatorStart = wholeNumberEnd;
-                wholeNumberEnd = numeratorStart = wholeNumberStart;
-                if (!incrementNext(ref denominatorStart))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                // ^[+-?]\d+(\.\d+)?/
-                break;
-            default:
-                if (!moveToEndOfWhiteSpace(wholeNumberEnd, out numeratorStart))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                switch (pattern[numeratorStart])
-                {
-                    case Negative_Prefix_Char:
-                    case AltNegative_Prefix_Char:
-                        isNegative = !isNegative;
-                        if (!incrementNext(ref numeratorStart))
-                        {
-                            wholeNumber = numerator = denominator = null;
-                            return false;
-                        }
-                        // ^[+-]?\d+(\.\d+)?\s+-(?=\d)
-                        break;
-                    case Positive_Prefix_Char:
-                        if (!incrementNext(ref numeratorStart))
-                        {
-                            wholeNumber = numerator = denominator = null;
-                            return false;
-                        }
-                        // ^[+-]?\d+(\.\d+)?\s+\+
-                        switch (pattern[numeratorStart])
-                        {
-                            case Negative_Prefix_Char:
-                            case AltNegative_Prefix_Char:
-                                isNegative = !isNegative;
-                                if (!incrementNext(ref numeratorStart))
-                                {
-                                    wholeNumber = numerator = denominator = null;
-                                    return false;
-                                }
-                                // ^[+-]?\d+(\.\d+)?\s+\+-
-                                break;
-                            default:
-                                if (char.IsWhiteSpace(pattern[numeratorStart]))
-                                {
-                                    if (!moveToEndOfWhiteSpace(numeratorStart, out numeratorStart))
-                                    {
-                                        wholeNumber = numerator = denominator = null;
-                                        return false;
-                                    }
-                                    // ^[+-]?\d+(\.\d+)?\s+\+\s+
-                                    switch (pattern[numeratorStart])
-                                    {
-                                        case Negative_Prefix_Char:
-                                        case AltNegative_Prefix_Char:
-                                            isNegative = !isNegative;
-                                            if (!incrementNext(ref numeratorStart))
-                                            {
-                                                wholeNumber = numerator = denominator = null;
-                                                return false;
-                                            }
-                                            break;
-                                    }
-                                    // ^[+-]?\d+(\.\d+)?\s+\+\s+-?
-                                }
-                                else
-                                {
-                                    switch (pattern[numeratorStart])
-                                    {
-                                        case Negative_Prefix_Char:
-                                        case AltNegative_Prefix_Char:
-                                            isNegative = !isNegative;
-                                            if (!incrementNext(ref numeratorStart))
-                                            {
-                                                wholeNumber = numerator = denominator = null;
-                                                return false;
-                                            }
-                                            break;
-                                    }
-                                    // ^[+-]?\d+(\.\d+)?\s+\+-?
-                                }
-                                // ^[+-]?\d+(\.\d+)?\s+\+\s*-?(?=\d)
-                                break;
-
-                        }
-                        break;
-                }
-                if (!(moveToEndOfNumber(numeratorStart, out numeratorEnd) && pattern[numeratorEnd] switch
-                {
-                    Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
-                    _ => false,
-                }))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                denominatorStart = numeratorEnd;
-                // ^[+-]?\d+(\.\d+)?\s+(-|\+\s*-?)\d+(\.\d+)?/
-                break;
-        }
-        if (!incrementNext(ref denominatorStart))
-        {
-            wholeNumber = numerator = denominator = null;
-            return false;
-        }
-        switch (pattern[denominatorStart])
-        {
-            case Negative_Prefix_Char:
-            case AltNegative_Prefix_Char:
-                isNegative = !isNegative;
-                if (!incrementNext(ref denominatorStart))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                break;
-            case Positive_Prefix_Char:
-                if (!incrementNext(ref denominatorStart))
-                {
-                    wholeNumber = numerator = denominator = null;
-                    return false;
-                }
-                break;
-        }
-        if (moveToEndOfNumber(denominatorStart, out int denominatorEnd) && denominatorEnd == pattern.Length)
-        {
-            wholeNumber = (wholeNumberStart == wholeNumberEnd) ? string.Empty : (wholeNumberStart > 0) ? pattern[wholeNumberStart..wholeNumberEnd] : pattern[..wholeNumberEnd];
-            numerator = pattern[numeratorStart..numeratorEnd];
-            denominator = pattern[denominatorStart..];
-            return true;
-        }
+        isNegative = false;
         wholeNumber = numerator = denominator = null;
         return false;
     }
 
-    internal static T GetGCD<T>(T d1, params T[] denominators)
+    /// <summary>
+    /// Gets the greatest common denominator.
+    /// </summary>
+    /// <param name="d1">The first denominator value.</param>
+    /// <param name="d2">The second denominator value.</param>
+    /// <param name="denominators">Optional additional denominator values.</param>
+    /// <returns>The greatest common denominator among the given denominators.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="d1"/>, <paramref name="d2"/>, or one of the values of <paramref name="denominators"/> is <c>0</c>.</exception>
+    public static T GetGCD<T>(T d1, T d2, params T[] denominators)
         where T : struct, IBinaryNumber<T>
     {
-        if (denominators == null || denominators.Length == 0)
-            return d1;
-        T gcd = T.Abs(d1);
-        foreach (T d in denominators)
+        if (T.IsZero(d1)) throw new ArgumentOutOfRangeException(nameof(d1));
+        if (T.IsZero(d2)) throw new ArgumentOutOfRangeException(nameof(d2));
+        if ((d1 = T.Abs(d1)) == T.One || (d2 = T.Abs(d2)) == T.One) return T.One;
+        static T getNext(T g, T d)
         {
             T b;
-            if (d.CompareTo(gcd) > 0)
+            if (d.CompareTo(g) > 0)
             {
-                b = gcd;
-                gcd = T.Abs(d);
+                b = g;
+                g = d;
             }
             else
-                b = T.Abs(d);
-            while (T.IsPositive(b))
+                b = d;
+            while (!T.IsZero(b))
             {
-                T rem = gcd % b;
-                gcd = b;
+                T rem = g % b;
+                g = b;
                 b = rem;
             }
+            return g;
         }
-
+        T gcd = getNext(d1, d2);
+        if (denominators is not null)
+            foreach (T d in denominators)
+            {
+                if (T.IsZero(d)) throw new ArgumentOutOfRangeException(nameof(denominators));
+                gcd = getNext(gcd, T.Abs(d));
+            }
         return gcd;
     }
 
-    internal static T GetLCM<T>(T d1, T d2, out T secondMultiplier)
+    /// <summary>
+    /// Gets the lowest common multiple.
+    /// </summary>
+    /// <param name="d1">The first denominator.</param>
+    /// <param name="d2">The second denominator.</param>
+    /// <returns>The lowest common mutiple for the two denominators.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="d1"/> or <paramref name="d2"/> is <c>0</c>.</exception>
+    public static T GetLCM<T>(T d1, T d2)
         where T : struct, IBinaryNumber<T>
     {
-        T zero = default;
-        if (d1.CompareTo(zero) < 0)
-            return GetLCM(T.Abs(d1), d2, out secondMultiplier);
-
-        if (d2.CompareTo(zero) < 0)
-            return GetLCM(d1, T.Abs(d2), out secondMultiplier);
-
-        if (d1.Equals(d2))
-        {
-            secondMultiplier = T.One;
-            return secondMultiplier;
-        }
-
-        if (d1.CompareTo(d2) < 0)
-        {
-            secondMultiplier = GetLCM(d2, d1, out d1);
-            return d1;
-        }
-
-        secondMultiplier = d1;
-
-        while (!(secondMultiplier % d2).Equals(zero))
-            secondMultiplier += d1;
-
-        return GetSimplifiedRational(secondMultiplier / d1, secondMultiplier, out secondMultiplier);
+        if (T.IsZero(d1)) throw new ArgumentOutOfRangeException(nameof(d1));
+        if (T.IsZero(d2)) throw new ArgumentOutOfRangeException(nameof(d2));
+        if ((d1 = T.Abs(d1)) == T.One) return T.Abs(d2);
+        if ((d2 = T.Abs(d2)) == T.One) return d1;
+        if (d1 < d2) return GetLCM(d2, d1);
+        var lcm = d1;
+        while (!T.IsZero(lcm % d2)) lcm += d1;
+        return lcm;
     }
-
-    internal static T GetSimplifiedRational<T>(T n, T d, out T denominator)
+    
+    /// <summary>
+    /// Gets the simplified rational for given fraction values.
+    /// </summary>
+    /// <param name="numerator">The numerator of a fraction.</param>
+    /// <param name="denominator">The denominator of a fraction.</param>
+    /// <param name="simplifiedDenominator">The simplified denominator.</param>
+    /// <returns>The simplified numerator.</returns>
+    public static T GetSimplifiedRational<T>(T numerator, T denominator, out T simplifiedDenominator)
         where T : struct, IBinaryNumber<T>
     {
-        if (T.IsZero(d)) throw new DivideByZeroException();
+        if (T.IsZero(denominator)) throw new DivideByZeroException();
 
-        if (T.IsZero(n))
+        if (T.IsZero(numerator))
         {
-            denominator = T.One;
+            simplifiedDenominator = T.One;
             return T.Zero;
         }
 
-        if (n.Equals(d))
+        if (numerator.Equals(denominator))
         {
-            denominator = T.One;
+            simplifiedDenominator = T.One;
             return T.One;
         }
 
-        if (T.IsNegative(d))
+        if (T.IsNegative(denominator))
         {
 
-            d = T.Zero - d;
-            n = T.Zero - n;
+            denominator = T.Zero - denominator;
+            numerator = T.Zero - numerator;
         }
-        T gcd = GetGCD(n, d);
-        denominator = d / gcd;
-        return n / gcd;
+        T gcd = GetGCD(numerator, denominator);
+        simplifiedDenominator = denominator / gcd;
+        return numerator / gcd;
     }
 
-    internal static T GetProperRational<T>(T wholeNumber, T numerator, T denominator,
+    public static T GetProperRational<T>(T wholeNumber, T numerator, T denominator,
             out T properNumerator)
         where T : struct, IBinaryNumber<T>
     {
@@ -447,33 +210,64 @@ public static class Fraction
         return wholeNumber;
     }
 
-    internal static T GetNormalizedRational<T>(T wholeNumber, T numerator, T denominator, out T properNumerator, out T properDenominator)
+    public static T GetNormalizedRational<T>(T wholeNumber, T numerator, T denominator, out T properNumerator, out T properDenominator)
         where T : struct, IBinaryNumber<T>
     {
-        numerator = GetSimplifiedRational(numerator, denominator, out properDenominator);
+        properNumerator = GetSimplifiedRational(numerator, denominator, out properDenominator);
 
-        if (T.IsZero(numerator))
+        if (T.IsZero(properNumerator))  return wholeNumber;
+
+        if (T.IsNegative(wholeNumber))
         {
-            properNumerator = numerator;
-            return wholeNumber;
+            if (T.IsNegative(properNumerator))
+            {
+                if (T.IsNegative(properDenominator))
+                    properDenominator = T.Abs(properDenominator);
+                else
+                    wholeNumber = T.Abs(wholeNumber);
+                properNumerator = T.Abs(properNumerator);
+            }
+            else if (T.IsNegative(properNumerator))
+            {
+                wholeNumber = T.Abs(wholeNumber);
+                properNumerator = T.Abs(properNumerator);
+            }
+        }
+        else if (T.IsNegative(properDenominator))
+        {
+            if (T.IsZero(wholeNumber))
+            {
+                if (T.IsNegative(properNumerator))
+                    properNumerator = T.Abs(properNumerator);
+                else
+                    properNumerator = T.Zero - properNumerator;
+            }
+            else if (T.IsNegative(properNumerator))
+                properNumerator = T.Abs(properNumerator);
+            else
+                wholeNumber = T.Zero - wholeNumber;
+            properDenominator = T.Abs(properDenominator);
+        }
+        else if (T.IsNegative(properNumerator) && !T.IsZero(wholeNumber))
+        {
+            wholeNumber = T.Zero - wholeNumber;
+            properDenominator = T.Abs(properDenominator); 
         }
 
         if (properDenominator.Equals(T.One))
         {
             properNumerator = T.Zero;
-            return wholeNumber + numerator;
+            return wholeNumber + properNumerator;
         }
 
-        if (numerator > properDenominator)
+        if (properNumerator > properDenominator)
         {
-            properNumerator = numerator % properDenominator;
+            properNumerator = properNumerator % properDenominator;
             wholeNumber = T.IsNegative(wholeNumber)
-                ? wholeNumber - ((numerator - properNumerator) / properDenominator)
-                : wholeNumber + ((numerator - properNumerator) / properDenominator);
+                ? wholeNumber - ((properNumerator - properNumerator) / properDenominator)
+                : wholeNumber + ((properNumerator - properNumerator) / properDenominator);
             properNumerator = GetSimplifiedRational(properNumerator, properDenominator, out properDenominator);
         }
-        else
-            properNumerator = numerator;
 
         if (T.IsZero(wholeNumber))
             return wholeNumber;
@@ -487,7 +281,7 @@ public static class Fraction
         return wholeNumber;
     }
 
-    internal static T GetInvertedRational<T>(T w, T n, T d, out T numerator, out T denominator)
+    public static T GetInvertedRational<T>(T w, T n, T d, out T numerator, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
         w = GetNormalizedRational(w, n, d, out numerator, out denominator);
@@ -506,7 +300,7 @@ public static class Fraction
         return GetNormalizedRational(T.Zero, d, n + d * w, out numerator, out denominator);
     }
 
-    internal static void ToCommonDenominator<T>(ref T numerator1, ref T denominator1, ref T numerator2, ref T denominator2)
+    public static void ToCommonDenominator<T>(ref T numerator1, ref T denominator1, ref T numerator2, ref T denominator2)
         where T : struct, IBinaryNumber<T>
     {
         if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
@@ -526,19 +320,17 @@ public static class Fraction
                 numerator2 *= denominator1;
             else if (!denominator1.Equals(denominator2))
             {
-                T m1 = GetLCM(denominator1, denominator2, out _);
-                numerator1 *= m1;
-                denominator1 *= m1;
-                numerator2 *= m1;
-                denominator2 *= m1;
+                T lcm = GetLCM(denominator1, denominator2);
+                numerator1 *= lcm / denominator1;
+                numerator2 *= lcm / denominator2;
+                denominator1 = denominator2 = lcm;
             }
         }
     }
 
-    internal static int Compare<T>(T numerator1, T denominator1, T numerator2, T denominator2)
+    public static int Compare<T>(T numerator1, T denominator1, T numerator2, T denominator2)
         where T : struct, IBinaryNumber<T>
     {
-        ;
         if (T.IsZero(numerator1) || T.IsZero(numerator2) || denominator1 == denominator2)
         {
             if (T.IsZero(denominator1) || T.IsZero(denominator2)) throw new DivideByZeroException();
@@ -548,7 +340,7 @@ public static class Fraction
         return numerator1.CompareTo(numerator2);
     }
 
-    internal static int Compare<T>(T wholeNumber1, T numerator1, T denominator1, T wholeNumber2, T numerator2, T denominator2)
+    public static int Compare<T>(T wholeNumber1, T numerator1, T denominator1, T wholeNumber2, T numerator2, T denominator2)
         where T : struct, IBinaryNumber<T>
     {
         wholeNumber1 = GetNormalizedRational(wholeNumber1, numerator1, denominator1, out numerator1, out denominator1);

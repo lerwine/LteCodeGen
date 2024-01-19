@@ -8,7 +8,6 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TSelf">The type that implements the interface.</typeparam>
 /// <typeparam name="TFloatingPoint">The denominated value type.</typeparam>
 /// <typeparam name="TWholeValue">The actual numerical value.</typeparam>
-/// <typeparam name="TResult">The denominated value without the original whole value.</typeparam>
 public interface IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue> : IMixedFraction<TSelf, TFloatingPoint>,
         IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>
     where TSelf : IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>?

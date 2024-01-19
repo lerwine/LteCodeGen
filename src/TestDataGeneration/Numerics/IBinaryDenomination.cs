@@ -2,6 +2,12 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
+/// <summary>
+/// Byte size representation in kilobytes, megabytes, etc.
+/// </summary>
+/// <typeparam name="TSelf">The type that implements this interface.</typeparam>
+/// <typeparam name="TFloatingPoint">The denominated value type.</typeparam>
+/// <typeparam name="TWholeValue">The original byte size value type.</typeparam>
 public interface IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue> : IFraction<TSelf, TFloatingPoint>
     where TSelf : IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>?
     where TFloatingPoint : IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
