@@ -1,9 +1,8 @@
 {
     "powershell.pester.codeLens": false,
     "omnisharp.organizeImportsOnFormat": true,
-    "editor.formatOnPaste": true,
-    "editor.defaultFormatter": "ms-dotnettools.csdevkit",
     "[csharp]": {
-        "editor.formatOnPaste": true
+        "editor.formatOnPaste": true,
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
     }
 }
