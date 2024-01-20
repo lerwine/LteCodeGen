@@ -9,9 +9,9 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TFloatingPoint">The denominated value type.</typeparam>
 /// <typeparam name="TWholeValue">The original byte size value type.</typeparam>
 public interface IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue> : IFraction<TSelf, TFloatingPoint>
-    where TSelf : IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>?
-    where TFloatingPoint : IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
-    where TWholeValue : IBinaryNumber<TWholeValue>
+    where TSelf : struct, IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>?
+    where TFloatingPoint : struct, IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
+    where TWholeValue : struct, IBinaryNumber<TWholeValue>
 {
     /// <summary>
     /// Gets the floating-point value.

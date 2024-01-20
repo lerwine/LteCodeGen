@@ -9,8 +9,8 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TValue">The value type for the <see cref="IFraction{TSelf, TValue}.Numerator"/>, <see cref="IFraction{TSelf, TValue}.Denominator"/>,
 /// and <see cref="IMixedFraction{TSelf, TValue}.WholeNumber"/>.</typeparam>
 public interface IMixedFraction<TSelf, TValue> : IFraction<TSelf, TValue>
-    where TSelf : IMixedFraction<TSelf, TValue>?
-    where TValue : IBinaryNumber<TValue>
+    where TSelf : struct, IMixedFraction<TSelf, TValue>?
+    where TValue : struct, IBinaryNumber<TValue>
 {
     /// <summary>
     /// Gets the whole number.
@@ -52,9 +52,9 @@ public interface IMixedFraction<TSelf, TValue> : IFraction<TSelf, TValue>
 /// and <see cref="IMixedFraction{TSelf, TValue}.WholeNumber"/>.</typeparam>
 /// <typeparam name="TFraction">The <see cref="ISimpleFraction{TFraction, TValue, TSelf}"/> type with the same numerator and denominator type.</typeparam>
 public interface IMixedFraction<TSelf, TValue, TFraction> : IFraction<TSelf, TValue, TSelf, TFraction>, IMixedFraction<TSelf, TValue>
-    where TSelf : IMixedFraction<TSelf, TValue, TFraction>?
-    where TValue : IBinaryNumber<TValue>
-    where TFraction : ISimpleFraction<TFraction, TValue, TSelf>?
+    where TSelf : struct, IMixedFraction<TSelf, TValue, TFraction>?
+    where TValue : struct, IBinaryNumber<TValue>
+    where TFraction : struct, ISimpleFraction<TFraction, TValue, TSelf>?
 {
     /// <summary>
     /// Gets a whole number and a simple fraction from a mixed fraction.

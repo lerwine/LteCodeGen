@@ -13,7 +13,7 @@ namespace TestDataGeneration.Numerics;
 public interface ISignedBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue> : IMixedSignedFraction<TSelf, TFloatingPoint>,
         ISignedBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>,
         IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>
-    where TSelf : ISignedBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>?
-    where TFloatingPoint : IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
-    where TWholeValue : IBinaryNumber<TWholeValue>, ISignedNumber<TWholeValue>
+    where TSelf : struct, ISignedBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>?
+    where TFloatingPoint : struct, IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
+    where TWholeValue : struct, IBinaryNumber<TWholeValue>, ISignedNumber<TWholeValue>
 { }

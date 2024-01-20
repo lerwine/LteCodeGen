@@ -9,8 +9,8 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TValue">The type of value for the <see cref="IFraction{TSelf, TValue}.Numerator"/>,
 /// <see cref="IFraction{TSelf, TValue}.Denominator"/>, and whole number calculations</typeparam>
 public interface ISimpleFraction<TSelf, TValue> : IFraction<TSelf, TValue>
-    where TSelf : ISimpleFraction<TSelf, TValue>?
-    where TValue : IBinaryNumber<TValue>
+    where TSelf : struct, ISimpleFraction<TSelf, TValue>?
+    where TValue : struct, IBinaryNumber<TValue>
 {
     /// <summary>
     /// Adds individual mixed fraction components.
@@ -81,9 +81,9 @@ public interface ISimpleFraction<TSelf, TValue> : IFraction<TSelf, TValue>
 /// <see cref="IFraction{TSelf, TValue}.Denominator"/>, and whole number calculations.</typeparam>
 /// <typeparam name="TMixed">The <see cref="IMixedFraction{TSelf, TValue, TFraction}"/> type that shares the same value type.</typeparam>
 public interface ISimpleFraction<TSelf, TValue, TMixed> : IFraction<TSelf, TValue, TMixed, TSelf>, ISimpleFraction<TSelf, TValue>
-    where TSelf : ISimpleFraction<TSelf, TValue, TMixed>?
-    where TValue : IBinaryNumber<TValue>
-    where TMixed : IMixedFraction<TMixed, TValue, TSelf>?
+    where TSelf : struct, ISimpleFraction<TSelf, TValue, TMixed>?
+    where TValue : struct, IBinaryNumber<TValue>
+    where TMixed : struct, IMixedFraction<TMixed, TValue, TSelf>?
 {
     TMixed Add(TValue wholeNumber1, TValue wholeNumber2, TSelf fraction2);
 

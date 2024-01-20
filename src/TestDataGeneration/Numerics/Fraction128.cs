@@ -19,13 +19,15 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     public static Fraction128 MinValue { get; } = new(long.MinValue, 1L);
 
+    public static Fraction128 NaN { get; } = new();
+
     #endregion
 
     #region Instance Properties
 
     public long Numerator { get; }
 
-    public long Denominator { get; } = 1L;
+    public long Denominator { get; }
 
     #endregion
 
@@ -49,77 +51,80 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     public MixedFraction256 Add(long wholeNumber1, long wholeNumber2, Fraction128 fraction2)
     {
-        throw new NotImplementedException();
+        (long wholeNumber, long numerator, long denominator) = AddFractions(wholeNumber1, this, wholeNumber2, fraction2);
+        return new(wholeNumber, numerator, denominator);
     }
 
     public Fraction128 Add(Fraction128 fraction)
     {
-        throw new NotImplementedException();
+        (long numerator, long denominator) = AddSimpleFractions<Fraction128, long>(this, fraction);
+        return new(numerator, denominator);
     }
 
-    public int CompareTo(Fraction128 other)
-    {
-        throw new NotImplementedException();
-    }
+    public int CompareTo(Fraction128 other) => CompareFractionComponents(Numerator, Denominator, other.Numerator, other.Denominator);
 
     public MixedFraction256 Divide(long wholeDividend, long wholeDivisor, Fraction128 divisorFraction)
     {
-        throw new NotImplementedException();
+        (long wholeNumber, long numerator, long denominator) = DivideFractions(wholeDividend, this, wholeDivisor, divisorFraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
     public Fraction128 Divide(Fraction128 fraction)
     {
-        throw new NotImplementedException();
+        (long numerator, long denominator) = DivideSimpleFractions<Fraction128, long>(this, fraction);
+        return new(numerator, denominator);
     }
 
-    public bool Equals(Fraction128 other)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Equals(Fraction128 other) => AreSimpleFractionsEqual<Fraction128, long>(this, other);
 
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Fraction128 other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
 
-    public MixedFraction256 Join(long wholeNumber)
-    {
-        throw new NotImplementedException();
-    }
+    public MixedFraction256 Join(long wholeNumber) => new(wholeNumber, Numerator, Denominator);
 
     public MixedFraction256 Multiply(long wholeMultiplier, long wholeMultiplicand, Fraction128 multiplicandFraction)
     {
-        throw new NotImplementedException();
+        (long wholeNumber, long numerator, long denominator) = MultiplyFractions(wholeMultiplier, this, wholeMultiplicand, multiplicandFraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
     public Fraction128 Multiply(Fraction128 fraction)
     {
-        throw new NotImplementedException();
+        (long numerator, long denominator) = MultiplySimpleFractions<Fraction128, long>(this, fraction);
+        return new(numerator, denominator);
     }
 
     public MixedFraction256 Subtract(long wholeMinuend, long wholeSubtrahend, Fraction128 subtrahendFraction)
     {
-        throw new NotImplementedException();
+        (long wholeNumber, long numerator, long denominator) = SubtractFractions(wholeMinuend, this, wholeSubtrahend, subtrahendFraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
     public Fraction128 Subtract(Fraction128 fraction)
     {
-        throw new NotImplementedException();
+        (long numerator, long denominator) = SubtractSimpleFractions<Fraction128, long>(this, fraction);
+        return new(numerator, denominator);
     }
 
-    public override string ToString()
+    public double ToDouble(IFormatProvider? provider = null)
     {
-        return base.ToString() ?? string.Empty;
+        if (Denominator == 0L) return double.NaN;
+        if (provider is null)
+            return (Numerator == 0L) ? Convert.ToDouble(Numerator) : Convert.ToDouble(Numerator) / Convert.ToDouble(Denominator);
+        return (Numerator == 0L) ? Convert.ToDouble(Numerator, provider) : Convert.ToDouble(Numerator, provider) / Convert.ToDouble(Denominator, provider);
     }
 
+    public override string ToString() => ToFractionString(Numerator, Denominator);
+
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) =>
+        TryFormatSimpleFraction<Fraction128, long>(this, destination, out charsWritten, format, provider);
 
     #endregion
 
     #region Static Methods
 
-    public static Fraction128 Abs(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction128 Abs(Fraction128 value) => (value.Denominator == 0L) ? value : new(long.Abs(value.Numerator), long.Abs(value.Denominator));
 
     public static Fraction128 Add(long wholeNumber1, Fraction128 fraction1, long wholeNumber2, Fraction128 fraction2, out long sum)
     {
@@ -424,100 +429,40 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is Fraction128 other) ? CompareTo(other) : -1;
 
-    TypeCode IConvertible.GetTypeCode()
-    {
-        throw new NotImplementedException();
-    }
+    TypeCode IConvertible.GetTypeCode() => TypeCode.Double;
 
-    bool IConvertible.ToBoolean(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    bool IConvertible.ToBoolean(IFormatProvider? provider) => Convert.ToBoolean(ToDouble(provider), provider);
 
-    byte IConvertible.ToByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    byte IConvertible.ToByte(IFormatProvider? provider) => Convert.ToByte(ToDouble(provider), provider);
 
-    char IConvertible.ToChar(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    char IConvertible.ToChar(IFormatProvider? provider) => Convert.ToChar(ToDouble(provider), provider);
 
-    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    DateTime IConvertible.ToDateTime(IFormatProvider? provider) => Convert.ToDateTime(ToDouble(provider), provider);
 
-    decimal IConvertible.ToDecimal(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    decimal IConvertible.ToDecimal(IFormatProvider? provider) => Convert.ToDecimal(ToDouble(provider), provider);
 
-    double IConvertible.ToDouble(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    short IConvertible.ToInt16(IFormatProvider? provider) => Convert.ToInt16(ToDouble(provider), provider);
 
-    short IConvertible.ToInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    int IConvertible.ToInt32(IFormatProvider? provider) => Convert.ToInt32(ToDouble(provider), provider);
 
-    int IConvertible.ToInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    long IConvertible.ToInt64(IFormatProvider? provider) => Convert.ToInt64(ToDouble(provider), provider);
 
-    long IConvertible.ToInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    sbyte IConvertible.ToSByte(IFormatProvider? provider) => Convert.ToSByte(ToDouble(provider), provider);
 
-    sbyte IConvertible.ToSByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    float IConvertible.ToSingle(IFormatProvider? provider) => Convert.ToSingle(ToDouble(provider), provider);
 
-    float IConvertible.ToSingle(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    string IConvertible.ToString(IFormatProvider? provider) => ToFractionString(Numerator, Denominator, provider);
 
-    string IConvertible.ToString(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToFractionString(Numerator, Denominator, format, formatProvider);
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
-    {
-        throw new NotImplementedException();
-    }
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => ConvertFraction<Fraction128, long>(this, conversionType, provider);
 
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    ushort IConvertible.ToUInt16(IFormatProvider? provider) => Convert.ToUInt16(ToDouble(provider), provider);
 
-    ushort IConvertible.ToUInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    uint IConvertible.ToUInt32(IFormatProvider? provider) => Convert.ToUInt32(ToDouble(provider), provider);
 
-    uint IConvertible.ToUInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    ulong IConvertible.ToUInt64(IFormatProvider? provider) => Convert.ToUInt64(ToDouble(provider), provider);
 
-    ulong IConvertible.ToUInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
     #endregion
 
     #region Static Methods

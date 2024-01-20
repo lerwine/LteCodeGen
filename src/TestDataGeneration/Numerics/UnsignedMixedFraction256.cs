@@ -17,6 +17,8 @@ public readonly struct UnsignedMixedFraction256 : IMixedFraction<UnsignedMixedFr
 
     public static UnsignedMixedFraction256 MinValue { get; } = new(ulong.MinValue, ulong.MaxValue, 1UL);
 
+    public static UnsignedMixedFraction256 NaN { get; } = new();
+
     #endregion
 
     #region Instance Properties
@@ -25,7 +27,7 @@ public readonly struct UnsignedMixedFraction256 : IMixedFraction<UnsignedMixedFr
 
     public ulong Numerator { get; }
 
-    public ulong Denominator { get; } = 1UL;
+    public ulong Denominator { get; }
 
     #endregion
 
@@ -68,23 +70,19 @@ public readonly struct UnsignedMixedFraction256 : IMixedFraction<UnsignedMixedFr
 
     public UnsignedMixedFraction256 Add(UnsignedMixedFraction256 fraction)
     {
-        throw new NotImplementedException();
+        (ulong wholeNumber, ulong numerator, ulong denominator) = AddFractions<UnsignedMixedFraction256, ulong>(this, fraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
-    public int CompareTo(UnsignedMixedFraction256 other)
-    {
-        throw new NotImplementedException();
-    }
+    public int CompareTo(UnsignedMixedFraction256 other) => CompareFractionComponents(WholeNumber, Numerator, Denominator, other.WholeNumber, other.Numerator, other.Denominator);
 
     public UnsignedMixedFraction256 Divide(UnsignedMixedFraction256 fraction)
     {
-        throw new NotImplementedException();
+        (ulong wholeNumber, ulong numerator, ulong denominator) = DivideFractions<UnsignedMixedFraction256, ulong>(this, fraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
-    public bool Equals(UnsignedMixedFraction256 other)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Equals(UnsignedMixedFraction256 other) => AreMixedFractionsEqual<UnsignedMixedFraction256, ulong>(this, other);
 
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is UnsignedMixedFraction256 other && Equals(other);
 
@@ -92,28 +90,34 @@ public readonly struct UnsignedMixedFraction256 : IMixedFraction<UnsignedMixedFr
 
     public UnsignedMixedFraction256 Multiply(UnsignedMixedFraction256 fraction)
     {
-        throw new NotImplementedException();
+        (ulong wholeNumber, ulong numerator, ulong denominator) = MultiplyFractions<UnsignedMixedFraction256, ulong>(this, fraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
     public ulong Split(out UnsignedFraction128 properFraction)
     {
-        throw new NotImplementedException();
+        properFraction = new(Numerator, Denominator);
+        return WholeNumber;
     }
 
     public UnsignedMixedFraction256 Subtract(UnsignedMixedFraction256 fraction)
     {
-        throw new NotImplementedException();
+        (ulong wholeNumber, ulong numerator, ulong denominator) = SubtractFractions<UnsignedMixedFraction256, ulong>(this, fraction);
+        return new(wholeNumber, numerator, denominator);
     }
 
-    public override string ToString()
+    public double ToDouble(IFormatProvider? provider = null)
     {
-        return base.ToString() ?? string.Empty;
+        if (Denominator == 0UL) return double.NaN;
+        if (provider is null)
+            return (Numerator == 0UL) ? Convert.ToDouble(WholeNumber) : Convert.ToDouble(WholeNumber) + (Convert.ToDouble(Numerator) / Convert.ToDouble(Denominator));
+        return (Numerator == 0UL) ? Convert.ToDouble(WholeNumber, provider) : Convert.ToDouble(WholeNumber, provider) + (Convert.ToDouble(Numerator, provider) / Convert.ToDouble(Denominator, provider));
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    public override string ToString() => ToFractionString(WholeNumber, Numerator, Denominator);
+
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) =>
+        TryFormatMixedFraction<UnsignedMixedFraction256, ulong>(this, destination, out charsWritten, format, provider);
 
     #endregion
 
@@ -362,95 +366,39 @@ public readonly struct UnsignedMixedFraction256 : IMixedFraction<UnsignedMixedFr
 
     int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedMixedFraction256 other) ? CompareTo(other) : -1;
 
-    TypeCode IConvertible.GetTypeCode()
-    {
-        throw new NotImplementedException();
-    }
+    TypeCode IConvertible.GetTypeCode() => TypeCode.Double;
 
-    bool IConvertible.ToBoolean(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    bool IConvertible.ToBoolean(IFormatProvider? provider) => Convert.ToBoolean(ToDouble(provider), provider);
 
-    byte IConvertible.ToByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    byte IConvertible.ToByte(IFormatProvider? provider) => Convert.ToByte(ToDouble(provider), provider);
 
-    char IConvertible.ToChar(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    char IConvertible.ToChar(IFormatProvider? provider) => Convert.ToChar(ToDouble(provider), provider);
 
-    DateTime IConvertible.ToDateTime(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    DateTime IConvertible.ToDateTime(IFormatProvider? provider) => Convert.ToDateTime(ToDouble(provider), provider);
 
-    decimal IConvertible.ToDecimal(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    decimal IConvertible.ToDecimal(IFormatProvider? provider) => Convert.ToDecimal(ToDouble(provider), provider);
 
-    double IConvertible.ToDouble(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    short IConvertible.ToInt16(IFormatProvider? provider) => Convert.ToInt16(ToDouble(provider), provider);
 
-    short IConvertible.ToInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    int IConvertible.ToInt32(IFormatProvider? provider) => Convert.ToInt32(ToDouble(provider), provider);
 
-    int IConvertible.ToInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    long IConvertible.ToInt64(IFormatProvider? provider) => Convert.ToInt64(ToDouble(provider), provider);
 
-    long IConvertible.ToInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    sbyte IConvertible.ToSByte(IFormatProvider? provider) => Convert.ToSByte(ToDouble(provider), provider);
 
-    sbyte IConvertible.ToSByte(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    float IConvertible.ToSingle(IFormatProvider? provider) => Convert.ToSingle(ToDouble(provider), provider);
 
-    float IConvertible.ToSingle(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    string IConvertible.ToString(IFormatProvider? provider) => ToFractionString(Numerator, Denominator, provider);
 
-    string IConvertible.ToString(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToFractionString(Numerator, Denominator, format, formatProvider);
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
-    {
-        throw new NotImplementedException();
-    }
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => ConvertFraction<UnsignedMixedFraction256, ulong>(this, conversionType, provider);
 
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    ushort IConvertible.ToUInt16(IFormatProvider? provider) => Convert.ToUInt16(ToDouble(provider), provider);
 
-    ushort IConvertible.ToUInt16(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    uint IConvertible.ToUInt32(IFormatProvider? provider) => Convert.ToUInt32(ToDouble(provider), provider);
 
-    uint IConvertible.ToUInt32(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    ulong IConvertible.ToUInt64(IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
+    ulong IConvertible.ToUInt64(IFormatProvider? provider) => Convert.ToUInt64(ToDouble(provider), provider);
 
     #endregion
 

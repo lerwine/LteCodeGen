@@ -10,9 +10,9 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TWholeValue">The actual numerical value.</typeparam>
 public interface IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue> : IMixedFraction<TSelf, TFloatingPoint>,
         IBinaryDenomination<TSelf, TFloatingPoint, TWholeValue>
-    where TSelf : IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>?
-    where TFloatingPoint : IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
-    where TWholeValue : IBinaryNumber<TWholeValue>
+    where TSelf : struct, IBinaryDenominatedNumber<TSelf, TFloatingPoint, TWholeValue>?
+    where TFloatingPoint : struct, IBinaryNumber<TFloatingPoint>, IFloatingPoint<TFloatingPoint>, ISignedNumber<TFloatingPoint>
+    where TWholeValue : struct, IBinaryNumber<TWholeValue>
 {
     /// <summary>
     /// Gets the raw value.

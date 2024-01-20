@@ -9,8 +9,8 @@ namespace TestDataGeneration.Numerics;
 /// <typeparam name="TValue">The type of value for the <see cref="IFraction{TSelf, TValue}.Numerator"/>,
 /// <see cref="IFraction{TSelf, TValue}.Denominator"/>, and whole number calculations</typeparam>
 public interface IFraction<TSelf, TValue> : IConvertible, IBinaryNumber<TSelf>, IMinMaxValue<TSelf>
-    where TSelf : IFraction<TSelf, TValue>?
-    where TValue : IBinaryNumber<TValue>
+        where TSelf : struct, IFraction<TSelf, TValue>?
+        where TValue : struct, IBinaryNumber<TValue>
 {
     /// <summary>
     /// Gets the numerator value.
@@ -109,11 +109,18 @@ public interface IFraction<TSelf, TValue> : IConvertible, IBinaryNumber<TSelf>, 
 /// <typeparam name="TMixed">The <see cref="IMixedFraction{TSelf, TFractional, TFraction}"/> type that shares the same value type.</typeparam>
 /// <typeparam name="TFraction">The <see cref="ISimpleFraction{TSelf, TValue, TMixed}"/> type that shares the same value type.</typeparam>
 public interface IFraction<TSelf, TValue, TMixed, TFraction> : IFraction<TSelf, TValue>
-    where TSelf : IFraction<TSelf, TValue, TMixed, TFraction>?
-    where TValue : IBinaryNumber<TValue>
-    where TMixed : IMixedFraction<TMixed, TValue, TFraction>?
-    where TFraction : ISimpleFraction<TFraction, TValue, TMixed>?
+    where TSelf : struct, IFraction<TSelf, TValue, TMixed, TFraction>?
+    where TValue : struct, IBinaryNumber<TValue>
+    where TMixed : struct, IMixedFraction<TMixed, TValue, TFraction>?
+    where TFraction : struct, ISimpleFraction<TFraction, TValue, TMixed>?
 {
+    /// /// <summary>
+    /// Represents a value that is not a number (NaN).
+    /// </summary>
+    /// <returns>An object of type <typeparamref name="TSelf"/> where the <see cref="IFraction{TSelf, TValue}.Denominator"/>, <see cref="IFraction{TSelf, TValue}.Numerator"/>,
+    /// and <see cref="IMixedFraction{TSelf, TValue}.WholeNumber"/> (if applicable) are all zeroes.</returns>
+    static abstract TSelf NaN { get; }
+    
     /// <summary>
     /// Adds a fraction to a whole number.
     /// </summary>
