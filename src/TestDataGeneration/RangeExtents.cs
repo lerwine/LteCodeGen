@@ -4,6 +4,7 @@ using System.Numerics;
 
 namespace TestDataGeneration;
 
+[Obsolete("Use Numerics.NumberExtents<T>")]
 public readonly struct RangeExtents<T> : IRangeExtents<T>
     where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
 {
