@@ -8,7 +8,7 @@ namespace TestDataGeneration;
 /// </summary>
 /// <typeparam name="T">The value type.</typeparam>
 /// <remarks>In this class, ranges cannot overlap, and one range will never immediately follow another. Adjacent ranges will be joined as a single range.</remarks>
-/// [Obsolete("Use Numerics.NumberRangesList<T>")]
+[Obsolete("Use Numerics.NumberRangesList<T>")]
 public partial class SequentialRangeSet<T> : LinkedCollectionBase<SequentialRangeSet<T>.RangeItem>, ICollection<SequentialRangeSet<T>.RangeItem>, IReadOnlyList<SequentialRangeSet<T>.RangeItem>
     where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
 {
