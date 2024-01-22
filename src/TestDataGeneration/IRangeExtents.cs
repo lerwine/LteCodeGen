@@ -6,6 +6,7 @@ namespace TestDataGeneration;
 /// Represents the extents of a sequential range of values.
 /// </summary>
 /// <typeparam name="T">The value type.</typeparam>
+[Obsolete("Use Numerics.NumberExtents<T>")]
 public interface IRangeExtents<T> : IEnumerable<T>, IEquatable<IRangeExtents<T>> where T : struct, IBinaryInteger<T>, IMinMaxValue<T>
 {
     /// <summary>
