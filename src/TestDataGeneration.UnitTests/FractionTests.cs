@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using TestDataGeneration.Numerics;
@@ -9,16 +10,612 @@ namespace TestDataGeneration.UnitTests
 {
     public class FractionTests
     {
+        private Random _random;
         [SetUp]
         public void Setup()
         {
+            _random = new();
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryGetFractionTokensTestData))]
-        public (bool ReturnValue, string? WholeNumber, string? Numerator, string? Denominator, bool IsNegative) TryGetFractionTokensTest(string fractionString)
+        private string GetRandomPaddingText(int minLength, int maxLength)
         {
-            var returnValue = Fraction.TryGetFractionTokens(fractionString, out string? wholeNumber, out string? numerator, out string? denominator, out bool isNegative);
-            return (returnValue, wholeNumber, numerator, denominator, isNegative);
+            int length = (minLength == maxLength) ? minLength : _random.Next(minLength, maxLength + 1);
+            if (length == 0) return string.Empty;
+            if (length == 1) return (_random.Next(0, 4) == 4) ? "\t" : " ";
+            StringBuilder sb = new();
+            for (var i = 0; i < length; i++) sb.Append((_random.Next(0, 4) == 4) ? '\t' : ' ');
+            return sb.ToString();
+        }
+
+        private string GetRandomZeroPad(int minLength, int maxLength)
+        {
+            int length = (minLength == maxLength) ? minLength : _random.Next(minLength, maxLength + 1);
+            if (length == 0) return string.Empty;
+            return new string('0', length);
+        }
+
+        private string GetRandomNumber(int minLength, int maxLength)
+        {
+            int length = (minLength == maxLength) ? minLength : _random.Next(minLength, maxLength + 1);
+            if (length < 2) return _random.Next(1, 10).ToString();
+            StringBuilder sb = new();
+            for (var i = 0; i < length; i++) sb.Append(_random.Next(0, 10));
+            var result = sb.ToString();
+            return result.All(c => c == '0') ? result[1..] + _random.Next(1, 10).ToString() : result;
+        }
+
+        [Test, Explicit]
+        public void TryGetSimpleFractionTokensTest()
+        {
+            IEnumerable<string> getPadStrings()
+            {
+                yield return string.Empty;
+                yield return " ";
+                yield return "\t";
+                yield return GetRandomPaddingText(2, 4);
+            }
+            foreach (var (sign, expectedNegative) in new[] { (string.Empty, false), ("+", false), ("-", true), ("−", true) })
+            {
+                var expectedNumerator = GetRandomZeroPad(1, 4);
+                var fractionString = $"{sign}{expectedNumerator}";
+                var returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out string? numerator, out string? denominator, out bool isNegative);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                    Assert.That(numerator, Is.Not.Null, fractionString);
+                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                    Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                    Assert.That(denominator, Is.Not.Null, fractionString);
+                    Assert.That(denominator, Is.Empty);
+                });
+                expectedNumerator = GetRandomNumber(1, 1);
+                fractionString = $"{sign}{expectedNumerator}";
+                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                    Assert.That(numerator, Is.Not.Null, fractionString);
+                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                    Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                    Assert.That(denominator, Is.Not.Null, fractionString);
+                    Assert.That(denominator, Is.Empty);
+                });
+                expectedNumerator = GetRandomNumber(2, 6);
+                fractionString = $"{sign}{expectedNumerator}";
+                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                    Assert.That(numerator, Is.Not.Null, fractionString);
+                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                    Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                    Assert.That(denominator, Is.Not.Null, fractionString);
+                    Assert.That(denominator, Is.Empty);
+                });
+                foreach (var leftPad in getPadStrings())
+                {
+                    foreach (var rightPad in getPadStrings())
+                    {
+                        expectedNumerator = GetRandomZeroPad(1, 4);
+                        fractionString = $"({leftPad}{sign}{expectedNumerator}{rightPad})";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.Empty);
+                        });
+                        expectedNumerator = GetRandomNumber(1, 1);
+                        fractionString = $"({leftPad}{sign}{expectedNumerator}{rightPad})";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.Empty);
+                        });
+                        expectedNumerator = GetRandomNumber(2, 6);
+                        fractionString = $"({leftPad}{sign}{expectedNumerator}{rightPad})";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.Empty);
+                        });
+                    }
+                }
+            }
+            
+            foreach (var (numeratorSign, expectedNumNegative) in new[] { (string.Empty, false), ("+", false), ("-", true), ("−", true) })
+            {
+                foreach (var (denominatorSign, expectedDenNegative) in new[] { (string.Empty, false), ("+", false), ("-", true), ("−", true) })
+                {
+                    foreach (string separator in new char[] { '∕', '/' }.SelectMany(c => getPadStrings().SelectMany(l => getPadStrings().Select(r => $"{l}{c}{r}"))))
+                    {
+                        var expectedNumerator = GetRandomZeroPad(1, 4);
+                        var expectedDenominiator = GetRandomNumber(1, 1);
+                        var fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        var returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out string? numerator, out string? denominator, out bool isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                        });
+                        
+                        expectedDenominiator = GetRandomNumber(2, 6);
+                        fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                        });
+
+                        expectedNumerator = GetRandomNumber(1, 1);
+                        expectedDenominiator = GetRandomNumber(1, 1);
+                        fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                        });
+
+                        expectedNumerator = GetRandomNumber(1, 1);
+                        expectedDenominiator = GetRandomNumber(2, 6);
+                        fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                        });
+
+                        expectedNumerator = GetRandomNumber(2, 6);
+                        expectedDenominiator = GetRandomNumber(1, 1);
+                        fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                        });
+
+                        expectedNumerator = GetRandomNumber(2, 6);
+                        expectedDenominiator = GetRandomNumber(2, 6);
+                        fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                        });
+
+                        foreach (var leftPad in getPadStrings())
+                        {
+                            foreach (var rightPad in getPadStrings())
+                            {
+                                expectedNumerator = GetRandomZeroPad(1, 4);
+                                expectedDenominiator = GetRandomNumber(1, 1);
+                                fractionString = $"({leftPad}{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}{rightPad})";
+                                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                                });
+
+                                expectedDenominiator = GetRandomNumber(2, 6);
+                                fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                                });
+
+                                expectedNumerator = GetRandomNumber(1, 1);
+                                expectedDenominiator = GetRandomNumber(1, 1);
+                                fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                                });
+
+                                expectedNumerator = GetRandomNumber(1, 1);
+                                expectedDenominiator = GetRandomNumber(2, 6);
+                                fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                                });
+
+                                expectedNumerator = GetRandomNumber(2, 6);
+                                expectedDenominiator = GetRandomNumber(1, 1);
+                                fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                                });
+
+                                expectedNumerator = GetRandomNumber(2, 6);
+                                expectedDenominiator = GetRandomNumber(2, 6);
+                                fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                                returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, expectedNumerator, fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test, Explicit]
+        public void TryGetMixedFractionTokensTest()
+        {
+            IEnumerable<string> getPadStrings()
+            {
+                yield return string.Empty;
+                yield return " ";
+                yield return "\t";
+                yield return GetRandomPaddingText(2, 4);
+            }
+
+            IEnumerable<(string Sign, string Expected, bool IsNegative)> getWholeNumberTests()
+            {
+                yield return (string.Empty, GetRandomNumber(1, 1), false);
+                yield return (string.Empty, GetRandomNumber(2, 6), false);
+                yield return ("+", GetRandomNumber(1, 1), false);
+                yield return ("+", GetRandomNumber(2, 6), false);
+                yield return ("-", GetRandomNumber(1, 1), true);
+                yield return ("-", GetRandomNumber(2, 6), true);
+                yield return ("−", GetRandomNumber(1, 1), true);
+                yield return ("−", GetRandomNumber(2, 6), true);
+            }
+            
+            IEnumerable<(string NumeratorSign, string ExpectedNumerator, string separator, string DenominatorSign, string ExpectedDenominator, bool IsNegative)> getSimpleFractionTests()
+            {
+                foreach (string separator in new char[] { '∕', '/' }.SelectMany(c => getPadStrings().SelectMany(l => getPadStrings().Select(r => $"{l}{c}{r}"))))
+                {
+                    yield return (string.Empty, "0", separator, string.Empty, GetRandomNumber(1, 1), false);
+                    yield return (string.Empty, "0", separator, "+", GetRandomNumber(1, 1), false);
+                    yield return (string.Empty, "0", separator, "-", GetRandomNumber(1, 1), true);
+                    yield return (string.Empty, "0", separator, "−", GetRandomNumber(1, 1), true);
+
+                    yield return (string.Empty, "0", separator, string.Empty, GetRandomNumber(2, 6), false);
+                    yield return (string.Empty, "0", separator, "+", GetRandomNumber(2, 6), false);
+                    yield return (string.Empty, "0", separator, "-", GetRandomNumber(2, 6), true);
+                    yield return (string.Empty, "0", separator, "−", GetRandomNumber(2, 6), true);
+
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(1, 1), false);
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, "+", GetRandomNumber(1, 1), false);
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, "-", GetRandomNumber(1, 1), true);
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, "−", GetRandomNumber(1, 1), true);
+
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(2, 6), false);
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, "+", GetRandomNumber(2, 6), false);
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, "-", GetRandomNumber(2, 6), true);
+                    yield return (string.Empty, GetRandomNumber(1, 1), separator, "−", GetRandomNumber(2, 6), true);
+
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(1, 1), false);
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, "+", GetRandomNumber(1, 1), false);
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, "-", GetRandomNumber(1, 1), true);
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, "−", GetRandomNumber(1, 1), true);
+
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(2, 6), false);
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, "+", GetRandomNumber(2, 6), false);
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, "-", GetRandomNumber(2, 6), true);
+                    yield return (string.Empty, GetRandomNumber(2, 6), separator, "−", GetRandomNumber(2, 6), true);
+
+                    yield return ("+", "0", separator, string.Empty, GetRandomNumber(1, 1), false);
+                    yield return ("+", "0", separator, "+", GetRandomNumber(1, 1), false);
+                    yield return ("+", "0", separator, "-", GetRandomNumber(1, 1), true);
+                    yield return ("+", "0", separator, "−", GetRandomNumber(1, 1), true);
+
+                    yield return ("+", "0", separator, string.Empty, GetRandomNumber(2, 6), false);
+                    yield return ("+", "0", separator, "+", GetRandomNumber(2, 6), false);
+                    yield return ("+", "0", separator, "-", GetRandomNumber(2, 6), true);
+                    yield return ("+", "0", separator, "−", GetRandomNumber(2, 6), true);
+
+                    yield return ("+", GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(1, 1), false);
+                    yield return ("+", GetRandomNumber(1, 1), separator, "+", GetRandomNumber(1, 1), false);
+                    yield return ("+", GetRandomNumber(1, 1), separator, "-", GetRandomNumber(1, 1), true);
+                    yield return ("+", GetRandomNumber(1, 1), separator, "−", GetRandomNumber(1, 1), true);
+
+                    yield return ("+", GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(2, 6), false);
+                    yield return ("+", GetRandomNumber(1, 1), separator, "+", GetRandomNumber(2, 6), false);
+                    yield return ("+", GetRandomNumber(1, 1), separator, "-", GetRandomNumber(2, 6), true);
+                    yield return ("+", GetRandomNumber(1, 1), separator, "−", GetRandomNumber(2, 6), true);
+
+                    yield return ("+", GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(1, 1), false);
+                    yield return ("+", GetRandomNumber(2, 6), separator, "+", GetRandomNumber(1, 1), false);
+                    yield return ("+", GetRandomNumber(2, 6), separator, "-", GetRandomNumber(1, 1), true);
+                    yield return ("+", GetRandomNumber(2, 6), separator, "−", GetRandomNumber(1, 1), true);
+
+                    yield return ("+", GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(2, 6), false);
+                    yield return ("+", GetRandomNumber(2, 6), separator, "+", GetRandomNumber(2, 6), false);
+                    yield return ("+", GetRandomNumber(2, 6), separator, "-", GetRandomNumber(2, 6), true);
+                    yield return ("+", GetRandomNumber(2, 6), separator, "−", GetRandomNumber(2, 6), true);
+
+                    yield return ("-", "0", separator, string.Empty, GetRandomNumber(1, 1), true);
+                    yield return ("-", "0", separator, "+", GetRandomNumber(1, 1), true);
+                    yield return ("-", "0", separator, "-", GetRandomNumber(1, 1), false);
+                    yield return ("-", "0", separator, "−", GetRandomNumber(1, 1), false);
+
+                    yield return ("-", "0", separator, string.Empty, GetRandomNumber(2, 6), true);
+                    yield return ("-", "0", separator, "+", GetRandomNumber(2, 6), true);
+                    yield return ("-", "0", separator, "-", GetRandomNumber(2, 6), false);
+                    yield return ("-", "0", separator, "−", GetRandomNumber(2, 6), false);
+
+                    yield return ("-", GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(1, 1), true);
+                    yield return ("-", GetRandomNumber(1, 1), separator, "+", GetRandomNumber(1, 1), true);
+                    yield return ("-", GetRandomNumber(1, 1), separator, "-", GetRandomNumber(1, 1), false);
+                    yield return ("-", GetRandomNumber(1, 1), separator, "−", GetRandomNumber(1, 1), false);
+
+                    yield return ("-", GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(2, 6), true);
+                    yield return ("-", GetRandomNumber(1, 1), separator, "+", GetRandomNumber(2, 6), true);
+                    yield return ("-", GetRandomNumber(1, 1), separator, "-", GetRandomNumber(2, 6), false);
+                    yield return ("-", GetRandomNumber(1, 1), separator, "−", GetRandomNumber(2, 6), false);
+
+                    yield return ("-", GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(1, 1), true);
+                    yield return ("-", GetRandomNumber(2, 6), separator, "+", GetRandomNumber(1, 1), true);
+                    yield return ("-", GetRandomNumber(2, 6), separator, "-", GetRandomNumber(1, 1), false);
+                    yield return ("-", GetRandomNumber(2, 6), separator, "−", GetRandomNumber(1, 1), false);
+
+                    yield return ("-", GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(2, 6), true);
+                    yield return ("-", GetRandomNumber(2, 6), separator, "+", GetRandomNumber(2, 6), true);
+                    yield return ("-", GetRandomNumber(2, 6), separator, "-", GetRandomNumber(2, 6), false);
+                    yield return ("-", GetRandomNumber(2, 6), separator, "−", GetRandomNumber(2, 6), false);
+
+                    yield return ("−", "0", separator, string.Empty, GetRandomNumber(1, 1), true);
+                    yield return ("−", "0", separator, "+", GetRandomNumber(1, 1), true);
+                    yield return ("−", "0", separator, "-", GetRandomNumber(1, 1), false);
+                    yield return ("−", "0", separator, "−", GetRandomNumber(1, 1), false);
+
+                    yield return ("−", "0", separator, string.Empty, GetRandomNumber(2, 6), true);
+                    yield return ("−", "0", separator, "+", GetRandomNumber(2, 6), true);
+                    yield return ("−", "0", separator, "-", GetRandomNumber(2, 6), false);
+                    yield return ("−", "0", separator, "−", GetRandomNumber(2, 6), false);
+
+                    yield return ("−", GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(1, 1), true);
+                    yield return ("−", GetRandomNumber(1, 1), separator, "+", GetRandomNumber(1, 1), true);
+                    yield return ("−", GetRandomNumber(1, 1), separator, "-", GetRandomNumber(1, 1), false);
+                    yield return ("−", GetRandomNumber(1, 1), separator, "−", GetRandomNumber(1, 1), false);
+
+                    yield return ("−", GetRandomNumber(1, 1), separator, string.Empty, GetRandomNumber(2, 6), true);
+                    yield return ("−", GetRandomNumber(1, 1), separator, "+", GetRandomNumber(2, 6), true);
+                    yield return ("−", GetRandomNumber(1, 1), separator, "-", GetRandomNumber(2, 6), false);
+                    yield return ("−", GetRandomNumber(1, 1), separator, "−", GetRandomNumber(2, 6), false);
+
+                    yield return ("−", GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(1, 1), true);
+                    yield return ("−", GetRandomNumber(2, 6), separator, "+", GetRandomNumber(1, 1), true);
+                    yield return ("−", GetRandomNumber(2, 6), separator, "-", GetRandomNumber(1, 1), false);
+                    yield return ("−", GetRandomNumber(2, 6), separator, "−", GetRandomNumber(1, 1), false);
+
+                    yield return ("−", GetRandomNumber(2, 6), separator, string.Empty, GetRandomNumber(2, 6), true);
+                    yield return ("−", GetRandomNumber(2, 6), separator, "+", GetRandomNumber(2, 6), true);
+                    yield return ("−", GetRandomNumber(2, 6), separator, "-", GetRandomNumber(2, 6), false);
+                    yield return ("−", GetRandomNumber(2, 6), separator, "−", GetRandomNumber(2, 6), false);
+                }
+            }
+            
+            foreach (var (wholeNumberSign, expectedWholeNumber, expectedNegative1) in getWholeNumberTests())
+            {
+                var fractionString = $"{wholeNumberSign}{expectedWholeNumber}";
+                var returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out string? wholeNumber, out string? numerator, out string? denominator, out bool isNegative);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(returnValue, Is.True, fractionString);
+                    Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                    Assert.That(wholeNumber, Is.EqualTo(expectedWholeNumber), fractionString);
+                    Assert.That(isNegative, Is.EqualTo(expectedNegative1), fractionString);
+                    Assert.That(numerator, Is.Not.Null, fractionString);
+                    Assert.That(numerator, Is.Empty, fractionString);
+                    Assert.That(denominator, Is.Not.Null, fractionString);
+                    Assert.That(denominator, Is.Empty, fractionString);
+                });
+                foreach (var leftPad in getPadStrings())
+                {
+                    foreach (var rightPad in getPadStrings())
+                    {
+                        fractionString = $"({leftPad}{wholeNumberSign}{expectedWholeNumber}{rightPad})";
+                        returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out wholeNumber, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, fractionString);
+                            Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                            Assert.That(wholeNumber, Is.EqualTo(expectedWholeNumber), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNegative1), fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.Empty, fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.Empty, fractionString);
+                        });
+                    }
+                }
+                foreach (var (numeratorSign, expectedNumerator, separator, denominatorSign, expectedDenominiator, expectedNegative2) in getSimpleFractionTests())
+                {
+                    if (numeratorSign.Length > 0)
+                    {
+                        foreach (var beforeNumSign in getPadStrings())
+                        {
+                            foreach (var afterNumSign in getPadStrings())
+                            {
+                                fractionString = $"{wholeNumberSign}{expectedWholeNumber}{beforeNumSign}{numeratorSign}{afterNumSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                                returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out wholeNumber, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, fractionString);
+                                    Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                                    Assert.That(wholeNumber, Is.EqualTo(expectedWholeNumber), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNegative1 != expectedNegative2), fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                });
+                                foreach (var leftPad in getPadStrings())
+                                {
+                                    foreach (var rightPad in getPadStrings())
+                                    {
+                                        fractionString = $"({leftPad}{wholeNumberSign}{expectedWholeNumber}{beforeNumSign}{numeratorSign}{afterNumSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}{rightPad})";
+                                        returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out wholeNumber, out numerator, out denominator, out isNegative);
+                                        Assert.Multiple(() =>
+                                        {
+                                            Assert.That(returnValue, Is.True, fractionString);
+                                            Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                                            Assert.That(wholeNumber, Is.EqualTo(expectedWholeNumber), fractionString);
+                                            Assert.That(isNegative, Is.EqualTo(expectedNegative1 != expectedNegative2), fractionString);
+                                            Assert.That(numerator, Is.Not.Null, fractionString);
+                                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                            Assert.That(denominator, Is.Not.Null, fractionString);
+                                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        fractionString = $"{wholeNumberSign}{expectedWholeNumber}{GetRandomPaddingText(1, 6)}{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                        returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out wholeNumber, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, fractionString);
+                            Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                            Assert.That(wholeNumber, Is.EqualTo(expectedWholeNumber), fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNegative1 != expectedNegative2), fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                        });
+                        foreach (var leftPad in getPadStrings())
+                        {
+                            foreach (var rightPad in getPadStrings())
+                            {
+                                fractionString = $"({leftPad}{wholeNumberSign}{expectedWholeNumber}{GetRandomPaddingText(1, 6)}{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}{rightPad})";
+                                returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out wholeNumber, out numerator, out denominator, out isNegative);
+                                Assert.Multiple(() =>
+                                {
+                                    Assert.That(returnValue, Is.True, fractionString);
+                                    Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                                    Assert.That(wholeNumber, Is.EqualTo(expectedWholeNumber), fractionString);
+                                    Assert.That(isNegative, Is.EqualTo(expectedNegative1 != expectedNegative2), fractionString);
+                                    Assert.That(numerator, Is.Not.Null, fractionString);
+                                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                                    Assert.That(denominator, Is.Not.Null, fractionString);
+                                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            foreach (var (numeratorSign, expectedNumerator, separator, denominatorSign, expectedDenominiator, expectedNegative) in getSimpleFractionTests())
+            {
+                var fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
+                var returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out string? wholeNumber, out string? numerator, out string? denominator, out bool isNegative);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(returnValue, Is.True, fractionString);
+                    Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                    Assert.That(wholeNumber, Is.Empty, fractionString);
+                    Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                    Assert.That(numerator, Is.Not.Null, fractionString);
+                    Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                    Assert.That(denominator, Is.Not.Null, fractionString);
+                    Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                });
+                foreach (var leftPad in getPadStrings())
+                {
+                    foreach (var rightPad in getPadStrings())
+                    {
+                        fractionString = $"({leftPad}{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}{rightPad})";
+                        returnValue = Fraction.TryGetMixedFractionTokens(fractionString, out wholeNumber, out numerator, out denominator, out isNegative);
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(returnValue, Is.True, fractionString);
+                            Assert.That(wholeNumber, Is.Not.Null, fractionString);
+                            Assert.That(wholeNumber, Is.Empty, fractionString);
+                            Assert.That(isNegative, Is.EqualTo(expectedNegative), fractionString);
+                            Assert.That(numerator, Is.Not.Null, fractionString);
+                            Assert.That(numerator, Is.EqualTo(expectedNumerator), fractionString);
+                            Assert.That(denominator, Is.Not.Null, fractionString);
+                            Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
+                        });
+                    }
+                }
+            }
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetGetSimplifiedRationalTestData))]
@@ -139,1336 +736,6 @@ namespace TestDataGeneration.UnitTests
                 yield return new TestCaseData(1, 1).Returns(1);
                 yield return new TestCaseData(12, 9).Returns(36);
                 yield return new TestCaseData(12, 16).Returns(48);
-            }
-
-            public static System.Collections.IEnumerable GetTryGetFractionTokensTestData()
-            {
-                yield return new TestCaseData("0").Returns((ReturnValue: true, WholeNumber: "0", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData("6").Returns((ReturnValue: true, WholeNumber: "6", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData(" 5").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("7 ").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData(" 3 ").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("+9").Returns((ReturnValue: true, WholeNumber: "9", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData(" +4").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("+ 2").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData(" + 7").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("-0").Returns((ReturnValue: true, WholeNumber: "0", Numerator: string.Empty, Denominator: string.Empty, IsNegative: true));
-                yield return new TestCaseData("-1").Returns((ReturnValue: true, WholeNumber: "1", Numerator: string.Empty, Denominator: string.Empty, IsNegative: true));
-                yield return new TestCaseData(" -3").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("- 7").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData(" - 6").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("0 8/8").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "8", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+2 5/2").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "5", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-0 6/3").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "6", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-0 6/0").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("-0 6/00").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("-0 6/0000").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("8 +8/3").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "8", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+7 +5/2").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "5", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+7 + 5/2").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("-0 +5/03").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "5", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("9+9/1").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "9", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("+2+2/6").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "2", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-6+5/2").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "5", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("09 -8/7").Returns((ReturnValue: true, WholeNumber: "09", Numerator: "8", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("9 - 8/7").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("9 -8 /7").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("9 -8/ 7").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("9 -8 / 7").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("+0 -0/6").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "0", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-9 -1/5").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "1", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("4-9/9").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "9", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+1-1/1").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "1", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-5-2/3").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "2", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("6  5/+6").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "5", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("6 6 5/+6").Returns((ReturnValue: false, WholeNumber: (string?)null, Numerator: (string?)null, Denominator: (string?)null, IsNegative: false));
-                yield return new TestCaseData("+1 6/+2").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "6", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-3 7/+09").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "7", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("9 +7/+6").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "7", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+1 +5/+9").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "5", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-9 +1/+8").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "1", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("5+7/+8").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "7", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+6+7/+4").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "7", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("-7+6/+6").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "6", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("3 -7/+8").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "7", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+0 -7/+9").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "7", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("-4 -0/+1").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "0", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-4 -0000/+1").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "0000", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("5-07/+2").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "07", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+5-7/+3").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "7", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-6-9/+4").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "9", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("8 2/-4").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "2", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+9 1/-9").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "1", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("-1  9/-6").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "9", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("3 +9/-7").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "9", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+2 +4/-01").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "4", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-5 +9/-9").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "9", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("0+9/-1").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "9", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("+6+7/-5").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "7", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-8+4/-4").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "4", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("7 -0/-9").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "0", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+6 -009/-8").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "009", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-9 -8/-3").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "8", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("1-3/-6").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "3", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+9-9/-8").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "9", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-4-0/-1").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "0", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("2 3/42").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "3", Denominator: "42", IsNegative: false));
-                yield return new TestCaseData("+0 9/78").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "9", Denominator: "78", IsNegative: false));
-                yield return new TestCaseData("-2 6/12").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "6", Denominator: "12", IsNegative: true));
-                yield return new TestCaseData("3 +2/59").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "2", Denominator: "59", IsNegative: false));
-                yield return new TestCaseData("+0008 +0/78").Returns((ReturnValue: true, WholeNumber: "0008", Numerator: "0", Denominator: "78", IsNegative: false));
-                yield return new TestCaseData("-5 +4/94").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "4", Denominator: "94", IsNegative: true));
-                yield return new TestCaseData("5+7/10").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "7", Denominator: "10", IsNegative: false));
-                yield return new TestCaseData("+9+2/56").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "2", Denominator: "56", IsNegative: false));
-                yield return new TestCaseData("-7+4/66").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "4", Denominator: "66", IsNegative: true));
-                yield return new TestCaseData("0003 -1/10").Returns((ReturnValue: true, WholeNumber: "0003", Numerator: "1", Denominator: "10", IsNegative: true));
-                yield return new TestCaseData("+2 -1/72").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "1", Denominator: "72", IsNegative: true));
-                yield return new TestCaseData("-4 -6/17").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "6", Denominator: "17", IsNegative: false));
-                yield return new TestCaseData("00-6/14").Returns((ReturnValue: true, WholeNumber: "00", Numerator: "6", Denominator: "14", IsNegative: true));
-                yield return new TestCaseData("+2-3/41").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "3", Denominator: "41", IsNegative: true));
-                yield return new TestCaseData("-7-6/68").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "6", Denominator: "68", IsNegative: false));
-                yield return new TestCaseData("7 3/+36").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "3", Denominator: "36", IsNegative: false));
-                yield return new TestCaseData("+8  3/+57").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "3", Denominator: "57", IsNegative: false));
-                yield return new TestCaseData("-8 8/+38").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "8", Denominator: "38", IsNegative: true));
-                yield return new TestCaseData("0 +3/+14").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "3", Denominator: "14", IsNegative: false));
-                yield return new TestCaseData("+8 +3/+59").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "3", Denominator: "59", IsNegative: false));
-                yield return new TestCaseData("-1 +9/+56").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "9", Denominator: "56", IsNegative: true));
-                yield return new TestCaseData("0+0/+14").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "0", Denominator: "14", IsNegative: false));
-                yield return new TestCaseData("+8+3/+49").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "3", Denominator: "49", IsNegative: false));
-                yield return new TestCaseData("-6+5/+74").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "5", Denominator: "74", IsNegative: true));
-                yield return new TestCaseData("8 -3/+43").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "3", Denominator: "43", IsNegative: true));
-                yield return new TestCaseData("+6 -1/+69").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "1", Denominator: "69", IsNegative: true));
-                yield return new TestCaseData("-8 -9/+19").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "9", Denominator: "19", IsNegative: false));
-                yield return new TestCaseData("3-5/+80").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "5", Denominator: "80", IsNegative: true));
-                yield return new TestCaseData("+4-4/+41").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "4", Denominator: "41", IsNegative: true));
-                yield return new TestCaseData("-3-4/+38").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "4", Denominator: "38", IsNegative: false));
-                yield return new TestCaseData("0 1/-42").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "1", Denominator: "42", IsNegative: true));
-                yield return new TestCaseData("+5 0/-50").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "0", Denominator: "50", IsNegative: true));
-                yield return new TestCaseData("-8 7/-56").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "7", Denominator: "56", IsNegative: false));
-                yield return new TestCaseData("6 +9/-95").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "9", Denominator: "95", IsNegative: true));
-                yield return new TestCaseData("+8 +1/-77").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "1", Denominator: "77", IsNegative: true));
-                yield return new TestCaseData("-8 +9/-53").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "9", Denominator: "53", IsNegative: false));
-                yield return new TestCaseData("9+3/-25").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "3", Denominator: "25", IsNegative: true));
-                yield return new TestCaseData("+3+9/-42").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "9", Denominator: "42", IsNegative: true));
-                yield return new TestCaseData("-4+7/-43").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "7", Denominator: "43", IsNegative: false));
-                yield return new TestCaseData("7 -5/-72").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "5", Denominator: "72", IsNegative: false));
-                yield return new TestCaseData("+6 -4/-92").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "4", Denominator: "92", IsNegative: false));
-                yield return new TestCaseData("-1 -6/-45").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "6", Denominator: "45", IsNegative: true));
-                yield return new TestCaseData("3-3/-34").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "3", Denominator: "34", IsNegative: false));
-                yield return new TestCaseData("+9-8/-44").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "8", Denominator: "44", IsNegative: false));
-                yield return new TestCaseData("-1-2/-14").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "2", Denominator: "14", IsNegative: true));
-                yield return new TestCaseData("1 4/1301").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "4", Denominator: "1301", IsNegative: false));
-                yield return new TestCaseData("+6 4/4769132").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "4", Denominator: "4769132", IsNegative: false));
-                yield return new TestCaseData("-0 1/289369").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "1", Denominator: "289369", IsNegative: true));
-                yield return new TestCaseData("0 +0/1700").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "0", Denominator: "1700", IsNegative: false));
-                yield return new TestCaseData("+0 +2/9145054").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "2", Denominator: "9145054", IsNegative: false));
-                yield return new TestCaseData("-4 +0/547788").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "0", Denominator: "547788", IsNegative: true));
-                yield return new TestCaseData("3+4/29167").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "4", Denominator: "29167", IsNegative: false));
-                yield return new TestCaseData("+0+5/319950").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "5", Denominator: "319950", IsNegative: false));
-                yield return new TestCaseData("-7+3/3736").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "3", Denominator: "3736", IsNegative: true));
-                yield return new TestCaseData("9 -6/3320553").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "6", Denominator: "3320553", IsNegative: true));
-                yield return new TestCaseData("+8 -0/9719514").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "0", Denominator: "9719514", IsNegative: true));
-                yield return new TestCaseData("-0 -1/3820").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "1", Denominator: "3820", IsNegative: false));
-                yield return new TestCaseData("9-8/247628").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "8", Denominator: "247628", IsNegative: true));
-                yield return new TestCaseData("+3-3/206614").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "3", Denominator: "206614", IsNegative: true));
-                yield return new TestCaseData("-7-8/303395").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "8", Denominator: "303395", IsNegative: false));
-                yield return new TestCaseData("8 6/+5407").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "6", Denominator: "5407", IsNegative: false));
-                yield return new TestCaseData("+3 3/+72443").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "3", Denominator: "72443", IsNegative: false));
-                yield return new TestCaseData("-7 0/+458").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "0", Denominator: "458", IsNegative: true));
-                yield return new TestCaseData("3 +5/+418").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "5", Denominator: "418", IsNegative: false));
-                yield return new TestCaseData("+1 +7/+26093").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "7", Denominator: "26093", IsNegative: false));
-                yield return new TestCaseData("-0 +2/+2743").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "2", Denominator: "2743", IsNegative: true));
-                yield return new TestCaseData("8+6/+4095491").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "6", Denominator: "4095491", IsNegative: false));
-                yield return new TestCaseData("+6+1/+20638").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "1", Denominator: "20638", IsNegative: false));
-                yield return new TestCaseData("-0+6/+25769").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "6", Denominator: "25769", IsNegative: true));
-                yield return new TestCaseData("6 -3/+667214").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "3", Denominator: "667214", IsNegative: true));
-                yield return new TestCaseData("+6 -6/+96052").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "6", Denominator: "96052", IsNegative: true));
-                yield return new TestCaseData("-7 -3/+7781465").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "3", Denominator: "7781465", IsNegative: false));
-                yield return new TestCaseData("2-2/+9798357").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "2", Denominator: "9798357", IsNegative: true));
-                yield return new TestCaseData("+4-4/+611").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "4", Denominator: "611", IsNegative: true));
-                yield return new TestCaseData("-4-1/+751953").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "1", Denominator: "751953", IsNegative: false));
-                yield return new TestCaseData("4 1/-654").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "1", Denominator: "654", IsNegative: true));
-                yield return new TestCaseData("+4 9/-7152").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "9", Denominator: "7152", IsNegative: true));
-                yield return new TestCaseData("-1 8/-835070").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "8", Denominator: "835070", IsNegative: false));
-                yield return new TestCaseData("1 +8/-48915").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "8", Denominator: "48915", IsNegative: true));
-                yield return new TestCaseData("+7 +2/-57195").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "2", Denominator: "57195", IsNegative: true));
-                yield return new TestCaseData("-8 +1/-481").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "1", Denominator: "481", IsNegative: false));
-                yield return new TestCaseData("2+5/-581364").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "5", Denominator: "581364", IsNegative: true));
-                yield return new TestCaseData("+5+8/-545949").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "8", Denominator: "545949", IsNegative: true));
-                yield return new TestCaseData("-7+8/-562").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "8", Denominator: "562", IsNegative: false));
-                yield return new TestCaseData("6 -9/-81699").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "9", Denominator: "81699", IsNegative: false));
-                yield return new TestCaseData("+9 -1/-44790").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "1", Denominator: "44790", IsNegative: false));
-                yield return new TestCaseData("-6 -1/-6023817").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "1", Denominator: "6023817", IsNegative: true));
-                yield return new TestCaseData("9-7/-1939782").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "7", Denominator: "1939782", IsNegative: false));
-                yield return new TestCaseData("+7-1/-3677301").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "1", Denominator: "3677301", IsNegative: false));
-                yield return new TestCaseData("-1-5/-8788").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "5", Denominator: "8788", IsNegative: true));
-                yield return new TestCaseData("2 85/2").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "85", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+3 21/2").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "21", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-0 33/7").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "33", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("9 +79/8").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "79", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+7 +67/6").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "67", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-6 +61/7").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "61", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("8+19/7").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "19", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+1+58/8").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "58", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-0+70/7").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "70", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("6 -97/8").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "97", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+4 -16/5").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "16", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-6 -59/2").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "59", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("9-36/3").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "36", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("+4-12/6").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "12", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-8-10/9").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "10", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("9 38/+2").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "38", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+5 33/+7").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "33", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-4 78/+3").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "78", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("1 +18/+3").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "18", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+3 +35/+5").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "35", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-4 +53/+3").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "53", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("8+62/+7").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "62", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+3+22/+1").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "22", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-4+71/+3").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "71", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("4 -45/+1").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "45", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("+1 -35/+5").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "35", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-8 -12/+4").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "12", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("6-15/+7").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "15", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+1-97/+3").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "97", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-2-58/+5").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "58", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("8 67/-1").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "67", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("+8 99/-5").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "99", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-2 15/-4").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "15", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("2 +72/-2").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "72", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+0 +18/-6").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "18", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-4 +11/-4").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "11", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("1+92/-8").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "92", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+7+50/-3").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "50", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-1+83/-4").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "83", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("5 -71/-6").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "71", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+3 -14/-6").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "14", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-6 -66/-1").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "66", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("2-64/-4").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "64", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+5-93/-3").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "93", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("-1-69/-3").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "69", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("1 63/97").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "63", Denominator: "97", IsNegative: false));
-                yield return new TestCaseData("+1 72/95").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "72", Denominator: "95", IsNegative: false));
-                yield return new TestCaseData("-9 14/66").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "14", Denominator: "66", IsNegative: true));
-                yield return new TestCaseData("6 +16/26").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "16", Denominator: "26", IsNegative: false));
-                yield return new TestCaseData("+7 +72/26").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "72", Denominator: "26", IsNegative: false));
-                yield return new TestCaseData("-1 +70/43").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "70", Denominator: "43", IsNegative: true));
-                yield return new TestCaseData("8+86/68").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "86", Denominator: "68", IsNegative: false));
-                yield return new TestCaseData("+5+45/51").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "45", Denominator: "51", IsNegative: false));
-                yield return new TestCaseData("-5+25/47").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "25", Denominator: "47", IsNegative: true));
-                yield return new TestCaseData("9 -68/98").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "68", Denominator: "98", IsNegative: true));
-                yield return new TestCaseData("+5 -66/80").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "66", Denominator: "80", IsNegative: true));
-                yield return new TestCaseData("-9 -93/30").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "93", Denominator: "30", IsNegative: false));
-                yield return new TestCaseData("4-52/98").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "52", Denominator: "98", IsNegative: true));
-                yield return new TestCaseData("+6-47/99").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "47", Denominator: "99", IsNegative: true));
-                yield return new TestCaseData("-9-98/59").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "98", Denominator: "59", IsNegative: false));
-                yield return new TestCaseData("8 58/+91").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "58", Denominator: "91", IsNegative: false));
-                yield return new TestCaseData("+2 48/+33").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "48", Denominator: "33", IsNegative: false));
-                yield return new TestCaseData("-8 36/+83").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "36", Denominator: "83", IsNegative: true));
-                yield return new TestCaseData("6 +64/+27").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "64", Denominator: "27", IsNegative: false));
-                yield return new TestCaseData("+5 +61/+57").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "61", Denominator: "57", IsNegative: false));
-                yield return new TestCaseData("-5 +99/+46").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "99", Denominator: "46", IsNegative: true));
-                yield return new TestCaseData("6+15/+49").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "15", Denominator: "49", IsNegative: false));
-                yield return new TestCaseData("+3+83/+79").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "83", Denominator: "79", IsNegative: false));
-                yield return new TestCaseData("-9+69/+27").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "69", Denominator: "27", IsNegative: true));
-                yield return new TestCaseData("3 -25/+48").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "25", Denominator: "48", IsNegative: true));
-                yield return new TestCaseData("+6 -63/+47").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "63", Denominator: "47", IsNegative: true));
-                yield return new TestCaseData("-9 -71/+66").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "71", Denominator: "66", IsNegative: false));
-                yield return new TestCaseData("5-77/+30").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "77", Denominator: "30", IsNegative: true));
-                yield return new TestCaseData("+7-76/+40").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "76", Denominator: "40", IsNegative: true));
-                yield return new TestCaseData("-9-31/+39").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "31", Denominator: "39", IsNegative: false));
-                yield return new TestCaseData("0 95/-91").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "95", Denominator: "91", IsNegative: true));
-                yield return new TestCaseData("+4 19/-48").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "19", Denominator: "48", IsNegative: true));
-                yield return new TestCaseData("-5 40/-92").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "40", Denominator: "92", IsNegative: false));
-                yield return new TestCaseData("1 +52/-75").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "52", Denominator: "75", IsNegative: true));
-                yield return new TestCaseData("+1 +32/-79").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "32", Denominator: "79", IsNegative: true));
-                yield return new TestCaseData("-0 +51/-20").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "51", Denominator: "20", IsNegative: false));
-                yield return new TestCaseData("3+13/-11").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "13", Denominator: "11", IsNegative: true));
-                yield return new TestCaseData("+7+64/-90").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "64", Denominator: "90", IsNegative: true));
-                yield return new TestCaseData("-8+13/-31").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "13", Denominator: "31", IsNegative: false));
-                yield return new TestCaseData("1 -93/-39").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "93", Denominator: "39", IsNegative: false));
-                yield return new TestCaseData("+1 -48/-61").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "48", Denominator: "61", IsNegative: false));
-                yield return new TestCaseData("-4 -93/-73").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "93", Denominator: "73", IsNegative: true));
-                yield return new TestCaseData("2-93/-16").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "93", Denominator: "16", IsNegative: false));
-                yield return new TestCaseData("+0-15/-33").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "15", Denominator: "33", IsNegative: false));
-                yield return new TestCaseData("-4-81/-28").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "81", Denominator: "28", IsNegative: true));
-                yield return new TestCaseData("9 42/50879").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "42", Denominator: "50879", IsNegative: false));
-                yield return new TestCaseData("+6 35/6248").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "35", Denominator: "6248", IsNegative: false));
-                yield return new TestCaseData("-1 38/4122").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "38", Denominator: "4122", IsNegative: true));
-                yield return new TestCaseData("0 +60/268").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "60", Denominator: "268", IsNegative: false));
-                yield return new TestCaseData("+4 +46/10144").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "46", Denominator: "10144", IsNegative: false));
-                yield return new TestCaseData("-0 +23/394642").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "23", Denominator: "394642", IsNegative: true));
-                yield return new TestCaseData("0+79/14334").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "79", Denominator: "14334", IsNegative: false));
-                yield return new TestCaseData("+3+98/353466").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "98", Denominator: "353466", IsNegative: false));
-                yield return new TestCaseData("-8+71/7017980").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "71", Denominator: "7017980", IsNegative: true));
-                yield return new TestCaseData("7 -74/1349").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "74", Denominator: "1349", IsNegative: true));
-                yield return new TestCaseData("+8 -85/2161").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "85", Denominator: "2161", IsNegative: true));
-                yield return new TestCaseData("-6 -42/4260").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "42", Denominator: "4260", IsNegative: false));
-                yield return new TestCaseData("0-83/865572").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "83", Denominator: "865572", IsNegative: true));
-                yield return new TestCaseData("+8-81/785").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "81", Denominator: "785", IsNegative: true));
-                yield return new TestCaseData("-6-25/8881").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "25", Denominator: "8881", IsNegative: false));
-                yield return new TestCaseData("7 25/+294").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "25", Denominator: "294", IsNegative: false));
-                yield return new TestCaseData("+5 97/+39394").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "97", Denominator: "39394", IsNegative: false));
-                yield return new TestCaseData("-5 46/+72629").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "46", Denominator: "72629", IsNegative: true));
-                yield return new TestCaseData("1 +60/+285").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "60", Denominator: "285", IsNegative: false));
-                yield return new TestCaseData("+7 +61/+728914").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "61", Denominator: "728914", IsNegative: false));
-                yield return new TestCaseData("-4 +24/+614").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "24", Denominator: "614", IsNegative: true));
-                yield return new TestCaseData("3+91/+1073").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "91", Denominator: "1073", IsNegative: false));
-                yield return new TestCaseData("+5+30/+614").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "30", Denominator: "614", IsNegative: false));
-                yield return new TestCaseData("-3+46/+7525").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "46", Denominator: "7525", IsNegative: true));
-                yield return new TestCaseData("6 -24/+72196").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "24", Denominator: "72196", IsNegative: true));
-                yield return new TestCaseData("+8 -96/+639238").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "96", Denominator: "639238", IsNegative: true));
-                yield return new TestCaseData("-3 -94/+399938").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "94", Denominator: "399938", IsNegative: false));
-                yield return new TestCaseData("6-96/+1885025").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "96", Denominator: "1885025", IsNegative: true));
-                yield return new TestCaseData("+5-72/+6321").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "72", Denominator: "6321", IsNegative: true));
-                yield return new TestCaseData("-1-66/+6846546").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "66", Denominator: "6846546", IsNegative: false));
-                yield return new TestCaseData("5 58/-4179178").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "58", Denominator: "4179178", IsNegative: true));
-                yield return new TestCaseData("+4 88/-7517").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "88", Denominator: "7517", IsNegative: true));
-                yield return new TestCaseData("-2 44/-64926").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "44", Denominator: "64926", IsNegative: false));
-                yield return new TestCaseData("9 +97/-5811304").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "97", Denominator: "5811304", IsNegative: true));
-                yield return new TestCaseData("+3 +50/-4616").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "50", Denominator: "4616", IsNegative: true));
-                yield return new TestCaseData("-1 +14/-6022").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "14", Denominator: "6022", IsNegative: false));
-                yield return new TestCaseData("2+91/-671").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "91", Denominator: "671", IsNegative: true));
-                yield return new TestCaseData("+0+72/-115264").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "72", Denominator: "115264", IsNegative: true));
-                yield return new TestCaseData("-2+93/-355").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "93", Denominator: "355", IsNegative: false));
-                yield return new TestCaseData("1 -48/-546").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "48", Denominator: "546", IsNegative: false));
-                yield return new TestCaseData("+5 -99/-372").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "99", Denominator: "372", IsNegative: false));
-                yield return new TestCaseData("-3 -44/-588").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "44", Denominator: "588", IsNegative: true));
-                yield return new TestCaseData("8-86/-7051").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "86", Denominator: "7051", IsNegative: false));
-                yield return new TestCaseData("+4-52/-58116").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "52", Denominator: "58116", IsNegative: false));
-                yield return new TestCaseData("-2-32/-548").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "32", Denominator: "548", IsNegative: true));
-                yield return new TestCaseData("8 735123/6").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "735123", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+7 39006/1").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "39006", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-8 44843/9").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "44843", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("2 +843567/2").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "843567", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+9 +245/8").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "245", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-8 +83819/2").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "83819", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("4+6340210/8").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "6340210", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+4+16380/9").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "16380", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-3+713561/8").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "713561", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("2 -57119/8").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "57119", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+0 -708/2").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "708", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-4 -4805/7").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "4805", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("6-5819/2").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "5819", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+0-7277/3").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "7277", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-9-19422/8").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "19422", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("9 65430/+3").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "65430", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+5 67650/+5").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "67650", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-0 9006955/+5").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "9006955", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("4 +8166/+7").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "8166", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+8 +735288/+3").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "735288", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("-5 +2564694/+2").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "2564694", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("0+8264364/+1").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "8264364", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("+0+9384/+7").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "9384", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-3+907582/+5").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "907582", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("4 -7259/+9").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "7259", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+6 -7229260/+6").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "7229260", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-3 -729/+7").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "729", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("4-5108340/+3").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "5108340", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("+8-4040021/+1").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "4040021", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-3-34043/+6").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "34043", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("6 59153/-6").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "59153", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+0 249/-8").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "249", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("-4 4213/-5").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "4213", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("9 +647377/-6").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "647377", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+1 +80143/-1").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "80143", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-1 +622/-1").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "622", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("9+932850/-5").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "932850", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("+3+3009049/-9").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "3009049", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("-1+359/-1").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "359", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("3 -649/-3").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "649", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+8 -4265765/-3").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "4265765", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("-5 -4655995/-1").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "4655995", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("2-902982/-8").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "902982", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+6-5245/-6").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "5245", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-0-74051/-4").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "74051", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("2 532063/63").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "532063", Denominator: "63", IsNegative: false));
-                yield return new TestCaseData("+0 4173/87").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "4173", Denominator: "87", IsNegative: false));
-                yield return new TestCaseData("-4 37742/21").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "37742", Denominator: "21", IsNegative: true));
-                yield return new TestCaseData("9 +26989/36").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "26989", Denominator: "36", IsNegative: false));
-                yield return new TestCaseData("+6 +5561/94").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "5561", Denominator: "94", IsNegative: false));
-                yield return new TestCaseData("-2 +2910945/67").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "2910945", Denominator: "67", IsNegative: true));
-                yield return new TestCaseData("9+37695/88").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "37695", Denominator: "88", IsNegative: false));
-                yield return new TestCaseData("+5+111374/87").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "111374", Denominator: "87", IsNegative: false));
-                yield return new TestCaseData("-3+147/24").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "147", Denominator: "24", IsNegative: true));
-                yield return new TestCaseData("4 -285113/26").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "285113", Denominator: "26", IsNegative: true));
-                yield return new TestCaseData("+6 -68640/71").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "68640", Denominator: "71", IsNegative: true));
-                yield return new TestCaseData("-3 -924192/23").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "924192", Denominator: "23", IsNegative: false));
-                yield return new TestCaseData("0-988/68").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "988", Denominator: "68", IsNegative: true));
-                yield return new TestCaseData("+9-294989/44").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "294989", Denominator: "44", IsNegative: true));
-                yield return new TestCaseData("-4-6984204/65").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "6984204", Denominator: "65", IsNegative: false));
-                yield return new TestCaseData("0 35370/+83").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "35370", Denominator: "83", IsNegative: false));
-                yield return new TestCaseData("+5 81250/+75").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "81250", Denominator: "75", IsNegative: false));
-                yield return new TestCaseData("-4 904/+90").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "904", Denominator: "90", IsNegative: true));
-                yield return new TestCaseData("1 +3645/+69").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "3645", Denominator: "69", IsNegative: false));
-                yield return new TestCaseData("+1 +31848/+25").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "31848", Denominator: "25", IsNegative: false));
-                yield return new TestCaseData("-4 +836/+45").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "836", Denominator: "45", IsNegative: true));
-                yield return new TestCaseData("6+9053/+60").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "9053", Denominator: "60", IsNegative: false));
-                yield return new TestCaseData("+9+716847/+60").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "716847", Denominator: "60", IsNegative: false));
-                yield return new TestCaseData("-1+19464/+24").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "19464", Denominator: "24", IsNegative: true));
-                yield return new TestCaseData("2 -2046746/+94").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "2046746", Denominator: "94", IsNegative: true));
-                yield return new TestCaseData("+9 -711/+11").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "711", Denominator: "11", IsNegative: true));
-                yield return new TestCaseData("-2 -554/+67").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "554", Denominator: "67", IsNegative: false));
-                yield return new TestCaseData("4-28266/+95").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "28266", Denominator: "95", IsNegative: true));
-                yield return new TestCaseData("+6-21216/+92").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "21216", Denominator: "92", IsNegative: true));
-                yield return new TestCaseData("-6-2474847/+29").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "2474847", Denominator: "29", IsNegative: false));
-                yield return new TestCaseData("5 7839/-81").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "7839", Denominator: "81", IsNegative: true));
-                yield return new TestCaseData("+3 8139/-60").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "8139", Denominator: "60", IsNegative: true));
-                yield return new TestCaseData("-2 458/-40").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "458", Denominator: "40", IsNegative: false));
-                yield return new TestCaseData("4 +2801/-36").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "2801", Denominator: "36", IsNegative: true));
-                yield return new TestCaseData("+4 +2055297/-60").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "2055297", Denominator: "60", IsNegative: true));
-                yield return new TestCaseData("-8 +1726/-47").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "1726", Denominator: "47", IsNegative: false));
-                yield return new TestCaseData("4+961056/-64").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "961056", Denominator: "64", IsNegative: true));
-                yield return new TestCaseData("+4+545/-44").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "545", Denominator: "44", IsNegative: true));
-                yield return new TestCaseData("-6+4488156/-76").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "4488156", Denominator: "76", IsNegative: false));
-                yield return new TestCaseData("4 -7034629/-95").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "7034629", Denominator: "95", IsNegative: false));
-                yield return new TestCaseData("+2 -4791108/-41").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "4791108", Denominator: "41", IsNegative: false));
-                yield return new TestCaseData("-1 -5835637/-37").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "5835637", Denominator: "37", IsNegative: true));
-                yield return new TestCaseData("2-4883924/-87").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "4883924", Denominator: "87", IsNegative: false));
-                yield return new TestCaseData("+7-426114/-37").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "426114", Denominator: "37", IsNegative: false));
-                yield return new TestCaseData("-1-3891/-64").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "3891", Denominator: "64", IsNegative: true));
-                yield return new TestCaseData("3 182/676").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "182", Denominator: "676", IsNegative: false));
-                yield return new TestCaseData("+0 555670/5138567").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "555670", Denominator: "5138567", IsNegative: false));
-                yield return new TestCaseData("-8 21709/335").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "21709", Denominator: "335", IsNegative: true));
-                yield return new TestCaseData("9 +7599365/6435").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "7599365", Denominator: "6435", IsNegative: false));
-                yield return new TestCaseData("+2 +380696/782464").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "380696", Denominator: "782464", IsNegative: false));
-                yield return new TestCaseData("-6 +163587/17849").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "163587", Denominator: "17849", IsNegative: true));
-                yield return new TestCaseData("5+609/608").Returns((ReturnValue: true, WholeNumber: "5", Numerator: "609", Denominator: "608", IsNegative: false));
-                yield return new TestCaseData("+1+4535439/223909").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "4535439", Denominator: "223909", IsNegative: false));
-                yield return new TestCaseData("-2+450/9683737").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "450", Denominator: "9683737", IsNegative: true));
-                yield return new TestCaseData("8 -633914/5112").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "633914", Denominator: "5112", IsNegative: true));
-                yield return new TestCaseData("+4 -18001/464956").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "18001", Denominator: "464956", IsNegative: true));
-                yield return new TestCaseData("-7 -5075154/1078").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "5075154", Denominator: "1078", IsNegative: false));
-                yield return new TestCaseData("3-96995/8802442").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "96995", Denominator: "8802442", IsNegative: true));
-                yield return new TestCaseData("+7-160/236348").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "160", Denominator: "236348", IsNegative: true));
-                yield return new TestCaseData("-0-12385/457").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "12385", Denominator: "457", IsNegative: false));
-                yield return new TestCaseData("1 5280/+930884").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "5280", Denominator: "930884", IsNegative: false));
-                yield return new TestCaseData("+8 754/+658").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "754", Denominator: "658", IsNegative: false));
-                yield return new TestCaseData("-1 8638074/+856297").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "8638074", Denominator: "856297", IsNegative: true));
-                yield return new TestCaseData("2 +21044/+767609").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "21044", Denominator: "767609", IsNegative: false));
-                yield return new TestCaseData("+6 +608/+2676894").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "608", Denominator: "2676894", IsNegative: false));
-                yield return new TestCaseData("-8 +987544/+465").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "987544", Denominator: "465", IsNegative: true));
-                yield return new TestCaseData("0+9705/+3106").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "9705", Denominator: "3106", IsNegative: false));
-                yield return new TestCaseData("+4+8009/+1987").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "8009", Denominator: "1987", IsNegative: false));
-                yield return new TestCaseData("-3+8954917/+7193").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "8954917", Denominator: "7193", IsNegative: true));
-                yield return new TestCaseData("7 -469/+922805").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "469", Denominator: "922805", IsNegative: true));
-                yield return new TestCaseData("+6 -3956/+8018").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "3956", Denominator: "8018", IsNegative: true));
-                yield return new TestCaseData("-1 -555595/+20671").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "555595", Denominator: "20671", IsNegative: false));
-                yield return new TestCaseData("2-581/+636390").Returns((ReturnValue: true, WholeNumber: "2", Numerator: "581", Denominator: "636390", IsNegative: true));
-                yield return new TestCaseData("+7-575/+44363").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "575", Denominator: "44363", IsNegative: true));
-                yield return new TestCaseData("-8-798223/+43430").Returns((ReturnValue: true, WholeNumber: "8", Numerator: "798223", Denominator: "43430", IsNegative: false));
-                yield return new TestCaseData("7 424/-4633").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "424", Denominator: "4633", IsNegative: true));
-                yield return new TestCaseData("+6 2974/-7822").Returns((ReturnValue: true, WholeNumber: "6", Numerator: "2974", Denominator: "7822", IsNegative: true));
-                yield return new TestCaseData("-7 628/-21425").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "628", Denominator: "21425", IsNegative: false));
-                yield return new TestCaseData("7 +3620603/-8884").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "3620603", Denominator: "8884", IsNegative: true));
-                yield return new TestCaseData("+3 +2868/-907410").Returns((ReturnValue: true, WholeNumber: "3", Numerator: "2868", Denominator: "907410", IsNegative: true));
-                yield return new TestCaseData("-7 +988764/-1673").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "988764", Denominator: "1673", IsNegative: false));
-                yield return new TestCaseData("0+76623/-122").Returns((ReturnValue: true, WholeNumber: "0", Numerator: "76623", Denominator: "122", IsNegative: true));
-                yield return new TestCaseData("+9+3025/-546").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "3025", Denominator: "546", IsNegative: true));
-                yield return new TestCaseData("-9+3315056/-9006306").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "3315056", Denominator: "9006306", IsNegative: false));
-                yield return new TestCaseData("7 -98958/-6623").Returns((ReturnValue: true, WholeNumber: "7", Numerator: "98958", Denominator: "6623", IsNegative: false));
-                yield return new TestCaseData("+9 -5927/-136465").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "5927", Denominator: "136465", IsNegative: false));
-                yield return new TestCaseData("-4 -7778125/-6847").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "7778125", Denominator: "6847", IsNegative: true));
-                yield return new TestCaseData("9-8510/-7596").Returns((ReturnValue: true, WholeNumber: "9", Numerator: "8510", Denominator: "7596", IsNegative: false));
-                yield return new TestCaseData("+1-6210/-28032").Returns((ReturnValue: true, WholeNumber: "1", Numerator: "6210", Denominator: "28032", IsNegative: false));
-                yield return new TestCaseData("-4-286506/-907424").Returns((ReturnValue: true, WholeNumber: "4", Numerator: "286506", Denominator: "907424", IsNegative: true));
-                yield return new TestCaseData("55").Returns((ReturnValue: true, WholeNumber: "55", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData("+16").Returns((ReturnValue: true, WholeNumber: "16", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData("-36").Returns((ReturnValue: true, WholeNumber: "36", Numerator: string.Empty, Denominator: string.Empty, IsNegative: true));
-                yield return new TestCaseData("74 1/3").Returns((ReturnValue: true, WholeNumber: "74", Numerator: "1", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+69 6/7").Returns((ReturnValue: true, WholeNumber: "69", Numerator: "6", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-21 6/9").Returns((ReturnValue: true, WholeNumber: "21", Numerator: "6", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("12 +9/6").Returns((ReturnValue: true, WholeNumber: "12", Numerator: "9", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+95 +5/8").Returns((ReturnValue: true, WholeNumber: "95", Numerator: "5", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-49 +5/7").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "5", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("98+0/2").Returns((ReturnValue: true, WholeNumber: "98", Numerator: "0", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+75+4/8").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "4", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-52+0/2").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "0", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("35 -1/8").Returns((ReturnValue: true, WholeNumber: "35", Numerator: "1", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+83 -5/4").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "5", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-71 -0/2").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "0", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("40-3/6").Returns((ReturnValue: true, WholeNumber: "40", Numerator: "3", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+16-0/1").Returns((ReturnValue: true, WholeNumber: "16", Numerator: "0", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-25-2/6").Returns((ReturnValue: true, WholeNumber: "25", Numerator: "2", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("92 2/+8").Returns((ReturnValue: true, WholeNumber: "92", Numerator: "2", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+84 7/+2").Returns((ReturnValue: true, WholeNumber: "84", Numerator: "7", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-26 5/+1").Returns((ReturnValue: true, WholeNumber: "26", Numerator: "5", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("19 +9/+7").Returns((ReturnValue: true, WholeNumber: "19", Numerator: "9", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+50 +1/+6").Returns((ReturnValue: true, WholeNumber: "50", Numerator: "1", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-59 +8/+6").Returns((ReturnValue: true, WholeNumber: "59", Numerator: "8", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("26+2/+4").Returns((ReturnValue: true, WholeNumber: "26", Numerator: "2", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+31+2/+5").Returns((ReturnValue: true, WholeNumber: "31", Numerator: "2", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-65+0/+2").Returns((ReturnValue: true, WholeNumber: "65", Numerator: "0", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("22 -9/+9").Returns((ReturnValue: true, WholeNumber: "22", Numerator: "9", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+23 -5/+2").Returns((ReturnValue: true, WholeNumber: "23", Numerator: "5", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-32 -5/+8").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "5", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("44-4/+4").Returns((ReturnValue: true, WholeNumber: "44", Numerator: "4", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+64-6/+1").Returns((ReturnValue: true, WholeNumber: "64", Numerator: "6", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-40-5/+1").Returns((ReturnValue: true, WholeNumber: "40", Numerator: "5", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("52 8/-2").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "8", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+98 5/-3").Returns((ReturnValue: true, WholeNumber: "98", Numerator: "5", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-52 9/-1").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "9", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("25 +6/-9").Returns((ReturnValue: true, WholeNumber: "25", Numerator: "6", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+34 +2/-7").Returns((ReturnValue: true, WholeNumber: "34", Numerator: "2", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("-98 +0/-6").Returns((ReturnValue: true, WholeNumber: "98", Numerator: "0", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("13+9/-4").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "9", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+66+1/-6").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "1", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-77+1/-4").Returns((ReturnValue: true, WholeNumber: "77", Numerator: "1", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("29 -5/-6").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "5", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+49 -8/-7").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "8", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-55 -1/-2").Returns((ReturnValue: true, WholeNumber: "55", Numerator: "1", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("19-1/-4").Returns((ReturnValue: true, WholeNumber: "19", Numerator: "1", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+77-6/-6").Returns((ReturnValue: true, WholeNumber: "77", Numerator: "6", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-13-0/-8").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "0", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("88 1/32").Returns((ReturnValue: true, WholeNumber: "88", Numerator: "1", Denominator: "32", IsNegative: false));
-                yield return new TestCaseData("+70 6/62").Returns((ReturnValue: true, WholeNumber: "70", Numerator: "6", Denominator: "62", IsNegative: false));
-                yield return new TestCaseData("-45 3/65").Returns((ReturnValue: true, WholeNumber: "45", Numerator: "3", Denominator: "65", IsNegative: true));
-                yield return new TestCaseData("64 +8/71").Returns((ReturnValue: true, WholeNumber: "64", Numerator: "8", Denominator: "71", IsNegative: false));
-                yield return new TestCaseData("+52 +2/41").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "2", Denominator: "41", IsNegative: false));
-                yield return new TestCaseData("-85 +2/47").Returns((ReturnValue: true, WholeNumber: "85", Numerator: "2", Denominator: "47", IsNegative: true));
-                yield return new TestCaseData("54+7/80").Returns((ReturnValue: true, WholeNumber: "54", Numerator: "7", Denominator: "80", IsNegative: false));
-                yield return new TestCaseData("+35+7/14").Returns((ReturnValue: true, WholeNumber: "35", Numerator: "7", Denominator: "14", IsNegative: false));
-                yield return new TestCaseData("-51+8/90").Returns((ReturnValue: true, WholeNumber: "51", Numerator: "8", Denominator: "90", IsNegative: true));
-                yield return new TestCaseData("30 -2/35").Returns((ReturnValue: true, WholeNumber: "30", Numerator: "2", Denominator: "35", IsNegative: true));
-                yield return new TestCaseData("+87 -5/20").Returns((ReturnValue: true, WholeNumber: "87", Numerator: "5", Denominator: "20", IsNegative: true));
-                yield return new TestCaseData("-78 -8/16").Returns((ReturnValue: true, WholeNumber: "78", Numerator: "8", Denominator: "16", IsNegative: false));
-                yield return new TestCaseData("22-5/95").Returns((ReturnValue: true, WholeNumber: "22", Numerator: "5", Denominator: "95", IsNegative: true));
-                yield return new TestCaseData("+10-0/63").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "0", Denominator: "63", IsNegative: true));
-                yield return new TestCaseData("-16-9/38").Returns((ReturnValue: true, WholeNumber: "16", Numerator: "9", Denominator: "38", IsNegative: false));
-                yield return new TestCaseData("57 6/+93").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "6", Denominator: "93", IsNegative: false));
-                yield return new TestCaseData("+13 9/+47").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "9", Denominator: "47", IsNegative: false));
-                yield return new TestCaseData("-23 5/+40").Returns((ReturnValue: true, WholeNumber: "23", Numerator: "5", Denominator: "40", IsNegative: true));
-                yield return new TestCaseData("17 +5/+40").Returns((ReturnValue: true, WholeNumber: "17", Numerator: "5", Denominator: "40", IsNegative: false));
-                yield return new TestCaseData("+28 +2/+77").Returns((ReturnValue: true, WholeNumber: "28", Numerator: "2", Denominator: "77", IsNegative: false));
-                yield return new TestCaseData("-71 +1/+11").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "1", Denominator: "11", IsNegative: true));
-                yield return new TestCaseData("40+7/+32").Returns((ReturnValue: true, WholeNumber: "40", Numerator: "7", Denominator: "32", IsNegative: false));
-                yield return new TestCaseData("+61+7/+42").Returns((ReturnValue: true, WholeNumber: "61", Numerator: "7", Denominator: "42", IsNegative: false));
-                yield return new TestCaseData("-35+7/+74").Returns((ReturnValue: true, WholeNumber: "35", Numerator: "7", Denominator: "74", IsNegative: true));
-                yield return new TestCaseData("51 -4/+72").Returns((ReturnValue: true, WholeNumber: "51", Numerator: "4", Denominator: "72", IsNegative: true));
-                yield return new TestCaseData("+27 -2/+87").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "2", Denominator: "87", IsNegative: true));
-                yield return new TestCaseData("-75 -9/+32").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "9", Denominator: "32", IsNegative: false));
-                yield return new TestCaseData("97-1/+44").Returns((ReturnValue: true, WholeNumber: "97", Numerator: "1", Denominator: "44", IsNegative: true));
-                yield return new TestCaseData("+88-7/+13").Returns((ReturnValue: true, WholeNumber: "88", Numerator: "7", Denominator: "13", IsNegative: true));
-                yield return new TestCaseData("-80-6/+35").Returns((ReturnValue: true, WholeNumber: "80", Numerator: "6", Denominator: "35", IsNegative: false));
-                yield return new TestCaseData("75 9/-39").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "9", Denominator: "39", IsNegative: true));
-                yield return new TestCaseData("+28 3/-89").Returns((ReturnValue: true, WholeNumber: "28", Numerator: "3", Denominator: "89", IsNegative: true));
-                yield return new TestCaseData("-61 7/-24").Returns((ReturnValue: true, WholeNumber: "61", Numerator: "7", Denominator: "24", IsNegative: false));
-                yield return new TestCaseData("16 +9/-93").Returns((ReturnValue: true, WholeNumber: "16", Numerator: "9", Denominator: "93", IsNegative: true));
-                yield return new TestCaseData("+60 +7/-28").Returns((ReturnValue: true, WholeNumber: "60", Numerator: "7", Denominator: "28", IsNegative: true));
-                yield return new TestCaseData("-73 +6/-15").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "6", Denominator: "15", IsNegative: false));
-                yield return new TestCaseData("68+8/-43").Returns((ReturnValue: true, WholeNumber: "68", Numerator: "8", Denominator: "43", IsNegative: true));
-                yield return new TestCaseData("+52+4/-34").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "4", Denominator: "34", IsNegative: true));
-                yield return new TestCaseData("-55+7/-97").Returns((ReturnValue: true, WholeNumber: "55", Numerator: "7", Denominator: "97", IsNegative: false));
-                yield return new TestCaseData("66 -4/-12").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "4", Denominator: "12", IsNegative: false));
-                yield return new TestCaseData("+29 -7/-13").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "7", Denominator: "13", IsNegative: false));
-                yield return new TestCaseData("-16 -5/-79").Returns((ReturnValue: true, WholeNumber: "16", Numerator: "5", Denominator: "79", IsNegative: true));
-                yield return new TestCaseData("44-2/-25").Returns((ReturnValue: true, WholeNumber: "44", Numerator: "2", Denominator: "25", IsNegative: false));
-                yield return new TestCaseData("+83-6/-53").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "6", Denominator: "53", IsNegative: false));
-                yield return new TestCaseData("-73-6/-98").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "6", Denominator: "98", IsNegative: true));
-                yield return new TestCaseData("39 4/26054").Returns((ReturnValue: true, WholeNumber: "39", Numerator: "4", Denominator: "26054", IsNegative: false));
-                yield return new TestCaseData("+24 0/2210245").Returns((ReturnValue: true, WholeNumber: "24", Numerator: "0", Denominator: "2210245", IsNegative: false));
-                yield return new TestCaseData("-80 9/5120").Returns((ReturnValue: true, WholeNumber: "80", Numerator: "9", Denominator: "5120", IsNegative: true));
-                yield return new TestCaseData("15 +7/915050").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "7", Denominator: "915050", IsNegative: false));
-                yield return new TestCaseData("+94 +2/867").Returns((ReturnValue: true, WholeNumber: "94", Numerator: "2", Denominator: "867", IsNegative: false));
-                yield return new TestCaseData("-25 +8/28310").Returns((ReturnValue: true, WholeNumber: "25", Numerator: "8", Denominator: "28310", IsNegative: true));
-                yield return new TestCaseData("49+3/89734").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "3", Denominator: "89734", IsNegative: false));
-                yield return new TestCaseData("+84+2/7893453").Returns((ReturnValue: true, WholeNumber: "84", Numerator: "2", Denominator: "7893453", IsNegative: false));
-                yield return new TestCaseData("-83+2/375").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "2", Denominator: "375", IsNegative: true));
-                yield return new TestCaseData("58 -4/1091").Returns((ReturnValue: true, WholeNumber: "58", Numerator: "4", Denominator: "1091", IsNegative: true));
-                yield return new TestCaseData("+31 -6/2416").Returns((ReturnValue: true, WholeNumber: "31", Numerator: "6", Denominator: "2416", IsNegative: true));
-                yield return new TestCaseData("-36 -3/6011").Returns((ReturnValue: true, WholeNumber: "36", Numerator: "3", Denominator: "6011", IsNegative: false));
-                yield return new TestCaseData("61-9/289252").Returns((ReturnValue: true, WholeNumber: "61", Numerator: "9", Denominator: "289252", IsNegative: true));
-                yield return new TestCaseData("+62-8/4901793").Returns((ReturnValue: true, WholeNumber: "62", Numerator: "8", Denominator: "4901793", IsNegative: true));
-                yield return new TestCaseData("-92-2/862809").Returns((ReturnValue: true, WholeNumber: "92", Numerator: "2", Denominator: "862809", IsNegative: false));
-                yield return new TestCaseData("63 0/+5545").Returns((ReturnValue: true, WholeNumber: "63", Numerator: "0", Denominator: "5545", IsNegative: false));
-                yield return new TestCaseData("+11 4/+804478").Returns((ReturnValue: true, WholeNumber: "11", Numerator: "4", Denominator: "804478", IsNegative: false));
-                yield return new TestCaseData("-57 2/+5410").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "2", Denominator: "5410", IsNegative: true));
-                yield return new TestCaseData("96 +1/+564774").Returns((ReturnValue: true, WholeNumber: "96", Numerator: "1", Denominator: "564774", IsNegative: false));
-                yield return new TestCaseData("+67 +3/+2103998").Returns((ReturnValue: true, WholeNumber: "67", Numerator: "3", Denominator: "2103998", IsNegative: false));
-                yield return new TestCaseData("-99 +8/+9324").Returns((ReturnValue: true, WholeNumber: "99", Numerator: "8", Denominator: "9324", IsNegative: true));
-                yield return new TestCaseData("64+6/+104").Returns((ReturnValue: true, WholeNumber: "64", Numerator: "6", Denominator: "104", IsNegative: false));
-                yield return new TestCaseData("+51+7/+3797").Returns((ReturnValue: true, WholeNumber: "51", Numerator: "7", Denominator: "3797", IsNegative: false));
-                yield return new TestCaseData("-73+4/+23323").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "4", Denominator: "23323", IsNegative: true));
-                yield return new TestCaseData("41 -7/+819").Returns((ReturnValue: true, WholeNumber: "41", Numerator: "7", Denominator: "819", IsNegative: true));
-                yield return new TestCaseData("+70 -5/+345").Returns((ReturnValue: true, WholeNumber: "70", Numerator: "5", Denominator: "345", IsNegative: true));
-                yield return new TestCaseData("-58 -1/+5188").Returns((ReturnValue: true, WholeNumber: "58", Numerator: "1", Denominator: "5188", IsNegative: false));
-                yield return new TestCaseData("27-3/+624823").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "3", Denominator: "624823", IsNegative: true));
-                yield return new TestCaseData("+38-6/+7530011").Returns((ReturnValue: true, WholeNumber: "38", Numerator: "6", Denominator: "7530011", IsNegative: true));
-                yield return new TestCaseData("-79-3/+4046989").Returns((ReturnValue: true, WholeNumber: "79", Numerator: "3", Denominator: "4046989", IsNegative: false));
-                yield return new TestCaseData("37 6/-8040").Returns((ReturnValue: true, WholeNumber: "37", Numerator: "6", Denominator: "8040", IsNegative: true));
-                yield return new TestCaseData("+91 0/-560921").Returns((ReturnValue: true, WholeNumber: "91", Numerator: "0", Denominator: "560921", IsNegative: true));
-                yield return new TestCaseData("-73 4/-900").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "4", Denominator: "900", IsNegative: false));
-                yield return new TestCaseData("27 +1/-50953").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "1", Denominator: "50953", IsNegative: true));
-                yield return new TestCaseData("+85 +0/-4771").Returns((ReturnValue: true, WholeNumber: "85", Numerator: "0", Denominator: "4771", IsNegative: true));
-                yield return new TestCaseData("-49 +7/-2426913").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "7", Denominator: "2426913", IsNegative: false));
-                yield return new TestCaseData("95+8/-1800687").Returns((ReturnValue: true, WholeNumber: "95", Numerator: "8", Denominator: "1800687", IsNegative: true));
-                yield return new TestCaseData("+64+6/-9762").Returns((ReturnValue: true, WholeNumber: "64", Numerator: "6", Denominator: "9762", IsNegative: true));
-                yield return new TestCaseData("-86+7/-12646").Returns((ReturnValue: true, WholeNumber: "86", Numerator: "7", Denominator: "12646", IsNegative: false));
-                yield return new TestCaseData("29 -2/-5408").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "2", Denominator: "5408", IsNegative: false));
-                yield return new TestCaseData("+46 -7/-756660").Returns((ReturnValue: true, WholeNumber: "46", Numerator: "7", Denominator: "756660", IsNegative: false));
-                yield return new TestCaseData("-22 -9/-2871").Returns((ReturnValue: true, WholeNumber: "22", Numerator: "9", Denominator: "2871", IsNegative: true));
-                yield return new TestCaseData("24-3/-7586031").Returns((ReturnValue: true, WholeNumber: "24", Numerator: "3", Denominator: "7586031", IsNegative: false));
-                yield return new TestCaseData("+99-4/-6292030").Returns((ReturnValue: true, WholeNumber: "99", Numerator: "4", Denominator: "6292030", IsNegative: false));
-                yield return new TestCaseData("-84-1/-1912420").Returns((ReturnValue: true, WholeNumber: "84", Numerator: "1", Denominator: "1912420", IsNegative: true));
-                yield return new TestCaseData("15 72/9").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "72", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+11 18/2").Returns((ReturnValue: true, WholeNumber: "11", Numerator: "18", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-14 46/6").Returns((ReturnValue: true, WholeNumber: "14", Numerator: "46", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("48 +31/6").Returns((ReturnValue: true, WholeNumber: "48", Numerator: "31", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+70 +90/1").Returns((ReturnValue: true, WholeNumber: "70", Numerator: "90", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-73 +95/1").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "95", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("11+13/4").Returns((ReturnValue: true, WholeNumber: "11", Numerator: "13", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+80+93/2").Returns((ReturnValue: true, WholeNumber: "80", Numerator: "93", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-82+67/9").Returns((ReturnValue: true, WholeNumber: "82", Numerator: "67", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("42 -90/9").Returns((ReturnValue: true, WholeNumber: "42", Numerator: "90", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+28 -14/4").Returns((ReturnValue: true, WholeNumber: "28", Numerator: "14", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-33 -48/7").Returns((ReturnValue: true, WholeNumber: "33", Numerator: "48", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("83-77/6").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "77", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+94-87/9").Returns((ReturnValue: true, WholeNumber: "94", Numerator: "87", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("-62-76/2").Returns((ReturnValue: true, WholeNumber: "62", Numerator: "76", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("36 14/+1").Returns((ReturnValue: true, WholeNumber: "36", Numerator: "14", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("+52 27/+6").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "27", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-77 22/+8").Returns((ReturnValue: true, WholeNumber: "77", Numerator: "22", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("71 +35/+7").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "35", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+73 +28/+5").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "28", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-29 +71/+5").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "71", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("74+30/+2").Returns((ReturnValue: true, WholeNumber: "74", Numerator: "30", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+26+47/+5").Returns((ReturnValue: true, WholeNumber: "26", Numerator: "47", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-37+89/+2").Returns((ReturnValue: true, WholeNumber: "37", Numerator: "89", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("49 -17/+2").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "17", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+49 -27/+2").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "27", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-13 -55/+6").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "55", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("88-90/+7").Returns((ReturnValue: true, WholeNumber: "88", Numerator: "90", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+34-50/+9").Returns((ReturnValue: true, WholeNumber: "34", Numerator: "50", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("-65-62/+2").Returns((ReturnValue: true, WholeNumber: "65", Numerator: "62", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("94 20/-5").Returns((ReturnValue: true, WholeNumber: "94", Numerator: "20", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("+26 75/-2").Returns((ReturnValue: true, WholeNumber: "26", Numerator: "75", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-53 88/-5").Returns((ReturnValue: true, WholeNumber: "53", Numerator: "88", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("98 +20/-6").Returns((ReturnValue: true, WholeNumber: "98", Numerator: "20", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+67 +24/-3").Returns((ReturnValue: true, WholeNumber: "67", Numerator: "24", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-48 +37/-1").Returns((ReturnValue: true, WholeNumber: "48", Numerator: "37", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("65+31/-1").Returns((ReturnValue: true, WholeNumber: "65", Numerator: "31", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("+62+69/-7").Returns((ReturnValue: true, WholeNumber: "62", Numerator: "69", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("-87+40/-8").Returns((ReturnValue: true, WholeNumber: "87", Numerator: "40", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("81 -50/-7").Returns((ReturnValue: true, WholeNumber: "81", Numerator: "50", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+34 -60/-8").Returns((ReturnValue: true, WholeNumber: "34", Numerator: "60", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-38 -42/-7").Returns((ReturnValue: true, WholeNumber: "38", Numerator: "42", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("69-33/-4").Returns((ReturnValue: true, WholeNumber: "69", Numerator: "33", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+99-95/-3").Returns((ReturnValue: true, WholeNumber: "99", Numerator: "95", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("-69-15/-4").Returns((ReturnValue: true, WholeNumber: "69", Numerator: "15", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("95 31/75").Returns((ReturnValue: true, WholeNumber: "95", Numerator: "31", Denominator: "75", IsNegative: false));
-                yield return new TestCaseData("+46 85/23").Returns((ReturnValue: true, WholeNumber: "46", Numerator: "85", Denominator: "23", IsNegative: false));
-                yield return new TestCaseData("-86 10/40").Returns((ReturnValue: true, WholeNumber: "86", Numerator: "10", Denominator: "40", IsNegative: true));
-                yield return new TestCaseData("15 +42/50").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "42", Denominator: "50", IsNegative: false));
-                yield return new TestCaseData("+86 +39/45").Returns((ReturnValue: true, WholeNumber: "86", Numerator: "39", Denominator: "45", IsNegative: false));
-                yield return new TestCaseData("-45 +71/48").Returns((ReturnValue: true, WholeNumber: "45", Numerator: "71", Denominator: "48", IsNegative: true));
-                yield return new TestCaseData("76+73/60").Returns((ReturnValue: true, WholeNumber: "76", Numerator: "73", Denominator: "60", IsNegative: false));
-                yield return new TestCaseData("+83+39/82").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "39", Denominator: "82", IsNegative: false));
-                yield return new TestCaseData("-57+79/14").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "79", Denominator: "14", IsNegative: true));
-                yield return new TestCaseData("74 -65/35").Returns((ReturnValue: true, WholeNumber: "74", Numerator: "65", Denominator: "35", IsNegative: true));
-                yield return new TestCaseData("+78 -93/63").Returns((ReturnValue: true, WholeNumber: "78", Numerator: "93", Denominator: "63", IsNegative: true));
-                yield return new TestCaseData("-37 -92/19").Returns((ReturnValue: true, WholeNumber: "37", Numerator: "92", Denominator: "19", IsNegative: false));
-                yield return new TestCaseData("15-45/64").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "45", Denominator: "64", IsNegative: true));
-                yield return new TestCaseData("+66-47/59").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "47", Denominator: "59", IsNegative: true));
-                yield return new TestCaseData("-54-32/10").Returns((ReturnValue: true, WholeNumber: "54", Numerator: "32", Denominator: "10", IsNegative: false));
-                yield return new TestCaseData("38 83/+93").Returns((ReturnValue: true, WholeNumber: "38", Numerator: "83", Denominator: "93", IsNegative: false));
-                yield return new TestCaseData("+96 64/+34").Returns((ReturnValue: true, WholeNumber: "96", Numerator: "64", Denominator: "34", IsNegative: false));
-                yield return new TestCaseData("-90 92/+41").Returns((ReturnValue: true, WholeNumber: "90", Numerator: "92", Denominator: "41", IsNegative: true));
-                yield return new TestCaseData("85 +22/+92").Returns((ReturnValue: true, WholeNumber: "85", Numerator: "22", Denominator: "92", IsNegative: false));
-                yield return new TestCaseData("+92 +88/+16").Returns((ReturnValue: true, WholeNumber: "92", Numerator: "88", Denominator: "16", IsNegative: false));
-                yield return new TestCaseData("-18 +22/+45").Returns((ReturnValue: true, WholeNumber: "18", Numerator: "22", Denominator: "45", IsNegative: true));
-                yield return new TestCaseData("14+37/+48").Returns((ReturnValue: true, WholeNumber: "14", Numerator: "37", Denominator: "48", IsNegative: false));
-                yield return new TestCaseData("+86+58/+46").Returns((ReturnValue: true, WholeNumber: "86", Numerator: "58", Denominator: "46", IsNegative: false));
-                yield return new TestCaseData("-35+39/+36").Returns((ReturnValue: true, WholeNumber: "35", Numerator: "39", Denominator: "36", IsNegative: true));
-                yield return new TestCaseData("84 -20/+36").Returns((ReturnValue: true, WholeNumber: "84", Numerator: "20", Denominator: "36", IsNegative: true));
-                yield return new TestCaseData("+10 -38/+16").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "38", Denominator: "16", IsNegative: true));
-                yield return new TestCaseData("-82 -29/+96").Returns((ReturnValue: true, WholeNumber: "82", Numerator: "29", Denominator: "96", IsNegative: false));
-                yield return new TestCaseData("20-78/+10").Returns((ReturnValue: true, WholeNumber: "20", Numerator: "78", Denominator: "10", IsNegative: true));
-                yield return new TestCaseData("+11-87/+10").Returns((ReturnValue: true, WholeNumber: "11", Numerator: "87", Denominator: "10", IsNegative: true));
-                yield return new TestCaseData("-31-51/+80").Returns((ReturnValue: true, WholeNumber: "31", Numerator: "51", Denominator: "80", IsNegative: false));
-                yield return new TestCaseData("27 22/-57").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "22", Denominator: "57", IsNegative: true));
-                yield return new TestCaseData("+58 57/-35").Returns((ReturnValue: true, WholeNumber: "58", Numerator: "57", Denominator: "35", IsNegative: true));
-                yield return new TestCaseData("-24 49/-94").Returns((ReturnValue: true, WholeNumber: "24", Numerator: "49", Denominator: "94", IsNegative: false));
-                yield return new TestCaseData("61 +51/-34").Returns((ReturnValue: true, WholeNumber: "61", Numerator: "51", Denominator: "34", IsNegative: true));
-                yield return new TestCaseData("+57 +70/-35").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "70", Denominator: "35", IsNegative: true));
-                yield return new TestCaseData("-97 +16/-82").Returns((ReturnValue: true, WholeNumber: "97", Numerator: "16", Denominator: "82", IsNegative: false));
-                yield return new TestCaseData("15+85/-83").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "85", Denominator: "83", IsNegative: true));
-                yield return new TestCaseData("+85+20/-68").Returns((ReturnValue: true, WholeNumber: "85", Numerator: "20", Denominator: "68", IsNegative: true));
-                yield return new TestCaseData("-19+98/-43").Returns((ReturnValue: true, WholeNumber: "19", Numerator: "98", Denominator: "43", IsNegative: false));
-                yield return new TestCaseData("44 -12/-49").Returns((ReturnValue: true, WholeNumber: "44", Numerator: "12", Denominator: "49", IsNegative: false));
-                yield return new TestCaseData("+48 -65/-16").Returns((ReturnValue: true, WholeNumber: "48", Numerator: "65", Denominator: "16", IsNegative: false));
-                yield return new TestCaseData("-66 -18/-26").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "18", Denominator: "26", IsNegative: true));
-                yield return new TestCaseData("78-35/-62").Returns((ReturnValue: true, WholeNumber: "78", Numerator: "35", Denominator: "62", IsNegative: false));
-                yield return new TestCaseData("+10-85/-89").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "85", Denominator: "89", IsNegative: false));
-                yield return new TestCaseData("-21-31/-77").Returns((ReturnValue: true, WholeNumber: "21", Numerator: "31", Denominator: "77", IsNegative: true));
-                yield return new TestCaseData("71 62/751").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "62", Denominator: "751", IsNegative: false));
-                yield return new TestCaseData("+13 81/262").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "81", Denominator: "262", IsNegative: false));
-                yield return new TestCaseData("-66 97/1245").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "97", Denominator: "1245", IsNegative: true));
-                yield return new TestCaseData("88 +48/91743").Returns((ReturnValue: true, WholeNumber: "88", Numerator: "48", Denominator: "91743", IsNegative: false));
-                yield return new TestCaseData("+80 +46/22424").Returns((ReturnValue: true, WholeNumber: "80", Numerator: "46", Denominator: "22424", IsNegative: false));
-                yield return new TestCaseData("-86 +27/6150345").Returns((ReturnValue: true, WholeNumber: "86", Numerator: "27", Denominator: "6150345", IsNegative: true));
-                yield return new TestCaseData("18+28/296793").Returns((ReturnValue: true, WholeNumber: "18", Numerator: "28", Denominator: "296793", IsNegative: false));
-                yield return new TestCaseData("+14+10/7344256").Returns((ReturnValue: true, WholeNumber: "14", Numerator: "10", Denominator: "7344256", IsNegative: false));
-                yield return new TestCaseData("-88+91/45177").Returns((ReturnValue: true, WholeNumber: "88", Numerator: "91", Denominator: "45177", IsNegative: true));
-                yield return new TestCaseData("35 -69/6834031").Returns((ReturnValue: true, WholeNumber: "35", Numerator: "69", Denominator: "6834031", IsNegative: true));
-                yield return new TestCaseData("+30 -48/68833").Returns((ReturnValue: true, WholeNumber: "30", Numerator: "48", Denominator: "68833", IsNegative: true));
-                yield return new TestCaseData("-76 -24/8764118").Returns((ReturnValue: true, WholeNumber: "76", Numerator: "24", Denominator: "8764118", IsNegative: false));
-                yield return new TestCaseData("13-19/529").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "19", Denominator: "529", IsNegative: true));
-                yield return new TestCaseData("+66-19/5397385").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "19", Denominator: "5397385", IsNegative: true));
-                yield return new TestCaseData("-71-56/848510").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "56", Denominator: "848510", IsNegative: false));
-                yield return new TestCaseData("10 98/+663").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "98", Denominator: "663", IsNegative: false));
-                yield return new TestCaseData("+13 68/+967").Returns((ReturnValue: true, WholeNumber: "13", Numerator: "68", Denominator: "967", IsNegative: false));
-                yield return new TestCaseData("-10 24/+209827").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "24", Denominator: "209827", IsNegative: true));
-                yield return new TestCaseData("47 +86/+4799179").Returns((ReturnValue: true, WholeNumber: "47", Numerator: "86", Denominator: "4799179", IsNegative: false));
-                yield return new TestCaseData("+77 +32/+9382640").Returns((ReturnValue: true, WholeNumber: "77", Numerator: "32", Denominator: "9382640", IsNegative: false));
-                yield return new TestCaseData("-38 +92/+958").Returns((ReturnValue: true, WholeNumber: "38", Numerator: "92", Denominator: "958", IsNegative: true));
-                yield return new TestCaseData("95+50/+795").Returns((ReturnValue: true, WholeNumber: "95", Numerator: "50", Denominator: "795", IsNegative: false));
-                yield return new TestCaseData("+10+94/+788128").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "94", Denominator: "788128", IsNegative: false));
-                yield return new TestCaseData("-12+24/+324609").Returns((ReturnValue: true, WholeNumber: "12", Numerator: "24", Denominator: "324609", IsNegative: true));
-                yield return new TestCaseData("37 -83/+179593").Returns((ReturnValue: true, WholeNumber: "37", Numerator: "83", Denominator: "179593", IsNegative: true));
-                yield return new TestCaseData("+10 -93/+8855035").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "93", Denominator: "8855035", IsNegative: true));
-                yield return new TestCaseData("-52 -93/+794").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "93", Denominator: "794", IsNegative: false));
-                yield return new TestCaseData("27-52/+490462").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "52", Denominator: "490462", IsNegative: true));
-                yield return new TestCaseData("+71-72/+17682").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "72", Denominator: "17682", IsNegative: true));
-                yield return new TestCaseData("-81-25/+629277").Returns((ReturnValue: true, WholeNumber: "81", Numerator: "25", Denominator: "629277", IsNegative: false));
-                yield return new TestCaseData("61 44/-1599527").Returns((ReturnValue: true, WholeNumber: "61", Numerator: "44", Denominator: "1599527", IsNegative: true));
-                yield return new TestCaseData("+50 87/-333").Returns((ReturnValue: true, WholeNumber: "50", Numerator: "87", Denominator: "333", IsNegative: true));
-                yield return new TestCaseData("-29 69/-938").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "69", Denominator: "938", IsNegative: false));
-                yield return new TestCaseData("67 +76/-4437333").Returns((ReturnValue: true, WholeNumber: "67", Numerator: "76", Denominator: "4437333", IsNegative: true));
-                yield return new TestCaseData("+15 +38/-11802").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "38", Denominator: "11802", IsNegative: true));
-                yield return new TestCaseData("-45 +37/-58244").Returns((ReturnValue: true, WholeNumber: "45", Numerator: "37", Denominator: "58244", IsNegative: false));
-                yield return new TestCaseData("27+34/-396").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "34", Denominator: "396", IsNegative: true));
-                yield return new TestCaseData("+67+59/-21800").Returns((ReturnValue: true, WholeNumber: "67", Numerator: "59", Denominator: "21800", IsNegative: true));
-                yield return new TestCaseData("-23+12/-66529").Returns((ReturnValue: true, WholeNumber: "23", Numerator: "12", Denominator: "66529", IsNegative: false));
-                yield return new TestCaseData("98 -81/-65438").Returns((ReturnValue: true, WholeNumber: "98", Numerator: "81", Denominator: "65438", IsNegative: false));
-                yield return new TestCaseData("+85 -81/-58177").Returns((ReturnValue: true, WholeNumber: "85", Numerator: "81", Denominator: "58177", IsNegative: false));
-                yield return new TestCaseData("-42 -82/-948206").Returns((ReturnValue: true, WholeNumber: "42", Numerator: "82", Denominator: "948206", IsNegative: true));
-                yield return new TestCaseData("79-22/-535").Returns((ReturnValue: true, WholeNumber: "79", Numerator: "22", Denominator: "535", IsNegative: false));
-                yield return new TestCaseData("+72-68/-341").Returns((ReturnValue: true, WholeNumber: "72", Numerator: "68", Denominator: "341", IsNegative: false));
-                yield return new TestCaseData("-82-47/-2636393").Returns((ReturnValue: true, WholeNumber: "82", Numerator: "47", Denominator: "2636393", IsNegative: true));
-                yield return new TestCaseData("80 657943/6").Returns((ReturnValue: true, WholeNumber: "80", Numerator: "657943", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+28 8080348/6").Returns((ReturnValue: true, WholeNumber: "28", Numerator: "8080348", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-30 4635/3").Returns((ReturnValue: true, WholeNumber: "30", Numerator: "4635", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("90 +2643246/6").Returns((ReturnValue: true, WholeNumber: "90", Numerator: "2643246", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+77 +261/4").Returns((ReturnValue: true, WholeNumber: "77", Numerator: "261", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("-52 +597/5").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "597", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("57+4917050/5").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "4917050", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("+84+8448/6").Returns((ReturnValue: true, WholeNumber: "84", Numerator: "8448", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-93+8506/1").Returns((ReturnValue: true, WholeNumber: "93", Numerator: "8506", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("26 -3979648/4").Returns((ReturnValue: true, WholeNumber: "26", Numerator: "3979648", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+11 -741/5").Returns((ReturnValue: true, WholeNumber: "11", Numerator: "741", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-75 -630496/8").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "630496", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("52-567923/7").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "567923", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+31-73532/6").Returns((ReturnValue: true, WholeNumber: "31", Numerator: "73532", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-28-215/3").Returns((ReturnValue: true, WholeNumber: "28", Numerator: "215", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("59 8037/+9").Returns((ReturnValue: true, WholeNumber: "59", Numerator: "8037", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+52 4062118/+6").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "4062118", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-12 472/+8").Returns((ReturnValue: true, WholeNumber: "12", Numerator: "472", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("74 +4380257/+3").Returns((ReturnValue: true, WholeNumber: "74", Numerator: "4380257", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+48 +795/+7").Returns((ReturnValue: true, WholeNumber: "48", Numerator: "795", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-44 +115680/+3").Returns((ReturnValue: true, WholeNumber: "44", Numerator: "115680", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("75+389/+5").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "389", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("+57+876/+1").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "876", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-79+836/+7").Returns((ReturnValue: true, WholeNumber: "79", Numerator: "836", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("46 -112535/+8").Returns((ReturnValue: true, WholeNumber: "46", Numerator: "112535", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+47 -8263893/+4").Returns((ReturnValue: true, WholeNumber: "47", Numerator: "8263893", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-27 -138625/+4").Returns((ReturnValue: true, WholeNumber: "27", Numerator: "138625", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("18-30146/+2").Returns((ReturnValue: true, WholeNumber: "18", Numerator: "30146", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+40-8673/+9").Returns((ReturnValue: true, WholeNumber: "40", Numerator: "8673", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("-35-33069/+4").Returns((ReturnValue: true, WholeNumber: "35", Numerator: "33069", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("57 2139912/-8").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "2139912", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+32 1722/-6").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "1722", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-99 899497/-7").Returns((ReturnValue: true, WholeNumber: "99", Numerator: "899497", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("15 +4200101/-5").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "4200101", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("+81 +134542/-1").Returns((ReturnValue: true, WholeNumber: "81", Numerator: "134542", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-12 +4174755/-2").Returns((ReturnValue: true, WholeNumber: "12", Numerator: "4174755", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("96+749476/-4").Returns((ReturnValue: true, WholeNumber: "96", Numerator: "749476", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+32+4978026/-8").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "4978026", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("-52+427808/-5").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "427808", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("82 -2058816/-8").Returns((ReturnValue: true, WholeNumber: "82", Numerator: "2058816", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+63 -49204/-5").Returns((ReturnValue: true, WholeNumber: "63", Numerator: "49204", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-57 -17382/-5").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "17382", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("99-24127/-6").Returns((ReturnValue: true, WholeNumber: "99", Numerator: "24127", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+56-430/-6").Returns((ReturnValue: true, WholeNumber: "56", Numerator: "430", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-58-888/-5").Returns((ReturnValue: true, WholeNumber: "58", Numerator: "888", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("66 434051/21").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "434051", Denominator: "21", IsNegative: false));
-                yield return new TestCaseData("+29 296/49").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "296", Denominator: "49", IsNegative: false));
-                yield return new TestCaseData("-56 6791554/84").Returns((ReturnValue: true, WholeNumber: "56", Numerator: "6791554", Denominator: "84", IsNegative: true));
-                yield return new TestCaseData("58 +520/64").Returns((ReturnValue: true, WholeNumber: "58", Numerator: "520", Denominator: "64", IsNegative: false));
-                yield return new TestCaseData("+51 +6304630/48").Returns((ReturnValue: true, WholeNumber: "51", Numerator: "6304630", Denominator: "48", IsNegative: false));
-                yield return new TestCaseData("-67 +4740/85").Returns((ReturnValue: true, WholeNumber: "67", Numerator: "4740", Denominator: "85", IsNegative: true));
-                yield return new TestCaseData("73+3988933/34").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "3988933", Denominator: "34", IsNegative: false));
-                yield return new TestCaseData("+32+994014/81").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "994014", Denominator: "81", IsNegative: false));
-                yield return new TestCaseData("-18+29117/93").Returns((ReturnValue: true, WholeNumber: "18", Numerator: "29117", Denominator: "93", IsNegative: true));
-                yield return new TestCaseData("15 -3092/53").Returns((ReturnValue: true, WholeNumber: "15", Numerator: "3092", Denominator: "53", IsNegative: true));
-                yield return new TestCaseData("+38 -941924/25").Returns((ReturnValue: true, WholeNumber: "38", Numerator: "941924", Denominator: "25", IsNegative: true));
-                yield return new TestCaseData("-78 -1805/38").Returns((ReturnValue: true, WholeNumber: "78", Numerator: "1805", Denominator: "38", IsNegative: false));
-                yield return new TestCaseData("75-254632/66").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "254632", Denominator: "66", IsNegative: true));
-                yield return new TestCaseData("+47-89330/42").Returns((ReturnValue: true, WholeNumber: "47", Numerator: "89330", Denominator: "42", IsNegative: true));
-                yield return new TestCaseData("-32-47285/45").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "47285", Denominator: "45", IsNegative: false));
-                yield return new TestCaseData("73 2700152/+80").Returns((ReturnValue: true, WholeNumber: "73", Numerator: "2700152", Denominator: "80", IsNegative: false));
-                yield return new TestCaseData("+84 7613056/+94").Returns((ReturnValue: true, WholeNumber: "84", Numerator: "7613056", Denominator: "94", IsNegative: false));
-                yield return new TestCaseData("-98 59111/+23").Returns((ReturnValue: true, WholeNumber: "98", Numerator: "59111", Denominator: "23", IsNegative: true));
-                yield return new TestCaseData("70 +207/+99").Returns((ReturnValue: true, WholeNumber: "70", Numerator: "207", Denominator: "99", IsNegative: false));
-                yield return new TestCaseData("+39 +1727/+44").Returns((ReturnValue: true, WholeNumber: "39", Numerator: "1727", Denominator: "44", IsNegative: false));
-                yield return new TestCaseData("-75 +588/+53").Returns((ReturnValue: true, WholeNumber: "75", Numerator: "588", Denominator: "53", IsNegative: true));
-                yield return new TestCaseData("60+4359/+68").Returns((ReturnValue: true, WholeNumber: "60", Numerator: "4359", Denominator: "68", IsNegative: false));
-                yield return new TestCaseData("+74+7069478/+57").Returns((ReturnValue: true, WholeNumber: "74", Numerator: "7069478", Denominator: "57", IsNegative: false));
-                yield return new TestCaseData("-90+8005845/+43").Returns((ReturnValue: true, WholeNumber: "90", Numerator: "8005845", Denominator: "43", IsNegative: true));
-                yield return new TestCaseData("50 -405/+92").Returns((ReturnValue: true, WholeNumber: "50", Numerator: "405", Denominator: "92", IsNegative: true));
-                yield return new TestCaseData("+63 -398/+26").Returns((ReturnValue: true, WholeNumber: "63", Numerator: "398", Denominator: "26", IsNegative: true));
-                yield return new TestCaseData("-29 -956/+38").Returns((ReturnValue: true, WholeNumber: "29", Numerator: "956", Denominator: "38", IsNegative: false));
-                yield return new TestCaseData("39-1301542/+10").Returns((ReturnValue: true, WholeNumber: "39", Numerator: "1301542", Denominator: "10", IsNegative: true));
-                yield return new TestCaseData("+50-702/+72").Returns((ReturnValue: true, WholeNumber: "50", Numerator: "702", Denominator: "72", IsNegative: true));
-                yield return new TestCaseData("-46-301593/+52").Returns((ReturnValue: true, WholeNumber: "46", Numerator: "301593", Denominator: "52", IsNegative: false));
-                yield return new TestCaseData("52 304/-22").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "304", Denominator: "22", IsNegative: true));
-                yield return new TestCaseData("+88 325/-85").Returns((ReturnValue: true, WholeNumber: "88", Numerator: "325", Denominator: "85", IsNegative: true));
-                yield return new TestCaseData("-39 590646/-26").Returns((ReturnValue: true, WholeNumber: "39", Numerator: "590646", Denominator: "26", IsNegative: false));
-                yield return new TestCaseData("91 +805/-62").Returns((ReturnValue: true, WholeNumber: "91", Numerator: "805", Denominator: "62", IsNegative: true));
-                yield return new TestCaseData("+71 +3381/-58").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "3381", Denominator: "58", IsNegative: true));
-                yield return new TestCaseData("-47 +391/-84").Returns((ReturnValue: true, WholeNumber: "47", Numerator: "391", Denominator: "84", IsNegative: false));
-                yield return new TestCaseData("83+168806/-87").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "168806", Denominator: "87", IsNegative: true));
-                yield return new TestCaseData("+25+969/-77").Returns((ReturnValue: true, WholeNumber: "25", Numerator: "969", Denominator: "77", IsNegative: true));
-                yield return new TestCaseData("-93+4922145/-55").Returns((ReturnValue: true, WholeNumber: "93", Numerator: "4922145", Denominator: "55", IsNegative: false));
-                yield return new TestCaseData("92 -387/-28").Returns((ReturnValue: true, WholeNumber: "92", Numerator: "387", Denominator: "28", IsNegative: false));
-                yield return new TestCaseData("+79 -994/-61").Returns((ReturnValue: true, WholeNumber: "79", Numerator: "994", Denominator: "61", IsNegative: false));
-                yield return new TestCaseData("-40 -1939309/-35").Returns((ReturnValue: true, WholeNumber: "40", Numerator: "1939309", Denominator: "35", IsNegative: true));
-                yield return new TestCaseData("32-109/-14").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "109", Denominator: "14", IsNegative: false));
-                yield return new TestCaseData("+49-148571/-47").Returns((ReturnValue: true, WholeNumber: "49", Numerator: "148571", Denominator: "47", IsNegative: false));
-                yield return new TestCaseData("-78-3882/-28").Returns((ReturnValue: true, WholeNumber: "78", Numerator: "3882", Denominator: "28", IsNegative: true));
-                yield return new TestCaseData("94 7041/8064").Returns((ReturnValue: true, WholeNumber: "94", Numerator: "7041", Denominator: "8064", IsNegative: false));
-                yield return new TestCaseData("+81 1273/347301").Returns((ReturnValue: true, WholeNumber: "81", Numerator: "1273", Denominator: "347301", IsNegative: false));
-                yield return new TestCaseData("-69 13023/787").Returns((ReturnValue: true, WholeNumber: "69", Numerator: "13023", Denominator: "787", IsNegative: true));
-                yield return new TestCaseData("37 +776/96690").Returns((ReturnValue: true, WholeNumber: "37", Numerator: "776", Denominator: "96690", IsNegative: false));
-                yield return new TestCaseData("+60 +650341/166").Returns((ReturnValue: true, WholeNumber: "60", Numerator: "650341", Denominator: "166", IsNegative: false));
-                yield return new TestCaseData("-92 +3148/1136475").Returns((ReturnValue: true, WholeNumber: "92", Numerator: "3148", Denominator: "1136475", IsNegative: true));
-                yield return new TestCaseData("77+88749/331").Returns((ReturnValue: true, WholeNumber: "77", Numerator: "88749", Denominator: "331", IsNegative: false));
-                yield return new TestCaseData("+44+77867/587655").Returns((ReturnValue: true, WholeNumber: "44", Numerator: "77867", Denominator: "587655", IsNegative: false));
-                yield return new TestCaseData("-63+591/4890853").Returns((ReturnValue: true, WholeNumber: "63", Numerator: "591", Denominator: "4890853", IsNegative: true));
-                yield return new TestCaseData("57 -437/7782391").Returns((ReturnValue: true, WholeNumber: "57", Numerator: "437", Denominator: "7782391", IsNegative: true));
-                yield return new TestCaseData("+42 -913/6748").Returns((ReturnValue: true, WholeNumber: "42", Numerator: "913", Denominator: "6748", IsNegative: true));
-                yield return new TestCaseData("-23 -634534/880").Returns((ReturnValue: true, WholeNumber: "23", Numerator: "634534", Denominator: "880", IsNegative: false));
-                yield return new TestCaseData("53-290/575445").Returns((ReturnValue: true, WholeNumber: "53", Numerator: "290", Denominator: "575445", IsNegative: true));
-                yield return new TestCaseData("+22-923800/4399695").Returns((ReturnValue: true, WholeNumber: "22", Numerator: "923800", Denominator: "4399695", IsNegative: true));
-                yield return new TestCaseData("-87-9676/4296282").Returns((ReturnValue: true, WholeNumber: "87", Numerator: "9676", Denominator: "4296282", IsNegative: false));
-                yield return new TestCaseData("54 6721/+595667").Returns((ReturnValue: true, WholeNumber: "54", Numerator: "6721", Denominator: "595667", IsNegative: false));
-                yield return new TestCaseData("+91 3846868/+690").Returns((ReturnValue: true, WholeNumber: "91", Numerator: "3846868", Denominator: "690", IsNegative: false));
-                yield return new TestCaseData("-76 566165/+19889").Returns((ReturnValue: true, WholeNumber: "76", Numerator: "566165", Denominator: "19889", IsNegative: true));
-                yield return new TestCaseData("64 +6295766/+1505525").Returns((ReturnValue: true, WholeNumber: "64", Numerator: "6295766", Denominator: "1505525", IsNegative: false));
-                yield return new TestCaseData("+62 +8447283/+36819").Returns((ReturnValue: true, WholeNumber: "62", Numerator: "8447283", Denominator: "36819", IsNegative: false));
-                yield return new TestCaseData("-91 +610/+90555").Returns((ReturnValue: true, WholeNumber: "91", Numerator: "610", Denominator: "90555", IsNegative: true));
-                yield return new TestCaseData("14+957/+2348593").Returns((ReturnValue: true, WholeNumber: "14", Numerator: "957", Denominator: "2348593", IsNegative: false));
-                yield return new TestCaseData("+90+953/+968069").Returns((ReturnValue: true, WholeNumber: "90", Numerator: "953", Denominator: "968069", IsNegative: false));
-                yield return new TestCaseData("-59+232485/+813").Returns((ReturnValue: true, WholeNumber: "59", Numerator: "232485", Denominator: "813", IsNegative: true));
-                yield return new TestCaseData("56 -492/+791902").Returns((ReturnValue: true, WholeNumber: "56", Numerator: "492", Denominator: "791902", IsNegative: true));
-                yield return new TestCaseData("+10 -139306/+8078764").Returns((ReturnValue: true, WholeNumber: "10", Numerator: "139306", Denominator: "8078764", IsNegative: true));
-                yield return new TestCaseData("-66 -26938/+6759").Returns((ReturnValue: true, WholeNumber: "66", Numerator: "26938", Denominator: "6759", IsNegative: false));
-                yield return new TestCaseData("82-7945/+642").Returns((ReturnValue: true, WholeNumber: "82", Numerator: "7945", Denominator: "642", IsNegative: true));
-                yield return new TestCaseData("+71-574466/+2923").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "574466", Denominator: "2923", IsNegative: true));
-                yield return new TestCaseData("-52-9761495/+5549353").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "9761495", Denominator: "5549353", IsNegative: false));
-                yield return new TestCaseData("89 788112/-805316").Returns((ReturnValue: true, WholeNumber: "89", Numerator: "788112", Denominator: "805316", IsNegative: true));
-                yield return new TestCaseData("+83 882432/-895989").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "882432", Denominator: "895989", IsNegative: true));
-                yield return new TestCaseData("-40 151/-5705").Returns((ReturnValue: true, WholeNumber: "40", Numerator: "151", Denominator: "5705", IsNegative: false));
-                yield return new TestCaseData("52 +6416272/-2453182").Returns((ReturnValue: true, WholeNumber: "52", Numerator: "6416272", Denominator: "2453182", IsNegative: true));
-                yield return new TestCaseData("+26 +9797221/-19382").Returns((ReturnValue: true, WholeNumber: "26", Numerator: "9797221", Denominator: "19382", IsNegative: true));
-                yield return new TestCaseData("-86 +19556/-37094").Returns((ReturnValue: true, WholeNumber: "86", Numerator: "19556", Denominator: "37094", IsNegative: false));
-                yield return new TestCaseData("20+179061/-9169").Returns((ReturnValue: true, WholeNumber: "20", Numerator: "179061", Denominator: "9169", IsNegative: true));
-                yield return new TestCaseData("+92+580126/-84130").Returns((ReturnValue: true, WholeNumber: "92", Numerator: "580126", Denominator: "84130", IsNegative: true));
-                yield return new TestCaseData("-22+99629/-3424").Returns((ReturnValue: true, WholeNumber: "22", Numerator: "99629", Denominator: "3424", IsNegative: false));
-                yield return new TestCaseData("71 -390644/-7666722").Returns((ReturnValue: true, WholeNumber: "71", Numerator: "390644", Denominator: "7666722", IsNegative: false));
-                yield return new TestCaseData("+56 -9986/-390273").Returns((ReturnValue: true, WholeNumber: "56", Numerator: "9986", Denominator: "390273", IsNegative: false));
-                yield return new TestCaseData("-95 -374365/-94343").Returns((ReturnValue: true, WholeNumber: "95", Numerator: "374365", Denominator: "94343", IsNegative: true));
-                yield return new TestCaseData("32-44668/-79555").Returns((ReturnValue: true, WholeNumber: "32", Numerator: "44668", Denominator: "79555", IsNegative: false));
-                yield return new TestCaseData("+62-7004862/-6496").Returns((ReturnValue: true, WholeNumber: "62", Numerator: "7004862", Denominator: "6496", IsNegative: false));
-                yield return new TestCaseData("-83-13458/-120").Returns((ReturnValue: true, WholeNumber: "83", Numerator: "13458", Denominator: "120", IsNegative: true));
-                yield return new TestCaseData("940008").Returns((ReturnValue: true, WholeNumber: "940008", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData("+271339").Returns((ReturnValue: true, WholeNumber: "271339", Numerator: string.Empty, Denominator: string.Empty, IsNegative: false));
-                yield return new TestCaseData("-31216").Returns((ReturnValue: true, WholeNumber: "31216", Numerator: string.Empty, Denominator: string.Empty, IsNegative: true));
-                yield return new TestCaseData("3694 7/8").Returns((ReturnValue: true, WholeNumber: "3694", Numerator: "7", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+7719470 2/1").Returns((ReturnValue: true, WholeNumber: "7719470", Numerator: "2", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-2574366 3/9").Returns((ReturnValue: true, WholeNumber: "2574366", Numerator: "3", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("617295 +5/2").Returns((ReturnValue: true, WholeNumber: "617295", Numerator: "5", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+56121 +6/7").Returns((ReturnValue: true, WholeNumber: "56121", Numerator: "6", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-1237893 +1/9").Returns((ReturnValue: true, WholeNumber: "1237893", Numerator: "1", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("332+8/7").Returns((ReturnValue: true, WholeNumber: "332", Numerator: "8", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+114597+0/2").Returns((ReturnValue: true, WholeNumber: "114597", Numerator: "0", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-731+0/3").Returns((ReturnValue: true, WholeNumber: "731", Numerator: "0", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("719601 -9/8").Returns((ReturnValue: true, WholeNumber: "719601", Numerator: "9", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+639963 -3/4").Returns((ReturnValue: true, WholeNumber: "639963", Numerator: "3", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-49290 -4/6").Returns((ReturnValue: true, WholeNumber: "49290", Numerator: "4", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("61430-4/2").Returns((ReturnValue: true, WholeNumber: "61430", Numerator: "4", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+68434-2/2").Returns((ReturnValue: true, WholeNumber: "68434", Numerator: "2", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-835-6/6").Returns((ReturnValue: true, WholeNumber: "835", Numerator: "6", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("5692219 4/+9").Returns((ReturnValue: true, WholeNumber: "5692219", Numerator: "4", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+315 8/+9").Returns((ReturnValue: true, WholeNumber: "315", Numerator: "8", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-39099 4/+8").Returns((ReturnValue: true, WholeNumber: "39099", Numerator: "4", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("85465 +1/+4").Returns((ReturnValue: true, WholeNumber: "85465", Numerator: "1", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+784318 +4/+6").Returns((ReturnValue: true, WholeNumber: "784318", Numerator: "4", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-3436015 +3/+1").Returns((ReturnValue: true, WholeNumber: "3436015", Numerator: "3", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("878873+6/+5").Returns((ReturnValue: true, WholeNumber: "878873", Numerator: "6", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("+80784+1/+8").Returns((ReturnValue: true, WholeNumber: "80784", Numerator: "1", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-4626178+9/+1").Returns((ReturnValue: true, WholeNumber: "4626178", Numerator: "9", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("456 -3/+2").Returns((ReturnValue: true, WholeNumber: "456", Numerator: "3", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+53864 -0/+2").Returns((ReturnValue: true, WholeNumber: "53864", Numerator: "0", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-621 -6/+7").Returns((ReturnValue: true, WholeNumber: "621", Numerator: "6", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("95367-5/+4").Returns((ReturnValue: true, WholeNumber: "95367", Numerator: "5", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+1293-7/+6").Returns((ReturnValue: true, WholeNumber: "1293", Numerator: "7", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("-426-3/+3").Returns((ReturnValue: true, WholeNumber: "426", Numerator: "3", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("432415 5/-8").Returns((ReturnValue: true, WholeNumber: "432415", Numerator: "5", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+681 8/-2").Returns((ReturnValue: true, WholeNumber: "681", Numerator: "8", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-1424437 1/-3").Returns((ReturnValue: true, WholeNumber: "1424437", Numerator: "1", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("31999 +0/-4").Returns((ReturnValue: true, WholeNumber: "31999", Numerator: "0", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("+2927 +9/-1").Returns((ReturnValue: true, WholeNumber: "2927", Numerator: "9", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-9401 +9/-5").Returns((ReturnValue: true, WholeNumber: "9401", Numerator: "9", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("8307+4/-9").Returns((ReturnValue: true, WholeNumber: "8307", Numerator: "4", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+382579+9/-8").Returns((ReturnValue: true, WholeNumber: "382579", Numerator: "9", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("-137+5/-2").Returns((ReturnValue: true, WholeNumber: "137", Numerator: "5", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("3001991 -9/-5").Returns((ReturnValue: true, WholeNumber: "3001991", Numerator: "9", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("+527169 -7/-5").Returns((ReturnValue: true, WholeNumber: "527169", Numerator: "7", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-314330 -8/-1").Returns((ReturnValue: true, WholeNumber: "314330", Numerator: "8", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("4147948-3/-9").Returns((ReturnValue: true, WholeNumber: "4147948", Numerator: "3", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+3822-0/-7").Returns((ReturnValue: true, WholeNumber: "3822", Numerator: "0", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-1493-5/-4").Returns((ReturnValue: true, WholeNumber: "1493", Numerator: "5", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("883 4/62").Returns((ReturnValue: true, WholeNumber: "883", Numerator: "4", Denominator: "62", IsNegative: false));
-                yield return new TestCaseData("+428 2/47").Returns((ReturnValue: true, WholeNumber: "428", Numerator: "2", Denominator: "47", IsNegative: false));
-                yield return new TestCaseData("-872106 3/13").Returns((ReturnValue: true, WholeNumber: "872106", Numerator: "3", Denominator: "13", IsNegative: true));
-                yield return new TestCaseData("5616 +2/78").Returns((ReturnValue: true, WholeNumber: "5616", Numerator: "2", Denominator: "78", IsNegative: false));
-                yield return new TestCaseData("+573 +6/11").Returns((ReturnValue: true, WholeNumber: "573", Numerator: "6", Denominator: "11", IsNegative: false));
-                yield return new TestCaseData("-4299758 +0/40").Returns((ReturnValue: true, WholeNumber: "4299758", Numerator: "0", Denominator: "40", IsNegative: true));
-                yield return new TestCaseData("9414567+4/77").Returns((ReturnValue: true, WholeNumber: "9414567", Numerator: "4", Denominator: "77", IsNegative: false));
-                yield return new TestCaseData("+897+8/92").Returns((ReturnValue: true, WholeNumber: "897", Numerator: "8", Denominator: "92", IsNegative: false));
-                yield return new TestCaseData("-633288+2/88").Returns((ReturnValue: true, WholeNumber: "633288", Numerator: "2", Denominator: "88", IsNegative: true));
-                yield return new TestCaseData("274 -3/46").Returns((ReturnValue: true, WholeNumber: "274", Numerator: "3", Denominator: "46", IsNegative: true));
-                yield return new TestCaseData("+528 -4/19").Returns((ReturnValue: true, WholeNumber: "528", Numerator: "4", Denominator: "19", IsNegative: true));
-                yield return new TestCaseData("-3900974 -7/89").Returns((ReturnValue: true, WholeNumber: "3900974", Numerator: "7", Denominator: "89", IsNegative: false));
-                yield return new TestCaseData("333-5/87").Returns((ReturnValue: true, WholeNumber: "333", Numerator: "5", Denominator: "87", IsNegative: true));
-                yield return new TestCaseData("+5578-4/82").Returns((ReturnValue: true, WholeNumber: "5578", Numerator: "4", Denominator: "82", IsNegative: true));
-                yield return new TestCaseData("-2016878-6/28").Returns((ReturnValue: true, WholeNumber: "2016878", Numerator: "6", Denominator: "28", IsNegative: false));
-                yield return new TestCaseData("5397038 3/+79").Returns((ReturnValue: true, WholeNumber: "5397038", Numerator: "3", Denominator: "79", IsNegative: false));
-                yield return new TestCaseData("+523 3/+70").Returns((ReturnValue: true, WholeNumber: "523", Numerator: "3", Denominator: "70", IsNegative: false));
-                yield return new TestCaseData("-4659 7/+96").Returns((ReturnValue: true, WholeNumber: "4659", Numerator: "7", Denominator: "96", IsNegative: true));
-                yield return new TestCaseData("3473 +0/+50").Returns((ReturnValue: true, WholeNumber: "3473", Numerator: "0", Denominator: "50", IsNegative: false));
-                yield return new TestCaseData("+9141665 +3/+66").Returns((ReturnValue: true, WholeNumber: "9141665", Numerator: "3", Denominator: "66", IsNegative: false));
-                yield return new TestCaseData("-5750 +7/+78").Returns((ReturnValue: true, WholeNumber: "5750", Numerator: "7", Denominator: "78", IsNegative: true));
-                yield return new TestCaseData("9682+5/+26").Returns((ReturnValue: true, WholeNumber: "9682", Numerator: "5", Denominator: "26", IsNegative: false));
-                yield return new TestCaseData("+526+0/+91").Returns((ReturnValue: true, WholeNumber: "526", Numerator: "0", Denominator: "91", IsNegative: false));
-                yield return new TestCaseData("-20477+4/+56").Returns((ReturnValue: true, WholeNumber: "20477", Numerator: "4", Denominator: "56", IsNegative: true));
-                yield return new TestCaseData("709 -0/+54").Returns((ReturnValue: true, WholeNumber: "709", Numerator: "0", Denominator: "54", IsNegative: true));
-                yield return new TestCaseData("+1341603 -6/+66").Returns((ReturnValue: true, WholeNumber: "1341603", Numerator: "6", Denominator: "66", IsNegative: true));
-                yield return new TestCaseData("-62082 -6/+18").Returns((ReturnValue: true, WholeNumber: "62082", Numerator: "6", Denominator: "18", IsNegative: false));
-                yield return new TestCaseData("98662-8/+96").Returns((ReturnValue: true, WholeNumber: "98662", Numerator: "8", Denominator: "96", IsNegative: true));
-                yield return new TestCaseData("+104333-9/+48").Returns((ReturnValue: true, WholeNumber: "104333", Numerator: "9", Denominator: "48", IsNegative: true));
-                yield return new TestCaseData("-674961-4/+15").Returns((ReturnValue: true, WholeNumber: "674961", Numerator: "4", Denominator: "15", IsNegative: false));
-                yield return new TestCaseData("2441900 5/-78").Returns((ReturnValue: true, WholeNumber: "2441900", Numerator: "5", Denominator: "78", IsNegative: true));
-                yield return new TestCaseData("+8587 4/-18").Returns((ReturnValue: true, WholeNumber: "8587", Numerator: "4", Denominator: "18", IsNegative: true));
-                yield return new TestCaseData("-5476974 3/-31").Returns((ReturnValue: true, WholeNumber: "5476974", Numerator: "3", Denominator: "31", IsNegative: false));
-                yield return new TestCaseData("9008047 +6/-26").Returns((ReturnValue: true, WholeNumber: "9008047", Numerator: "6", Denominator: "26", IsNegative: true));
-                yield return new TestCaseData("+1761563 +2/-78").Returns((ReturnValue: true, WholeNumber: "1761563", Numerator: "2", Denominator: "78", IsNegative: true));
-                yield return new TestCaseData("-5072 +6/-25").Returns((ReturnValue: true, WholeNumber: "5072", Numerator: "6", Denominator: "25", IsNegative: false));
-                yield return new TestCaseData("14345+1/-60").Returns((ReturnValue: true, WholeNumber: "14345", Numerator: "1", Denominator: "60", IsNegative: true));
-                yield return new TestCaseData("+127+7/-49").Returns((ReturnValue: true, WholeNumber: "127", Numerator: "7", Denominator: "49", IsNegative: true));
-                yield return new TestCaseData("-1036+5/-83").Returns((ReturnValue: true, WholeNumber: "1036", Numerator: "5", Denominator: "83", IsNegative: false));
-                yield return new TestCaseData("90306 -2/-70").Returns((ReturnValue: true, WholeNumber: "90306", Numerator: "2", Denominator: "70", IsNegative: false));
-                yield return new TestCaseData("+605 -2/-99").Returns((ReturnValue: true, WholeNumber: "605", Numerator: "2", Denominator: "99", IsNegative: false));
-                yield return new TestCaseData("-683850 -1/-85").Returns((ReturnValue: true, WholeNumber: "683850", Numerator: "1", Denominator: "85", IsNegative: true));
-                yield return new TestCaseData("8116-5/-72").Returns((ReturnValue: true, WholeNumber: "8116", Numerator: "5", Denominator: "72", IsNegative: false));
-                yield return new TestCaseData("+6989-7/-52").Returns((ReturnValue: true, WholeNumber: "6989", Numerator: "7", Denominator: "52", IsNegative: false));
-                yield return new TestCaseData("-40472-1/-41").Returns((ReturnValue: true, WholeNumber: "40472", Numerator: "1", Denominator: "41", IsNegative: true));
-                yield return new TestCaseData("861615 9/782546").Returns((ReturnValue: true, WholeNumber: "861615", Numerator: "9", Denominator: "782546", IsNegative: false));
-                yield return new TestCaseData("+9932718 8/8527").Returns((ReturnValue: true, WholeNumber: "9932718", Numerator: "8", Denominator: "8527", IsNegative: false));
-                yield return new TestCaseData("-986107 8/62930").Returns((ReturnValue: true, WholeNumber: "986107", Numerator: "8", Denominator: "62930", IsNegative: true));
-                yield return new TestCaseData("258344 +6/94252").Returns((ReturnValue: true, WholeNumber: "258344", Numerator: "6", Denominator: "94252", IsNegative: false));
-                yield return new TestCaseData("+3986661 +2/5332").Returns((ReturnValue: true, WholeNumber: "3986661", Numerator: "2", Denominator: "5332", IsNegative: false));
-                yield return new TestCaseData("-142 +5/1884").Returns((ReturnValue: true, WholeNumber: "142", Numerator: "5", Denominator: "1884", IsNegative: true));
-                yield return new TestCaseData("2676+7/9992387").Returns((ReturnValue: true, WholeNumber: "2676", Numerator: "7", Denominator: "9992387", IsNegative: false));
-                yield return new TestCaseData("+6481+4/7204").Returns((ReturnValue: true, WholeNumber: "6481", Numerator: "4", Denominator: "7204", IsNegative: false));
-                yield return new TestCaseData("-365935+5/21630").Returns((ReturnValue: true, WholeNumber: "365935", Numerator: "5", Denominator: "21630", IsNegative: true));
-                yield return new TestCaseData("85299 -8/105").Returns((ReturnValue: true, WholeNumber: "85299", Numerator: "8", Denominator: "105", IsNegative: true));
-                yield return new TestCaseData("+7974 -7/4846").Returns((ReturnValue: true, WholeNumber: "7974", Numerator: "7", Denominator: "4846", IsNegative: true));
-                yield return new TestCaseData("-6783 -6/7406").Returns((ReturnValue: true, WholeNumber: "6783", Numerator: "6", Denominator: "7406", IsNegative: false));
-                yield return new TestCaseData("4692296-5/5407").Returns((ReturnValue: true, WholeNumber: "4692296", Numerator: "5", Denominator: "5407", IsNegative: true));
-                yield return new TestCaseData("+33948-9/33271").Returns((ReturnValue: true, WholeNumber: "33948", Numerator: "9", Denominator: "33271", IsNegative: true));
-                yield return new TestCaseData("-718-4/3519412").Returns((ReturnValue: true, WholeNumber: "718", Numerator: "4", Denominator: "3519412", IsNegative: false));
-                yield return new TestCaseData("830162 6/+9251").Returns((ReturnValue: true, WholeNumber: "830162", Numerator: "6", Denominator: "9251", IsNegative: false));
-                yield return new TestCaseData("+3066 5/+8233").Returns((ReturnValue: true, WholeNumber: "3066", Numerator: "5", Denominator: "8233", IsNegative: false));
-                yield return new TestCaseData("-46476 4/+69508").Returns((ReturnValue: true, WholeNumber: "46476", Numerator: "4", Denominator: "69508", IsNegative: true));
-                yield return new TestCaseData("104437 +1/+82807").Returns((ReturnValue: true, WholeNumber: "104437", Numerator: "1", Denominator: "82807", IsNegative: false));
-                yield return new TestCaseData("+7423 +2/+688").Returns((ReturnValue: true, WholeNumber: "7423", Numerator: "2", Denominator: "688", IsNegative: false));
-                yield return new TestCaseData("-8737 +2/+8798847").Returns((ReturnValue: true, WholeNumber: "8737", Numerator: "2", Denominator: "8798847", IsNegative: true));
-                yield return new TestCaseData("388265+9/+8204027").Returns((ReturnValue: true, WholeNumber: "388265", Numerator: "9", Denominator: "8204027", IsNegative: false));
-                yield return new TestCaseData("+96021+3/+5518").Returns((ReturnValue: true, WholeNumber: "96021", Numerator: "3", Denominator: "5518", IsNegative: false));
-                yield return new TestCaseData("-914830+3/+92617").Returns((ReturnValue: true, WholeNumber: "914830", Numerator: "3", Denominator: "92617", IsNegative: true));
-                yield return new TestCaseData("806 -5/+6145133").Returns((ReturnValue: true, WholeNumber: "806", Numerator: "5", Denominator: "6145133", IsNegative: true));
-                yield return new TestCaseData("+554 -9/+130").Returns((ReturnValue: true, WholeNumber: "554", Numerator: "9", Denominator: "130", IsNegative: true));
-                yield return new TestCaseData("-5619560 -6/+65654").Returns((ReturnValue: true, WholeNumber: "5619560", Numerator: "6", Denominator: "65654", IsNegative: false));
-                yield return new TestCaseData("9902-6/+2765").Returns((ReturnValue: true, WholeNumber: "9902", Numerator: "6", Denominator: "2765", IsNegative: true));
-                yield return new TestCaseData("+5431-5/+221090").Returns((ReturnValue: true, WholeNumber: "5431", Numerator: "5", Denominator: "221090", IsNegative: true));
-                yield return new TestCaseData("-658088-7/+242").Returns((ReturnValue: true, WholeNumber: "658088", Numerator: "7", Denominator: "242", IsNegative: false));
-                yield return new TestCaseData("4367 8/-625").Returns((ReturnValue: true, WholeNumber: "4367", Numerator: "8", Denominator: "625", IsNegative: true));
-                yield return new TestCaseData("+40100 3/-7584").Returns((ReturnValue: true, WholeNumber: "40100", Numerator: "3", Denominator: "7584", IsNegative: true));
-                yield return new TestCaseData("-453 8/-8985222").Returns((ReturnValue: true, WholeNumber: "453", Numerator: "8", Denominator: "8985222", IsNegative: false));
-                yield return new TestCaseData("366 +8/-236763").Returns((ReturnValue: true, WholeNumber: "366", Numerator: "8", Denominator: "236763", IsNegative: true));
-                yield return new TestCaseData("+297358 +9/-6998").Returns((ReturnValue: true, WholeNumber: "297358", Numerator: "9", Denominator: "6998", IsNegative: true));
-                yield return new TestCaseData("-33607 +8/-856526").Returns((ReturnValue: true, WholeNumber: "33607", Numerator: "8", Denominator: "856526", IsNegative: false));
-                yield return new TestCaseData("74040+9/-7240736").Returns((ReturnValue: true, WholeNumber: "74040", Numerator: "9", Denominator: "7240736", IsNegative: true));
-                yield return new TestCaseData("+67074+5/-1947068").Returns((ReturnValue: true, WholeNumber: "67074", Numerator: "5", Denominator: "1947068", IsNegative: true));
-                yield return new TestCaseData("-698+4/-183894").Returns((ReturnValue: true, WholeNumber: "698", Numerator: "4", Denominator: "183894", IsNegative: false));
-                yield return new TestCaseData("6748106 -5/-209054").Returns((ReturnValue: true, WholeNumber: "6748106", Numerator: "5", Denominator: "209054", IsNegative: false));
-                yield return new TestCaseData("+82048 -0/-5468403").Returns((ReturnValue: true, WholeNumber: "82048", Numerator: "0", Denominator: "5468403", IsNegative: false));
-                yield return new TestCaseData("-469 -6/-10603").Returns((ReturnValue: true, WholeNumber: "469", Numerator: "6", Denominator: "10603", IsNegative: true));
-                yield return new TestCaseData("5142-5/-29508").Returns((ReturnValue: true, WholeNumber: "5142", Numerator: "5", Denominator: "29508", IsNegative: false));
-                yield return new TestCaseData("+5419-9/-4133").Returns((ReturnValue: true, WholeNumber: "5419", Numerator: "9", Denominator: "4133", IsNegative: false));
-                yield return new TestCaseData("-7706-8/-222687").Returns((ReturnValue: true, WholeNumber: "7706", Numerator: "8", Denominator: "222687", IsNegative: true));
-                yield return new TestCaseData("8022991 38/2").Returns((ReturnValue: true, WholeNumber: "8022991", Numerator: "38", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+9449206 69/1").Returns((ReturnValue: true, WholeNumber: "9449206", Numerator: "69", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-464905 74/7").Returns((ReturnValue: true, WholeNumber: "464905", Numerator: "74", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("464 +61/2").Returns((ReturnValue: true, WholeNumber: "464", Numerator: "61", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+1974539 +97/8").Returns((ReturnValue: true, WholeNumber: "1974539", Numerator: "97", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("-20926 +12/4").Returns((ReturnValue: true, WholeNumber: "20926", Numerator: "12", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("430600+71/4").Returns((ReturnValue: true, WholeNumber: "430600", Numerator: "71", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+76775+72/9").Returns((ReturnValue: true, WholeNumber: "76775", Numerator: "72", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-7633+54/4").Returns((ReturnValue: true, WholeNumber: "7633", Numerator: "54", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("574 -67/1").Returns((ReturnValue: true, WholeNumber: "574", Numerator: "67", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("+41509 -89/1").Returns((ReturnValue: true, WholeNumber: "41509", Numerator: "89", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-73160 -51/5").Returns((ReturnValue: true, WholeNumber: "73160", Numerator: "51", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("297530-46/6").Returns((ReturnValue: true, WholeNumber: "297530", Numerator: "46", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+8303198-62/8").Returns((ReturnValue: true, WholeNumber: "8303198", Numerator: "62", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("-903200-48/4").Returns((ReturnValue: true, WholeNumber: "903200", Numerator: "48", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("3647 72/+9").Returns((ReturnValue: true, WholeNumber: "3647", Numerator: "72", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+776988 40/+3").Returns((ReturnValue: true, WholeNumber: "776988", Numerator: "40", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("-3080523 13/+5").Returns((ReturnValue: true, WholeNumber: "3080523", Numerator: "13", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("91584 +33/+2").Returns((ReturnValue: true, WholeNumber: "91584", Numerator: "33", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("+1281 +93/+1").Returns((ReturnValue: true, WholeNumber: "1281", Numerator: "93", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-2240627 +73/+2").Returns((ReturnValue: true, WholeNumber: "2240627", Numerator: "73", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("1477+18/+5").Returns((ReturnValue: true, WholeNumber: "1477", Numerator: "18", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("+661+63/+2").Returns((ReturnValue: true, WholeNumber: "661", Numerator: "63", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("-274+83/+3").Returns((ReturnValue: true, WholeNumber: "274", Numerator: "83", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("968427 -35/+7").Returns((ReturnValue: true, WholeNumber: "968427", Numerator: "35", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+2537 -67/+4").Returns((ReturnValue: true, WholeNumber: "2537", Numerator: "67", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-955 -24/+9").Returns((ReturnValue: true, WholeNumber: "955", Numerator: "24", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("43820-67/+7").Returns((ReturnValue: true, WholeNumber: "43820", Numerator: "67", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+4848437-58/+2").Returns((ReturnValue: true, WholeNumber: "4848437", Numerator: "58", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-54843-61/+6").Returns((ReturnValue: true, WholeNumber: "54843", Numerator: "61", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("809909 22/-3").Returns((ReturnValue: true, WholeNumber: "809909", Numerator: "22", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("+856098 41/-3").Returns((ReturnValue: true, WholeNumber: "856098", Numerator: "41", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-975 59/-3").Returns((ReturnValue: true, WholeNumber: "975", Numerator: "59", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("257141 +66/-7").Returns((ReturnValue: true, WholeNumber: "257141", Numerator: "66", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+35525 +11/-4").Returns((ReturnValue: true, WholeNumber: "35525", Numerator: "11", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-2263962 +99/-8").Returns((ReturnValue: true, WholeNumber: "2263962", Numerator: "99", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("8887987+30/-7").Returns((ReturnValue: true, WholeNumber: "8887987", Numerator: "30", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+730117+73/-2").Returns((ReturnValue: true, WholeNumber: "730117", Numerator: "73", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-6608+18/-6").Returns((ReturnValue: true, WholeNumber: "6608", Numerator: "18", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("425 -81/-4").Returns((ReturnValue: true, WholeNumber: "425", Numerator: "81", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+89437 -87/-6").Returns((ReturnValue: true, WholeNumber: "89437", Numerator: "87", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-4275352 -97/-8").Returns((ReturnValue: true, WholeNumber: "4275352", Numerator: "97", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("821706-65/-3").Returns((ReturnValue: true, WholeNumber: "821706", Numerator: "65", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+26891-79/-5").Returns((ReturnValue: true, WholeNumber: "26891", Numerator: "79", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-419789-36/-7").Returns((ReturnValue: true, WholeNumber: "419789", Numerator: "36", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("712136 66/45").Returns((ReturnValue: true, WholeNumber: "712136", Numerator: "66", Denominator: "45", IsNegative: false));
-                yield return new TestCaseData("+4530 89/21").Returns((ReturnValue: true, WholeNumber: "4530", Numerator: "89", Denominator: "21", IsNegative: false));
-                yield return new TestCaseData("-146 72/21").Returns((ReturnValue: true, WholeNumber: "146", Numerator: "72", Denominator: "21", IsNegative: true));
-                yield return new TestCaseData("70640 +81/10").Returns((ReturnValue: true, WholeNumber: "70640", Numerator: "81", Denominator: "10", IsNegative: false));
-                yield return new TestCaseData("+4850 +95/66").Returns((ReturnValue: true, WholeNumber: "4850", Numerator: "95", Denominator: "66", IsNegative: false));
-                yield return new TestCaseData("-4937656 +88/87").Returns((ReturnValue: true, WholeNumber: "4937656", Numerator: "88", Denominator: "87", IsNegative: true));
-                yield return new TestCaseData("469+70/27").Returns((ReturnValue: true, WholeNumber: "469", Numerator: "70", Denominator: "27", IsNegative: false));
-                yield return new TestCaseData("+6240838+81/71").Returns((ReturnValue: true, WholeNumber: "6240838", Numerator: "81", Denominator: "71", IsNegative: false));
-                yield return new TestCaseData("-124+75/92").Returns((ReturnValue: true, WholeNumber: "124", Numerator: "75", Denominator: "92", IsNegative: true));
-                yield return new TestCaseData("5274 -37/49").Returns((ReturnValue: true, WholeNumber: "5274", Numerator: "37", Denominator: "49", IsNegative: true));
-                yield return new TestCaseData("+86349 -74/76").Returns((ReturnValue: true, WholeNumber: "86349", Numerator: "74", Denominator: "76", IsNegative: true));
-                yield return new TestCaseData("-538 -82/82").Returns((ReturnValue: true, WholeNumber: "538", Numerator: "82", Denominator: "82", IsNegative: false));
-                yield return new TestCaseData("7884-31/42").Returns((ReturnValue: true, WholeNumber: "7884", Numerator: "31", Denominator: "42", IsNegative: true));
-                yield return new TestCaseData("+70477-87/25").Returns((ReturnValue: true, WholeNumber: "70477", Numerator: "87", Denominator: "25", IsNegative: true));
-                yield return new TestCaseData("-7902360-38/86").Returns((ReturnValue: true, WholeNumber: "7902360", Numerator: "38", Denominator: "86", IsNegative: false));
-                yield return new TestCaseData("717903 34/+54").Returns((ReturnValue: true, WholeNumber: "717903", Numerator: "34", Denominator: "54", IsNegative: false));
-                yield return new TestCaseData("+1168 15/+52").Returns((ReturnValue: true, WholeNumber: "1168", Numerator: "15", Denominator: "52", IsNegative: false));
-                yield return new TestCaseData("-8852987 77/+81").Returns((ReturnValue: true, WholeNumber: "8852987", Numerator: "77", Denominator: "81", IsNegative: true));
-                yield return new TestCaseData("568 +23/+15").Returns((ReturnValue: true, WholeNumber: "568", Numerator: "23", Denominator: "15", IsNegative: false));
-                yield return new TestCaseData("+218842 +77/+63").Returns((ReturnValue: true, WholeNumber: "218842", Numerator: "77", Denominator: "63", IsNegative: false));
-                yield return new TestCaseData("-878041 +82/+17").Returns((ReturnValue: true, WholeNumber: "878041", Numerator: "82", Denominator: "17", IsNegative: true));
-                yield return new TestCaseData("4863+35/+45").Returns((ReturnValue: true, WholeNumber: "4863", Numerator: "35", Denominator: "45", IsNegative: false));
-                yield return new TestCaseData("+603+20/+54").Returns((ReturnValue: true, WholeNumber: "603", Numerator: "20", Denominator: "54", IsNegative: false));
-                yield return new TestCaseData("-511+74/+81").Returns((ReturnValue: true, WholeNumber: "511", Numerator: "74", Denominator: "81", IsNegative: true));
-                yield return new TestCaseData("29640 -53/+17").Returns((ReturnValue: true, WholeNumber: "29640", Numerator: "53", Denominator: "17", IsNegative: true));
-                yield return new TestCaseData("+40392 -88/+57").Returns((ReturnValue: true, WholeNumber: "40392", Numerator: "88", Denominator: "57", IsNegative: true));
-                yield return new TestCaseData("-496 -31/+89").Returns((ReturnValue: true, WholeNumber: "496", Numerator: "31", Denominator: "89", IsNegative: false));
-                yield return new TestCaseData("81898-50/+70").Returns((ReturnValue: true, WholeNumber: "81898", Numerator: "50", Denominator: "70", IsNegative: true));
-                yield return new TestCaseData("+746-32/+86").Returns((ReturnValue: true, WholeNumber: "746", Numerator: "32", Denominator: "86", IsNegative: true));
-                yield return new TestCaseData("-2671649-23/+84").Returns((ReturnValue: true, WholeNumber: "2671649", Numerator: "23", Denominator: "84", IsNegative: false));
-                yield return new TestCaseData("703243 36/-44").Returns((ReturnValue: true, WholeNumber: "703243", Numerator: "36", Denominator: "44", IsNegative: true));
-                yield return new TestCaseData("+329010 67/-69").Returns((ReturnValue: true, WholeNumber: "329010", Numerator: "67", Denominator: "69", IsNegative: true));
-                yield return new TestCaseData("-4182428 53/-55").Returns((ReturnValue: true, WholeNumber: "4182428", Numerator: "53", Denominator: "55", IsNegative: false));
-                yield return new TestCaseData("701377 +25/-34").Returns((ReturnValue: true, WholeNumber: "701377", Numerator: "25", Denominator: "34", IsNegative: true));
-                yield return new TestCaseData("+3512398 +16/-91").Returns((ReturnValue: true, WholeNumber: "3512398", Numerator: "16", Denominator: "91", IsNegative: true));
-                yield return new TestCaseData("-457 +88/-43").Returns((ReturnValue: true, WholeNumber: "457", Numerator: "88", Denominator: "43", IsNegative: false));
-                yield return new TestCaseData("497+53/-50").Returns((ReturnValue: true, WholeNumber: "497", Numerator: "53", Denominator: "50", IsNegative: true));
-                yield return new TestCaseData("+8756+91/-45").Returns((ReturnValue: true, WholeNumber: "8756", Numerator: "91", Denominator: "45", IsNegative: true));
-                yield return new TestCaseData("-684+40/-77").Returns((ReturnValue: true, WholeNumber: "684", Numerator: "40", Denominator: "77", IsNegative: false));
-                yield return new TestCaseData("536 -78/-78").Returns((ReturnValue: true, WholeNumber: "536", Numerator: "78", Denominator: "78", IsNegative: false));
-                yield return new TestCaseData("+6227727 -16/-25").Returns((ReturnValue: true, WholeNumber: "6227727", Numerator: "16", Denominator: "25", IsNegative: false));
-                yield return new TestCaseData("-9497 -12/-41").Returns((ReturnValue: true, WholeNumber: "9497", Numerator: "12", Denominator: "41", IsNegative: true));
-                yield return new TestCaseData("98175-87/-64").Returns((ReturnValue: true, WholeNumber: "98175", Numerator: "87", Denominator: "64", IsNegative: false));
-                yield return new TestCaseData("+325-68/-40").Returns((ReturnValue: true, WholeNumber: "325", Numerator: "68", Denominator: "40", IsNegative: false));
-                yield return new TestCaseData("-9316876-34/-38").Returns((ReturnValue: true, WholeNumber: "9316876", Numerator: "34", Denominator: "38", IsNegative: true));
-                yield return new TestCaseData("271809 50/5012536").Returns((ReturnValue: true, WholeNumber: "271809", Numerator: "50", Denominator: "5012536", IsNegative: false));
-                yield return new TestCaseData("+496 10/4774").Returns((ReturnValue: true, WholeNumber: "496", Numerator: "10", Denominator: "4774", IsNegative: false));
-                yield return new TestCaseData("-5613 56/1884").Returns((ReturnValue: true, WholeNumber: "5613", Numerator: "56", Denominator: "1884", IsNegative: true));
-                yield return new TestCaseData("389049 +72/249").Returns((ReturnValue: true, WholeNumber: "389049", Numerator: "72", Denominator: "249", IsNegative: false));
-                yield return new TestCaseData("+21930 +90/1047").Returns((ReturnValue: true, WholeNumber: "21930", Numerator: "90", Denominator: "1047", IsNegative: false));
-                yield return new TestCaseData("-3463 +83/101").Returns((ReturnValue: true, WholeNumber: "3463", Numerator: "83", Denominator: "101", IsNegative: true));
-                yield return new TestCaseData("2055274+29/98846").Returns((ReturnValue: true, WholeNumber: "2055274", Numerator: "29", Denominator: "98846", IsNegative: false));
-                yield return new TestCaseData("+215828+22/305693").Returns((ReturnValue: true, WholeNumber: "215828", Numerator: "22", Denominator: "305693", IsNegative: false));
-                yield return new TestCaseData("-11975+12/778").Returns((ReturnValue: true, WholeNumber: "11975", Numerator: "12", Denominator: "778", IsNegative: true));
-                yield return new TestCaseData("1816 -83/135").Returns((ReturnValue: true, WholeNumber: "1816", Numerator: "83", Denominator: "135", IsNegative: true));
-                yield return new TestCaseData("+196 -88/907").Returns((ReturnValue: true, WholeNumber: "196", Numerator: "88", Denominator: "907", IsNegative: true));
-                yield return new TestCaseData("-364526 -30/2281509").Returns((ReturnValue: true, WholeNumber: "364526", Numerator: "30", Denominator: "2281509", IsNegative: false));
-                yield return new TestCaseData("6633084-99/5229").Returns((ReturnValue: true, WholeNumber: "6633084", Numerator: "99", Denominator: "5229", IsNegative: true));
-                yield return new TestCaseData("+370-15/5363").Returns((ReturnValue: true, WholeNumber: "370", Numerator: "15", Denominator: "5363", IsNegative: true));
-                yield return new TestCaseData("-26857-97/6958834").Returns((ReturnValue: true, WholeNumber: "26857", Numerator: "97", Denominator: "6958834", IsNegative: false));
-                yield return new TestCaseData("1992 79/+69518").Returns((ReturnValue: true, WholeNumber: "1992", Numerator: "79", Denominator: "69518", IsNegative: false));
-                yield return new TestCaseData("+5159 69/+9827141").Returns((ReturnValue: true, WholeNumber: "5159", Numerator: "69", Denominator: "9827141", IsNegative: false));
-                yield return new TestCaseData("-3224210 19/+40958").Returns((ReturnValue: true, WholeNumber: "3224210", Numerator: "19", Denominator: "40958", IsNegative: true));
-                yield return new TestCaseData("9157 +27/+47128").Returns((ReturnValue: true, WholeNumber: "9157", Numerator: "27", Denominator: "47128", IsNegative: false));
-                yield return new TestCaseData("+1230089 +73/+680229").Returns((ReturnValue: true, WholeNumber: "1230089", Numerator: "73", Denominator: "680229", IsNegative: false));
-                yield return new TestCaseData("-123 +54/+606381").Returns((ReturnValue: true, WholeNumber: "123", Numerator: "54", Denominator: "606381", IsNegative: true));
-                yield return new TestCaseData("2264223+14/+54957").Returns((ReturnValue: true, WholeNumber: "2264223", Numerator: "14", Denominator: "54957", IsNegative: false));
-                yield return new TestCaseData("+57289+77/+9367").Returns((ReturnValue: true, WholeNumber: "57289", Numerator: "77", Denominator: "9367", IsNegative: false));
-                yield return new TestCaseData("-9678+12/+6652").Returns((ReturnValue: true, WholeNumber: "9678", Numerator: "12", Denominator: "6652", IsNegative: true));
-                yield return new TestCaseData("2746231 -56/+2486855").Returns((ReturnValue: true, WholeNumber: "2746231", Numerator: "56", Denominator: "2486855", IsNegative: true));
-                yield return new TestCaseData("+99172 -44/+80543").Returns((ReturnValue: true, WholeNumber: "99172", Numerator: "44", Denominator: "80543", IsNegative: true));
-                yield return new TestCaseData("-4688 -19/+6558644").Returns((ReturnValue: true, WholeNumber: "4688", Numerator: "19", Denominator: "6558644", IsNegative: false));
-                yield return new TestCaseData("972-99/+23221").Returns((ReturnValue: true, WholeNumber: "972", Numerator: "99", Denominator: "23221", IsNegative: true));
-                yield return new TestCaseData("+282202-69/+829").Returns((ReturnValue: true, WholeNumber: "282202", Numerator: "69", Denominator: "829", IsNegative: true));
-                yield return new TestCaseData("-244360-92/+152798").Returns((ReturnValue: true, WholeNumber: "244360", Numerator: "92", Denominator: "152798", IsNegative: false));
-                yield return new TestCaseData("9940659 42/-804").Returns((ReturnValue: true, WholeNumber: "9940659", Numerator: "42", Denominator: "804", IsNegative: true));
-                yield return new TestCaseData("+5623131 56/-99271").Returns((ReturnValue: true, WholeNumber: "5623131", Numerator: "56", Denominator: "99271", IsNegative: true));
-                yield return new TestCaseData("-7829235 66/-214804").Returns((ReturnValue: true, WholeNumber: "7829235", Numerator: "66", Denominator: "214804", IsNegative: false));
-                yield return new TestCaseData("473 +92/-768879").Returns((ReturnValue: true, WholeNumber: "473", Numerator: "92", Denominator: "768879", IsNegative: true));
-                yield return new TestCaseData("+9732 +66/-933").Returns((ReturnValue: true, WholeNumber: "9732", Numerator: "66", Denominator: "933", IsNegative: true));
-                yield return new TestCaseData("-578504 +51/-433").Returns((ReturnValue: true, WholeNumber: "578504", Numerator: "51", Denominator: "433", IsNegative: false));
-                yield return new TestCaseData("16330+75/-8827").Returns((ReturnValue: true, WholeNumber: "16330", Numerator: "75", Denominator: "8827", IsNegative: true));
-                yield return new TestCaseData("+1453+17/-791").Returns((ReturnValue: true, WholeNumber: "1453", Numerator: "17", Denominator: "791", IsNegative: true));
-                yield return new TestCaseData("-505244+54/-37344").Returns((ReturnValue: true, WholeNumber: "505244", Numerator: "54", Denominator: "37344", IsNegative: false));
-                yield return new TestCaseData("6135862 -10/-7191120").Returns((ReturnValue: true, WholeNumber: "6135862", Numerator: "10", Denominator: "7191120", IsNegative: false));
-                yield return new TestCaseData("+3213 -33/-7063929").Returns((ReturnValue: true, WholeNumber: "3213", Numerator: "33", Denominator: "7063929", IsNegative: false));
-                yield return new TestCaseData("-4265403 -24/-211").Returns((ReturnValue: true, WholeNumber: "4265403", Numerator: "24", Denominator: "211", IsNegative: true));
-                yield return new TestCaseData("1482-41/-623").Returns((ReturnValue: true, WholeNumber: "1482", Numerator: "41", Denominator: "623", IsNegative: false));
-                yield return new TestCaseData("+129476-34/-774100").Returns((ReturnValue: true, WholeNumber: "129476", Numerator: "34", Denominator: "774100", IsNegative: false));
-                yield return new TestCaseData("-402-87/-1633553").Returns((ReturnValue: true, WholeNumber: "402", Numerator: "87", Denominator: "1633553", IsNegative: true));
-                yield return new TestCaseData("5308391 9012/9").Returns((ReturnValue: true, WholeNumber: "5308391", Numerator: "9012", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+576 52795/9").Returns((ReturnValue: true, WholeNumber: "576", Numerator: "52795", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-827 7124101/9").Returns((ReturnValue: true, WholeNumber: "827", Numerator: "7124101", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("896 +9324984/5").Returns((ReturnValue: true, WholeNumber: "896", Numerator: "9324984", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("+185476 +8452/5").Returns((ReturnValue: true, WholeNumber: "185476", Numerator: "8452", Denominator: "5", IsNegative: false));
-                yield return new TestCaseData("-3637728 +2583/6").Returns((ReturnValue: true, WholeNumber: "3637728", Numerator: "2583", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("442+8578/7").Returns((ReturnValue: true, WholeNumber: "442", Numerator: "8578", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+22771+2080/1").Returns((ReturnValue: true, WholeNumber: "22771", Numerator: "2080", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-566600+2250797/4").Returns((ReturnValue: true, WholeNumber: "566600", Numerator: "2250797", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("2972016 -87792/7").Returns((ReturnValue: true, WholeNumber: "2972016", Numerator: "87792", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+424 -4964204/5").Returns((ReturnValue: true, WholeNumber: "424", Numerator: "4964204", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-2067086 -4233/1").Returns((ReturnValue: true, WholeNumber: "2067086", Numerator: "4233", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("385768-8742/9").Returns((ReturnValue: true, WholeNumber: "385768", Numerator: "8742", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+492997-9471785/5").Returns((ReturnValue: true, WholeNumber: "492997", Numerator: "9471785", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("-6492369-9010131/6").Returns((ReturnValue: true, WholeNumber: "6492369", Numerator: "9010131", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("293 4698/+6").Returns((ReturnValue: true, WholeNumber: "293", Numerator: "4698", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("+726369 4983/+4").Returns((ReturnValue: true, WholeNumber: "726369", Numerator: "4983", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("-495460 4517365/+9").Returns((ReturnValue: true, WholeNumber: "495460", Numerator: "4517365", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("7741 +1415516/+3").Returns((ReturnValue: true, WholeNumber: "7741", Numerator: "1415516", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+24326 +270/+6").Returns((ReturnValue: true, WholeNumber: "24326", Numerator: "270", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("-32274 +463123/+8").Returns((ReturnValue: true, WholeNumber: "32274", Numerator: "463123", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("55455+801/+4").Returns((ReturnValue: true, WholeNumber: "55455", Numerator: "801", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+907657+8133644/+4").Returns((ReturnValue: true, WholeNumber: "907657", Numerator: "8133644", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("-972+4893895/+3").Returns((ReturnValue: true, WholeNumber: "972", Numerator: "4893895", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("5549 -13763/+2").Returns((ReturnValue: true, WholeNumber: "5549", Numerator: "13763", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("+725 -6855448/+2").Returns((ReturnValue: true, WholeNumber: "725", Numerator: "6855448", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("-2761391 -800/+1").Returns((ReturnValue: true, WholeNumber: "2761391", Numerator: "800", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("13614-6248834/+8").Returns((ReturnValue: true, WholeNumber: "13614", Numerator: "6248834", Denominator: "8", IsNegative: true));
-                yield return new TestCaseData("+449-136/+3").Returns((ReturnValue: true, WholeNumber: "449", Numerator: "136", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-79045-696/+2").Returns((ReturnValue: true, WholeNumber: "79045", Numerator: "696", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("31830 92944/-3").Returns((ReturnValue: true, WholeNumber: "31830", Numerator: "92944", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("+700 360190/-7").Returns((ReturnValue: true, WholeNumber: "700", Numerator: "360190", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("-7262296 62981/-4").Returns((ReturnValue: true, WholeNumber: "7262296", Numerator: "62981", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("87889 +7784/-9").Returns((ReturnValue: true, WholeNumber: "87889", Numerator: "7784", Denominator: "9", IsNegative: true));
-                yield return new TestCaseData("+123 +6240/-1").Returns((ReturnValue: true, WholeNumber: "123", Numerator: "6240", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-4180775 +79010/-6").Returns((ReturnValue: true, WholeNumber: "4180775", Numerator: "79010", Denominator: "6", IsNegative: false));
-                yield return new TestCaseData("6143+559/-7").Returns((ReturnValue: true, WholeNumber: "6143", Numerator: "559", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("+648002+540/-1").Returns((ReturnValue: true, WholeNumber: "648002", Numerator: "540", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-483552+863654/-9").Returns((ReturnValue: true, WholeNumber: "483552", Numerator: "863654", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("98961 -66833/-8").Returns((ReturnValue: true, WholeNumber: "98961", Numerator: "66833", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+60681 -7509/-1").Returns((ReturnValue: true, WholeNumber: "60681", Numerator: "7509", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-91822 -847/-3").Returns((ReturnValue: true, WholeNumber: "91822", Numerator: "847", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("213631-6614689/-4").Returns((ReturnValue: true, WholeNumber: "213631", Numerator: "6614689", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+5946-9094383/-7").Returns((ReturnValue: true, WholeNumber: "5946", Numerator: "9094383", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-7795879-763550/-2").Returns((ReturnValue: true, WholeNumber: "7795879", Numerator: "763550", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("433832 65308/64").Returns((ReturnValue: true, WholeNumber: "433832", Numerator: "65308", Denominator: "64", IsNegative: false));
-                yield return new TestCaseData("+8110045 9284598/17").Returns((ReturnValue: true, WholeNumber: "8110045", Numerator: "9284598", Denominator: "17", IsNegative: false));
-                yield return new TestCaseData("-282081 48740/29").Returns((ReturnValue: true, WholeNumber: "282081", Numerator: "48740", Denominator: "29", IsNegative: true));
-                yield return new TestCaseData("643901 +2417/41").Returns((ReturnValue: true, WholeNumber: "643901", Numerator: "2417", Denominator: "41", IsNegative: false));
-                yield return new TestCaseData("+621065 +524/69").Returns((ReturnValue: true, WholeNumber: "621065", Numerator: "524", Denominator: "69", IsNegative: false));
-                yield return new TestCaseData("-1891842 +929448/12").Returns((ReturnValue: true, WholeNumber: "1891842", Numerator: "929448", Denominator: "12", IsNegative: true));
-                yield return new TestCaseData("8638075+604119/50").Returns((ReturnValue: true, WholeNumber: "8638075", Numerator: "604119", Denominator: "50", IsNegative: false));
-                yield return new TestCaseData("+481+2996/42").Returns((ReturnValue: true, WholeNumber: "481", Numerator: "2996", Denominator: "42", IsNegative: false));
-                yield return new TestCaseData("-2955780+5880580/62").Returns((ReturnValue: true, WholeNumber: "2955780", Numerator: "5880580", Denominator: "62", IsNegative: true));
-                yield return new TestCaseData("214 -71671/92").Returns((ReturnValue: true, WholeNumber: "214", Numerator: "71671", Denominator: "92", IsNegative: true));
-                yield return new TestCaseData("+5282 -45065/56").Returns((ReturnValue: true, WholeNumber: "5282", Numerator: "45065", Denominator: "56", IsNegative: true));
-                yield return new TestCaseData("-405 -962/70").Returns((ReturnValue: true, WholeNumber: "405", Numerator: "962", Denominator: "70", IsNegative: false));
-                yield return new TestCaseData("2133699-9046925/32").Returns((ReturnValue: true, WholeNumber: "2133699", Numerator: "9046925", Denominator: "32", IsNegative: true));
-                yield return new TestCaseData("+6133214-9850379/19").Returns((ReturnValue: true, WholeNumber: "6133214", Numerator: "9850379", Denominator: "19", IsNegative: true));
-                yield return new TestCaseData("-2928-813/52").Returns((ReturnValue: true, WholeNumber: "2928", Numerator: "813", Denominator: "52", IsNegative: false));
-                yield return new TestCaseData("68703 89979/+59").Returns((ReturnValue: true, WholeNumber: "68703", Numerator: "89979", Denominator: "59", IsNegative: false));
-                yield return new TestCaseData("+6761621 1014397/+82").Returns((ReturnValue: true, WholeNumber: "6761621", Numerator: "1014397", Denominator: "82", IsNegative: false));
-                yield return new TestCaseData("-3625 1426/+45").Returns((ReturnValue: true, WholeNumber: "3625", Numerator: "1426", Denominator: "45", IsNegative: true));
-                yield return new TestCaseData("469611 +58985/+54").Returns((ReturnValue: true, WholeNumber: "469611", Numerator: "58985", Denominator: "54", IsNegative: false));
-                yield return new TestCaseData("+306973 +360/+67").Returns((ReturnValue: true, WholeNumber: "306973", Numerator: "360", Denominator: "67", IsNegative: false));
-                yield return new TestCaseData("-33752 +61781/+59").Returns((ReturnValue: true, WholeNumber: "33752", Numerator: "61781", Denominator: "59", IsNegative: true));
-                yield return new TestCaseData("476+928726/+17").Returns((ReturnValue: true, WholeNumber: "476", Numerator: "928726", Denominator: "17", IsNegative: false));
-                yield return new TestCaseData("+86587+469/+88").Returns((ReturnValue: true, WholeNumber: "86587", Numerator: "469", Denominator: "88", IsNegative: false));
-                yield return new TestCaseData("-2324+1749024/+91").Returns((ReturnValue: true, WholeNumber: "2324", Numerator: "1749024", Denominator: "91", IsNegative: true));
-                yield return new TestCaseData("395212 -6315554/+41").Returns((ReturnValue: true, WholeNumber: "395212", Numerator: "6315554", Denominator: "41", IsNegative: true));
-                yield return new TestCaseData("+8040352 -36750/+74").Returns((ReturnValue: true, WholeNumber: "8040352", Numerator: "36750", Denominator: "74", IsNegative: true));
-                yield return new TestCaseData("-6577 -326/+10").Returns((ReturnValue: true, WholeNumber: "6577", Numerator: "326", Denominator: "10", IsNegative: false));
-                yield return new TestCaseData("24817-50250/+82").Returns((ReturnValue: true, WholeNumber: "24817", Numerator: "50250", Denominator: "82", IsNegative: true));
-                yield return new TestCaseData("+5750415-9708/+99").Returns((ReturnValue: true, WholeNumber: "5750415", Numerator: "9708", Denominator: "99", IsNegative: true));
-                yield return new TestCaseData("-3572152-704/+34").Returns((ReturnValue: true, WholeNumber: "3572152", Numerator: "704", Denominator: "34", IsNegative: false));
-                yield return new TestCaseData("319808 4501459/-98").Returns((ReturnValue: true, WholeNumber: "319808", Numerator: "4501459", Denominator: "98", IsNegative: true));
-                yield return new TestCaseData("+5036 3069029/-63").Returns((ReturnValue: true, WholeNumber: "5036", Numerator: "3069029", Denominator: "63", IsNegative: true));
-                yield return new TestCaseData("-9148 28440/-88").Returns((ReturnValue: true, WholeNumber: "9148", Numerator: "28440", Denominator: "88", IsNegative: false));
-                yield return new TestCaseData("686294 +4607787/-39").Returns((ReturnValue: true, WholeNumber: "686294", Numerator: "4607787", Denominator: "39", IsNegative: true));
-                yield return new TestCaseData("+769 +34620/-96").Returns((ReturnValue: true, WholeNumber: "769", Numerator: "34620", Denominator: "96", IsNegative: true));
-                yield return new TestCaseData("-105 +6399201/-48").Returns((ReturnValue: true, WholeNumber: "105", Numerator: "6399201", Denominator: "48", IsNegative: false));
-                yield return new TestCaseData("784344+1268311/-19").Returns((ReturnValue: true, WholeNumber: "784344", Numerator: "1268311", Denominator: "19", IsNegative: true));
-                yield return new TestCaseData("+7032711+3419474/-81").Returns((ReturnValue: true, WholeNumber: "7032711", Numerator: "3419474", Denominator: "81", IsNegative: true));
-                yield return new TestCaseData("-351+863/-63").Returns((ReturnValue: true, WholeNumber: "351", Numerator: "863", Denominator: "63", IsNegative: false));
-                yield return new TestCaseData("155 -181/-28").Returns((ReturnValue: true, WholeNumber: "155", Numerator: "181", Denominator: "28", IsNegative: false));
-                yield return new TestCaseData("+4713 -406102/-28").Returns((ReturnValue: true, WholeNumber: "4713", Numerator: "406102", Denominator: "28", IsNegative: false));
-                yield return new TestCaseData("-7351493 -480781/-87").Returns((ReturnValue: true, WholeNumber: "7351493", Numerator: "480781", Denominator: "87", IsNegative: true));
-                yield return new TestCaseData("6406-8181/-93").Returns((ReturnValue: true, WholeNumber: "6406", Numerator: "8181", Denominator: "93", IsNegative: false));
-                yield return new TestCaseData("+15751-18524/-92").Returns((ReturnValue: true, WholeNumber: "15751", Numerator: "18524", Denominator: "92", IsNegative: false));
-                yield return new TestCaseData("-856-641794/-31").Returns((ReturnValue: true, WholeNumber: "856", Numerator: "641794", Denominator: "31", IsNegative: true));
-                yield return new TestCaseData("613138 714552/1585534").Returns((ReturnValue: true, WholeNumber: "613138", Numerator: "714552", Denominator: "1585534", IsNegative: false));
-                yield return new TestCaseData("+7810205 2529/2254").Returns((ReturnValue: true, WholeNumber: "7810205", Numerator: "2529", Denominator: "2254", IsNegative: false));
-                yield return new TestCaseData("-84354 3278/4486518").Returns((ReturnValue: true, WholeNumber: "84354", Numerator: "3278", Denominator: "4486518", IsNegative: true));
-                yield return new TestCaseData("63541 +99524/9258").Returns((ReturnValue: true, WholeNumber: "63541", Numerator: "99524", Denominator: "9258", IsNegative: false));
-                yield return new TestCaseData("+968 +119732/186").Returns((ReturnValue: true, WholeNumber: "968", Numerator: "119732", Denominator: "186", IsNegative: false));
-                yield return new TestCaseData("-82747 +190/36267").Returns((ReturnValue: true, WholeNumber: "82747", Numerator: "190", Denominator: "36267", IsNegative: true));
-                yield return new TestCaseData("993+81245/8596").Returns((ReturnValue: true, WholeNumber: "993", Numerator: "81245", Denominator: "8596", IsNegative: false));
-                yield return new TestCaseData("+6651523+387276/64961").Returns((ReturnValue: true, WholeNumber: "6651523", Numerator: "387276", Denominator: "64961", IsNegative: false));
-                yield return new TestCaseData("-6981312+508/106").Returns((ReturnValue: true, WholeNumber: "6981312", Numerator: "508", Denominator: "106", IsNegative: true));
-                yield return new TestCaseData("810404 -795/97477").Returns((ReturnValue: true, WholeNumber: "810404", Numerator: "795", Denominator: "97477", IsNegative: true));
-                yield return new TestCaseData("+88112 -36581/503399").Returns((ReturnValue: true, WholeNumber: "88112", Numerator: "36581", Denominator: "503399", IsNegative: true));
-                yield return new TestCaseData("-460 -96068/1013").Returns((ReturnValue: true, WholeNumber: "460", Numerator: "96068", Denominator: "1013", IsNegative: false));
-                yield return new TestCaseData("6584882-6829/772").Returns((ReturnValue: true, WholeNumber: "6584882", Numerator: "6829", Denominator: "772", IsNegative: true));
-                yield return new TestCaseData("+8316-11226/557").Returns((ReturnValue: true, WholeNumber: "8316", Numerator: "11226", Denominator: "557", IsNegative: true));
-                yield return new TestCaseData("-9707551-110737/6672").Returns((ReturnValue: true, WholeNumber: "9707551", Numerator: "110737", Denominator: "6672", IsNegative: false));
-                yield return new TestCaseData("317 56269/+5015").Returns((ReturnValue: true, WholeNumber: "317", Numerator: "56269", Denominator: "5015", IsNegative: false));
-                yield return new TestCaseData("+6382 3029468/+246").Returns((ReturnValue: true, WholeNumber: "6382", Numerator: "3029468", Denominator: "246", IsNegative: false));
-                yield return new TestCaseData("-9012 20447/+61446").Returns((ReturnValue: true, WholeNumber: "9012", Numerator: "20447", Denominator: "61446", IsNegative: true));
-                yield return new TestCaseData("189549 +502111/+76395").Returns((ReturnValue: true, WholeNumber: "189549", Numerator: "502111", Denominator: "76395", IsNegative: false));
-                yield return new TestCaseData("+48440 +167160/+8032").Returns((ReturnValue: true, WholeNumber: "48440", Numerator: "167160", Denominator: "8032", IsNegative: false));
-                yield return new TestCaseData("-1975769 +798/+9965953").Returns((ReturnValue: true, WholeNumber: "1975769", Numerator: "798", Denominator: "9965953", IsNegative: true));
-                yield return new TestCaseData("44848+8511/+5528").Returns((ReturnValue: true, WholeNumber: "44848", Numerator: "8511", Denominator: "5528", IsNegative: false));
-                yield return new TestCaseData("+1165181+316066/+3566421").Returns((ReturnValue: true, WholeNumber: "1165181", Numerator: "316066", Denominator: "3566421", IsNegative: false));
-                yield return new TestCaseData("-876+14005/+3289").Returns((ReturnValue: true, WholeNumber: "876", Numerator: "14005", Denominator: "3289", IsNegative: true));
-                yield return new TestCaseData("6855114 -734112/+9313699").Returns((ReturnValue: true, WholeNumber: "6855114", Numerator: "734112", Denominator: "9313699", IsNegative: true));
-                yield return new TestCaseData("+267467 -1879/+1813").Returns((ReturnValue: true, WholeNumber: "267467", Numerator: "1879", Denominator: "1813", IsNegative: true));
-                yield return new TestCaseData("-485 -487/+24854").Returns((ReturnValue: true, WholeNumber: "485", Numerator: "487", Denominator: "24854", IsNegative: false));
-                yield return new TestCaseData("9025-266350/+55983").Returns((ReturnValue: true, WholeNumber: "9025", Numerator: "266350", Denominator: "55983", IsNegative: true));
-                yield return new TestCaseData("+396-466635/+5087103").Returns((ReturnValue: true, WholeNumber: "396", Numerator: "466635", Denominator: "5087103", IsNegative: true));
-                yield return new TestCaseData("-8088-8128041/+2875482").Returns((ReturnValue: true, WholeNumber: "8088", Numerator: "8128041", Denominator: "2875482", IsNegative: false));
-                yield return new TestCaseData("8691 41133/-280").Returns((ReturnValue: true, WholeNumber: "8691", Numerator: "41133", Denominator: "280", IsNegative: true));
-                yield return new TestCaseData("+7938 571314/-443").Returns((ReturnValue: true, WholeNumber: "7938", Numerator: "571314", Denominator: "443", IsNegative: true));
-                yield return new TestCaseData("-6868 3251/-454498").Returns((ReturnValue: true, WholeNumber: "6868", Numerator: "3251", Denominator: "454498", IsNegative: false));
-                yield return new TestCaseData("78163 +281/-65361").Returns((ReturnValue: true, WholeNumber: "78163", Numerator: "281", Denominator: "65361", IsNegative: true));
-                yield return new TestCaseData("+4116 +844/-645246").Returns((ReturnValue: true, WholeNumber: "4116", Numerator: "844", Denominator: "645246", IsNegative: true));
-                yield return new TestCaseData("-3916 +84059/-731").Returns((ReturnValue: true, WholeNumber: "3916", Numerator: "84059", Denominator: "731", IsNegative: false));
-                yield return new TestCaseData("960418+5603550/-8264575").Returns((ReturnValue: true, WholeNumber: "960418", Numerator: "5603550", Denominator: "8264575", IsNegative: true));
-                yield return new TestCaseData("+6399366+3123/-406").Returns((ReturnValue: true, WholeNumber: "6399366", Numerator: "3123", Denominator: "406", IsNegative: true));
-                yield return new TestCaseData("-204+486/-1690").Returns((ReturnValue: true, WholeNumber: "204", Numerator: "486", Denominator: "1690", IsNegative: false));
-                yield return new TestCaseData("173 -8447/-761").Returns((ReturnValue: true, WholeNumber: "173", Numerator: "8447", Denominator: "761", IsNegative: false));
-                yield return new TestCaseData("+455 -117/-8200").Returns((ReturnValue: true, WholeNumber: "455", Numerator: "117", Denominator: "8200", IsNegative: false));
-                yield return new TestCaseData("-487901 -64315/-80787").Returns((ReturnValue: true, WholeNumber: "487901", Numerator: "64315", Denominator: "80787", IsNegative: true));
-                yield return new TestCaseData("12735-338725/-9829").Returns((ReturnValue: true, WholeNumber: "12735", Numerator: "338725", Denominator: "9829", IsNegative: false));
-                yield return new TestCaseData("+16319-868/-654054").Returns((ReturnValue: true, WholeNumber: "16319", Numerator: "868", Denominator: "654054", IsNegative: false));
-                yield return new TestCaseData("-85485-565/-158295").Returns((ReturnValue: true, WholeNumber: "85485", Numerator: "565", Denominator: "158295", IsNegative: true));
-                yield return new TestCaseData("4/9").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "4", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("+9/1").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "9", Denominator: "1", IsNegative: false));
-                yield return new TestCaseData("-5/6").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "5", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("7/+8").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7", Denominator: "8", IsNegative: false));
-                yield return new TestCaseData("+3/+4").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "3", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("-4/+7").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "4", Denominator: "7", IsNegative: true));
-                yield return new TestCaseData("8/-5").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "8", Denominator: "5", IsNegative: true));
-                yield return new TestCaseData("+5/-3").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "5", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("-8/-2").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "8", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("2/88").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "2", Denominator: "88", IsNegative: false));
-                yield return new TestCaseData("+7/36").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7", Denominator: "36", IsNegative: false));
-                yield return new TestCaseData("-4/97").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "4", Denominator: "97", IsNegative: true));
-                yield return new TestCaseData("5/+23").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "5", Denominator: "23", IsNegative: false));
-                yield return new TestCaseData("+7/+48").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7", Denominator: "48", IsNegative: false));
-                yield return new TestCaseData("-4/+47").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "4", Denominator: "47", IsNegative: true));
-                yield return new TestCaseData("7/-34").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7", Denominator: "34", IsNegative: true));
-                yield return new TestCaseData("+7/-49").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7", Denominator: "49", IsNegative: true));
-                yield return new TestCaseData("-1/-66").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "1", Denominator: "66", IsNegative: false));
-                yield return new TestCaseData("8/57351").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "8", Denominator: "57351", IsNegative: false));
-                yield return new TestCaseData("+2/50397").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "2", Denominator: "50397", IsNegative: false));
-                yield return new TestCaseData("-6/660").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "6", Denominator: "660", IsNegative: true));
-                yield return new TestCaseData("4/+220").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "4", Denominator: "220", IsNegative: false));
-                yield return new TestCaseData("+0/+9935").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "0", Denominator: "9935", IsNegative: false));
-                yield return new TestCaseData("-8/+8345").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "8", Denominator: "8345", IsNegative: true));
-                yield return new TestCaseData("2/-529").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "2", Denominator: "529", IsNegative: true));
-                yield return new TestCaseData("+9/-41535").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "9", Denominator: "41535", IsNegative: true));
-                yield return new TestCaseData("-8/-4676").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "8", Denominator: "4676", IsNegative: false));
-                yield return new TestCaseData("93/7").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "93", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+25/9").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "25", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-45/4").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "45", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("95/+4").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "95", Denominator: "4", IsNegative: false));
-                yield return new TestCaseData("+40/+7").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "40", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-15/+4").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "15", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("38/-6").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "38", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("+47/-4").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "47", Denominator: "4", IsNegative: true));
-                yield return new TestCaseData("-16/-2").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "16", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("62/45").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "62", Denominator: "45", IsNegative: false));
-                yield return new TestCaseData("+24/48").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "24", Denominator: "48", IsNegative: false));
-                yield return new TestCaseData("-88/13").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "88", Denominator: "13", IsNegative: true));
-                yield return new TestCaseData("93/+22").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "93", Denominator: "22", IsNegative: false));
-                yield return new TestCaseData("+13/+24").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "13", Denominator: "24", IsNegative: false));
-                yield return new TestCaseData("-93/+97").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "93", Denominator: "97", IsNegative: true));
-                yield return new TestCaseData("25/-43").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "25", Denominator: "43", IsNegative: true));
-                yield return new TestCaseData("+23/-13").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "23", Denominator: "13", IsNegative: true));
-                yield return new TestCaseData("-73/-39").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "73", Denominator: "39", IsNegative: false));
-                yield return new TestCaseData("50/66155").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "50", Denominator: "66155", IsNegative: false));
-                yield return new TestCaseData("+78/922").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "78", Denominator: "922", IsNegative: false));
-                yield return new TestCaseData("-68/260").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "68", Denominator: "260", IsNegative: true));
-                yield return new TestCaseData("49/+5323027").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "49", Denominator: "5323027", IsNegative: false));
-                yield return new TestCaseData("+15/+51675").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "15", Denominator: "51675", IsNegative: false));
-                yield return new TestCaseData("-29/+9528").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "29", Denominator: "9528", IsNegative: true));
-                yield return new TestCaseData("32/-82642").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "32", Denominator: "82642", IsNegative: true));
-                yield return new TestCaseData("+22/-327").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "22", Denominator: "327", IsNegative: true));
-                yield return new TestCaseData("-39/-518061").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "39", Denominator: "518061", IsNegative: false));
-                yield return new TestCaseData("5660/7").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "5660", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("+3493/9").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "3493", Denominator: "9", IsNegative: false));
-                yield return new TestCaseData("-911/6").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "911", Denominator: "6", IsNegative: true));
-                yield return new TestCaseData("83598/+3").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "83598", Denominator: "3", IsNegative: false));
-                yield return new TestCaseData("+7936/+7").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7936", Denominator: "7", IsNegative: false));
-                yield return new TestCaseData("-5363872/+2").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "5363872", Denominator: "2", IsNegative: true));
-                yield return new TestCaseData("18257/-3").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "18257", Denominator: "3", IsNegative: true));
-                yield return new TestCaseData("+96475/-1").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "96475", Denominator: "1", IsNegative: true));
-                yield return new TestCaseData("-8089/-2").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "8089", Denominator: "2", IsNegative: false));
-                yield return new TestCaseData("37431/49").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "37431", Denominator: "49", IsNegative: false));
-                yield return new TestCaseData("+4899/34").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "4899", Denominator: "34", IsNegative: false));
-                yield return new TestCaseData("-35830/67").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "35830", Denominator: "67", IsNegative: true));
-                yield return new TestCaseData("30098/+73").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "30098", Denominator: "73", IsNegative: false));
-                yield return new TestCaseData("+97824/+72").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "97824", Denominator: "72", IsNegative: false));
-                yield return new TestCaseData("-7330060/+50").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "7330060", Denominator: "50", IsNegative: true));
-                yield return new TestCaseData("109604/-75").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "109604", Denominator: "75", IsNegative: true));
-                yield return new TestCaseData("+354/-60").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "354", Denominator: "60", IsNegative: true));
-                yield return new TestCaseData("-794/-73").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "794", Denominator: "73", IsNegative: false));
-                yield return new TestCaseData("871/62277").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "871", Denominator: "62277", IsNegative: false));
-                yield return new TestCaseData("+540/612909").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "540", Denominator: "612909", IsNegative: false));
-                yield return new TestCaseData("-22429/446").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "22429", Denominator: "446", IsNegative: true));
-                yield return new TestCaseData("813/+16183").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "813", Denominator: "16183", IsNegative: false));
-                yield return new TestCaseData("+3354/+12104").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "3354", Denominator: "12104", IsNegative: false));
-                yield return new TestCaseData("-664/+331748").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "664", Denominator: "331748", IsNegative: true));
-                yield return new TestCaseData("624349/-529391").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "624349", Denominator: "529391", IsNegative: true));
-                yield return new TestCaseData("+12009/-3517449").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "12009", Denominator: "3517449", IsNegative: true));
-                yield return new TestCaseData("-607965/-4865").Returns((ReturnValue: true, WholeNumber: string.Empty, Numerator: "607965", Denominator: "4865", IsNegative: false));
             }
         }
     }

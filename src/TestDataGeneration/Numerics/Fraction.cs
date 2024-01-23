@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Media;
 using System.Numerics;
 using System.Text.RegularExpressions;
 
@@ -11,9 +12,21 @@ namespace TestDataGeneration.Numerics;
 /// </summary>
 public static class Fraction
 {
-    public const char Separator_Numerator_Denominator = '∕';
+    public const char Separator_Numerator_Denominator = '\u2215';
+
+    public const char AltSeparator_Numerator_Denominator = '/';
+
+    private static readonly char[] _anySeparator = new char[] { Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator };
+
+    public const char Group_Open = '(';
+
+    public const char Group_Close = ')';
+
+    public const char Positive_Prefix_Char = '+';
 
     public const char Negative_Prefix_Char = '-';
+
+    public const char AltNegative_Prefix_Char = '\u2212';
 
     public const string Format_NaN = "NaN";
     private const string Default_Number_Format = "D";
@@ -487,6 +500,116 @@ public static class Fraction
         return "(" + numerator.ToString(format, provider) + Separator_Numerator_Denominator + denominator.ToString(format, provider) + ")";
     }
 
+    public static bool TryParseSimpleFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T numerator, out T denominator)
+        where T : struct, IBinaryNumber<T>
+    {
+        int index = s.IndexOf(Group_Open);
+        if ((index == 0) ? (s.Length < 3 || s[^1] != Group_Close || (s = s[1..^1].Trim()).Length == 0) : index > 0)
+        {
+            numerator = denominator = default;
+            return false;
+        }
+        
+        if ((index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator)) < 0)
+        {
+            if (T.TryParse(s, style, provider, out numerator))
+            {
+                denominator = T.One;
+                return true;
+            }
+            denominator = default;
+        }
+        else if (index == 0 || index == s.Length - 1)
+            numerator = denominator = default;
+        else if (T.TryParse(s[..index].TrimEnd(), style, provider, out numerator))
+        {
+            if (T.TryParse(s[(index + 1)..].TrimStart(), style, provider, out denominator)) return true;
+        }
+        else
+            denominator = default;
+        return false;
+    }
+
+    public static bool TryParseMixedFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T wholeNumber, out T numerator, out T denominator)
+        where T : struct, IBinaryNumber<T>
+    {
+        int index = s.IndexOf(Group_Open);
+        if ((index == 0) ? (s.Length < 3 || s[^1] != Group_Close || (s = s[1..^1].Trim()).Length == 0) : index > 0)
+        {
+            wholeNumber = numerator = denominator = default;
+            return false;
+        }
+
+        if ((index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator)) < 0)
+        {
+            if (T.TryParse(s, style, provider, out wholeNumber))
+            {
+                numerator = T.Zero;
+                denominator = T.One;
+                return true;
+            }
+            numerator = denominator = default;
+            return false;
+        }
+        if (index == 0 || index == s.Length - 1)
+        {
+            wholeNumber = numerator = denominator = default;
+            return false;
+        }
+        // s = [^/]{index}/[^/].*
+        ReadOnlySpan<char> n = s[..index].TrimStart();
+        if (n.Length == 0 || (s = s[(index + 1)..].TrimStart()).Length == 0 || !T.TryParse(s, style, provider, out denominator) || T.IsZero(denominator))
+        {
+            denominator = wholeNumber = numerator = default;
+            return false;
+        }
+        // n = [^/\s][^/]*
+        int startIndex;
+        if (char.IsNumber(n[0]))
+            startIndex = 0; // n = \d[^/]*
+        else
+        {
+            if (n.Length == 1)
+            {
+                wholeNumber = numerator = default;
+                return false;
+            }
+            // n = [^\d\s][^/]+
+            startIndex = 1;
+        }
+        if (!char.IsNumber(n[startIndex]))
+        {
+            wholeNumber = numerator = default;
+            return false;
+        }
+        // n = [^\d\s]?\d[^/]*
+        for (int i = startIndex + 1; i < n.Length; i++)
+        {
+            if (!char.IsNumber(n[i]))
+            {
+                // n = [+-]?\d+[^\d]
+                s = n[..i];
+                if ((n = n[index..].TrimStart()).Length == 0 || !T.TryParse(s, style, provider, out wholeNumber))
+                {
+                    denominator = wholeNumber = numerator = default;
+                    return false;
+                }
+                if (!char.IsNumber(n[0]))
+                {
+                    if (n.Length == 1)
+                    {
+                        denominator = numerator = default;
+                        return false;
+                    }
+                    if (char.IsWhiteSpace(s[1])) n = new(new char[] { n[0] }.Concat(n[1..].TrimStart().ToArray()).ToArray());
+                }
+                return T.TryParse(n, style, provider, out numerator);
+            }
+        }
+        wholeNumber = default;
+        return T.TryParse(n, style, provider, out numerator);
+    }
+
     public static object ConvertFraction<TFraction, TValue>(TFraction fraction, Type conversionType, IFormatProvider? provider)
         where TFraction : struct, IFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
@@ -497,50 +620,328 @@ public static class Fraction
         return conversionType.IsAssignableFrom(typeof(double)) ? d : Convert.ChangeType(d, conversionType, provider);
     }
 
-    public static readonly Regex FractionStringRegex = new(@"^(?:(?<wn>[−-])|\+)?(?<wh>\d+)([∕/](?:(?<dn0>[−-])|\+)?0*(?<d0>[1-9]\d*)|(\s+(?:(?<nn0>[−-])|\+)?|(?<nn1>[−-])|\+)(?<n>\d+)[∕/](?:(?<dn1>[−-])|\+)?0*(?<d1>[1-9]\d*))?$", RegexOptions.Compiled);
+//     public static readonly Regex SimpleFractionPattern = new(@"^
+// (
+//     \(\s*
+//         (?:(?<nn>[\u2212-])|\+)?(?<num>\d+)
+//         (
+//             [ \t]*
+//             [\u2215/]
+//             [ \t]*
+//             (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+//         )?
+//     \s*\)
+// |
+//     (?:(?<nn>[\u2212-])|\+)?(?<num>\d+)
+//     (
+//         [ \t]*
+//         [\u2215/]
+//         [ \t]*
+//         (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+//     )?
+// )
+// $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+
+//     public static readonly Regex MixedFractionPattern = new(@"^
+// (
+//     \(\s*
+//         (?:(?<wn>[\u2212-])|\+)?(?<whl>\d+)
+//         (
+//             (
+//                 (?:[\t ]+(?:(?<nn>[\u2212-])|\+)?|(?:(?<nn>[\u2212-])|\+))
+//                 (?<num>\d+)
+//             )?
+//             [\u2215/]
+//             [ \t]*
+//             (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+//         )?
+//     \s*\)
+// |
+//     (?:(?<wn>[\u2212-])|\+)?(?<whl>\d+)
+//     (
+//         (
+//             (?:[\t ]+(?:(?<nn>[\u2212-])|\+)?|(?:(?<nn>[\u2212-])|\+))
+//             (?<num>\d+)
+//         )?
+//         [\u2215/]
+//         [ \t]*
+//         (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+//     )?
+// )
+// $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+
+    // public static readonly Regex FractionStringRegex = new(@"^(?:(?<wn>[−-])|\+)?(?<wh>\d+)([\u2215/](?:(?<dn0>[−-])|\+)?0*(?<d0>[1-9]\d*)|(\s+(?:(?<nn0>[−-])|\+)?|(?<nn1>[−-])|\+)(?<n>\d+)[\u2215/](?:(?<dn1>[−-])|\+)?0*(?<d1>[1-9]\d*))?$", RegexOptions.Compiled);
+
+    public static int IndexOfNextNonWhiteSpace(string source, int startIndex)
+    {
+        while (startIndex < source.Length)
+        {
+            if (!char.IsWhiteSpace(source[startIndex])) return startIndex;
+            startIndex++;
+        }
+        return -1;
+    }
+
+    public static bool TryGetFractionNumber(string source, int startIndex, bool allowWhitespaceAfterSign, out bool isNegative, out int numberStartIndex, out int nextIndex)
+    {
+        numberStartIndex = startIndex;
+        switch (source[startIndex])
+        {
+            case Positive_Prefix_Char:
+                isNegative = false;
+                if (++numberStartIndex == source.Length)
+                {
+                    nextIndex = numberStartIndex;
+                    return false;
+                }
+                if (char.IsWhiteSpace(source[numberStartIndex]))
+                {
+                    if (!allowWhitespaceAfterSign || (nextIndex = IndexOfNextNonWhiteSpace(source, numberStartIndex)) < 0)
+                    {
+                        nextIndex = numberStartIndex;
+                        return false;
+                    }
+                    numberStartIndex = nextIndex;
+                }
+                break;
+            case Negative_Prefix_Char:
+            case AltNegative_Prefix_Char:
+                isNegative = true;
+                if (++numberStartIndex == source.Length)
+                {
+                    nextIndex = numberStartIndex;
+                    return false;
+                }
+                if (char.IsWhiteSpace(source[numberStartIndex]))
+                {
+                    if (!allowWhitespaceAfterSign || (nextIndex = IndexOfNextNonWhiteSpace(source, numberStartIndex)) < 0)
+                    {
+                        nextIndex = numberStartIndex;
+                        return false;
+                    }
+                    numberStartIndex = nextIndex;
+                }
+                break;
+            default:
+                isNegative = false;
+                break;
+        }
+        if (char.IsAsciiDigit(source[numberStartIndex]))
+        {
+            nextIndex = numberStartIndex + 1;
+            while (nextIndex < source.Length)
+            {
+                if (!char.IsAsciiDigit(source[nextIndex])) break;
+                nextIndex++;
+            }
+            return true;
+        }
+        nextIndex = numberStartIndex;
+        return false;
+    }
+    
+    /// <summary>
+    /// Parses the fraction component tokens from a string representation of a fraction.
+    /// </summary>
+    /// <param name="fractionString">A string representation of a fraction.</param>
+    /// <returns><see langword="true"/> if the components could be parsed; ottherwise, <see langword="false"/> if <paramref name="fractionString"/> was not properly formatted.</returns>
+    public static bool TryGetMixedFractionTokens(string fractionString, [NotNullWhen(true)] out string? wholeNumber, [NotNullWhen(true)] out string? numerator, [NotNullWhen(true)] out string? denominator,
+        out bool isNegative)
+    {
+        if (string.IsNullOrEmpty(fractionString))
+        {
+            isNegative = false;
+            wholeNumber = numerator = denominator = null;
+            return false;
+        }
+        bool enclosedInParentheses = fractionString[0] == Group_Open;
+        int wholeNumberStartIndex = enclosedInParentheses ? 1 : 0;
+        if ((enclosedInParentheses && (fractionString.Length < 3 || fractionString[^1] != Group_Close || (wholeNumberStartIndex = IndexOfNextNonWhiteSpace(fractionString, wholeNumberStartIndex)) < 0)) ||
+            !TryGetFractionNumber(fractionString, wholeNumberStartIndex, false, out isNegative, out wholeNumberStartIndex, out int wholeNumberEndIndex))
+        {
+            isNegative = false;
+            wholeNumber = numerator = denominator = null;
+            return false;
+        }
+        if (wholeNumberEndIndex == fractionString.Length)
+        {
+            wholeNumber = (wholeNumberStartIndex > 0) ? fractionString[wholeNumberStartIndex..] : fractionString;
+            numerator = denominator = string.Empty;
+            return true;
+        }
+        int numeratorStartIndex = IndexOfNextNonWhiteSpace(fractionString, wholeNumberEndIndex);
+        if (numeratorStartIndex < 0)
+        {
+            if (enclosedInParentheses)
+            {
+                wholeNumber = fractionString[wholeNumberStartIndex..wholeNumberEndIndex];
+                numerator = denominator = string.Empty;
+                return true;
+            }
+            wholeNumber = numerator = denominator = null;
+            return false;
+        }
+        int numeratorEndIndex, denominatorStartIndex;
+        switch (fractionString[numeratorStartIndex])
+        {
+            case Separator_Numerator_Denominator:
+            case AltSeparator_Numerator_Denominator:
+                if ((denominatorStartIndex = numeratorStartIndex + 1) == fractionString.Length || (denominatorStartIndex = IndexOfNextNonWhiteSpace(fractionString, denominatorStartIndex)) < 0)
+                {
+                    wholeNumber = numerator = denominator = null;
+                    return false;
+                }
+                numeratorStartIndex = wholeNumberStartIndex;
+                numeratorEndIndex = wholeNumberEndIndex;
+                wholeNumberEndIndex = wholeNumberStartIndex;
+                break;
+            case Group_Close:
+                if (enclosedInParentheses && numeratorStartIndex + 1 == fractionString.Length)
+                {
+                    wholeNumber = fractionString[wholeNumberStartIndex..wholeNumberEndIndex];
+                    numerator = denominator = string.Empty;
+                    return true;
+                }
+                wholeNumber = numerator = denominator = null;
+                return false;
+            default:
+                if (!TryGetFractionNumber(fractionString, numeratorStartIndex, true, out bool numeratorIsNegative, out numeratorStartIndex, out numeratorEndIndex) ||
+                    (denominatorStartIndex = IndexOfNextNonWhiteSpace(fractionString, numeratorEndIndex)) < 0)
+                {
+                    wholeNumber = numerator = denominator = null;
+                    return false;
+                }
+                switch (fractionString[denominatorStartIndex])
+                {
+                    case Separator_Numerator_Denominator:
+                    case AltSeparator_Numerator_Denominator:
+                        if (++denominatorStartIndex == fractionString.Length || (denominatorStartIndex = IndexOfNextNonWhiteSpace(fractionString, denominatorStartIndex)) < 0)
+                        {
+                            wholeNumber = numerator = denominator = null;
+                            return false;
+                        }
+                        break;
+                    default:
+                        wholeNumber = numerator = denominator = null;
+                        return false;
+                }
+                if (numeratorIsNegative) isNegative = !isNegative;
+                break;
+        }
+        if (!TryGetFractionNumber(fractionString, denominatorStartIndex, true, out bool denominatorIsNegative, out denominatorStartIndex, out int denominatorEndIndex))
+        {
+            wholeNumber = numerator = denominator = null;
+            return false;
+        }
+        if (denominatorIsNegative) isNegative = !isNegative;
+        if (denominatorEndIndex < fractionString.Length)
+        {
+            if (enclosedInParentheses)
+            {
+                int index = IndexOfNextNonWhiteSpace(fractionString, denominatorEndIndex);
+                if (index < fractionString.Length - 1)
+                {
+                    wholeNumber = numerator = denominator = null;
+                    return false;
+                }
+            }
+            else
+            {
+                wholeNumber = numerator = denominator = null;
+                return false;
+            }
+        }
+        wholeNumber = (wholeNumberStartIndex < wholeNumberEndIndex) ? fractionString[wholeNumberStartIndex..wholeNumberEndIndex] : string.Empty;
+        numerator = fractionString[numeratorStartIndex..numeratorEndIndex];
+        denominator = fractionString[denominatorStartIndex..denominatorEndIndex];
+        return true;
+    }
 
     /// <summary>
     /// Parses the fraction component tokens from a string representation of a fraction.
     /// </summary>
     /// <param name="fractionString">A string representation of a fraction.</param>
     /// <returns><see langword="true"/> if the components could be parsed; ottherwise, <see langword="false"/> if <paramref name="fractionString"/> was not properly formatted.</returns>
-    public static bool TryGetFractionTokens(string fractionString, [NotNullWhen(true)] out string? wholeNumber, [NotNullWhen(true)] out string? numerator, [NotNullWhen(true)] out string? denominator,
-        out bool isNegative)
+    public static bool TryGetSimpleFractionTokens(string fractionString, [NotNullWhen(true)] out string? numerator, [NotNullWhen(true)] out string? denominator, out bool isNegative)
     {
-        if (!string.IsNullOrEmpty(fractionString))
+        if (string.IsNullOrEmpty(fractionString))
         {
-            Match match = FractionStringRegex.Match(fractionString);
-            if (match.Success)
-            {
-                var g = match.Groups["d0"];
-                if (g.Success)
+            isNegative = false;
+            numerator = denominator = null;
+            return false;
+        }
+        bool enclosedInParentheses = fractionString[0] == Group_Open;
+        int numeratorStartIndex = enclosedInParentheses ? 1 : 0;
+        if ((enclosedInParentheses && (fractionString.Length < 3 || fractionString[^1] != Group_Close || (numeratorStartIndex = IndexOfNextNonWhiteSpace(fractionString, numeratorStartIndex)) < 0)) ||
+            !TryGetFractionNumber(fractionString, numeratorStartIndex, false, out isNegative, out numeratorStartIndex, out int numeratorEndIndex))
+        {
+            isNegative = false;
+            numerator = denominator = null;
+            return false;
+        }
+        if (numeratorEndIndex == fractionString.Length)
+        {
+            numerator = (numeratorStartIndex > 0) ? fractionString[numeratorStartIndex..] : fractionString;
+            denominator = string.Empty;
+            return true;
+        }
+        
+        int denominatorStartIndex = IndexOfNextNonWhiteSpace(fractionString, numeratorEndIndex);
+        if (denominatorStartIndex < 0)
+        {
+            numerator = denominator = null;
+            return false;
+        }
+        switch (fractionString[denominatorStartIndex])
+        {
+            case Separator_Numerator_Denominator:
+            case AltSeparator_Numerator_Denominator:
+                if (++denominatorStartIndex == fractionString.Length || (denominatorStartIndex = IndexOfNextNonWhiteSpace(fractionString, denominatorStartIndex)) < 0)
                 {
-                    isNegative = match.Groups["wn"].Success != match.Groups["dn0"].Success;
-                    wholeNumber = string.Empty;
-                    numerator = match.Groups["wh"].Value;
-                    denominator = g.Value;
+                    numerator = denominator = null;
+                    return false;
+                }
+                break;
+            case Group_Close:
+                if (enclosedInParentheses && denominatorStartIndex + 1 == fractionString.Length)
+                {
+                    numerator = fractionString[numeratorStartIndex..numeratorEndIndex];
+                    denominator = string.Empty;
                     return true;
                 }
-                wholeNumber = match.Groups["wh"].Value;
-                if ((g = match.Groups["n"]).Success)
+                numerator = denominator = null;
+                return false;
+            default:
+                numerator = denominator = null;
+                return false;
+        }
+        if (!TryGetFractionNumber(fractionString, denominatorStartIndex, true, out bool denominatorIsNegative, out denominatorStartIndex, out int denominatorEndIndex))
+        {
+            numerator = denominator = null;
+            return false;
+        }
+        if (denominatorIsNegative) isNegative = !isNegative;
+        if (denominatorEndIndex < fractionString.Length)
+        {
+            if (enclosedInParentheses)
+            {
+                int index = IndexOfNextNonWhiteSpace(fractionString, denominatorEndIndex);
+                if (index < fractionString.Length - 1 || fractionString[index] != Group_Close)
                 {
-                    numerator = g.Value;
-                    denominator = match.Groups["d1"].Value;
-                    isNegative = (match.Groups["nn0"].Success || match.Groups["nn1"].Success) ? match.Groups["wn"].Success == match.Groups["dn1"].Success : match.Groups["wn"].Success != match.Groups["dn1"].Success;
+                    numerator = denominator = null;
+                    return false;
                 }
-                else
-                {
-                    numerator = denominator = string.Empty;
-                    isNegative = match.Groups["wn"].Success;
-                }
-                return true;
+            }
+            else
+            {
+                numerator = denominator = null;
+                return false;
             }
         }
-        isNegative = false;
-        wholeNumber = numerator = denominator = null;
-        return false;
+        numerator = fractionString[numeratorStartIndex..numeratorEndIndex];
+        denominator = fractionString[denominatorStartIndex..denominatorEndIndex];
+        return true;
     }
-
 
     public static bool TryFormatSimpleFraction<TFraction, TValue>(TFraction fraction, Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
         where TFraction : struct, ISimpleFraction<TFraction, TValue>?

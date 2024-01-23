@@ -393,22 +393,46 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out Fraction64 result)
     {
-        throw new NotImplementedException();
+        if (TryParseSimpleFraction(s, style, provider, out int numerator, out int denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out Fraction64 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseSimpleFraction(s.AsSpan(), style, provider, out int numerator, out int denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out Fraction64 result)
     {
-        throw new NotImplementedException();
+        if (TryParseSimpleFraction(s, NumberStyles.Integer | NumberStyles.AllowLeadingSign, provider, out int numerator, out int denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Fraction64 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseSimpleFraction(s.AsSpan(), NumberStyles.Integer | NumberStyles.AllowLeadingSign, provider, out int numerator, out int denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     #endregion

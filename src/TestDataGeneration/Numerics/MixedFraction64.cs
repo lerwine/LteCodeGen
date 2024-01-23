@@ -282,7 +282,7 @@ public readonly struct MixedFraction64 : IMixedSignedFraction<MixedFraction64, s
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 Multiply(int wholeNumber, Fraction32 fraction)
+    public static MixedFraction64 Multiply(short wholeNumber, Fraction32 fraction)
     {
         throw new NotImplementedException();
     }
@@ -307,7 +307,7 @@ public readonly struct MixedFraction64 : IMixedSignedFraction<MixedFraction64, s
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 Subtract(int wholeNumber, Fraction32 fraction)
+    public static MixedFraction64 Subtract(short wholeNumber, Fraction32 fraction)
     {
         throw new NotImplementedException();
     }
@@ -329,62 +329,46 @@ public readonly struct MixedFraction64 : IMixedSignedFraction<MixedFraction64, s
 
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction64 result)
     {
-        throw new NotImplementedException();
+        if (TryParseMixedFraction(s, style, provider, out short wholeNumber, out short numerator, out short denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction64 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), style, provider, out short wholeNumber, out short numerator, out short denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction64 result)
     {
-        throw new NotImplementedException();
+        if (TryParseMixedFraction(s, NumberStyles.Integer | NumberStyles.AllowLeadingSign, provider, out short wholeNumber, out short numerator, out short denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction64 result)
     {
-        throw new NotImplementedException();
-    }
-
-    static bool INumberBase<MixedFraction64>.TryConvertFromChecked<TOther>(TOther value, out MixedFraction64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    static bool INumberBase<MixedFraction64>.TryConvertFromSaturating<TOther>(TOther value, out MixedFraction64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    static bool INumberBase<MixedFraction64>.TryConvertFromTruncating<TOther>(TOther value, out MixedFraction64 result)
-    {
-        throw new NotImplementedException();
-    }
-
-    static bool INumberBase<MixedFraction64>.TryConvertToChecked<TOther>(MixedFraction64 value, out TOther result)
-    {
-        throw new NotImplementedException();
-    }
-
-    static bool INumberBase<MixedFraction64>.TryConvertToSaturating<TOther>(MixedFraction64 value, out TOther result)
-    {
-        throw new NotImplementedException();
-    }
-
-    static bool INumberBase<MixedFraction64>.TryConvertToTruncating<TOther>(MixedFraction64 value, out TOther result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static MixedFraction64 Subtract(short wholeNumber, Fraction32 fraction)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static MixedFraction64 Multiply(short wholeNumber, Fraction32 fraction)
-    {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), NumberStyles.Integer | NumberStyles.AllowLeadingSign, provider, out short wholeNumber, out short numerator, out short denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     #endregion
@@ -442,6 +426,36 @@ public readonly struct MixedFraction64 : IMixedSignedFraction<MixedFraction64, s
     #endregion
 
     #region Static Methods
+
+    static bool INumberBase<MixedFraction64>.TryConvertFromChecked<TOther>(TOther value, out MixedFraction64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<MixedFraction64>.TryConvertFromSaturating<TOther>(TOther value, out MixedFraction64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<MixedFraction64>.TryConvertFromTruncating<TOther>(TOther value, out MixedFraction64 result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<MixedFraction64>.TryConvertToChecked<TOther>(MixedFraction64 value, out TOther result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<MixedFraction64>.TryConvertToSaturating<TOther>(MixedFraction64 value, out TOther result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<MixedFraction64>.TryConvertToTruncating<TOther>(MixedFraction64 value, out TOther result)
+    {
+        throw new NotImplementedException();
+    }
 
     #endregion
 

@@ -394,22 +394,46 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedFraction16 result)
     {
-        throw new NotImplementedException();
+        if (TryParseSimpleFraction(s, style, provider, out byte numerator, out byte denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedFraction16 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseSimpleFraction(s.AsSpan(), style, provider, out byte numerator, out byte denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedFraction16 result)
     {
-        throw new NotImplementedException();
+        if (TryParseSimpleFraction(s, NumberStyles.Integer, provider, out byte numerator, out byte denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedFraction16 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseSimpleFraction(s.AsSpan(), NumberStyles.Integer, provider, out byte numerator, out byte denominator))
+        {
+            result = new(numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     #endregion

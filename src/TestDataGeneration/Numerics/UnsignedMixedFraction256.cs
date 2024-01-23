@@ -330,22 +330,46 @@ public readonly struct UnsignedMixedFraction256 : IMixedFraction<UnsignedMixedFr
 
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction256 result)
     {
-        throw new NotImplementedException();
+        if (TryParseMixedFraction(s, style, provider, out ulong wholeNumber, out ulong numerator, out ulong denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction256 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), style, provider, out ulong wholeNumber, out ulong numerator, out ulong denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction256 result)
     {
-        throw new NotImplementedException();
+        if (TryParseMixedFraction(s, NumberStyles.Integer, provider, out ulong wholeNumber, out ulong numerator, out ulong denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction256 result)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), NumberStyles.Integer, provider, out ulong wholeNumber, out ulong numerator, out ulong denominator))
+        {
+            result = new(wholeNumber, numerator, denominator);
+            return true;
+        }
+        result = Zero;
+        return false;
     }
 
     #endregion
