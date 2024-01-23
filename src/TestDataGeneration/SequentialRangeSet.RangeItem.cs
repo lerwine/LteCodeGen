@@ -10,6 +10,7 @@ public partial class SequentialRangeSet<T>
     /// <summary>
     /// A linked node for a value range.
     /// </summary>
+    [Obsolete("Use Numerics.NumberExtents<T>")]
     public class RangeItem : LinkedCollectionBase<RangeItem>.LinkedNode, IRangeExtents<T>, IReadOnlyCollection<T>, ICollection, IHasChangeToken
     {
         #region Fields

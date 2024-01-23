@@ -25,9 +25,44 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
 
     NumberExtents<T> IReadOnlyList<NumberExtents<T>>.this[int index] => GetItemAt(index);
 
-    private bool TryFindInsertionNode(T value, [NotNullWhen(true)] out LinkedListNode<NumberExtents<T>>? node)
+    public NumberRangesList(IEnumerable<NumberExtents<T>> collection)
     {
         throw new NotImplementedException();
+    }
+    
+    public NumberRangesList(IEnumerable<(T First, T Last)> collection)
+    {
+        throw new NotImplementedException();
+    }
+
+    public NumberRangesList(params NumberExtents<T>[] list) : this((IEnumerable<NumberExtents<T>>)list) { }
+    
+    public NumberRangesList(params (T First, T Last)[] list) : this((IEnumerable<(T First, T Last)>)list) { }
+
+    public NumberRangesList() { }
+    
+    // true && valueLessThanItemFirst == true: value < node.Value.First && (node.Previous is null || value > node.Previous.Value.Last)
+    // true && valueLessThanItemFirst == false: value >= node.Value.First && value <= node.Value.Last && (node.Previous is null || value > node.Previous.Value.Last)
+    // false: _backingList.Last is null || value > _backingList.Last.Value.Last
+    private bool TryFindInsertionNode(T value, [NotNullWhen(true)] out LinkedListNode<NumberExtents<T>>? node, out bool valueLessThanItemFirst)
+    {
+        for (node = _backingList.First; node is not null; node = node.Next)
+        {
+            var item = node.Value;
+            var diff = value.CompareTo(item.First);
+            if (diff < 0)
+            {
+                valueLessThanItemFirst = true;
+                return true;
+            }
+            else if (diff == 0 || value <= item.Last)
+            {
+                valueLessThanItemFirst = false;
+                return true;
+            }
+        }
+        valueLessThanItemFirst = false;
+        return false;
     }
 
     public bool Add(T value)
@@ -35,19 +70,167 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
-            throw new NotImplementedException();
+            NumberExtents<T> item;
+            if (TryFindInsertionNode(value, out LinkedListNode<NumberExtents<T>>? nextNode, out bool valueLessThanItemFirst))
+            {
+                if (!valueLessThanItemFirst) return false;
+                // value < nextNode.Value.First && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)
+                LinkedListNode<NumberExtents<T>>? other;
+                if (value + T.One == (item = nextNode.Value).First)
+                {
+                    // value + 1 == nextNode.Value.First && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)
+                    var last = item.Last;
+                    if ((other = nextNode.Previous) is not null && (item = other.Value).Last + T.One == value)
+                    {
+                        value = item.First;
+                        _backingList.Remove(nextNode);
+                    }
+                    else
+                        other = nextNode;
+                    nextNode = other.Next;
+                    _backingList.Remove(other);
+                    if (nextNode is null)
+                        _backingList.AddLast(new NumberExtents<T>(value, last));
+                    else
+                        _backingList.AddBefore(nextNode, new NumberExtents<T>(value, last));
+                }
+                else if ((other = nextNode.Previous) is not null && (item = other.Value).Last + T.One == value)
+                {
+                    // value < nextNode.Value.First + 1 && value - 1 == nextNode.Previous.Value.Last)
+                    var first = item.First;
+                    _backingList.Remove(other);
+                    _backingList.AddBefore(nextNode, new NumberExtents<T>(first, value));
+                }
+                else // value < nextNode.Value.First + 1 && (nextNode.Previous is null || value > nextNode.Previous.Value.Last + 1)
+                    _backingList.AddBefore(nextNode, new NumberExtents<T>(value));
+            }
+            else
+            {
+                // _backingList.Last is null || value > _backingList.Last.Value.Last
+                if ((nextNode = _backingList.Last) is not null)
+                {
+                    if ((item = nextNode.Value).Last + T.One == value)
+                    {
+                        var first = item.First;
+                        _backingList.Remove(nextNode);
+                        _backingList.AddLast(new NumberExtents<T>(first, value));
+                        return true;
+                    }
+                }
+                // backingList.Last is null || value > _backingList.Last.Value.Last + 1
+                _backingList.AddLast(new NumberExtents<T>(value));
+            }
         }
         finally { Monitor.Exit(SyncRoot); }
+        return true;
     }
+
+    // public bool Add(T value)
+    // {
+    //     Monitor.Enter(SyncRoot);
+    //     try
+    //     {
+    //         var nextNode = _backingList.First;
+    //         if (nextNode is null)
+    //         {
+    //             _backingList.AddLast(new NumberExtents<T>(value));
+    //             return true;
+    //         }
+    //         NumberExtents<T> item = nextNode.Value;
+    //         var diff = value.CompareTo(item.First);
+    //         if (diff == 0) return false;
+    //         LinkedListNode<NumberExtents<T>>? other;
+    //         while (diff > 0)
+    //         {
+    //             // (nextNode.Previous is null || value > nextNode.Previous.Value.Last + 1) && value > nextNode.Value.First;
+    //             if (value <= item.Last) return false;
+    //             // value > nextNode.Value.Last;
+    //             if (value == item.Last + T.One)
+    //             {
+    //                 var first = item.First;
+    //                 if ((other = nextNode.Next) is null)
+    //                 {
+    //                     _backingList.Remove(nextNode);
+    //                     _backingList.AddLast(new NumberExtents<T>(first, value));
+    //                 }
+    //                 else if (value + T.One == other.Value.First)
+    //                 {
+    //                     // value == nextNode.Value.Last + 1 && value == nextNode.Value.First - 1;
+    //                     value = other.Value.Last;
+    //                     _backingList.Remove(nextNode);
+    //                     nextNode = other.Next;
+    //                     _backingList.Remove(other);
+    //                     if (nextNode is null)
+    //                         _backingList.AddLast(new NumberExtents<T>(first, value));
+    //                     else
+    //                         _backingList.AddBefore(nextNode, new NumberExtents<T>(first, value));
+    //                 }
+    //                 else
+    //                 {
+    //                     // value == nextNode.Value.Last + 1 && value < nextNode.Value.First - 1;
+    //                     _backingList.Remove(nextNode);
+    //                     _backingList.AddBefore(other, new NumberExtents<T>(first, value));
+    //                 }
+    //                 return true;
+    //             }
+    //             // value > nextNode.Value.Last + 1
+    //             nextNode = nextNode.Next;
+    //             if (nextNode is null)
+    //             {
+    //                 _backingList.AddLast(new NumberExtents<T>(value));
+    //                 return true;
+    //             }
+    //             if ((diff = value.CompareTo((item = nextNode.Value).First)) == 0) return false;
+    //             // value > nextNode.Previous.Value.Last + 1 && value != nextNode.Value.First;
+    //         }
+    //         // (nextNode.Previous is null || value > nextNode.Previous.Value.Last + 1) && value < nextNode.Value.First;
+    //         other = nextNode.Next;
+    //         _backingList.Remove(nextNode);
+    //         if (value + T.One == item.First)
+    //         {
+    //             if (other is null)
+    //                 _backingList.AddLast(new NumberExtents<T>(value, item.Last));
+    //             else
+    //                 _backingList.AddBefore(other, new NumberExtents<T>(value, item.Last));
+    //         }
+    //         else if (other is null)
+    //             _backingList.AddLast(new NumberExtents<T>(value));
+    //         else
+    //             _backingList.AddBefore(other, new NumberExtents<T>(value));
+    //     }
+    //     finally { Monitor.Exit(SyncRoot); }
+    //     return true;
+    // }
 
     public bool Add(NumberExtents<T> item)
     {
         Monitor.Enter(SyncRoot);
         try
         {
-            throw new NotImplementedException();
+            var first = item.First;
+            if (TryFindInsertionNode(first, out LinkedListNode<NumberExtents<T>>? nextNode, out bool itemFirstLessThanNextFirst))
+            {
+                if (itemFirstLessThanNextFirst)
+                {
+                    // value < nextNode.Value.First && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)=
+                }
+                else
+                {
+                    // value >= nextNode.Value.First && value <= nextNode.Value.Last && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)
+                }
+            }
+            else
+            {
+                // _backingList.Last is null || value > _backingList.Last.Value.Last
+            }
         }
         finally { Monitor.Exit(SyncRoot); }
+        throw new NotImplementedException();
+    }
+
+    private bool SetLast(LinkedListNode<NumberExtents<T>> nextNode, T last)
+    {
+        throw new NotImplementedException();
     }
 
     public bool Add(T first, T last)
