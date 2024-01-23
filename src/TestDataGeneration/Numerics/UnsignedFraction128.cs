@@ -5,7 +5,7 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128, ulong, UnsignedMixedFraction256>
+public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128, ulong, UnsignedMixedFraction192>
 {
     #region Static Properties
 
@@ -47,7 +47,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
 
     #region Instance Methods
 
-    public UnsignedMixedFraction256 Add(ulong wholeNumber1, ulong wholeNumber2, UnsignedFraction128 fraction2)
+    public UnsignedMixedFraction192 Add(ulong wholeNumber1, ulong wholeNumber2, UnsignedFraction128 fraction2)
     {
         (ulong wholeNumber, ulong numerator, ulong denominator) = AddFractions(wholeNumber1, this, wholeNumber2, fraction2);
         return new(wholeNumber, numerator, denominator);
@@ -61,7 +61,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
 
     public int CompareTo(UnsignedFraction128 other) => CompareFractionComponents(Numerator, Denominator, other.Numerator, other.Denominator);
 
-    public UnsignedMixedFraction256 Divide(ulong wholeDividend, ulong wholeDivisor, UnsignedFraction128 divisorFraction)
+    public UnsignedMixedFraction192 Divide(ulong wholeDividend, ulong wholeDivisor, UnsignedFraction128 divisorFraction)
     {
         (ulong wholeNumber, ulong numerator, ulong denominator) = DivideFractions(wholeDividend, this, wholeDivisor, divisorFraction);
         return new(wholeNumber, numerator, denominator);
@@ -79,9 +79,9 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
 
-    public UnsignedMixedFraction256 Join(ulong wholeNumber) => new(wholeNumber, Numerator, Denominator);
+    public UnsignedMixedFraction192 Join(ulong wholeNumber) => new(wholeNumber, Numerator, Denominator);
 
-    public UnsignedMixedFraction256 Multiply(ulong wholeMultiplier, ulong wholeMultiplicand, UnsignedFraction128 multiplicandFraction)
+    public UnsignedMixedFraction192 Multiply(ulong wholeMultiplier, ulong wholeMultiplicand, UnsignedFraction128 multiplicandFraction)
     {
         (ulong wholeNumber, ulong numerator, ulong denominator) = MultiplyFractions(wholeMultiplier, this, wholeMultiplicand, multiplicandFraction);
         return new(wholeNumber, numerator, denominator);
@@ -93,7 +93,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         return new(numerator, denominator);
     }
 
-    public UnsignedMixedFraction256 Subtract(ulong wholeMinuend, ulong wholeSubtrahend, UnsignedFraction128 subtrahendFraction)
+    public UnsignedMixedFraction192 Subtract(ulong wholeMinuend, ulong wholeSubtrahend, UnsignedFraction128 subtrahendFraction)
     {
         (ulong wholeNumber, ulong numerator, ulong denominator) = SubtractFractions(wholeMinuend, this, wholeSubtrahend, subtrahendFraction);
         return new(wholeNumber, numerator, denominator);
@@ -132,17 +132,17 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Add(UnsignedMixedFraction256 fraction1, ulong wholeNumber2, UnsignedFraction128 fraction2, out ulong sum)
+    public static UnsignedFraction128 Add(UnsignedMixedFraction192 fraction1, ulong wholeNumber2, UnsignedFraction128 fraction2, out ulong sum)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Add(ulong wholeNumber1, UnsignedFraction128 fraction1, UnsignedMixedFraction256 fraction2, out ulong sum)
+    public static UnsignedFraction128 Add(ulong wholeNumber1, UnsignedFraction128 fraction1, UnsignedMixedFraction192 fraction2, out ulong sum)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction256 Add(ulong wholeNumber, UnsignedFraction128 fraction)
+    public static UnsignedMixedFraction192 Add(ulong wholeNumber, UnsignedFraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -152,17 +152,17 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Divide(UnsignedMixedFraction256 dividend, ulong wholeDivisor, UnsignedFraction128 divisorFraction, out ulong quotient)
+    public static UnsignedFraction128 Divide(UnsignedMixedFraction192 dividend, ulong wholeDivisor, UnsignedFraction128 divisorFraction, out ulong quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Divide(ulong wholeDividend, UnsignedFraction128 dividendFraction, UnsignedMixedFraction256 divisor, out ulong quotient)
+    public static UnsignedFraction128 Divide(ulong wholeDividend, UnsignedFraction128 dividendFraction, UnsignedMixedFraction192 divisor, out ulong quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction256 Divide(ulong wholeNumber, UnsignedFraction128 fraction)
+    public static UnsignedMixedFraction192 Divide(ulong wholeNumber, UnsignedFraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -312,17 +312,17 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Multiply(UnsignedMixedFraction256 multiplier, ulong wholeMultiplicand, UnsignedFraction128 multiplicandFraction, out ulong product)
+    public static UnsignedFraction128 Multiply(UnsignedMixedFraction192 multiplier, ulong wholeMultiplicand, UnsignedFraction128 multiplicandFraction, out ulong product)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Multiply(ulong wholeMultiplier, UnsignedFraction128 multiplierFraction, UnsignedMixedFraction256 multiplicand, out ulong product)
+    public static UnsignedFraction128 Multiply(ulong wholeMultiplier, UnsignedFraction128 multiplierFraction, UnsignedMixedFraction192 multiplicand, out ulong product)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction256 Multiply(ulong wholeNumber, UnsignedFraction128 fraction)
+    public static UnsignedMixedFraction192 Multiply(ulong wholeNumber, UnsignedFraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -352,17 +352,17 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Subtract(UnsignedMixedFraction256 minuend, ulong wholeSubtrahend, UnsignedFraction128 subtrahendFraction, out ulong difference)
+    public static UnsignedFraction128 Subtract(UnsignedMixedFraction192 minuend, ulong wholeSubtrahend, UnsignedFraction128 subtrahendFraction, out ulong difference)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction128 Subtract(ulong wholeMinuend, UnsignedFraction128 minuendFraction, UnsignedMixedFraction256 subtrahend, out ulong difference)
+    public static UnsignedFraction128 Subtract(ulong wholeMinuend, UnsignedFraction128 minuendFraction, UnsignedMixedFraction192 subtrahend, out ulong difference)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction256 Subtract(ulong wholeNumber, UnsignedFraction128 fraction)
+    public static UnsignedMixedFraction192 Subtract(ulong wholeNumber, UnsignedFraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -372,7 +372,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction256 ToProperFraction(UnsignedFraction128 value)
+    public static UnsignedMixedFraction192 ToProperFraction(UnsignedFraction128 value)
     {
         throw new NotImplementedException();
     }
@@ -382,7 +382,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction256 ToProperSimplestForm(UnsignedFraction128 value)
+    public static UnsignedMixedFraction192 ToProperSimplestForm(UnsignedFraction128 value)
     {
         throw new NotImplementedException();
     }

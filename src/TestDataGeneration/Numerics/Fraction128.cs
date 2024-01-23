@@ -5,7 +5,7 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, MixedFraction256>
+public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, MixedFraction192>
 {
     #region Static Properties
 
@@ -49,7 +49,7 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     #region Instance Methods
 
-    public MixedFraction256 Add(long wholeNumber1, long wholeNumber2, Fraction128 fraction2)
+    public MixedFraction192 Add(long wholeNumber1, long wholeNumber2, Fraction128 fraction2)
     {
         (long wholeNumber, long numerator, long denominator) = AddFractions(wholeNumber1, this, wholeNumber2, fraction2);
         return new(wholeNumber, numerator, denominator);
@@ -63,7 +63,7 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     public int CompareTo(Fraction128 other) => CompareFractionComponents(Numerator, Denominator, other.Numerator, other.Denominator);
 
-    public MixedFraction256 Divide(long wholeDividend, long wholeDivisor, Fraction128 divisorFraction)
+    public MixedFraction192 Divide(long wholeDividend, long wholeDivisor, Fraction128 divisorFraction)
     {
         (long wholeNumber, long numerator, long denominator) = DivideFractions(wholeDividend, this, wholeDivisor, divisorFraction);
         return new(wholeNumber, numerator, denominator);
@@ -81,9 +81,9 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
 
-    public MixedFraction256 Join(long wholeNumber) => new(wholeNumber, Numerator, Denominator);
+    public MixedFraction192 Join(long wholeNumber) => new(wholeNumber, Numerator, Denominator);
 
-    public MixedFraction256 Multiply(long wholeMultiplier, long wholeMultiplicand, Fraction128 multiplicandFraction)
+    public MixedFraction192 Multiply(long wholeMultiplier, long wholeMultiplicand, Fraction128 multiplicandFraction)
     {
         (long wholeNumber, long numerator, long denominator) = MultiplyFractions(wholeMultiplier, this, wholeMultiplicand, multiplicandFraction);
         return new(wholeNumber, numerator, denominator);
@@ -95,7 +95,7 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         return new(numerator, denominator);
     }
 
-    public MixedFraction256 Subtract(long wholeMinuend, long wholeSubtrahend, Fraction128 subtrahendFraction)
+    public MixedFraction192 Subtract(long wholeMinuend, long wholeSubtrahend, Fraction128 subtrahendFraction)
     {
         (long wholeNumber, long numerator, long denominator) = SubtractFractions(wholeMinuend, this, wholeSubtrahend, subtrahendFraction);
         return new(wholeNumber, numerator, denominator);
@@ -131,17 +131,17 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Add(MixedFraction256 fraction1, long wholeNumber2, Fraction128 fraction2, out long sum)
+    public static Fraction128 Add(MixedFraction192 fraction1, long wholeNumber2, Fraction128 fraction2, out long sum)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Add(long wholeNumber1, Fraction128 fraction1, MixedFraction256 fraction2, out long sum)
+    public static Fraction128 Add(long wholeNumber1, Fraction128 fraction1, MixedFraction192 fraction2, out long sum)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Add(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Add(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -151,17 +151,17 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Divide(MixedFraction256 dividend, long wholeDivisor, Fraction128 divisorFraction, out long quotient)
+    public static Fraction128 Divide(MixedFraction192 dividend, long wholeDivisor, Fraction128 divisorFraction, out long quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Divide(long wholeDividend, Fraction128 dividendFraction, MixedFraction256 divisor, out long quotient)
+    public static Fraction128 Divide(long wholeDividend, Fraction128 dividendFraction, MixedFraction192 divisor, out long quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Divide(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Divide(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -311,17 +311,17 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Multiply(MixedFraction256 multiplier, long wholeMultiplicand, Fraction128 multiplicandFraction, out long product)
+    public static Fraction128 Multiply(MixedFraction192 multiplier, long wholeMultiplicand, Fraction128 multiplicandFraction, out long product)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Multiply(long wholeMultiplier, Fraction128 multiplierFraction, MixedFraction256 multiplicand, out long product)
+    public static Fraction128 Multiply(long wholeMultiplier, Fraction128 multiplierFraction, MixedFraction192 multiplicand, out long product)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Multiply(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Multiply(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -351,17 +351,17 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Subtract(MixedFraction256 minuend, long wholeSubtrahend, Fraction128 subtrahendFraction, out long difference)
+    public static Fraction128 Subtract(MixedFraction192 minuend, long wholeSubtrahend, Fraction128 subtrahendFraction, out long difference)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction128 Subtract(long wholeMinuend, Fraction128 minuendFraction, MixedFraction256 subtrahend, out long difference)
+    public static Fraction128 Subtract(long wholeMinuend, Fraction128 minuendFraction, MixedFraction192 subtrahend, out long difference)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Subtract(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Subtract(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
@@ -371,7 +371,7 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 ToProperFraction(Fraction128 value)
+    public static MixedFraction192 ToProperFraction(Fraction128 value)
     {
         throw new NotImplementedException();
     }
@@ -381,7 +381,7 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 ToProperSimplestForm(Fraction128 value)
+    public static MixedFraction192 ToProperSimplestForm(Fraction128 value)
     {
         throw new NotImplementedException();
     }

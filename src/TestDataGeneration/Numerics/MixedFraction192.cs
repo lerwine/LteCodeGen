@@ -5,21 +5,21 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256, long, Fraction128>
+public readonly struct MixedFraction192 : IMixedSignedFraction<MixedFraction192, long, Fraction128>
 {
     #region Static Properties
 
-    public static MixedFraction256 NegativeOne { get; } = new(-1L);
+    public static MixedFraction192 NegativeOne { get; } = new(-1L);
 
-    public static MixedFraction256 One { get; } = new(1L);
+    public static MixedFraction192 One { get; } = new(1L);
 
-    public static MixedFraction256 Zero { get; } = new(0L);
+    public static MixedFraction192 Zero { get; } = new(0L);
 
-    public static MixedFraction256 MaxValue { get; } = new(long.MaxValue, long.MaxValue, 1U);
+    public static MixedFraction192 MaxValue { get; } = new(long.MaxValue, long.MaxValue, 1U);
 
-    public static MixedFraction256 MinValue { get; } = new(long.MinValue, long.MaxValue, 1U);
+    public static MixedFraction192 MinValue { get; } = new(long.MinValue, long.MaxValue, 1U);
 
-    public static MixedFraction256 NaN { get; } = new();
+    public static MixedFraction192 NaN { get; } = new();
 
     #endregion
 
@@ -35,7 +35,7 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
 
     #region Constructors
 
-    public MixedFraction256(long wholeNumber, long numerator, long denominator, bool doNotReduce = false, bool doNotMakeProper = false)
+    public MixedFraction192(long wholeNumber, long numerator, long denominator, bool doNotReduce = false, bool doNotMakeProper = false)
     {
         if (doNotReduce)
         {
@@ -55,11 +55,11 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
         Denominator = denominator;
     }
 
-    public MixedFraction256(long numerator, long denominator, bool doNotReduce = false, bool doNotMakeProper = false) :
+    public MixedFraction192(long numerator, long denominator, bool doNotReduce = false, bool doNotMakeProper = false) :
         this(0L, numerator, denominator, doNotReduce, doNotMakeProper)
     { }
 
-    public MixedFraction256(long wholeNumber)
+    public MixedFraction192(long wholeNumber)
     {
         WholeNumber = wholeNumber;
         Numerator = 0;
@@ -70,29 +70,29 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
 
     #region Instance Methods
 
-    public MixedFraction256 Add(MixedFraction256 fraction)
+    public MixedFraction192 Add(MixedFraction192 fraction)
     {
-        (long wholeNumber, long numerator, long denominator) = AddFractions<MixedFraction256, long>(this, fraction);
+        (long wholeNumber, long numerator, long denominator) = AddFractions<MixedFraction192, long>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
-    public int CompareTo(MixedFraction256 other) => CompareFractionComponents(WholeNumber, Numerator, Denominator, other.WholeNumber, other.Numerator, other.Denominator);
+    public int CompareTo(MixedFraction192 other) => CompareFractionComponents(WholeNumber, Numerator, Denominator, other.WholeNumber, other.Numerator, other.Denominator);
 
-    public MixedFraction256 Divide(MixedFraction256 fraction)
+    public MixedFraction192 Divide(MixedFraction192 fraction)
     {
-        (long wholeNumber, long numerator, long denominator) = DivideFractions<MixedFraction256, long>(this, fraction);
+        (long wholeNumber, long numerator, long denominator) = DivideFractions<MixedFraction192, long>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
-    public bool Equals(MixedFraction256 other) => AreMixedFractionsEqual<MixedFraction256, long>(this, other);
+    public bool Equals(MixedFraction192 other) => AreMixedFractionsEqual<MixedFraction192, long>(this, other);
 
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is MixedFraction256 other && Equals(other);
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is MixedFraction192 other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(WholeNumber, Numerator, Denominator);
 
-    public MixedFraction256 Multiply(MixedFraction256 fraction)
+    public MixedFraction192 Multiply(MixedFraction192 fraction)
     {
-        (long wholeNumber, long numerator, long denominator) = MultiplyFractions<MixedFraction256, long>(this, fraction);
+        (long wholeNumber, long numerator, long denominator) = MultiplyFractions<MixedFraction192, long>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
@@ -102,9 +102,9 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
         return WholeNumber;
     }
 
-    public MixedFraction256 Subtract(MixedFraction256 fraction)
+    public MixedFraction192 Subtract(MixedFraction192 fraction)
     {
-        (long wholeNumber, long numerator, long denominator) = SubtractFractions<MixedFraction256, long>(this, fraction);
+        (long wholeNumber, long numerator, long denominator) = SubtractFractions<MixedFraction192, long>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
@@ -119,215 +119,215 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
     public override string ToString() => ToFractionString(WholeNumber, Numerator, Denominator);
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) =>
-        TryFormatMixedFraction<MixedFraction256, long>(this, destination, out charsWritten, format, provider);
+        TryFormatMixedFraction<MixedFraction192, long>(this, destination, out charsWritten, format, provider);
 
     #endregion
 
     #region Static Methods
 
-    public static MixedFraction256 Abs(MixedFraction256 value) => (value.Denominator == 0L) ? value : new(long.Abs(value.Numerator), long.Abs(value.Denominator));
+    public static MixedFraction192 Abs(MixedFraction192 value) => (value.Denominator == 0L) ? value : new(long.Abs(value.Numerator), long.Abs(value.Denominator));
 
-    public static MixedFraction256 Add(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Add(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Divide(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Divide(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Invert(MixedFraction256 fraction, bool doNotReduce, bool doNotMakeProper)
+    public static MixedFraction192 Invert(MixedFraction192 fraction, bool doNotReduce, bool doNotMakeProper)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Invert(MixedFraction256 fraction)
+    public static MixedFraction192 Invert(MixedFraction192 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Invert(MixedFraction256 fraction, bool doNotReduce)
+    public static MixedFraction192 Invert(MixedFraction192 fraction, bool doNotReduce)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(MixedFraction256 value)
+    public static bool IsCanonical(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsComplexNumber(MixedFraction256 value)
+    public static bool IsComplexNumber(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsEvenInteger(MixedFraction256 value)
+    public static bool IsEvenInteger(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsFinite(MixedFraction256 value)
+    public static bool IsFinite(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsImaginaryNumber(MixedFraction256 value)
+    public static bool IsImaginaryNumber(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInfinity(MixedFraction256 value)
+    public static bool IsInfinity(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInteger(MixedFraction256 value)
+    public static bool IsInteger(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(MixedFraction256 value)
+    public static bool IsNaN(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegative(MixedFraction256 value)
+    public static bool IsNegative(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegativeInfinity(MixedFraction256 value)
+    public static bool IsNegativeInfinity(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNormal(MixedFraction256 value)
+    public static bool IsNormal(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsOddInteger(MixedFraction256 value)
+    public static bool IsOddInteger(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositive(MixedFraction256 value)
+    public static bool IsPositive(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositiveInfinity(MixedFraction256 value)
+    public static bool IsPositiveInfinity(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPow2(MixedFraction256 value)
+    public static bool IsPow2(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperFraction(MixedFraction256 value)
+    public static bool IsProperFraction(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperSimplestForm(MixedFraction256 value)
+    public static bool IsProperSimplestForm(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(MixedFraction256 value)
+    public static bool IsRealNumber(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSimplestForm(MixedFraction256 value)
+    public static bool IsSimplestForm(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(MixedFraction256 value)
+    public static bool IsSubnormal(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsZero(MixedFraction256 value)
+    public static bool IsZero(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Log2(MixedFraction256 value)
+    public static MixedFraction192 Log2(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 MaxMagnitude(MixedFraction256 x, MixedFraction256 y)
+    public static MixedFraction192 MaxMagnitude(MixedFraction192 x, MixedFraction192 y)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 MaxMagnitudeNumber(MixedFraction256 x, MixedFraction256 y)
+    public static MixedFraction192 MaxMagnitudeNumber(MixedFraction192 x, MixedFraction192 y)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 MinMagnitude(MixedFraction256 x, MixedFraction256 y)
+    public static MixedFraction192 MinMagnitude(MixedFraction192 x, MixedFraction192 y)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 MinMagnitudeNumber(MixedFraction256 x, MixedFraction256 y)
+    public static MixedFraction192 MinMagnitudeNumber(MixedFraction192 x, MixedFraction192 y)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Multiply(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Multiply(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    public static MixedFraction192 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Parse(string s, NumberStyles style, IFormatProvider? provider)
+    public static MixedFraction192 Parse(string s, NumberStyles style, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+    public static MixedFraction192 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Parse(string s, IFormatProvider? provider)
+    public static MixedFraction192 Parse(string s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 Subtract(long wholeNumber, Fraction128 fraction)
+    public static MixedFraction192 Subtract(long wholeNumber, Fraction128 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 ToProperFraction(MixedFraction256 value)
+    public static MixedFraction192 ToProperFraction(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 ToProperSimplestForm(MixedFraction256 value)
+    public static MixedFraction192 ToProperSimplestForm(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 ToSimplestForm(MixedFraction256 fraction)
+    public static MixedFraction192 ToSimplestForm(MixedFraction192 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction256 result)
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction192 result)
     {
         if (TryParseMixedFraction(s, style, provider, out long wholeNumber, out long numerator, out long denominator))
         {
@@ -338,7 +338,7 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
         return false;
     }
 
-    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction256 result)
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction192 result)
     {
         if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), style, provider, out long wholeNumber, out long numerator, out long denominator))
         {
@@ -349,7 +349,7 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
         return false;
     }
 
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction256 result)
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction192 result)
     {
         if (TryParseMixedFraction(s, NumberStyles.Integer | NumberStyles.AllowLeadingSign, provider, out long wholeNumber, out long numerator, out long denominator))
         {
@@ -360,7 +360,7 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
         return false;
     }
 
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction256 result)
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out MixedFraction192 result)
     {
         if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), NumberStyles.Integer | NumberStyles.AllowLeadingSign, provider, out long wholeNumber, out long numerator, out long denominator))
         {
@@ -377,17 +377,17 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
 
     #region Static Properties
 
-    static int INumberBase<MixedFraction256>.Radix => 10;
+    static int INumberBase<MixedFraction192>.Radix => 10;
 
-    static MixedFraction256 IAdditiveIdentity<MixedFraction256, MixedFraction256>.AdditiveIdentity => Zero;
+    static MixedFraction192 IAdditiveIdentity<MixedFraction192, MixedFraction192>.AdditiveIdentity => Zero;
 
-    static MixedFraction256 IMultiplicativeIdentity<MixedFraction256, MixedFraction256>.MultiplicativeIdentity => One;
+    static MixedFraction192 IMultiplicativeIdentity<MixedFraction192, MixedFraction192>.MultiplicativeIdentity => One;
 
     #endregion
 
     #region Instance Methods
 
-    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is MixedFraction256 other) ? CompareTo(other) : -1;
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is MixedFraction192 other) ? CompareTo(other) : -1;
 
     TypeCode IConvertible.GetTypeCode() => TypeCode.Double;
 
@@ -415,7 +415,7 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
 
     string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToFractionString(Numerator, Denominator, format, formatProvider);
 
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => ConvertFraction<MixedFraction256, long>(this, conversionType, provider);
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => ConvertFraction<MixedFraction192, long>(this, conversionType, provider);
 
     ushort IConvertible.ToUInt16(IFormatProvider? provider) => Convert.ToUInt16(ToDouble(provider), provider);
 
@@ -427,32 +427,32 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
 
     #region Static Methods
 
-    static bool INumberBase<MixedFraction256>.TryConvertFromChecked<TOther>(TOther value, out MixedFraction256 result)
+    static bool INumberBase<MixedFraction192>.TryConvertFromChecked<TOther>(TOther value, out MixedFraction192 result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<MixedFraction256>.TryConvertFromSaturating<TOther>(TOther value, out MixedFraction256 result)
+    static bool INumberBase<MixedFraction192>.TryConvertFromSaturating<TOther>(TOther value, out MixedFraction192 result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<MixedFraction256>.TryConvertFromTruncating<TOther>(TOther value, out MixedFraction256 result)
+    static bool INumberBase<MixedFraction192>.TryConvertFromTruncating<TOther>(TOther value, out MixedFraction192 result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<MixedFraction256>.TryConvertToChecked<TOther>(MixedFraction256 value, out TOther result)
+    static bool INumberBase<MixedFraction192>.TryConvertToChecked<TOther>(MixedFraction192 value, out TOther result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<MixedFraction256>.TryConvertToSaturating<TOther>(MixedFraction256 value, out TOther result)
+    static bool INumberBase<MixedFraction192>.TryConvertToSaturating<TOther>(MixedFraction192 value, out TOther result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<MixedFraction256>.TryConvertToTruncating<TOther>(MixedFraction256 value, out TOther result)
+    static bool INumberBase<MixedFraction192>.TryConvertToTruncating<TOther>(MixedFraction192 value, out TOther result)
     {
         throw new NotImplementedException();
     }
@@ -463,97 +463,97 @@ public readonly struct MixedFraction256 : IMixedSignedFraction<MixedFraction256,
 
     #region Static Operators
 
-    public static MixedFraction256 operator +(MixedFraction256 value)
+    public static MixedFraction192 operator +(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator +(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator +(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator -(MixedFraction256 value)
+    public static MixedFraction192 operator -(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator -(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator -(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator ~(MixedFraction256 value)
+    public static MixedFraction192 operator ~(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator ++(MixedFraction256 value)
+    public static MixedFraction192 operator ++(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator --(MixedFraction256 value)
+    public static MixedFraction192 operator --(MixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator *(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator *(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator /(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator /(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator %(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator %(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator &(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator &(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator |(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator |(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction256 operator ^(MixedFraction256 left, MixedFraction256 right)
+    public static MixedFraction192 operator ^(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator ==(MixedFraction256 left, MixedFraction256 right)
+    public static bool operator ==(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator !=(MixedFraction256 left, MixedFraction256 right)
+    public static bool operator !=(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator <(MixedFraction256 left, MixedFraction256 right)
+    public static bool operator <(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator >(MixedFraction256 left, MixedFraction256 right)
+    public static bool operator >(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator <=(MixedFraction256 left, MixedFraction256 right)
+    public static bool operator <=(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator >=(MixedFraction256 left, MixedFraction256 right)
+    public static bool operator >=(MixedFraction192 left, MixedFraction192 right)
     {
         throw new NotImplementedException();
     }

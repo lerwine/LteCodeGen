@@ -5,19 +5,19 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFraction64, ushort, UnsignedFraction32>
+public readonly struct UnsignedMixedFraction48 : IMixedFraction<UnsignedMixedFraction48, ushort, UnsignedFraction32>
 {
     #region Static Properties
 
-    public static UnsignedMixedFraction64 One { get; } = new(1);
+    public static UnsignedMixedFraction48 One { get; } = new(1);
 
-    public static UnsignedMixedFraction64 Zero { get; } = new(0);
+    public static UnsignedMixedFraction48 Zero { get; } = new(0);
 
-    public static UnsignedMixedFraction64 MaxValue { get; } = new(ushort.MaxValue, ushort.MaxValue, 1);
+    public static UnsignedMixedFraction48 MaxValue { get; } = new(ushort.MaxValue, ushort.MaxValue, 1);
 
-    public static UnsignedMixedFraction64 MinValue { get; } = new(ushort.MinValue, ushort.MaxValue, 1);
+    public static UnsignedMixedFraction48 MinValue { get; } = new(ushort.MinValue, ushort.MaxValue, 1);
 
-    public static UnsignedMixedFraction64 NaN { get; } = new();
+    public static UnsignedMixedFraction48 NaN { get; } = new();
 
     #endregion
 
@@ -33,7 +33,7 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
 
     #region Constructors
 
-    public UnsignedMixedFraction64(ushort wholeNumber, ushort numerator, ushort denominator, bool doNotReduce = false, bool doNotMakeProper = false)
+    public UnsignedMixedFraction48(ushort wholeNumber, ushort numerator, ushort denominator, bool doNotReduce = false, bool doNotMakeProper = false)
     {
         if (doNotReduce)
         {
@@ -53,11 +53,11 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
         Denominator = denominator;
     }
 
-    public UnsignedMixedFraction64(ushort numerator, ushort denominator, bool doNotReduce = false, bool doNotMakeProper = false) :
+    public UnsignedMixedFraction48(ushort numerator, ushort denominator, bool doNotReduce = false, bool doNotMakeProper = false) :
         this(0, numerator, denominator, doNotReduce, doNotMakeProper)
     { }
 
-    public UnsignedMixedFraction64(ushort wholeNumber)
+    public UnsignedMixedFraction48(ushort wholeNumber)
     {
         WholeNumber = wholeNumber;
         Numerator = 0;
@@ -68,29 +68,29 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
 
     #region Instance Methods
 
-    public UnsignedMixedFraction64 Add(UnsignedMixedFraction64 fraction)
+    public UnsignedMixedFraction48 Add(UnsignedMixedFraction48 fraction)
     {
-        (ushort wholeNumber, ushort numerator, ushort denominator) = AddFractions<UnsignedMixedFraction64, ushort>(this, fraction);
+        (ushort wholeNumber, ushort numerator, ushort denominator) = AddFractions<UnsignedMixedFraction48, ushort>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
-    public int CompareTo(UnsignedMixedFraction64 other) => CompareFractionComponents(WholeNumber, Numerator, Denominator, other.WholeNumber, other.Numerator, other.Denominator);
+    public int CompareTo(UnsignedMixedFraction48 other) => CompareFractionComponents(WholeNumber, Numerator, Denominator, other.WholeNumber, other.Numerator, other.Denominator);
 
-    public UnsignedMixedFraction64 Divide(UnsignedMixedFraction64 fraction)
+    public UnsignedMixedFraction48 Divide(UnsignedMixedFraction48 fraction)
     {
-        (ushort wholeNumber, ushort numerator, ushort denominator) = DivideFractions<UnsignedMixedFraction64, ushort>(this, fraction);
+        (ushort wholeNumber, ushort numerator, ushort denominator) = DivideFractions<UnsignedMixedFraction48, ushort>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
-    public bool Equals(UnsignedMixedFraction64 other) => AreMixedFractionsEqual<UnsignedMixedFraction64, ushort>(this, other);
+    public bool Equals(UnsignedMixedFraction48 other) => AreMixedFractionsEqual<UnsignedMixedFraction48, ushort>(this, other);
 
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is UnsignedMixedFraction64 other && Equals(other);
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is UnsignedMixedFraction48 other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(WholeNumber, Numerator, Denominator);
 
-    public UnsignedMixedFraction64 Multiply(UnsignedMixedFraction64 fraction)
+    public UnsignedMixedFraction48 Multiply(UnsignedMixedFraction48 fraction)
     {
-        (ushort wholeNumber, ushort numerator, ushort denominator) = MultiplyFractions<UnsignedMixedFraction64, ushort>(this, fraction);
+        (ushort wholeNumber, ushort numerator, ushort denominator) = MultiplyFractions<UnsignedMixedFraction48, ushort>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
@@ -100,9 +100,9 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
         return WholeNumber;
     }
 
-    public UnsignedMixedFraction64 Subtract(UnsignedMixedFraction64 fraction)
+    public UnsignedMixedFraction48 Subtract(UnsignedMixedFraction48 fraction)
     {
-        (ushort wholeNumber, ushort numerator, ushort denominator) = SubtractFractions<UnsignedMixedFraction64, ushort>(this, fraction);
+        (ushort wholeNumber, ushort numerator, ushort denominator) = SubtractFractions<UnsignedMixedFraction48, ushort>(this, fraction);
         return new(wholeNumber, numerator, denominator);
     }
 
@@ -117,218 +117,218 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
     public override string ToString() => ToFractionString(WholeNumber, Numerator, Denominator);
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) =>
-        TryFormatMixedFraction<UnsignedMixedFraction64, ushort>(this, destination, out charsWritten, format, provider);
+        TryFormatMixedFraction<UnsignedMixedFraction48, ushort>(this, destination, out charsWritten, format, provider);
 
     #endregion
 
     #region Static Methods
 
-    public static UnsignedMixedFraction64 Abs(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 Abs(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Add(ushort wholeNumber, UnsignedFraction32 fraction)
+    public static UnsignedMixedFraction48 Add(ushort wholeNumber, UnsignedFraction32 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Divide(ushort wholeNumber, UnsignedFraction32 fraction)
+    public static UnsignedMixedFraction48 Divide(ushort wholeNumber, UnsignedFraction32 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Invert(UnsignedMixedFraction64 fraction, bool doNotReduce, bool doNotMakeProper)
+    public static UnsignedMixedFraction48 Invert(UnsignedMixedFraction48 fraction, bool doNotReduce, bool doNotMakeProper)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Invert(UnsignedMixedFraction64 fraction)
+    public static UnsignedMixedFraction48 Invert(UnsignedMixedFraction48 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Invert(UnsignedMixedFraction64 fraction, bool doNotReduce)
+    public static UnsignedMixedFraction48 Invert(UnsignedMixedFraction48 fraction, bool doNotReduce)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(UnsignedMixedFraction64 value)
+    public static bool IsCanonical(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsComplexNumber(UnsignedMixedFraction64 value)
+    public static bool IsComplexNumber(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsEvenInteger(UnsignedMixedFraction64 value)
+    public static bool IsEvenInteger(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsFinite(UnsignedMixedFraction64 value)
+    public static bool IsFinite(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsImaginaryNumber(UnsignedMixedFraction64 value)
+    public static bool IsImaginaryNumber(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInfinity(UnsignedMixedFraction64 value)
+    public static bool IsInfinity(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsInteger(UnsignedMixedFraction64 value)
+    public static bool IsInteger(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(UnsignedMixedFraction64 value)
+    public static bool IsNaN(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegative(UnsignedMixedFraction64 value)
+    public static bool IsNegative(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNegativeInfinity(UnsignedMixedFraction64 value)
+    public static bool IsNegativeInfinity(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsNormal(UnsignedMixedFraction64 value)
+    public static bool IsNormal(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsOddInteger(UnsignedMixedFraction64 value)
+    public static bool IsOddInteger(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositive(UnsignedMixedFraction64 value)
+    public static bool IsPositive(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPositiveInfinity(UnsignedMixedFraction64 value)
+    public static bool IsPositiveInfinity(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPow2(UnsignedMixedFraction64 value)
+    public static bool IsPow2(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperFraction(UnsignedMixedFraction64 value)
+    public static bool IsProperFraction(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsProperSimplestForm(UnsignedMixedFraction64 value)
+    public static bool IsProperSimplestForm(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(UnsignedMixedFraction64 value)
+    public static bool IsRealNumber(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSimplestForm(UnsignedMixedFraction64 value)
+    public static bool IsSimplestForm(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(UnsignedMixedFraction64 value)
+    public static bool IsSubnormal(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsZero(UnsignedMixedFraction64 value)
+    public static bool IsZero(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Log2(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 Log2(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 MaxMagnitude(UnsignedMixedFraction64 x, UnsignedMixedFraction64 y)
+    public static UnsignedMixedFraction48 MaxMagnitude(UnsignedMixedFraction48 x, UnsignedMixedFraction48 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 MaxMagnitudeNumber(UnsignedMixedFraction64 x, UnsignedMixedFraction64 y)
+    public static UnsignedMixedFraction48 MaxMagnitudeNumber(UnsignedMixedFraction48 x, UnsignedMixedFraction48 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 MinMagnitude(UnsignedMixedFraction64 x, UnsignedMixedFraction64 y)
+    public static UnsignedMixedFraction48 MinMagnitude(UnsignedMixedFraction48 x, UnsignedMixedFraction48 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 MinMagnitudeNumber(UnsignedMixedFraction64 x, UnsignedMixedFraction64 y)
+    public static UnsignedMixedFraction48 MinMagnitudeNumber(UnsignedMixedFraction48 x, UnsignedMixedFraction48 y)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Multiply(ushort wholeNumber, UnsignedFraction32 fraction)
+    public static UnsignedMixedFraction48 Multiply(ushort wholeNumber, UnsignedFraction32 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
+    public static UnsignedMixedFraction48 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Parse(string s, NumberStyles style, IFormatProvider? provider)
+    public static UnsignedMixedFraction48 Parse(string s, NumberStyles style, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+    public static UnsignedMixedFraction48 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Parse(string s, IFormatProvider? provider)
+    public static UnsignedMixedFraction48 Parse(string s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 Subtract(ushort wholeNumber, UnsignedFraction32 fraction)
+    public static UnsignedMixedFraction48 Subtract(ushort wholeNumber, UnsignedFraction32 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 ToProperFraction(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 ToProperFraction(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 ToProperSimplestForm(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 ToProperSimplestForm(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 ToSimplestForm(UnsignedMixedFraction64 fraction)
+    public static UnsignedMixedFraction48 ToSimplestForm(UnsignedMixedFraction48 fraction)
     {
         throw new NotImplementedException();
     }
 
-    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction64 result)
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction48 result)
     {
         if (TryParseMixedFraction(s, style, provider, out ushort wholeNumber, out ushort numerator, out ushort denominator))
         {
@@ -339,7 +339,7 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
         return false;
     }
 
-    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction64 result)
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction48 result)
     {
         if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), style, provider, out ushort wholeNumber, out ushort numerator, out ushort denominator))
         {
@@ -350,7 +350,7 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
         return false;
     }
 
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction64 result)
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction48 result)
     {
         if (TryParseMixedFraction(s, NumberStyles.Integer, provider, out ushort wholeNumber, out ushort numerator, out ushort denominator))
         {
@@ -361,7 +361,7 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
         return false;
     }
 
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction64 result)
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out UnsignedMixedFraction48 result)
     {
         if (string.IsNullOrEmpty(s) && TryParseMixedFraction(s.AsSpan(), NumberStyles.Integer, provider, out ushort wholeNumber, out ushort numerator, out ushort denominator))
         {
@@ -378,17 +378,17 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
 
     #region Static Properties
 
-    static int INumberBase<UnsignedMixedFraction64>.Radix => 10;
+    static int INumberBase<UnsignedMixedFraction48>.Radix => 10;
 
-    static UnsignedMixedFraction64 IAdditiveIdentity<UnsignedMixedFraction64, UnsignedMixedFraction64>.AdditiveIdentity => Zero;
+    static UnsignedMixedFraction48 IAdditiveIdentity<UnsignedMixedFraction48, UnsignedMixedFraction48>.AdditiveIdentity => Zero;
 
-    static UnsignedMixedFraction64 IMultiplicativeIdentity<UnsignedMixedFraction64, UnsignedMixedFraction64>.MultiplicativeIdentity => One;
+    static UnsignedMixedFraction48 IMultiplicativeIdentity<UnsignedMixedFraction48, UnsignedMixedFraction48>.MultiplicativeIdentity => One;
 
     #endregion
 
     #region Instance Methods
 
-    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedMixedFraction64 other) ? CompareTo(other) : -1;
+    int IComparable.CompareTo(object? obj) => (obj is null) ? 1 : (obj is UnsignedMixedFraction48 other) ? CompareTo(other) : -1;
 
     TypeCode IConvertible.GetTypeCode() => TypeCode.Double;
 
@@ -416,7 +416,7 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
 
     string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToFractionString(Numerator, Denominator, format, formatProvider);
 
-    object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => ConvertFraction<UnsignedMixedFraction64, ushort>(this, conversionType, provider);
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => ConvertFraction<UnsignedMixedFraction48, ushort>(this, conversionType, provider);
 
     ushort IConvertible.ToUInt16(IFormatProvider? provider) => Convert.ToUInt16(ToDouble(provider), provider);
 
@@ -428,32 +428,32 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
 
     #region Static Methods
 
-    static bool INumberBase<UnsignedMixedFraction64>.TryConvertFromChecked<TOther>(TOther value, out UnsignedMixedFraction64 result)
+    static bool INumberBase<UnsignedMixedFraction48>.TryConvertFromChecked<TOther>(TOther value, out UnsignedMixedFraction48 result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<UnsignedMixedFraction64>.TryConvertFromSaturating<TOther>(TOther value, out UnsignedMixedFraction64 result)
+    static bool INumberBase<UnsignedMixedFraction48>.TryConvertFromSaturating<TOther>(TOther value, out UnsignedMixedFraction48 result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<UnsignedMixedFraction64>.TryConvertFromTruncating<TOther>(TOther value, out UnsignedMixedFraction64 result)
+    static bool INumberBase<UnsignedMixedFraction48>.TryConvertFromTruncating<TOther>(TOther value, out UnsignedMixedFraction48 result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<UnsignedMixedFraction64>.TryConvertToChecked<TOther>(UnsignedMixedFraction64 value, out TOther result)
+    static bool INumberBase<UnsignedMixedFraction48>.TryConvertToChecked<TOther>(UnsignedMixedFraction48 value, out TOther result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<UnsignedMixedFraction64>.TryConvertToSaturating<TOther>(UnsignedMixedFraction64 value, out TOther result)
+    static bool INumberBase<UnsignedMixedFraction48>.TryConvertToSaturating<TOther>(UnsignedMixedFraction48 value, out TOther result)
     {
         throw new NotImplementedException();
     }
 
-    static bool INumberBase<UnsignedMixedFraction64>.TryConvertToTruncating<TOther>(UnsignedMixedFraction64 value, out TOther result)
+    static bool INumberBase<UnsignedMixedFraction48>.TryConvertToTruncating<TOther>(UnsignedMixedFraction48 value, out TOther result)
     {
         throw new NotImplementedException();
     }
@@ -464,97 +464,97 @@ public readonly struct UnsignedMixedFraction64 : IMixedFraction<UnsignedMixedFra
 
     #region Static Operators
 
-    public static UnsignedMixedFraction64 operator +(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 operator +(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator +(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator +(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator -(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 operator -(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator -(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator -(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator ~(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 operator ~(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator ++(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 operator ++(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator --(UnsignedMixedFraction64 value)
+    public static UnsignedMixedFraction48 operator --(UnsignedMixedFraction48 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator *(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator *(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator /(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator /(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator %(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator %(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator &(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator &(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator |(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator |(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction64 operator ^(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static UnsignedMixedFraction48 operator ^(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator ==(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static bool operator ==(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator !=(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static bool operator !=(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator <(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static bool operator <(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator >(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static bool operator >(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator <=(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static bool operator <=(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }
 
-    public static bool operator >=(UnsignedMixedFraction64 left, UnsignedMixedFraction64 right)
+    public static bool operator >=(UnsignedMixedFraction48 left, UnsignedMixedFraction48 right)
     {
         throw new NotImplementedException();
     }

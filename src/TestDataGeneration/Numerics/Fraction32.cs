@@ -5,7 +5,7 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, MixedFraction64>
+public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, MixedFraction48>
 {
     #region Static Properties
 
@@ -49,7 +49,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
 
     #region Instance Methods
 
-    public MixedFraction64 Add(short wholeNumber1, short wholeNumber2, Fraction32 fraction2)
+    public MixedFraction48 Add(short wholeNumber1, short wholeNumber2, Fraction32 fraction2)
     {
         (short wholeNumber, short numerator, short denominator) = AddFractions(wholeNumber1, this, wholeNumber2, fraction2);
         return new(wholeNumber, numerator, denominator);
@@ -63,7 +63,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
 
     public int CompareTo(Fraction32 other) => CompareFractionComponents(Numerator, Denominator, other.Numerator, other.Denominator);
 
-    public MixedFraction64 Divide(short wholeDividend, short wholeDivisor, Fraction32 divisorFraction)
+    public MixedFraction48 Divide(short wholeDividend, short wholeDivisor, Fraction32 divisorFraction)
     {
         (short wholeNumber, short numerator, short denominator) = DivideFractions(wholeDividend, this, wholeDivisor, divisorFraction);
         return new(wholeNumber, numerator, denominator);
@@ -81,9 +81,9 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
 
-    public MixedFraction64 Join(short wholeNumber) => new(wholeNumber, Numerator, Denominator);
+    public MixedFraction48 Join(short wholeNumber) => new(wholeNumber, Numerator, Denominator);
 
-    public MixedFraction64 Multiply(short wholeMultiplier, short wholeMultiplicand, Fraction32 multiplicandFraction)
+    public MixedFraction48 Multiply(short wholeMultiplier, short wholeMultiplicand, Fraction32 multiplicandFraction)
     {
         (short wholeNumber, short numerator, short denominator) = MultiplyFractions(wholeMultiplier, this, wholeMultiplicand, multiplicandFraction);
         return new(wholeNumber, numerator, denominator);
@@ -95,7 +95,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         return new(numerator, denominator);
     }
 
-    public MixedFraction64 Subtract(short wholeMinuend, short wholeSubtrahend, Fraction32 subtrahendFraction)
+    public MixedFraction48 Subtract(short wholeMinuend, short wholeSubtrahend, Fraction32 subtrahendFraction)
     {
         (short wholeNumber, short numerator, short denominator) = SubtractFractions(wholeMinuend, this, wholeSubtrahend, subtrahendFraction);
         return new(wholeNumber, numerator, denominator);
@@ -131,17 +131,17 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Add(MixedFraction64 fraction1, short wholeNumber2, Fraction32 fraction2, out short sum)
+    public static Fraction32 Add(MixedFraction48 fraction1, short wholeNumber2, Fraction32 fraction2, out short sum)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Add(short wholeNumber1, Fraction32 fraction1, MixedFraction64 fraction2, out short sum)
+    public static Fraction32 Add(short wholeNumber1, Fraction32 fraction1, MixedFraction48 fraction2, out short sum)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 Add(short wholeNumber, Fraction32 fraction)
+    public static MixedFraction48 Add(short wholeNumber, Fraction32 fraction)
     {
         throw new NotImplementedException();
     }
@@ -151,17 +151,17 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Divide(MixedFraction64 dividend, short wholeDivisor, Fraction32 divisorFraction, out short quotient)
+    public static Fraction32 Divide(MixedFraction48 dividend, short wholeDivisor, Fraction32 divisorFraction, out short quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Divide(short wholeDividend, Fraction32 dividendFraction, MixedFraction64 divisor, out short quotient)
+    public static Fraction32 Divide(short wholeDividend, Fraction32 dividendFraction, MixedFraction48 divisor, out short quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 Divide(short wholeNumber, Fraction32 fraction)
+    public static MixedFraction48 Divide(short wholeNumber, Fraction32 fraction)
     {
         throw new NotImplementedException();
     }
@@ -311,17 +311,17 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Multiply(MixedFraction64 multiplier, short wholeMultiplicand, Fraction32 multiplicandFraction, out short product)
+    public static Fraction32 Multiply(MixedFraction48 multiplier, short wholeMultiplicand, Fraction32 multiplicandFraction, out short product)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Multiply(short wholeMultiplier, Fraction32 multiplierFraction, MixedFraction64 multiplicand, out short product)
+    public static Fraction32 Multiply(short wholeMultiplier, Fraction32 multiplierFraction, MixedFraction48 multiplicand, out short product)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 Multiply(short wholeNumber, Fraction32 fraction)
+    public static MixedFraction48 Multiply(short wholeNumber, Fraction32 fraction)
     {
         throw new NotImplementedException();
     }
@@ -351,17 +351,17 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Subtract(MixedFraction64 minuend, short wholeSubtrahend, Fraction32 subtrahendFraction, out short difference)
+    public static Fraction32 Subtract(MixedFraction48 minuend, short wholeSubtrahend, Fraction32 subtrahendFraction, out short difference)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction32 Subtract(short wholeMinuend, Fraction32 minuendFraction, MixedFraction64 subtrahend, out short difference)
+    public static Fraction32 Subtract(short wholeMinuend, Fraction32 minuendFraction, MixedFraction48 subtrahend, out short difference)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 Subtract(short wholeNumber, Fraction32 fraction)
+    public static MixedFraction48 Subtract(short wholeNumber, Fraction32 fraction)
     {
         throw new NotImplementedException();
     }
@@ -371,7 +371,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 ToProperFraction(Fraction32 value)
+    public static MixedFraction48 ToProperFraction(Fraction32 value)
     {
         throw new NotImplementedException();
     }
@@ -381,7 +381,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static MixedFraction64 ToProperSimplestForm(Fraction32 value)
+    public static MixedFraction48 ToProperSimplestForm(Fraction32 value)
     {
         throw new NotImplementedException();
     }

@@ -5,7 +5,7 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, byte, UnsignedMixedFraction32>
+public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, byte, UnsignedMixedFraction24>
 {
     #region Static Properties
 
@@ -47,7 +47,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     #region Instance Methods
 
-    public UnsignedMixedFraction32 Add(byte wholeNumber1, byte wholeNumber2, UnsignedFraction16 fraction2)
+    public UnsignedMixedFraction24 Add(byte wholeNumber1, byte wholeNumber2, UnsignedFraction16 fraction2)
     {
         (byte wholeNumber, byte numerator, byte denominator) = AddFractions(wholeNumber1, this, wholeNumber2, fraction2);
         return new(wholeNumber, numerator, denominator);
@@ -61,7 +61,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     public int CompareTo(UnsignedFraction16 other) => CompareFractionComponents(Numerator, Denominator, other.Numerator, other.Denominator);
 
-    public UnsignedMixedFraction32 Divide(byte wholeDividend, byte wholeDivisor, UnsignedFraction16 divisorFraction)
+    public UnsignedMixedFraction24 Divide(byte wholeDividend, byte wholeDivisor, UnsignedFraction16 divisorFraction)
     {
         (byte wholeNumber, byte numerator, byte denominator) = DivideFractions(wholeDividend, this, wholeDivisor, divisorFraction);
         return new(wholeNumber, numerator, denominator);
@@ -79,9 +79,9 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
 
-    public UnsignedMixedFraction32 Join(byte wholeNumber) => new(wholeNumber, Numerator, Denominator);
+    public UnsignedMixedFraction24 Join(byte wholeNumber) => new(wholeNumber, Numerator, Denominator);
 
-    public UnsignedMixedFraction32 Multiply(byte wholeMultiplier, byte wholeMultiplicand, UnsignedFraction16 multiplicandFraction)
+    public UnsignedMixedFraction24 Multiply(byte wholeMultiplier, byte wholeMultiplicand, UnsignedFraction16 multiplicandFraction)
     {
         (byte wholeNumber, byte numerator, byte denominator) = MultiplyFractions(wholeMultiplier, this, wholeMultiplicand, multiplicandFraction);
         return new(wholeNumber, numerator, denominator);
@@ -93,7 +93,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         return new(numerator, denominator);
     }
 
-    public UnsignedMixedFraction32 Subtract(byte wholeMinuend, byte wholeSubtrahend, UnsignedFraction16 subtrahendFraction)
+    public UnsignedMixedFraction24 Subtract(byte wholeMinuend, byte wholeSubtrahend, UnsignedFraction16 subtrahendFraction)
     {
         (byte wholeNumber, byte numerator, byte denominator) = SubtractFractions(wholeMinuend, this, wholeSubtrahend, subtrahendFraction);
         return new(wholeNumber, numerator, denominator);
@@ -132,17 +132,17 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Add(UnsignedMixedFraction32 fraction1, byte wholeNumber2, UnsignedFraction16 fraction2, out byte sum)
+    public static UnsignedFraction16 Add(UnsignedMixedFraction24 fraction1, byte wholeNumber2, UnsignedFraction16 fraction2, out byte sum)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Add(byte wholeNumber1, UnsignedFraction16 fraction1, UnsignedMixedFraction32 fraction2, out byte sum)
+    public static UnsignedFraction16 Add(byte wholeNumber1, UnsignedFraction16 fraction1, UnsignedMixedFraction24 fraction2, out byte sum)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction32 Add(byte wholeNumber, UnsignedFraction16 fraction)
+    public static UnsignedMixedFraction24 Add(byte wholeNumber, UnsignedFraction16 fraction)
     {
         throw new NotImplementedException();
     }
@@ -152,17 +152,17 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Divide(UnsignedMixedFraction32 dividend, byte wholeDivisor, UnsignedFraction16 divisorFraction, out byte quotient)
+    public static UnsignedFraction16 Divide(UnsignedMixedFraction24 dividend, byte wholeDivisor, UnsignedFraction16 divisorFraction, out byte quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Divide(byte wholeDividend, UnsignedFraction16 dividendFraction, UnsignedMixedFraction32 divisor, out byte quotient)
+    public static UnsignedFraction16 Divide(byte wholeDividend, UnsignedFraction16 dividendFraction, UnsignedMixedFraction24 divisor, out byte quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction32 Divide(byte wholeNumber, UnsignedFraction16 fraction)
+    public static UnsignedMixedFraction24 Divide(byte wholeNumber, UnsignedFraction16 fraction)
     {
         throw new NotImplementedException();
     }
@@ -312,17 +312,17 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Multiply(UnsignedMixedFraction32 multiplier, byte wholeMultiplicand, UnsignedFraction16 multiplicandFraction, out byte product)
+    public static UnsignedFraction16 Multiply(UnsignedMixedFraction24 multiplier, byte wholeMultiplicand, UnsignedFraction16 multiplicandFraction, out byte product)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Multiply(byte wholeMultiplier, UnsignedFraction16 multiplierFraction, UnsignedMixedFraction32 multiplicand, out byte product)
+    public static UnsignedFraction16 Multiply(byte wholeMultiplier, UnsignedFraction16 multiplierFraction, UnsignedMixedFraction24 multiplicand, out byte product)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction32 Multiply(byte wholeNumber, UnsignedFraction16 fraction)
+    public static UnsignedMixedFraction24 Multiply(byte wholeNumber, UnsignedFraction16 fraction)
     {
         throw new NotImplementedException();
     }
@@ -352,17 +352,17 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Subtract(UnsignedMixedFraction32 minuend, byte wholeSubtrahend, UnsignedFraction16 subtrahendFraction, out byte difference)
+    public static UnsignedFraction16 Subtract(UnsignedMixedFraction24 minuend, byte wholeSubtrahend, UnsignedFraction16 subtrahendFraction, out byte difference)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 Subtract(byte wholeMinuend, UnsignedFraction16 minuendFraction, UnsignedMixedFraction32 subtrahend, out byte difference)
+    public static UnsignedFraction16 Subtract(byte wholeMinuend, UnsignedFraction16 minuendFraction, UnsignedMixedFraction24 subtrahend, out byte difference)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction32 Subtract(byte wholeNumber, UnsignedFraction16 fraction)
+    public static UnsignedMixedFraction24 Subtract(byte wholeNumber, UnsignedFraction16 fraction)
     {
         throw new NotImplementedException();
     }
@@ -372,7 +372,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction32 ToProperFraction(UnsignedFraction16 value)
+    public static UnsignedMixedFraction24 ToProperFraction(UnsignedFraction16 value)
     {
         throw new NotImplementedException();
     }
@@ -382,7 +382,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction32 ToProperSimplestForm(UnsignedFraction16 value)
+    public static UnsignedMixedFraction24 ToProperSimplestForm(UnsignedFraction16 value)
     {
         throw new NotImplementedException();
     }

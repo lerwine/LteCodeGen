@@ -5,7 +5,7 @@ using static TestDataGeneration.Numerics.Fraction;
 
 namespace TestDataGeneration.Numerics;
 
-public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, MixedFraction128>
+public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, MixedFraction96>
 {
     #region Static Properties
 
@@ -49,7 +49,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     #region Instance Methods
 
-    public MixedFraction128 Add(int wholeNumber1, int wholeNumber2, Fraction64 fraction2)
+    public MixedFraction96 Add(int wholeNumber1, int wholeNumber2, Fraction64 fraction2)
     {
         (int wholeNumber, int numerator, int denominator) = AddFractions(wholeNumber1, this, wholeNumber2, fraction2);
         return new(wholeNumber, numerator, denominator);
@@ -63,7 +63,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     public int CompareTo(Fraction64 other) => CompareFractionComponents(Numerator, Denominator, other.Numerator, other.Denominator);
 
-    public MixedFraction128 Divide(int wholeDividend, int wholeDivisor, Fraction64 divisorFraction)
+    public MixedFraction96 Divide(int wholeDividend, int wholeDivisor, Fraction64 divisorFraction)
     {
         (int wholeNumber, int numerator, int denominator) = DivideFractions(wholeDividend, this, wholeDivisor, divisorFraction);
         return new(wholeNumber, numerator, denominator);
@@ -81,9 +81,9 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     public override int GetHashCode() => HashCode.Combine(Numerator, Denominator);
 
-    public MixedFraction128 Join(int wholeNumber) => new(wholeNumber, Numerator, Denominator);
+    public MixedFraction96 Join(int wholeNumber) => new(wholeNumber, Numerator, Denominator);
 
-    public MixedFraction128 Multiply(int wholeMultiplier, int wholeMultiplicand, Fraction64 multiplicandFraction)
+    public MixedFraction96 Multiply(int wholeMultiplier, int wholeMultiplicand, Fraction64 multiplicandFraction)
     {
         (int wholeNumber, int numerator, int denominator) = MultiplyFractions(wholeMultiplier, this, wholeMultiplicand, multiplicandFraction);
         return new(wholeNumber, numerator, denominator);
@@ -95,7 +95,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         return new(numerator, denominator);
     }
 
-    public MixedFraction128 Subtract(int wholeMinuend, int wholeSubtrahend, Fraction64 subtrahendFraction)
+    public MixedFraction96 Subtract(int wholeMinuend, int wholeSubtrahend, Fraction64 subtrahendFraction)
     {
         (int wholeNumber, int numerator, int denominator) = SubtractFractions(wholeMinuend, this, wholeSubtrahend, subtrahendFraction);
         return new(wholeNumber, numerator, denominator);
@@ -131,17 +131,17 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Add(MixedFraction128 fraction1, int wholeNumber2, Fraction64 fraction2, out int sum)
+    public static Fraction64 Add(MixedFraction96 fraction1, int wholeNumber2, Fraction64 fraction2, out int sum)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Add(int wholeNumber1, Fraction64 fraction1, MixedFraction128 fraction2, out int sum)
+    public static Fraction64 Add(int wholeNumber1, Fraction64 fraction1, MixedFraction96 fraction2, out int sum)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction128 Add(int wholeNumber, Fraction64 fraction)
+    public static MixedFraction96 Add(int wholeNumber, Fraction64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -151,17 +151,17 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Divide(MixedFraction128 dividend, int wholeDivisor, Fraction64 divisorFraction, out int quotient)
+    public static Fraction64 Divide(MixedFraction96 dividend, int wholeDivisor, Fraction64 divisorFraction, out int quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Divide(int wholeDividend, Fraction64 dividendFraction, MixedFraction128 divisor, out int quotient)
+    public static Fraction64 Divide(int wholeDividend, Fraction64 dividendFraction, MixedFraction96 divisor, out int quotient)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction128 Divide(int wholeNumber, Fraction64 fraction)
+    public static MixedFraction96 Divide(int wholeNumber, Fraction64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -311,17 +311,17 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Multiply(MixedFraction128 multiplier, int wholeMultiplicand, Fraction64 multiplicandFraction, out int product)
+    public static Fraction64 Multiply(MixedFraction96 multiplier, int wholeMultiplicand, Fraction64 multiplicandFraction, out int product)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Multiply(int wholeMultiplier, Fraction64 multiplierFraction, MixedFraction128 multiplicand, out int product)
+    public static Fraction64 Multiply(int wholeMultiplier, Fraction64 multiplierFraction, MixedFraction96 multiplicand, out int product)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction128 Multiply(int wholeNumber, Fraction64 fraction)
+    public static MixedFraction96 Multiply(int wholeNumber, Fraction64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -351,17 +351,17 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Subtract(MixedFraction128 minuend, int wholeSubtrahend, Fraction64 subtrahendFraction, out int difference)
+    public static Fraction64 Subtract(MixedFraction96 minuend, int wholeSubtrahend, Fraction64 subtrahendFraction, out int difference)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction64 Subtract(int wholeMinuend, Fraction64 minuendFraction, MixedFraction128 subtrahend, out int difference)
+    public static Fraction64 Subtract(int wholeMinuend, Fraction64 minuendFraction, MixedFraction96 subtrahend, out int difference)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction128 Subtract(int wholeNumber, Fraction64 fraction)
+    public static MixedFraction96 Subtract(int wholeNumber, Fraction64 fraction)
     {
         throw new NotImplementedException();
     }
@@ -371,7 +371,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static MixedFraction128 ToProperFraction(Fraction64 value)
+    public static MixedFraction96 ToProperFraction(Fraction64 value)
     {
         throw new NotImplementedException();
     }
@@ -381,7 +381,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static MixedFraction128 ToProperSimplestForm(Fraction64 value)
+    public static MixedFraction96 ToProperSimplestForm(Fraction64 value)
     {
         throw new NotImplementedException();
     }
