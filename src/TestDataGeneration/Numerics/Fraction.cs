@@ -12,8 +12,14 @@ namespace TestDataGeneration.Numerics;
 /// </summary>
 public static class Fraction
 {
+    /// <summary>
+    /// The default separator for the <see cref="IFraction{TSelf, TValue}.Numerator" /> and <see cref="IFraction{TSelf, TValue}.Denominator" />.
+    /// </summary>
     public const char Separator_Numerator_Denominator = '\u2215';
 
+    /// <summary>
+    /// The alternate separator for the <see cref="IFraction{TSelf, TValue}.Numerator" /> and <see cref="IFraction{TSelf, TValue}.Denominator" />.
+    /// </summary>
     public const char AltSeparator_Numerator_Denominator = '/';
 
     private static readonly char[] _anySeparator = new char[] { Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator };
@@ -22,24 +28,41 @@ public static class Fraction
 
     public const char Group_Close = ')';
 
+    /// <summary>
+    /// The default positive sign character.
+    /// </summary>
     public const char Positive_Prefix_Char = '+';
 
+    /// <summary>
+    /// The default negative sign character.
+    /// </summary>
     public const char Negative_Prefix_Char = '-';
 
+    /// <summary>
+    /// The alternate negative sign character.
+    /// </summary>
     public const char AltNegative_Prefix_Char = '\u2212';
 
+    /// <summary>
+    /// String representation for a fraction that is not a number (<see cref="IFraction{TSelf, TValue}.Denominator" /> is zero).
+    /// </summary>
     public const string Format_NaN = "NaN";
+
+    /// <summary>
+    /// The default number format for the <see cref="IMixedFraction{TSelf, TValue}.WholeNumber"/>, <see cref="IFraction{TSelf, TValue}.Numerator" />, and <see cref="IFraction{TSelf, TValue}.Denominator" />.
+    /// </summary>
     private const string Default_Number_Format = "D";
+
     private static readonly NumberFormatInfo _defaultFormatInfo = CultureInfo.InvariantCulture.NumberFormat;
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) AddFractions<TFraction, TValue>(TValue wholeNumber1, TFraction fraction1, TValue wholeNumber2, TFraction fraction2)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) AddFractions<TFraction, TValue>(TValue wholeNumber1, TFraction fraction1, TValue wholeNumber2, TFraction fraction2)
         where TFraction : struct, ISimpleFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) AddFractions<TFraction, TValue>(TFraction fraction1, TFraction fraction2)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) AddFractions<TFraction, TValue>(TFraction fraction1, TFraction fraction2)
         where TFraction : struct, IMixedFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
@@ -106,14 +129,14 @@ public static class Fraction
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) DivideFractions<TFraction, TValue>(TValue wholeDividend, TFraction dividendFraction, TValue wholeDivisor, TFraction divisorFraction)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) DivideFractions<TFraction, TValue>(TValue wholeDividend, TFraction dividendFraction, TValue wholeDivisor, TFraction divisorFraction)
         where TFraction : struct, ISimpleFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) DivideFractions<TFraction, TValue>(TFraction dividend, TFraction divisor)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) DivideFractions<TFraction, TValue>(TFraction dividend, TFraction divisor)
         where TFraction : struct, IMixedFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
@@ -127,14 +150,14 @@ public static class Fraction
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) MultiplyFractions<TFraction, TValue>(TValue wholeMultiplier, TFraction multiplierFraction, TValue wholeMultiplicand, TFraction multiplicandFraction)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) MultiplyFractions<TFraction, TValue>(TValue wholeMultiplier, TFraction multiplierFraction, TValue wholeMultiplicand, TFraction multiplicandFraction)
         where TFraction : struct, ISimpleFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) MultiplyFractions<TFraction, TValue>(TFraction multiplier, TFraction multiplicand)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) MultiplyFractions<TFraction, TValue>(TFraction multiplier, TFraction multiplicand)
         where TFraction : struct, IMixedFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
@@ -148,14 +171,14 @@ public static class Fraction
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) SubtractFractions<TFraction, TValue>(TValue wholeMinuend, TFraction minuendFraction, TValue wholeSubtrahend, TFraction subtrahendFraction)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) SubtractFractions<TFraction, TValue>(TValue wholeMinuend, TFraction minuendFraction, TValue wholeSubtrahend, TFraction subtrahendFraction)
         where TFraction : struct, ISimpleFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
         throw new NotImplementedException();
     }
 
-    public static (TValue WholeNUmber, TValue Numerator, TValue Denominator) SubtractFractions<TFraction, TValue>(TFraction minuend, TFraction subtrahend)
+    public static (TValue WholeNumber, TValue Numerator, TValue Denominator) SubtractFractions<TFraction, TValue>(TFraction minuend, TFraction subtrahend)
         where TFraction : struct, IMixedFraction<TFraction, TValue>?
         where TValue : struct, IBinaryNumber<TValue>
     {
