@@ -523,6 +523,155 @@ public static class Fraction
         return "(" + numerator.ToString(format, provider) + Separator_Numerator_Denominator + denominator.ToString(format, provider) + ")";
     }
 
+    public enum FractionTokenType
+    {
+        Group,
+        Numbers,
+        Separator,
+        WhiteSpace,
+        Other
+    }
+    public record FractionToken(int Start, int End, FractionTokenType Type)
+    {
+        public ReadOnlySpan<char> ToSpan(ReadOnlySpan<char> s) => s[Start..End];
+        public ReadOnlySpan<char> ToInnerSpan(ReadOnlySpan<char> s)
+        {
+            var i = Start + 1;
+            var e = End - 1;
+            return (i < e) ? ReadOnlySpan<char>.Empty : s[i..e];
+        }
+    }
+
+    public static IEnumerable<FractionToken> TokenizeFractionString(ReadOnlySpan<char> s)
+    {
+        int e;
+        for (int index = 0; index < s.Length; index++)
+        {
+            char c = s[index];
+            switch (c)
+            {
+                case '(':
+                    int level = 1;
+                    e = index + 1;
+                    while (level > 0)
+                    {
+                        switch (s[e])
+                        {
+                            case '(':
+                                level++;
+                                break;
+                            case ')':
+                                level--;
+                                break;
+                        }
+                        e++;
+                        if (e == s.Length) break;
+                    }
+                    if (level == 0)
+                    {
+                        yield return new FractionToken(index, e, FractionTokenType.Group);
+                        index = e - 1;
+                    }
+                    else
+                    {
+                        e = index + 1;
+                        while (e < s.Length)
+                        {
+                            c = s[e];
+                            if (c switch
+                            {
+                                '(' or Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
+                                _ => char.IsNumber(c) || char.IsWhiteSpace(c),
+                            }) break;
+                            e++;
+                        }
+                        yield return new FractionToken(index, e, FractionTokenType.Other);
+                        index = e - 1;
+                    }
+                    break;
+                case Separator_Numerator_Denominator:
+                case AltSeparator_Numerator_Denominator:
+                    yield return new FractionToken(index, index + 1, FractionTokenType.Separator);
+                    break;
+                default:
+                    e = index + 1;
+                    if (char.IsNumber(c))
+                    {
+                        while (e < s.Length)
+                        {
+                            if (!char.IsNumber(c)) break;
+                            e++;
+                        }
+                        yield return new FractionToken(index, e, FractionTokenType.Numbers);
+                    }
+                    else if (char.IsWhiteSpace(c))
+                    {
+                        while (e < s.Length)
+                        {
+                            if (!char.IsWhiteSpace(c)) break;
+                            e++;
+                        }
+                        yield return new FractionToken(index, e, FractionTokenType.WhiteSpace);
+                    }
+                    else
+                    {
+                        while (e < s.Length)
+                        {
+                            c = s[e];
+                            if (c switch
+                            {
+                                '(' or Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
+                                _ => char.IsNumber(c) || char.IsWhiteSpace(c),
+                            }) break;
+                            e++;
+                        }
+                        yield return new FractionToken(index, e, FractionTokenType.Other);
+                    }
+                    index = e - 1;
+                    break;
+            }
+        }
+    }
+
+    public static ReadOnlySpan<char> SplitFractionComponents(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out ReadOnlySpan<char> numerator, out ReadOnlySpan<char> denominator)
+    {
+        // Check starting with \s*\( and ending witih \)\s* with balancing pair checking
+        // whole: \D*\d+[^\d/]*
+        // whole: \D*\d+[^\d/]*
+        // whole: \D*\d+[^\d\s/]*  \s+  numerator: [^\d/\s]*\d+[^/\d]*  \s*/\s*  denominator: \D*\d+\D*
+        // whole: \D*\d+[^\d\s/]*  numerator: [^\d/\s]+\d+[^/\d]*  \s*/\s*  denominator: \D*\d+\D*
+        // numerator: \D*\d+[^\d\s/]*   \s*/\s*  denominator: \D*\d+\D*
+        var tokens = TokenizeFractionString(s).ToList();
+        if (tokens.Count == 0)
+        {
+            numerator = denominator = ReadOnlySpan<char>.Empty;
+            return s;
+        }
+        var t = tokens[0];
+        if (tokens.Count == 1)
+        {
+            if (t.Type == FractionTokenType.Group)
+            {
+                if ((s = t.ToInnerSpan(s)).IsEmpty)
+                {
+                    numerator = denominator = ReadOnlySpan<char>.Empty;
+                    return s;
+                }
+                return SplitFractionComponents(s, style, provider, out numerator, out denominator);
+            }
+            if (t.Type == FractionTokenType.Numbers)
+            {
+                numerator = ReadOnlySpan<char>.Empty;
+                denominator = ReadOnlySpan<char>.Empty;
+                return t.ToSpan(s);
+            }
+            numerator = denominator = ReadOnlySpan<char>.Empty;
+            return s;
+        }
+        int wholeNumberStart = t.Start;
+        throw new NotImplementedException();
+    }
+
     public static bool TryParseSimpleFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T numerator, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
