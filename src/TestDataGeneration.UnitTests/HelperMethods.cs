@@ -2,6 +2,79 @@ namespace TestDataGeneration.UnitTests;
 
 static class HelperMethods
 {
+    internal static readonly Random SharedRandom = new();
+
+    internal static T GetRandomItem<T>(IList<T> list)
+    {
+        if (list is null || list.Count == 0) return default!;
+        return list[(list.Count == 1) ? 0 : SharedRandom.Next(0, list.Count)];
+    }
+    
+    internal static T GetRandomItem<T>(params T[] items) => GetRandomItem((IList<T>)items);
+    
+    internal static IEnumerable<T> GetRandomItems<T>(int count, IList<T> list)
+    {
+        if (count > 0 && list is not null && list.Count > 0)
+        {
+            if (list.Count == 1)
+            {
+                T i = list[0];
+                for (var n = 0; n < count; n++) yield return i;
+            }
+            else
+                for (var n = 0; n < count; n++) yield return list[SharedRandom.Next(0, list.Count)];
+        }
+    }
+    
+    internal static IEnumerable<T> GetRandomItems<T>(int minCount, int maxCount, IList<T> list)
+    {
+        int count = (minCount == maxCount) ? minCount : SharedRandom.Next(minCount, maxCount + 1);
+        if (count > 0 && list is not null && list.Count > 0)
+        {
+            if (list.Count == 1)
+            {
+                T i = list[0];
+                for (var n = 0; n < count; n++) yield return i;
+            }
+            else
+                for (var n = 0; n < count; n++) yield return list[SharedRandom.Next(0, list.Count)];
+        }
+    }
+    
+    internal static IEnumerable<T> GetRandomItems<T>(int count, params T[] items) => GetRandomItems(count, (IList<T>)items);
+    
+    internal static IEnumerable<T> GetRandomItems<T>(int minCount, int maxCount, params T[] items) => GetRandomItems(minCount, maxCount, (IList<T>)items);
+    
+    internal static string GetRandomString(int minLength, int maxLength, params char[] chars) => new(GetRandomItems(minLength, maxLength, chars).ToArray());
+
+    internal static string GetRandomString(int length, params char[] chars) => new(GetRandomItems(length, chars).ToArray());
+
+    internal static string GetRandomString(int minLength, int maxLength, IList<char> chars) => new(GetRandomItems(minLength, maxLength, chars).ToArray());
+
+    internal static string GetRandomString(int minLength, int maxLength, string chars) => new(GetRandomItems(minLength, maxLength, chars.ToCharArray()).ToArray());
+
+    internal static string GetRandomString(int length, IList<char> chars) => new(GetRandomItems(length, chars).ToArray());
+
+    internal static string GetRandomString(int length, string chars) => new(GetRandomItems(length, chars.ToCharArray()).ToArray());
+
+    internal static int GetRandomIntByLength(int minLength, int maxLength, bool nonZero = false)
+    {
+        int length = (minLength == maxLength) ? minLength : SharedRandom.Next(minLength, maxLength + 1);
+        if (length < 2) return SharedRandom.Next(nonZero ? 1 : 0, 10);
+        int minValue = 10, maxValue = 100;
+        while (length > 2)
+        {
+            minValue *= 10;
+            if (maxValue * 10L > int.MaxValue)
+            {
+                maxValue = int.MaxValue;
+                break;
+            }
+            maxValue *= 10;
+        }
+        return SharedRandom.Next(minValue, maxValue);
+    }
+
     internal static IEnumerable<char> GetAllTestCharacters()
     {
         for (char c = char.MinValue; c < char.MaxValue; c++)

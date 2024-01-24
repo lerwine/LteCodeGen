@@ -523,196 +523,286 @@ public static class Fraction
         return "(" + numerator.ToString(format, provider) + Separator_Numerator_Denominator + denominator.ToString(format, provider) + ")";
     }
 
-    public enum FractionTokenType
+    public static readonly Regex SimpleFractionPattern = new(@"^
+(
+    \(\s*
+        (?:(?<nn>[\u2212-])|\+)?(?<num>\p{N})
+        (
+            [ \t]*
+            [\u2215/]
+            [ \t]*
+            (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+        )?
+    \s*\)
+|
+    (?:(?<nn>[\u2212-])|\+)?(?<num>\d+)
+    (
+        [ \t]*
+        [\u2215/]
+        [ \t]*
+        (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+    )?
+)
+$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+
+    public static readonly Regex MixedFractionPattern = new(@"^
+(
+    \(\s*
+        (?:(?<wn>[\u2212-])|\+)?(?<whl>\d+)
+        (
+            (
+                (?:[\t ]+(?:(?<nn>[\u2212-])|\+)?|(?:(?<nn>[\u2212-])|\+))
+                (?<num>\d+)
+            )?
+            [\u2215/]
+            [ \t]*
+            (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+        )?
+    \s*\)
+|
+    (?:(?<wn>[\u2212-])|\+)?(?<whl>\d+)
+    (
+        (
+            (?:[\t ]+(?:(?<nn>[\u2212-])|\+)?|(?:(?<nn>[\u2212-])|\+))
+            (?<num>\d+)
+        )?
+        [\u2215/]
+        [ \t]*
+        (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
+    )?
+)
+$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+
+    // public static readonly Regex FractionStringRegex = new(@"^(?:(?<wn>[−-])|\+)?(?<wh>\d+)([\u2215/](?:(?<dn0>[−-])|\+)?0*(?<d0>[1-9]\d*)|(\s+(?:(?<nn0>[−-])|\+)?|(?<nn1>[−-])|\+)(?<n>\d+)[\u2215/](?:(?<dn1>[−-])|\+)?0*(?<d1>[1-9]\d*))?$", RegexOptions.Compiled);
+
+    public static bool TryMatchWhiteSpace(this ReadOnlySpan<char> s, out int endIndex) => TryMatchWhiteSpace(s, 0, out endIndex);
+
+    public static bool TryMatchWhiteSpace(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
     {
-        Group,
-        Numbers,
-        Separator,
-        WhiteSpace,
-        Other
-    }
-    public record FractionToken(int Start, int End, FractionTokenType Type)
-    {
-        public ReadOnlySpan<char> ToSpan(ReadOnlySpan<char> s) => s[Start..End];
-        public ReadOnlySpan<char> ToInnerSpan(ReadOnlySpan<char> s)
+        endIndex = startIndex;
+        if (endIndex < s.Length && char.IsWhiteSpace(s[endIndex]))
         {
-            var i = Start + 1;
-            var e = End - 1;
-            return (i < e) ? ReadOnlySpan<char>.Empty : s[i..e];
+            endIndex++;
+            while (endIndex < s.Length && char.IsWhiteSpace(s[endIndex])) endIndex++;
+            return true;
         }
+        return false;
     }
 
-    public static IEnumerable<FractionToken> TokenizeFractionString(ReadOnlySpan<char> s)
+    public static bool TryMatchDigits(this ReadOnlySpan<char> s, out int endIndex) => TryMatchDigits(s, 0, out endIndex);
+
+    public static bool TryMatchDigits(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
     {
-        int e;
-        for (int index = 0; index < s.Length; index++)
+        endIndex = startIndex;
+        if (endIndex < s.Length && char.IsDigit(s[endIndex]))
         {
-            char c = s[index];
-            switch (c)
+            endIndex++;
+            while (endIndex < s.Length && char.IsDigit(s[endIndex])) endIndex++;
+            return true;
+        }
+        return false;
+    }
+
+    public static bool IsSeparatorChar(char c) => c switch { Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true, _ => false };
+
+    public static bool TryMatchSeparator(this ReadOnlySpan<char> s, out int endIndex) => TryMatchSeparator(s, 0, out endIndex);
+
+    public static bool TryMatchSeparator(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
+    {
+        endIndex = startIndex;
+        if (endIndex < s.Length && s[endIndex] == '(')
+        {
+            int level = 1;
+            while (++endIndex < s.Length)
             {
-                case '(':
-                    int level = 1;
-                    e = index + 1;
-                    while (level > 0)
-                    {
-                        switch (s[e])
-                        {
-                            case '(':
-                                level++;
-                                break;
-                            case ')':
-                                level--;
-                                break;
-                        }
-                        e++;
-                        if (e == s.Length) break;
-                    }
+                char c = s[endIndex];
+                if (c == ')')
+                {
+                    level--;
                     if (level == 0)
                     {
-                        yield return new FractionToken(index, e, FractionTokenType.Group);
-                        index = e - 1;
+                        endIndex++;
+                        return true;
                     }
-                    else
-                    {
-                        e = index + 1;
-                        while (e < s.Length)
-                        {
-                            c = s[e];
-                            if (c switch
-                            {
-                                '(' or Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
-                                _ => char.IsNumber(c) || char.IsWhiteSpace(c),
-                            }) break;
-                            e++;
-                        }
-                        yield return new FractionToken(index, e, FractionTokenType.Other);
-                        index = e - 1;
-                    }
-                    break;
-                case Separator_Numerator_Denominator:
-                case AltSeparator_Numerator_Denominator:
-                    yield return new FractionToken(index, index + 1, FractionTokenType.Separator);
-                    break;
-                default:
-                    e = index + 1;
-                    if (char.IsNumber(c))
-                    {
-                        while (e < s.Length)
-                        {
-                            if (!char.IsNumber(c)) break;
-                            e++;
-                        }
-                        yield return new FractionToken(index, e, FractionTokenType.Numbers);
-                    }
-                    else if (char.IsWhiteSpace(c))
-                    {
-                        while (e < s.Length)
-                        {
-                            if (!char.IsWhiteSpace(c)) break;
-                            e++;
-                        }
-                        yield return new FractionToken(index, e, FractionTokenType.WhiteSpace);
-                    }
-                    else
-                    {
-                        while (e < s.Length)
-                        {
-                            c = s[e];
-                            if (c switch
-                            {
-                                '(' or Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => true,
-                                _ => char.IsNumber(c) || char.IsWhiteSpace(c),
-                            }) break;
-                            e++;
-                        }
-                        yield return new FractionToken(index, e, FractionTokenType.Other);
-                    }
-                    index = e - 1;
-                    break;
+                }
+                else if (c == '(')
+                    level++;
             }
+            endIndex = startIndex;
         }
+        return false;
     }
 
-    public static ReadOnlySpan<char> SplitFractionComponents(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out ReadOnlySpan<char> numerator, out ReadOnlySpan<char> denominator)
+    public static bool IsOtherChar(char c) => c switch { Group_Open or Group_Close or Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => false, _ => !(char.IsWhiteSpace(c) || char.IsDigit(c)) };
+
+    public static bool TryMatchOther(this ReadOnlySpan<char> s, out int endIndex) => TryMatchOther(s, 0, out endIndex);
+
+    public static bool TryMatchOther(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
     {
-        // Check starting with \s*\( and ending witih \)\s* with balancing pair checking
-        // whole: \D*\d+[^\d/]*
-        // whole: \D*\d+[^\d/]*
-        // whole: \D*\d+[^\d\s/]*  \s+  numerator: [^\d/\s]*\d+[^/\d]*  \s*/\s*  denominator: \D*\d+\D*
-        // whole: \D*\d+[^\d\s/]*  numerator: [^\d/\s]+\d+[^/\d]*  \s*/\s*  denominator: \D*\d+\D*
-        // numerator: \D*\d+[^\d\s/]*   \s*/\s*  denominator: \D*\d+\D*
-        var tokens = TokenizeFractionString(s).ToList();
-        if (tokens.Count == 0)
+        endIndex = startIndex;
+        if (endIndex < s.Length && IsOtherChar(s[endIndex]))
         {
-            numerator = denominator = ReadOnlySpan<char>.Empty;
-            return s;
+            endIndex++;
+            while (endIndex < s.Length && IsOtherChar(s[endIndex])) endIndex++;
+            return true;
         }
-        var t = tokens[0];
-        if (tokens.Count == 1)
+        return false;
+    }
+
+    public static bool TryMatchGroup(this ReadOnlySpan<char> s, out int endIndex) => TryMatchGroup(s, 0, out endIndex);
+
+    public static bool TryMatchGroup(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
+    {
+        endIndex = startIndex;
+        if (endIndex < s.Length && s[endIndex] == '(')
         {
-            if (t.Type == FractionTokenType.Group)
+            int level = 1;
+            while (++endIndex < s.Length)
             {
-                if ((s = t.ToInnerSpan(s)).IsEmpty)
+                char c = s[endIndex];
+                if (c == ')')
                 {
-                    numerator = denominator = ReadOnlySpan<char>.Empty;
-                    return s;
+                    level--;
+                    if (level == 0)
+                    {
+                        endIndex++;
+                        return true;
+                    }
                 }
-                return SplitFractionComponents(s, style, provider, out numerator, out denominator);
+                else if (c == '(')
+                    level++;
             }
-            if (t.Type == FractionTokenType.Numbers)
-            {
-                numerator = ReadOnlySpan<char>.Empty;
-                denominator = ReadOnlySpan<char>.Empty;
-                return t.ToSpan(s);
-            }
-            numerator = denominator = ReadOnlySpan<char>.Empty;
-            return s;
+            endIndex = startIndex;
         }
-        int wholeNumberStart = t.Start;
-        throw new NotImplementedException();
+        return false;
     }
 
     public static bool TryParseSimpleFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T numerator, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
-        int index = s.IndexOf(Group_Open);
-        if ((index == 0) ? (s.Length < 3 || s[^1] != Group_Close || (s = s[1..^1].Trim()).Length == 0) : index > 0)
+        if (s.IsEmpty)
         {
             numerator = denominator = default;
             return false;
         }
-        
-        if ((index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator)) < 0)
+        if (s.TryMatchWhiteSpace(0, out int start))
+        {
+            if (start == s.Length || !style.HasFlag(NumberStyles.AllowLeadingWhite))
+            {
+                numerator = denominator = default;
+                return false;
+            }
+            s = s[..start];
+        }
+        if (s.TryMatchGroup(out int end))
+        {
+            if (end == s.Length) return TryParseSimpleFraction(s[1..(end - 1)], style, provider, out numerator, out denominator);
+            if (s.TryMatchWhiteSpace(end, out end) && end == s.Length)
+            {
+                if (style.HasFlag(NumberStyles.AllowTrailingWhite)) return TryParseSimpleFraction(s[1..(end - 1)], style, provider, out numerator, out denominator);
+                numerator = denominator = default;
+                return false;
+            }
+        }
+        int index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator);
+        if (index < 0)
         {
             if (T.TryParse(s, style, provider, out numerator))
             {
                 denominator = T.One;
                 return true;
             }
-            denominator = default;
         }
-        else if (index == 0 || index == s.Length - 1)
-            numerator = denominator = default;
-        else if (T.TryParse(s[..index].TrimEnd(), style, provider, out numerator))
+        else if (index > 0 && index < s.Length - 1)
         {
-            if (T.TryParse(s[(index + 1)..].TrimStart(), style, provider, out denominator)) return true;
+            if (T.TryParse(s[..index].TrimEnd(), style, provider, out numerator))
+                return T.TryParse(s[(index + 1)..].TrimStart(), style, provider, out denominator);
         }
         else
-            denominator = default;
+            numerator = default;
+        denominator = default;
         return false;
     }
 
     public static bool TryParseMixedFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T wholeNumber, out T numerator, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
-        int index = s.IndexOf(Group_Open);
-        if ((index == 0) ? (s.Length < 3 || s[^1] != Group_Close || (s = s[1..^1].Trim()).Length == 0) : index > 0)
+        // (W)$
+
+        // (W)[sp]$
+        // (W)[sp](N)/
+        // (W)[sp](N)[sp]/
+        // (W)[sp](N-)/
+        // (W)[sp](N-)[sp]/
+        // (W)[sp](-N)/
+        // (W)[sp](-N)[sp]/
+        // (W)[sp](-[sp]N)/
+        // (W)[sp](-[sp]N)[sp]/
+
+        // (-W)$
+        // (-W)[sp]$
+        // (-W)[sp](N)/
+        // (-W)[sp](N)[sp]/
+        // (-W)[sp](-N)/
+        // (-W)[sp](-N)[sp]/
+        // (-W)[sp](-[sp]N)/
+        // (-W)[sp](-[sp]N)[sp]/
+        // (-W)[sp](N-)/
+        // (-W)[sp](N-)[sp]/
+        // (-W)(-[sp]N)/
+        // (-W)(-[sp]N)[sp]/
+        // (-W)(-N)/
+        // (-W)(-N)[sp]/
+
+        // (W-)$
+        // (W-)[sp]$
+        // (W-)[sp](-N)/
+        // (W-)[sp](-N)[sp]/
+        // (W-)[sp](-[sp]N)/
+        // (W-)[sp](-[sp]N)[sp]/
+        // (W-)[sp](N)/
+        // (W-)[sp](N)[sp]/
+        // (W)(-[sp]N)[sp]/ ** Only when trailing sign not allowed
+        // (W-)[sp](N-)/
+        // (W-)[sp](N-)[sp]/
+        // (W)(-[sp]N)/ ** Only when trailing sign not allowed
+
+        // (W)(-N)/ ** Not when leading sign not allowed
+        // (W-)(N)/ ** Only when leading sign not allowed and trailing sign not allowed
+        // (W)(-N)[sp]/
+        // (W-)(N)[sp]/ ** Only when leading sign not allowed
+        // (W-)(N-)/ ** Only when leading sign not allowed
+        // (W-)(N-)[sp]/ ** Only when leading sign not allowed
+
+
+
+
+        if (s.IsEmpty)
         {
             wholeNumber = numerator = denominator = default;
             return false;
         }
-
-        if ((index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator)) < 0)
+        if (s.TryMatchWhiteSpace(0, out int start))
+        {
+            if (start == s.Length || !style.HasFlag(NumberStyles.AllowLeadingWhite))
+            {
+                wholeNumber = numerator = denominator = default;
+                return false;
+            }
+            s = s[..start];
+        }
+        if (s.TryMatchGroup(out int end))
+        {
+            if (end == s.Length) return TryParseMixedFraction(s[1..(end - 1)], style, provider, out wholeNumber, out numerator, out denominator);
+            if (s.TryMatchWhiteSpace(end, out end) && end == s.Length)
+            {
+                if (style.HasFlag(NumberStyles.AllowTrailingWhite)) return TryParseMixedFraction(s[1..(end - 1)], style, provider, out wholeNumber, out numerator, out denominator);
+                wholeNumber = numerator = denominator = default;
+                return false;
+            }
+        }
+        int index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator);
+        if (index < 0)
         {
             if (T.TryParse(s, style, provider, out wholeNumber))
             {
@@ -720,66 +810,62 @@ public static class Fraction
                 denominator = T.One;
                 return true;
             }
-            numerator = denominator = default;
-            return false;
+            denominator = default;
         }
-        if (index == 0 || index == s.Length - 1)
+        else if (index > 0 && index < s.Length - 1)
         {
-            wholeNumber = numerator = denominator = default;
-            return false;
-        }
-        // s = [^/]{index}/[^/].*
-        ReadOnlySpan<char> n = s[..index].TrimStart();
-        if (n.Length == 0 || (s = s[(index + 1)..].TrimStart()).Length == 0 || !T.TryParse(s, style, provider, out denominator) || T.IsZero(denominator))
-        {
-            denominator = wholeNumber = numerator = default;
-            return false;
-        }
-        // n = [^/\s][^/]*
-        int startIndex;
-        if (char.IsNumber(n[0]))
-            startIndex = 0; // n = \d[^/]*
-        else
-        {
-            if (n.Length == 1)
+            if (T.TryParse(s[(index + 1)..].TrimStart(), style, provider, out denominator) && !(s = s[..index].TrimEnd()).IsEmpty)
             {
-                wholeNumber = numerator = default;
-                return false;
-            }
-            // n = [^\d\s][^/]+
-            startIndex = 1;
-        }
-        if (!char.IsNumber(n[startIndex]))
-        {
-            wholeNumber = numerator = default;
-            return false;
-        }
-        // n = [^\d\s]?\d[^/]*
-        for (int i = startIndex + 1; i < n.Length; i++)
-        {
-            if (!char.IsNumber(n[i]))
-            {
-                // n = [+-]?\d+[^\d]
-                s = n[..i];
-                if ((n = n[index..].TrimStart()).Length == 0 || !T.TryParse(s, style, provider, out wholeNumber))
+                if (s.TryMatchGroup(out end))
                 {
-                    denominator = wholeNumber = numerator = default;
+                    if (end == s.Length)
+                    {
+                        if (T.TryParse(s, style, provider, out numerator))
+                        {
+                            wholeNumber = T.Zero;
+                            return true;
+                        }
+                    }
+                    if (s.TryMatchOther(end, out end))
+                    {
+                        // (G-)[space](-N)
+                        // (G-)[space](N)
+                        // NumberStyles.AllowTrailingSign && !NumberStyles.LeadingingSign: (G-)(N) : (G)(-N)
+                    }
+                    // (G)[space](-[space]N)
+                    // (G)[space](-N)
+                    // (G)[space](N)
+                }
+                if (s.TryMatchDigits(out end))
+                {
+                    // (W-)[space](-N)
+                    // (W)[space](-[space]N)
+                    // (W-)[space](N)
+                    // (W)[space](-N)
+                    // (W)[space](N)
+                    // NumberStyles.AllowTrailingSign && !NumberStyles.LeadingingSign: (G-)(N) : (G)(-N)
+                }
+                if (s.TryMatchOther(out end))
+                {
+                    // (-W)[space](-[space]N)
+                    // (-W)(-[space]N)
+                    // (-W)[space](-N)
+                    // (-W)[space](N)
+                    // (-W)(-N)
+                }
+                else
+                {
+                    wholeNumber = numerator = default;
                     return false;
                 }
-                if (!char.IsNumber(n[0]))
-                {
-                    if (n.Length == 1)
-                    {
-                        denominator = numerator = default;
-                        return false;
-                    }
-                    if (char.IsWhiteSpace(s[1])) n = new(new char[] { n[0] }.Concat(n[1..].TrimStart().ToArray()).ToArray());
-                }
-                return T.TryParse(n, style, provider, out numerator);
+                // return true;
+                throw new NotImplementedException();
             }
         }
-        wholeNumber = default;
-        return T.TryParse(n, style, provider, out numerator);
+        else
+            denominator = default;
+        wholeNumber = numerator = default;
+        return false;
     }
 
     public static object ConvertFraction<TFraction, TValue>(TFraction fraction, Type conversionType, IFormatProvider? provider)
@@ -791,58 +877,6 @@ public static class Fraction
         var d = fraction.ToDouble(provider);
         return conversionType.IsAssignableFrom(typeof(double)) ? d : Convert.ChangeType(d, conversionType, provider);
     }
-
-//     public static readonly Regex SimpleFractionPattern = new(@"^
-// (
-//     \(\s*
-//         (?:(?<nn>[\u2212-])|\+)?(?<num>\d+)
-//         (
-//             [ \t]*
-//             [\u2215/]
-//             [ \t]*
-//             (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
-//         )?
-//     \s*\)
-// |
-//     (?:(?<nn>[\u2212-])|\+)?(?<num>\d+)
-//     (
-//         [ \t]*
-//         [\u2215/]
-//         [ \t]*
-//         (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
-//     )?
-// )
-// $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
-
-//     public static readonly Regex MixedFractionPattern = new(@"^
-// (
-//     \(\s*
-//         (?:(?<wn>[\u2212-])|\+)?(?<whl>\d+)
-//         (
-//             (
-//                 (?:[\t ]+(?:(?<nn>[\u2212-])|\+)?|(?:(?<nn>[\u2212-])|\+))
-//                 (?<num>\d+)
-//             )?
-//             [\u2215/]
-//             [ \t]*
-//             (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
-//         )?
-//     \s*\)
-// |
-//     (?:(?<wn>[\u2212-])|\+)?(?<whl>\d+)
-//     (
-//         (
-//             (?:[\t ]+(?:(?<nn>[\u2212-])|\+)?|(?:(?<nn>[\u2212-])|\+))
-//             (?<num>\d+)
-//         )?
-//         [\u2215/]
-//         [ \t]*
-//         (?:(?<nd>[\u2212-])|\+)?(?<den>\d+)
-//     )?
-// )
-// $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
-
-    // public static readonly Regex FractionStringRegex = new(@"^(?:(?<wn>[−-])|\+)?(?<wh>\d+)([\u2215/](?:(?<dn0>[−-])|\+)?0*(?<d0>[1-9]\d*)|(\s+(?:(?<nn0>[−-])|\+)?|(?<nn1>[−-])|\+)(?<n>\d+)[\u2215/](?:(?<dn1>[−-])|\+)?0*(?<d1>[1-9]\d*))?$", RegexOptions.Compiled);
 
     public static int IndexOfNextNonWhiteSpace(string source, int startIndex)
     {
