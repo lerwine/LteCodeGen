@@ -727,145 +727,84 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
     public static bool TryParseMixedFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T wholeNumber, out T numerator, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
-        // (W)$
-
-        // (W)[sp]$
-        // (W)[sp](N)/
-        // (W)[sp](N)[sp]/
-        // (W)[sp](N-)/
-        // (W)[sp](N-)[sp]/
-        // (W)[sp](-N)/
-        // (W)[sp](-N)[sp]/
-        // (W)[sp](-[sp]N)/
-        // (W)[sp](-[sp]N)[sp]/
-
-        // (-W)$
-        // (-W)[sp]$
-        // (-W)[sp](N)/
-        // (-W)[sp](N)[sp]/
-        // (-W)[sp](-N)/
-        // (-W)[sp](-N)[sp]/
-        // (-W)[sp](-[sp]N)/
-        // (-W)[sp](-[sp]N)[sp]/
-        // (-W)[sp](N-)/
-        // (-W)[sp](N-)[sp]/
-        // (-W)(-[sp]N)/
-        // (-W)(-[sp]N)[sp]/
-        // (-W)(-N)/
-        // (-W)(-N)[sp]/
-
-        // (W-)$
-        // (W-)[sp]$
-        // (W-)[sp](-N)/
-        // (W-)[sp](-N)[sp]/
-        // (W-)[sp](-[sp]N)/
-        // (W-)[sp](-[sp]N)[sp]/
-        // (W-)[sp](N)/
-        // (W-)[sp](N)[sp]/
-        // (W)(-[sp]N)[sp]/ ** Only when trailing sign not allowed
-        // (W-)[sp](N-)/
-        // (W-)[sp](N-)[sp]/
-        // (W)(-[sp]N)/ ** Only when trailing sign not allowed
-
-        // (W)(-N)/ ** Not when leading sign not allowed
-        // (W-)(N)/ ** Only when leading sign not allowed and trailing sign not allowed
-        // (W)(-N)[sp]/
-        // (W-)(N)[sp]/ ** Only when leading sign not allowed
-        // (W-)(N-)/ ** Only when leading sign not allowed
-        // (W-)(N-)[sp]/ ** Only when leading sign not allowed
-
-
-
-
         if (s.IsEmpty)
         {
             wholeNumber = numerator = denominator = default;
             return false;
         }
-        if (s.TryMatchWhiteSpace(0, out int start))
+        if (s.TryMatchWhiteSpace(out int wholeNumberStart))
         {
-            if (start == s.Length || !style.HasFlag(NumberStyles.AllowLeadingWhite))
+            if (!style.HasFlag(NumberStyles.AllowLeadingWhite))
             {
                 wholeNumber = numerator = denominator = default;
                 return false;
-            }
-            s = s[..start];
-        }
-        if (s.TryMatchGroup(out int end))
-        {
-            if (end == s.Length) return TryParseMixedFraction(s[1..(end - 1)], style, provider, out wholeNumber, out numerator, out denominator);
-            if (s.TryMatchWhiteSpace(end, out end) && end == s.Length)
-            {
-                if (style.HasFlag(NumberStyles.AllowTrailingWhite)) return TryParseMixedFraction(s[1..(end - 1)], style, provider, out wholeNumber, out numerator, out denominator);
-                wholeNumber = numerator = denominator = default;
-                return false;
-            }
-        }
-        int index = s.IndexOfAny(Separator_Numerator_Denominator, AltSeparator_Numerator_Denominator);
-        if (index < 0)
-        {
-            if (T.TryParse(s, style, provider, out wholeNumber))
-            {
-                numerator = T.Zero;
-                denominator = T.One;
-                return true;
-            }
-            denominator = default;
-        }
-        else if (index > 0 && index < s.Length - 1)
-        {
-            if (T.TryParse(s[(index + 1)..].TrimStart(), style, provider, out denominator) && !(s = s[..index].TrimEnd()).IsEmpty)
-            {
-                if (s.TryMatchGroup(out end))
-                {
-                    if (end == s.Length)
-                    {
-                        if (T.TryParse(s, style, provider, out numerator))
-                        {
-                            wholeNumber = T.Zero;
-                            return true;
-                        }
-                    }
-                    if (s.TryMatchOther(end, out end))
-                    {
-                        // (G-)[space](-N)
-                        // (G-)[space](N)
-                        // NumberStyles.AllowTrailingSign && !NumberStyles.LeadingingSign: (G-)(N) : (G)(-N)
-                    }
-                    // (G)[space](-[space]N)
-                    // (G)[space](-N)
-                    // (G)[space](N)
-                }
-                if (s.TryMatchDigits(out end))
-                {
-                    // (W-)[space](-N)
-                    // (W)[space](-[space]N)
-                    // (W-)[space](N)
-                    // (W)[space](-N)
-                    // (W)[space](N)
-                    // NumberStyles.AllowTrailingSign && !NumberStyles.LeadingingSign: (G-)(N) : (G)(-N)
-                }
-                if (s.TryMatchOther(out end))
-                {
-                    // (-W)[space](-[space]N)
-                    // (-W)(-[space]N)
-                    // (-W)[space](-N)
-                    // (-W)[space](N)
-                    // (-W)(-N)
-                }
-                else
-                {
-                    wholeNumber = numerator = default;
-                    return false;
-                }
-                // return true;
-                throw new NotImplementedException();
             }
         }
         else
-            denominator = default;
-        wholeNumber = numerator = default;
-        return false;
+            wholeNumberStart = 0;
+        int wholeNumberEnd, numeratorStart;
+        if (s.TryMatchOther(wholeNumberStart, out numeratorStart))
+        {
+            if (!(s.TryMatchGroup(numeratorStart, out wholeNumberEnd) || s.TryMatchDigits(numeratorStart, out wholeNumberEnd)))
+            {
+                wholeNumber = numerator = denominator = default;
+                return false;
+            }
+            if (numeratorStart == s.Length)
+            {
+                // Other+Digits
+            }
+            else
+            {
+                // Other+Digits     +WhiteSpace
+                // Other+Digits     +WhiteSpace+Other+Digits+WhiteSpace+Separator
+                // Other+Digits     +WhiteSpace+Other+Digits+Separator
+                // Other+Digits     +WhiteSpace+Other+WhiteSpace+Digits+WhiteSpace+Separator
+                // Other+Digits     +WhiteSpace+Other+WhiteSpace+Digits+Separator
+                // Other+Digits     +WhiteSpace+Digits+Other+WhiteSpace+Separator
+                // Other+Digits     +WhiteSpace+Digits+Other+Separator
+                // Other+Digits     +WhiteSpace+Digits+WhiteSpace+Separator
+                // Other+Digits     +WhiteSpace+Digits+Separator
+                // Other+Digits     +WhiteSpace+Separator
+                // Other+Digits     +Other+Digits+WhiteSpace+Separator
+                // Other+Digits     +Other+Digits+Separator
+                // Other+Digits     +Other+WhiteSpace+Digits+WhiteSpace+Separator
+                // Other+Digits     +Other+WhiteSpace+Digits+Separator
+                // Other+Digits     +Separator
+            }
+        }
+        else
+        {
+            // Digits
+            // Digits+Other
+            // Digits+Other+Digits+Separator
+            // Digits+Other+Digits+WhiteSpace+Separator
+            // Digits+Other+Digits+Other+Separator
+            // Digits+Other+Digits+Other+WhiteSpace+Separator
+            // Digits+Other+WhiteSpace
+            // Digits+Other+WhiteSpace+Other+WhiteSpace+Digits+Separator
+            // Digits+Other+WhiteSpace+Other+WhiteSpace+Digits+WhiteSpace+Separator
+            // Digits+Other+WhiteSpace+Other+Digits+Separator
+            // Digits+Other+WhiteSpace+Other+Digits+WhiteSpace+Separator]
+            // Digits+Other+WhiteSpace+Digits+Separator
+            // Digits+Other+WhiteSpace+Digits+WhiteSpace+Separator
+            // Digits+Other+WhiteSpace+Digits+Other+Separator
+            // Digits+Other+WhiteSpace+Digits+Other+WhiteSpace+Separator
+            // Digits+Other+WhiteSpace+Separator
+            // Digits+Other+Separator
+            // Digits+WhiteSpace
+            // Digits+WhiteSpace+Other+Digits+WhiteSpace+Separator
+            // Digits+WhiteSpace+Other+Digits+Separator
+            // Digits+WhiteSpace+Other+WhiteSpace+Digits+WhiteSpace+Separator
+            // Digits+WhiteSpace+Other+WhiteSpace+Digits+Separator
+            // Digits+WhiteSpace+Digits+WhiteSpace+Separator
+            // Digits+WhiteSpace+Digits+Separator
+            // Digits+WhiteSpace+Digits+Other+WhiteSpace+Separator
+            // Digits+WhiteSpace+Digits+Other+Separator
+            // Digits+WhiteSpace+Separator
+            // Digits+Separator
+        }
+        throw new NotImplementedException();
     }
 
     public static object ConvertFraction<TFraction, TValue>(TFraction fraction, Type conversionType, IFormatProvider? provider)
