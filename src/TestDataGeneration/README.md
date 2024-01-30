@@ -29,7 +29,7 @@ Additionally, you may see a VS code extension error stating `Test Discovery fail
 This may occur if version 3 or older is installed. To check the version of Pester, execute the following command to make sure you're using at least version 4:
 
 ```powershell
-Get-Module -Name 'Pester'
+Get-Module -Name 'Pester' -ListAvailable
 ```
 
 You can run the following command to install the latest version:
