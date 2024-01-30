@@ -43,65 +43,17 @@ public static class CmdletStatic
 
     internal static ErrorRecord CreateInvalidOperationErrorRecord(Exception exception, string errorId, object targetObject, string targetName, string reason)
     {
-
         var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.InvalidOperation, targetObject);
         errorRecord.CategoryInfo.TargetName = targetName;
         errorRecord.CategoryInfo.Reason = reason;
         return errorRecord;
     }
 
-    private static ulong ParseBinary64Bit(string pattern, int start, int end)
+    public static void FormatBits(BinaryFormatOptions format, TextWriter writer, params bool[] bits)
     {
-        var result = 1UL;
-        while (start < end)
-        {
-            result <<= 1;
-            if (pattern[start] == Char_One) result |= 1;
-            start++;
-        }
-        return result;
-    }
-
-    private static uint ParseBinary32Bit(string pattern, int start, int end)
-    {
-        var result = 1U;
-        while (start < end)
-        {
-            result <<= 1;
-            if (pattern[start] == Char_One) result |= 1;
-            start++;
-        }
-        return result;
-    }
-
-    private static uint ParseBinary16Bit(string pattern, int start)
-    {
-        ushort result = 1;
-        while (start < pattern.Length)
-        {
-            result <<= 1;
-            if (pattern[start] == Char_One) result |= 1;
-            start++;
-        }
-        return result;
-    }
-
-    private static byte ParseBinary8Bit(string pattern, int start)
-    {
-        byte result = 1;
-        while (start < pattern.Length)
-        {
-            result <<= 1;
-            if (pattern[start] == Char_One) result |= 1;
-            start++;
-        }
-        return result;
-    }
-
-    
-    private static void FormatBits(BinaryFormatOptions format, TextWriter writer, params bool[] bitArr)
-    {
-        var length = bitArr.Length;
+        ArgumentNullException.ThrowIfNull(writer);
+        ArgumentNullException.ThrowIfNull(bits);
+        var length = bits.Length;
         if (length < 1) return;
         var step = format.HasFlag(BinaryFormatOptions.SplitNibble) ? 4 : format.HasFlag(BinaryFormatOptions.SplitByte) ? 8 :
             format.HasFlag(BinaryFormatOptions.SplitWord) ? 16 : format.HasFlag(BinaryFormatOptions.SplitDWord) ? 32 : 0;
@@ -115,30 +67,32 @@ public static class CmdletStatic
             writer.Write(BinaryFormatPrefix_Amp_B);
         if (step < 1)
         {
-            foreach (var b in bitArr)
+            foreach (var b in bits)
                 writer.Write(b ? Char_One : Char_Zero);
         }
         else
         {
             var position = length % step;
             if (position == 0) position = step;
-            for (var i = 0; i < position; i++) writer.Write(bitArr[i] ? Char_One : Char_Zero);
+            for (var i = 0; i < position; i++) writer.Write(bits[i] ? Char_One : Char_Zero);
             do
             {
                 writer.Write(Char_Underscore);
                 for (var i = 0; i < step; i++)
                 {
                     position++;
-                    writer.Write(bitArr[position] ? Char_One : Char_Zero);
+                    writer.Write(bits[position] ? Char_One : Char_Zero);
                 }
             }
             while (position < length);
         }
     }
 
-    private static void FormatBits(BinaryFormatOptions format, StringBuilder stringBuilder, params bool[] bitArr)
+    public static void FormatBits(BinaryFormatOptions format, StringBuilder stringBuilder, params bool[] bits)
     {
-        var length = bitArr.Length;
+        ArgumentNullException.ThrowIfNull(stringBuilder);
+        ArgumentNullException.ThrowIfNull(bits);
+        var length = bits.Length;
         if (length < 1) return;
         var step = format.HasFlag(BinaryFormatOptions.SplitNibble) ? 4 : format.HasFlag(BinaryFormatOptions.SplitByte) ? 8 :
             format.HasFlag(BinaryFormatOptions.SplitWord) ? 16 : format.HasFlag(BinaryFormatOptions.SplitDWord) ? 32 : 0;
@@ -152,65 +106,34 @@ public static class CmdletStatic
             stringBuilder.Append(BinaryFormatPrefix_Amp_B);
         if (step < 1)
         {
-            foreach (var b in bitArr)
+            foreach (var b in bits)
                 stringBuilder.Append(b ? Char_One : Char_Zero);
         }
         else
         {
             var position = length % step;
             if (position == 0) position = step;
-            for (var i = 0; i < position; i++) stringBuilder.Append(bitArr[i] ? Char_One : Char_Zero);
+            for (var i = 0; i < position; i++) stringBuilder.Append(bits[i] ? Char_One : Char_Zero);
             do
             {
                 stringBuilder.Append(Char_Underscore);
                 for (var i = 0; i < step; i++)
                 {
                     position++;
-                    stringBuilder.Append(bitArr[position] ? Char_One : Char_Zero);
+                    stringBuilder.Append(bits[position] ? Char_One : Char_Zero);
                 }
             }
             while (position < length);
         }
     }
 
-    private static string FormatBits(IEnumerable<bool> bits, BinaryFormatOptions format)
+    public static string FormatBits(IEnumerable<bool> bits, BinaryFormatOptions format)
     {
+        ArgumentNullException.ThrowIfNull(bits);
         var bitArr = bits.ToArray();
         if (bitArr.Length < 1) return string.Empty;
         StringBuilder sb = new();
         FormatBits(format, sb, bitArr);
-        return sb.ToString();
-    }
-
-    [Obsolete("Use FormatBits(IEnumerable<bool>, BinaryFormatOptions)")]
-    private static string FormatBits(IEnumerable<bool> bits, BinaryFormatOptions format, bool noPrefix)
-    {
-        var bitArr = bits.ToList();
-        var length = bitArr.Count;
-        var step = format switch
-        {
-            BinaryFormatOptions.SplitNibble => 4,
-            BinaryFormatOptions.SplitByte => 8,
-            BinaryFormatOptions.SplitWord => 16,
-            BinaryFormatOptions.SplitDWord => 32,
-            _ => length,
-        };
-        if (length >= step) return noPrefix ? new string(bitArr.Select(b => b ? Char_One : Char_Zero).ToArray()) : "0b" + new string(bitArr.Select(b => b ? Char_One : Char_Zero).ToArray());
-        var position = length % step;
-        if (position == 0) position = step;
-        var sb = new StringBuilder();
-        if (!noPrefix) sb.Append("0b");
-        for (var i = 0; i < position; i++) sb.Append(bitArr[i] ? Char_One : Char_Zero);
-        do
-        {
-            sb.Append(Char_Underscore);
-            for (var i = 0; i < step; i++)
-            {
-                position++;
-                sb.Append(bitArr[position] ? Char_One : Char_Zero);
-            }
-        }
-        while (position < length);
         return sb.ToString();
     }
 
@@ -254,7 +177,7 @@ public static class CmdletStatic
         return FormatBits(bits, format);
     }
 
-    public static string ConvertUInt16ToBinaryNotation(ushort value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly,int minBits = 1)
+    public static string ConvertUInt16ToBinaryNotation(ushort value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
@@ -264,7 +187,7 @@ public static class CmdletStatic
         return FormatBits(bits, format);
     }
 
-    public static string ConvertInt16ToBinaryNotation(short value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly,int minBits = 1)
+    public static string ConvertInt16ToBinaryNotation(short value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
@@ -394,7 +317,7 @@ public static class CmdletStatic
                 startIndex++;
                 if (startIndex == endIndex) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
                 switch (pattern[startIndex])
-                { 
+                {
                     case Prefix_Binary_UC:
                     case Prefix_Binary_LC:
                         startIndex++;
