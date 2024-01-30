@@ -2,37 +2,28 @@
 
 The purpose of this project is to provide ways to generate test data and source code for development.
 
+- [Projects](#projects)
+- [Solution Development Dependencies](#solution-development-dependencies)
+  - [APIs / Modules](#apis--modules)
+  - [Required / Strongly Suggested VS Code Extensions](#required--strongly-suggested-vs-code-extensions)
+  - [Suggested VS Code Extensions](#suggested-vs-code-extensions)
+- [References](#references)
+
 ## Projects
 
 - [TestDataGeneration](./src/TestDataGeneration/README.md) PowerShell module providing several cmdlets supporting data and code generation.
-- [](./src/TestDataGeneration.UnitTests/README.md) NUnit tests for the `TestDataGeneration` project.
-
-## Testing
-
-### Pester Issues
-
-You may see errors such as `The BeforeAll command may only be used inside a Describe block.` or `RuntimeException: '-Be' is not a valid Should operator.`.
-Additionally, you may see a VS code extension error stating `Test Discovery failed: A terminating error was received from PowerShell: Pester 5.2.0 or greater is required`.
-This may occur if version 3 or older is installed. To check the version of Pester, execute the following command to make sure you're using at least version 4:
-
-```powershell
-Get-Module -Name 'Pester'
-```
-
-You can run the following command to install the latest version:
-
-```Powershell
-Install-Module -Name Pester -Force -SkipPublisherCheck
-```
+- [TestDataGeneration.UnitTests](./src/TestDataGeneration.UnitTests/README.md) NUnit tests for the `TestDataGeneration` project.
+  - The `TestDataGeneration` project uses [Pester](https://github.com/Pester/Pester) to test the scripted components. See the [Pester Unit Tests](./src/TestDataGeneration/README.md#pester-unit-tests) section for more information.
 
 ## Solution Development Dependencies
 
-### APIs
+### APIs / Modules
 
-| Installer                                                                     | Dev Container Feature                                                                                                   |
-|-------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| [DotNet Core 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | [devcontainers/features/dotnet](https://github.com/devcontainers/features/tree/main/src/dotnet)                         |
-| [PowerShell Core](https://github.com/powershell/powershell)                   | [devcontainers/features/powershell](https://github.com/devcontainers/features/tree/main/src/powershell)                 |
+| Installer                                                                     | Dev Container Feature                                                                                                             |
+|-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| [DotNet Core 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | [dotnet](https://github.com/devcontainers/features/tree/main/src/dotnet)                                                          |
+| [PowerShell Core](https://github.com/powershell/powershell)                   | [powershell](https://github.com/devcontainers/features/tree/main/src/powershell)                                                  |
+| [Pester](https://github.com/Pester/Pester)                                    | [powershell-resources](https://github.com/natescherer/devcontainers-custom-features/blob/main/src/powershell-resources/README.md) |
 
 ### Required / Strongly Suggested VS Code Extensions
 

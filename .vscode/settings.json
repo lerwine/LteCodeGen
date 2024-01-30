@@ -4,5 +4,6 @@
     "[csharp]": {
         "editor.formatOnPaste": true,
         "editor.defaultFormatter": "ms-dotnettools.csharp"
-    }
+    },
+    "markdown.extension.toc.levels": "2..6"
 }

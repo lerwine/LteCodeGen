@@ -2,6 +2,13 @@
 
 PowerShell module providing several cmdlets supporting data and code generation.
 
+- [Home](../../README.md)
+- [Testing](#testing)
+  - [Pester Unit Tests](#pester-unit-tests)
+  - [Possible Pester Issues](#possible-pester-issues)
+- [TODO](#todo)
+- [References](#references)
+
 ## Testing
 
 There are 2 different stages of testing. The [TestDataGeneration.UnitTests](../TestDataGeneration.UnitTests/README.md) test the underlying components of the nested binary module.
@@ -15,9 +22,10 @@ Files with the extension `.tests.ps1` contain the code for unit tests. Simply in
 
 The [/.vscode/launch.json](../../.vscode/launch.json) provides a launch configuration to allow the Pester tests to be executed from withing VS Code.
 
-### Troubleshooting Pester Execution
+### Possible Pester Issues
 
 You may see errors such as `The BeforeAll command may only be used inside a Describe block.` or `RuntimeException: '-Be' is not a valid Should operator.`.
+Additionally, you may see a VS code extension error stating `Test Discovery failed: A terminating error was received from PowerShell: Pester 5.2.0 or greater is required`.
 This may occur if version 3 or older is installed. To check the version of Pester, execute the following command to make sure you're using at least version 4:
 
 ```powershell
