@@ -17,8 +17,13 @@ public static class CmdletStatic
     private const char Char_Underscore = '_';
     private const char Char_Zero = '0';
     private const char Char_One = '1';
-    private const char Prefix_Binary_UC = 'B';
+    private const char Prefix_Binary_Amp = '&';
     private const char Prefix_Binary_LC = 'b';
+    private const char Prefix_Binary_UC = 'B';
+    public const string BinaryFormatPrefix_0b = "0b";
+    public const string BinaryFormatPrefix_0B = "0B";
+    public const string BinaryFormatPrefix_Amp_b = "&b";
+    public const string BinaryFormatPrefix_Amp_B = "&B";
 
     internal static object EnsureBaseObject(object value) => (value is PSObject psObject) ? psObject.BaseObject : value;
 
@@ -93,16 +98,101 @@ public static class CmdletStatic
         return result;
     }
 
-    private static string FormatBits(IEnumerable<bool> bits, BinaryNotationFormat format, bool noPrefix)
+    
+    private static void FormatBits(BinaryFormatOptions format, TextWriter writer, params bool[] bitArr)
+    {
+        var length = bitArr.Length;
+        if (length < 1) return;
+        var step = format.HasFlag(BinaryFormatOptions.SplitNibble) ? 4 : format.HasFlag(BinaryFormatOptions.SplitByte) ? 8 :
+            format.HasFlag(BinaryFormatOptions.SplitWord) ? 16 : format.HasFlag(BinaryFormatOptions.SplitDWord) ? 32 : 0;
+        if (format.HasFlag(BinaryFormatOptions.Lc0B))
+            writer.Write(BinaryFormatPrefix_0b);
+        else if (format.HasFlag(BinaryFormatOptions.Uc0B))
+            writer.Write(BinaryFormatPrefix_0B);
+        else if (format.HasFlag(BinaryFormatOptions.AmpersandLcB))
+            writer.Write(BinaryFormatPrefix_Amp_b);
+        else if (format.HasFlag(BinaryFormatOptions.AmpersandUcB))
+            writer.Write(BinaryFormatPrefix_Amp_B);
+        if (step < 1)
+        {
+            foreach (var b in bitArr)
+                writer.Write(b ? Char_One : Char_Zero);
+        }
+        else
+        {
+            var position = length % step;
+            if (position == 0) position = step;
+            for (var i = 0; i < position; i++) writer.Write(bitArr[i] ? Char_One : Char_Zero);
+            do
+            {
+                writer.Write(Char_Underscore);
+                for (var i = 0; i < step; i++)
+                {
+                    position++;
+                    writer.Write(bitArr[position] ? Char_One : Char_Zero);
+                }
+            }
+            while (position < length);
+        }
+    }
+
+    private static void FormatBits(BinaryFormatOptions format, StringBuilder stringBuilder, params bool[] bitArr)
+    {
+        var length = bitArr.Length;
+        if (length < 1) return;
+        var step = format.HasFlag(BinaryFormatOptions.SplitNibble) ? 4 : format.HasFlag(BinaryFormatOptions.SplitByte) ? 8 :
+            format.HasFlag(BinaryFormatOptions.SplitWord) ? 16 : format.HasFlag(BinaryFormatOptions.SplitDWord) ? 32 : 0;
+        if (format.HasFlag(BinaryFormatOptions.Lc0B))
+            stringBuilder.Append(BinaryFormatPrefix_0b);
+        else if (format.HasFlag(BinaryFormatOptions.Uc0B))
+            stringBuilder.Append(BinaryFormatPrefix_0b);
+        else if (format.HasFlag(BinaryFormatOptions.AmpersandLcB))
+            stringBuilder.Append(BinaryFormatPrefix_Amp_b);
+        else if (format.HasFlag(BinaryFormatOptions.AmpersandUcB))
+            stringBuilder.Append(BinaryFormatPrefix_Amp_B);
+        if (step < 1)
+        {
+            foreach (var b in bitArr)
+                stringBuilder.Append(b ? Char_One : Char_Zero);
+        }
+        else
+        {
+            var position = length % step;
+            if (position == 0) position = step;
+            for (var i = 0; i < position; i++) stringBuilder.Append(bitArr[i] ? Char_One : Char_Zero);
+            do
+            {
+                stringBuilder.Append(Char_Underscore);
+                for (var i = 0; i < step; i++)
+                {
+                    position++;
+                    stringBuilder.Append(bitArr[position] ? Char_One : Char_Zero);
+                }
+            }
+            while (position < length);
+        }
+    }
+
+    private static string FormatBits(IEnumerable<bool> bits, BinaryFormatOptions format)
+    {
+        var bitArr = bits.ToArray();
+        if (bitArr.Length < 1) return string.Empty;
+        StringBuilder sb = new();
+        FormatBits(format, sb, bitArr);
+        return sb.ToString();
+    }
+
+    [Obsolete("Use FormatBits(IEnumerable<bool>, BinaryFormatOptions)")]
+    private static string FormatBits(IEnumerable<bool> bits, BinaryFormatOptions format, bool noPrefix)
     {
         var bitArr = bits.ToList();
         var length = bitArr.Count;
         var step = format switch
         {
-            BinaryNotationFormat.SplitBit => 4,
-            BinaryNotationFormat.SplitByte => 8,
-            BinaryNotationFormat.SplitWord => 16,
-            BinaryNotationFormat.SplitDWord => 32,
+            BinaryFormatOptions.SplitNibble => 4,
+            BinaryFormatOptions.SplitByte => 8,
+            BinaryFormatOptions.SplitWord => 16,
+            BinaryFormatOptions.SplitDWord => 32,
             _ => length,
         };
         if (length >= step) return noPrefix ? new string(bitArr.Select(b => b ? Char_One : Char_Zero).ToArray()) : "0b" + new string(bitArr.Select(b => b ? Char_One : Char_Zero).ToArray());
@@ -124,76 +214,76 @@ public static class CmdletStatic
         return sb.ToString();
     }
 
-    public static string ConvertUInt64ToBinaryNotation(ulong value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertUInt64ToBinaryNotation(ulong value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         foreach (byte b in BitConverter.GetBytes(value))
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertInt64ToBinaryNotation(long value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertInt64ToBinaryNotation(long value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         foreach (byte b in BitConverter.GetBytes(value))
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertUInt32ToBinaryNotation(uint value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertUInt32ToBinaryNotation(uint value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         foreach (byte b in BitConverter.GetBytes(value))
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertInt32ToBinaryNotation(int value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertInt32ToBinaryNotation(int value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         foreach (byte b in BitConverter.GetBytes(value))
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertUInt16ToBinaryNotation(ushort value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertUInt16ToBinaryNotation(ushort value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly,int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         foreach (byte b in BitConverter.GetBytes(value))
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertInt16ToBinaryNotation(short value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertInt16ToBinaryNotation(short value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly,int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         foreach (byte b in BitConverter.GetBytes(value))
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((b & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertByteToBinaryNotation(byte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertByteToBinaryNotation(byte value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
         for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((value & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
-    public static string ConvertSByteToBinaryNotation(sbyte value, BinaryNotationFormat format = BinaryNotationFormat.NoUnderscore, bool noPrefix = false, int minBits = 1)
+    public static string ConvertSByteToBinaryNotation(sbyte value, BinaryFormatOptions format = BinaryFormatOptions.DigitsOnly, int minBits = 1)
     {
         if (minBits < 1) minBits = 1;
         LinkedList<bool> bits = new();
@@ -205,7 +295,7 @@ public static class CmdletStatic
         else
             for (int i = 1; i <= 0b1000_000; i <<= 1) bits.AddFirst((value & i) != 0);
         while (bits.Count > minBits && !bits.First!.Value) bits.RemoveFirst();
-        return FormatBits(bits, format, noPrefix);
+        return FormatBits(bits, format);
     }
 
     public static void AssertValidPattern(string pattern, int maxBits = 0)
@@ -300,11 +390,35 @@ public static class CmdletStatic
                         throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
                 }
                 break;
+            case Prefix_Binary_Amp:
+                startIndex++;
+                if (startIndex == endIndex) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                switch (pattern[startIndex])
+                { 
+                    case Prefix_Binary_UC:
+                    case Prefix_Binary_LC:
+                        startIndex++;
+                        if (startIndex == endIndex) throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                        switch (pattern[startIndex])
+                        {
+                            case Char_One:
+                                break;
+                            case Char_Zero:
+                                startIndex++;
+                                if (startIndex == endIndex || !moveToFirstOne()) return;
+                                break;
+                            default:
+                                throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                        }
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid binary notation pattern", nameof(pattern));
+                }
+                break;
             case Char_Zero:
                 startIndex++;
                 if (startIndex == endIndex) return;
-                c = pattern[startIndex];
-                switch (c)
+                switch (pattern[startIndex])
                 {
                     case Char_One:
                         break;
@@ -530,7 +644,7 @@ public static class CmdletStatic
     {
         AssertValidPattern(pattern, 64);
         var bits = ParseBits(pattern, out bool forceUnsigned);
-        return ConvertFromBinary64BitsAsSigned(ParseBits(pattern), forceUnsigned);
+        return ConvertFromBinary64BitsAsSigned(bits, forceUnsigned);
     }
 
     private static uint ConvertFromBinary32its(List<bool> bits)

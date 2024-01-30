@@ -50,46 +50,46 @@ public class ConvertTo_BinaryNotation : PSCmdlet
     public int MinimumBits { get; set; }
 
     [Parameter(HelpMessage = "How to format/group the bit values.")]
-    public BinaryNotationFormat Format { get; set; }
+    public BinaryFormatOptions[] Format { get; set; } = null!;
 
-    [Parameter(HelpMessage = "Omit the '0b' prefix.")]
-    public SwitchParameter NoPrefix { get; set; }
-
-    private void ConvertToBn<T>(T[] values, BinaryNotationFormat format, bool noPrefix, int minimumBits, Func<T,BinaryNotationFormat, bool, int, string> func)
+    private void ConvertToBn<T>(T[] values, BinaryFormatOptions format, int minimumBits, Func<T,BinaryFormatOptions, int, string> func)
     {
         foreach (T v in values)
-            WriteObject(func(v, format, noPrefix, minimumBits));
+            WriteObject(func(v, format, minimumBits));
     }
 
     protected override void ProcessRecord()
     {
-        bool noPrefix = NoPrefix.IsPresent;
-        BinaryNotationFormat format = MyInvocation.BoundParameters.ContainsKey(nameof(MinimumBits)) ? Format : BinaryNotationFormat.NoUnderscore;
+        BinaryFormatOptions format;
+        if (MyInvocation.BoundParameters.ContainsKey(nameof(Format)))
+            format = (Format.Length == 1) ? Format[0] : Format.Aggregate(BinaryFormatOptions.DigitsOnly, (a, b) => a | b);
+        else
+            format = BinaryFormatOptions.Default;
         switch (ParameterSetName)
         {
             case ParameterSetName_UInt64:
-                ConvertToBn(UInt64, format, noPrefix, 64, ConvertUInt64ToBinaryNotation);
+                ConvertToBn(UInt64, format, 64, ConvertUInt64ToBinaryNotation);
                 break;
             case ParameterSetName_Int64:
-                ConvertToBn(Int64, format, noPrefix, 64, ConvertInt64ToBinaryNotation);
+                ConvertToBn(Int64, format, 64, ConvertInt64ToBinaryNotation);
                 break;
             case ParameterSetName_UInt32:
-                ConvertToBn(UInt32, format, noPrefix, 32, ConvertUInt32ToBinaryNotation);
+                ConvertToBn(UInt32, format, 32, ConvertUInt32ToBinaryNotation);
                 break;
             case ParameterSetName_Int32:
-                ConvertToBn(Int32, format, noPrefix, 32, ConvertInt32ToBinaryNotation);
+                ConvertToBn(Int32, format, 32, ConvertInt32ToBinaryNotation);
                 break;
             case ParameterSetName_UInt16:
-                ConvertToBn(UInt16, format, noPrefix, 16, ConvertUInt16ToBinaryNotation);
+                ConvertToBn(UInt16, format, 16, ConvertUInt16ToBinaryNotation);
                 break;
             case ParameterSetName_Int16:
-                ConvertToBn(Int16, format, noPrefix, 16, ConvertInt16ToBinaryNotation);
+                ConvertToBn(Int16, format, 16, ConvertInt16ToBinaryNotation);
                 break;
             case ParameterSetName_Byte:
-                ConvertToBn(Byte, format, noPrefix, 8, ConvertByteToBinaryNotation);
+                ConvertToBn(Byte, format, 8, ConvertByteToBinaryNotation);
                 break;
             case ParameterSetName_SByte:
-                ConvertToBn(SByte, format, noPrefix, 8, ConvertSByteToBinaryNotation);
+                ConvertToBn(SByte, format, 8, ConvertSByteToBinaryNotation);
                 break;
             default:
                 int minimumBits = MyInvocation.BoundParameters.ContainsKey(nameof(MinimumBits)) ? MinimumBits : 1;
@@ -97,27 +97,27 @@ public class ConvertTo_BinaryNotation : PSCmdlet
                 {
                     var obj = EnsureBaseObject(element);
                     if (obj is ulong ul)
-                        ConvertUInt64ToBinaryNotation(ul, format, noPrefix, minimumBits);
+                        ConvertUInt64ToBinaryNotation(ul, format, minimumBits);
                     else if (obj is long l)
-                        ConvertInt64ToBinaryNotation(l, format, noPrefix, minimumBits);
+                        ConvertInt64ToBinaryNotation(l, format, minimumBits);
                     else if (obj is uint u)
-                        ConvertUInt32ToBinaryNotation(u, format, noPrefix, minimumBits);
+                        ConvertUInt32ToBinaryNotation(u, format, minimumBits);
                     else if (obj is int i)
-                        ConvertInt32ToBinaryNotation(i, format, noPrefix, minimumBits);
+                        ConvertInt32ToBinaryNotation(i, format, minimumBits);
                     else if (obj is ushort uint16)
-                        ConvertUInt16ToBinaryNotation(uint16, format, noPrefix, minimumBits);
+                        ConvertUInt16ToBinaryNotation(uint16, format, minimumBits);
                     else if (obj is short int16)
-                        ConvertInt16ToBinaryNotation(int16, format, noPrefix, minimumBits);
+                        ConvertInt16ToBinaryNotation(int16, format, minimumBits);
                     else if (obj is byte b)
-                        ConvertByteToBinaryNotation(b, format, noPrefix, minimumBits);
+                        ConvertByteToBinaryNotation(b, format, minimumBits);
                     else if (obj is sbyte s)
-                        ConvertSByteToBinaryNotation(s, format, noPrefix, minimumBits);
+                        ConvertSByteToBinaryNotation(s, format, minimumBits);
                     else if (LanguagePrimitives.TryConvertTo(element, out i))
-                        ConvertInt32ToBinaryNotation(i, format, noPrefix, minimumBits);
+                        ConvertInt32ToBinaryNotation(i, format, minimumBits);
                     else if (LanguagePrimitives.TryConvertTo(element, out l))
-                        ConvertInt64ToBinaryNotation(l, format, noPrefix, minimumBits);
+                        ConvertInt64ToBinaryNotation(l, format, minimumBits);
                     else if (LanguagePrimitives.TryConvertTo(element, out ul))
-                        ConvertUInt64ToBinaryNotation(ul, format, noPrefix, minimumBits);
+                        ConvertUInt64ToBinaryNotation(ul, format, minimumBits);
                 }
                 break;
         }
