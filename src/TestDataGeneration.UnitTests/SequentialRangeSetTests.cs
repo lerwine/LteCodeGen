@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Management.Automation;
 using System.Numerics;
 using NuGet.Frameworks;
 
