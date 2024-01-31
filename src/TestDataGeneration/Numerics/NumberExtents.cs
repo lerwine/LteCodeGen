@@ -177,25 +177,33 @@ public readonly struct NumberExtents<T> : IEquatable<NumberExtents<T>>, ICompara
     /// </summary>
     /// <param name="other">The extents to compare to.</param>
     /// <returns>A <see cref="ExtentRelativity"/> value indicating how the current extents relates to another extent pair.</returns>
-    public ExtentRelativity GetRelationTo(NumberExtents<T> other)
+    public ExtentRelativity GetRelationTo(NumberExtents<T> other) => GetRelationTo(other.First, other.Last);
+
+    /// <summary>
+    /// Returns a value indicating how the current extents relates to another.
+    /// </summary>
+    /// <param name="first">The inclusive first value extent.</param>
+    /// <param name="last">The inclusive last value extent.</param>
+    /// <returns>A <see cref="ExtentRelativity"/> value indicating how the current extents relates to another extent pair.</returns>
+    public ExtentRelativity GetRelationTo(T first, T last)
     {
-        int diff = Last.CompareTo(other.First);
+        int diff = Last.CompareTo(first);
         if (diff < 0)
-            return ((Last + T.One) == other.First) ? ExtentRelativity.ImmediatelyPrecedes : ExtentRelativity.PrecedesWithGap;
+            return ((Last + T.One) == first) ? ExtentRelativity.ImmediatelyPrecedes : ExtentRelativity.PrecedesWithGap;
         if (diff == 0)
         {
             if (First == Last)
-                return (Last == other.Last) ? ExtentRelativity.EqualTo : ExtentRelativity.ContainedBy;
-            return (other.First == other.Last) ? ExtentRelativity.Contains : ExtentRelativity.Overlaps;
+                return (Last == last) ? ExtentRelativity.EqualTo : ExtentRelativity.ContainedBy;
+            return (first == last) ? ExtentRelativity.Contains : ExtentRelativity.Overlaps;
         }
-        if ((diff = Last.CompareTo(other.Last)) < 0)
-            return (First < other.First) ? ExtentRelativity.Overlaps : ExtentRelativity.ContainedBy;
+        if ((diff = Last.CompareTo(last)) < 0)
+            return (First < first) ? ExtentRelativity.Overlaps : ExtentRelativity.ContainedBy;
         if (diff == 0)
-            return ((diff = First.CompareTo(other.First)) == 0) ? ExtentRelativity.EqualTo : (diff < 0) ? ExtentRelativity.Contains : ExtentRelativity.ContainedBy;
-        if (First < other.First) return ExtentRelativity.Contains;
-        if (other.Last < First)
-            return ((First - T.One) == other.Last) ? ExtentRelativity.ImmediatelyFollows : ExtentRelativity.FollowsWithGap;
-        return (First == other.First) ? ExtentRelativity.Contains : ExtentRelativity.Overlaps;
+            return ((diff = First.CompareTo(first)) == 0) ? ExtentRelativity.EqualTo : (diff < 0) ? ExtentRelativity.Contains : ExtentRelativity.ContainedBy;
+        if (First < first) return ExtentRelativity.Contains;
+        if (last < First)
+            return ((First - T.One) == last) ? ExtentRelativity.ImmediatelyFollows : ExtentRelativity.FollowsWithGap;
+        return (First == first) ? ExtentRelativity.Contains : ExtentRelativity.Overlaps;
     }
 
     /// <summary>
