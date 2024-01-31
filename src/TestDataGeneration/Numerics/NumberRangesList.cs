@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Resources;
 
 namespace TestDataGeneration.Numerics;
 
@@ -69,7 +70,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     /// Initializes a new <c>NumberRangesList</c>.
     /// </summary>
     public NumberRangesList() { }
-    
+
     /// <summary>
     /// Adds a value to the current list.
     /// </summary>
@@ -81,59 +82,9 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
-            NumberExtents<T> item;
-            if (TryFindInsertionNode(value, out LinkedListNode<NumberExtents<T>>? nextNode, out bool valueLessThanItemFirst))
-            {
-                if (!valueLessThanItemFirst) return false;
-                // value < nextNode.Value.First && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)
-                LinkedListNode<NumberExtents<T>>? other;
-                if (value + T.One == (item = nextNode.Value).First)
-                {
-                    // value + 1 == nextNode.Value.First && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)
-                    var last = item.Last;
-                    if ((other = nextNode.Previous) is not null && (item = other.Value).Last + T.One == value)
-                    {
-                        value = item.First;
-                        _backingList.Remove(nextNode);
-                    }
-                    else
-                        other = nextNode;
-                    nextNode = other.Next;
-                    _backingList.Remove(other);
-                    if (nextNode is null)
-                        _backingList.AddLast(new NumberExtents<T>(value, last));
-                    else
-                        _backingList.AddBefore(nextNode, new NumberExtents<T>(value, last));
-                }
-                else if ((other = nextNode.Previous) is not null && (item = other.Value).Last + T.One == value)
-                {
-                    // value < nextNode.Value.First + 1 && value - 1 == nextNode.Previous.Value.Last)
-                    var first = item.First;
-                    _backingList.Remove(other);
-                    _backingList.AddBefore(nextNode, new NumberExtents<T>(first, value));
-                }
-                else // value < nextNode.Value.First + 1 && (nextNode.Previous is null || value > nextNode.Previous.Value.Last + 1)
-                    _backingList.AddBefore(nextNode, new NumberExtents<T>(value));
-            }
-            else
-            {
-                // _backingList.Last is null || value > _backingList.Last.Value.Last
-                if ((nextNode = _backingList.Last) is not null)
-                {
-                    if ((item = nextNode.Value).Last + T.One == value)
-                    {
-                        var first = item.First;
-                        _backingList.Remove(nextNode);
-                        _backingList.AddLast(new NumberExtents<T>(first, value));
-                        return true;
-                    }
-                }
-                // backingList.Last is null || value > _backingList.Last.Value.Last + 1
-                _backingList.AddLast(new NumberExtents<T>(value));
-            }
+            throw new NotImplementedException();
         }
         finally { Monitor.Exit(SyncRoot); }
-        return true;
     }
 
     /// <summary>
@@ -147,25 +98,9 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
-            var first = item.First;
-            if (TryFindInsertionNode(first, out LinkedListNode<NumberExtents<T>>? nextNode, out bool itemFirstLessThanNextFirst))
-            {
-                if (itemFirstLessThanNextFirst)
-                {
-                    // value < nextNode.Value.First && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)=
-                }
-                else
-                {
-                    // value >= nextNode.Value.First && value <= nextNode.Value.Last && (nextNode.Previous is null || value > nextNode.Previous.Value.Last)
-                }
-            }
-            else
-            {
-                // _backingList.Last is null || value > _backingList.Last.Value.Last
-            }
+            throw new NotImplementedException();
         }
         finally { Monitor.Exit(SyncRoot); }
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -447,7 +382,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
-            if (_backingList.Count == 0) return -1; 
+            if (_backingList.Count == 0) return -1;
             var pos = -1;
             var first = item.First;
             foreach (var element in _backingList)
@@ -650,7 +585,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     public bool Remove(NumberExtents<T> item)
     {
         Monitor.Enter(SyncRoot);
-        try { return _backingList.Remove(item);  }
+        try { return _backingList.Remove(item); }
         finally { Monitor.Exit(SyncRoot); }
     }
 
@@ -787,29 +722,5 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         ArgumentNullException.ThrowIfNull(other);
         var uniqueFoundCount = CheckUniqueAndUnfoundElements(other, false, out int unfoundCount);
         return uniqueFoundCount == _backingList.Count && unfoundCount == 0;
-    }
-
-    // true && valueLessThanItemFirst == true: value < node.Value.First && (node.Previous is null || value > node.Previous.Value.Last)
-    // true && valueLessThanItemFirst == false: value >= node.Value.First && value <= node.Value.Last && (node.Previous is null || value > node.Previous.Value.Last)
-    // false: _backingList.Last is null || value > _backingList.Last.Value.Last
-    private bool TryFindInsertionNode(T value, [NotNullWhen(true)] out LinkedListNode<NumberExtents<T>>? node, out bool valueLessThanItemFirst)
-    {
-        for (node = _backingList.First; node is not null; node = node.Next)
-        {
-            var item = node.Value;
-            var diff = value.CompareTo(item.First);
-            if (diff < 0)
-            {
-                valueLessThanItemFirst = true;
-                return true;
-            }
-            else if (diff == 0 || value <= item.Last)
-            {
-                valueLessThanItemFirst = false;
-                return true;
-            }
-        }
-        valueLessThanItemFirst = false;
-        return false;
     }
 }
