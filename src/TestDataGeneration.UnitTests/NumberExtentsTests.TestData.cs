@@ -286,6 +286,187 @@ namespace TestDataGeneration.UnitTests
                 yield return new TestCaseData(char.MaxValue, '\ufffe').SetArgDisplayNames("char.MaxValue", "'\\ufffe'");
                 yield return new TestCaseData('\u0001', char.MinValue).SetArgDisplayNames("'\\u0001'", "char.MinValue");
             }
+
+            public static System.Collections.IEnumerable GetIsMoreThanOneAfterTest1Data()
+            {
+                yield return new TestCaseData('c', new NumberExtents<char>('a')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsMoreThanOneAfterTest2Data()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsNotMoreThanOneAfterTest1Data()
+            {
+                yield return new TestCaseData('b', new NumberExtents<char>('a')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsNotMoreThanOneAfterTest2Data()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTest1Data()
+            {
+                yield return new TestCaseData('a', new NumberExtents<char>('c')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTest2Data()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'c').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsNotMoreThanOneBeforeTest1Data()
+            {
+                yield return new TestCaseData('a', new NumberExtents<char>('b')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsNotMoreThanOneBeforeTest2Data()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsLessThanTest1Data()
+            {
+                yield return new TestCaseData('a', new NumberExtents<char>('b')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsLessThanTest2Data()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsGreaterThanTest1Data()
+            {
+                yield return new TestCaseData('b', new NumberExtents<char>('a')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsGreaterThanTest2Data()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIsIncludedInTestData()
+            {
+                yield return new TestCaseData('b', new NumberExtents<char>('b')).Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetIncludesTestData()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'b').Returns(true);
+            }
+
+            public static System.Collections.IEnumerable GetWithFirstTestData()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(new NumberExtents<char>('a', 'b'));
+            }
+
+            public static System.Collections.IEnumerable GetWithLastTestData()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(new NumberExtents<char>('a', 'b'));
+            }
+
+            public static System.Collections.IEnumerable GetAddFirstTest1Data()
+            {
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'z').Returns(new NumberExtents<char>[] { new('a', 'z') });
+            }
+
+            public static System.Collections.IEnumerable GetAddFirstTest2Data()
+            {
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a').Returns(new NumberExtents<char>[] { new('a') });
+            }
+
+            public static System.Collections.IEnumerable GetAddLastTest1Data()
+            {
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'z').Returns(new NumberExtents<char>[] { new('a', 'z') });
+            }
+
+            public static System.Collections.IEnumerable GetAddLastTest2Data()
+            {
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a').Returns(new NumberExtents<char>[] { new('a') });
+            }
+
+            public static System.Collections.IEnumerable GetAddPreviousTest1Data()
+            {
+                static TestCaseData create(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char first, char last)
+                {
+                    return new TestCaseData(before, target, after, first, last);
+                }
+                yield return create(before: new NumberExtents<char>('a', 'b'), target: new NumberExtents<char>('g', 'h'), after: new NumberExtents<char>('j', 'k'), first: 'd', last: 'e').Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h'), new('j', 'k') });
+            }
+
+            public static System.Collections.IEnumerable GetAddPreviousTest2Data()
+            {
+                static TestCaseData create(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char value)
+                {
+                    return new TestCaseData(before, target, after, value);
+                }
+                yield return create(before: new NumberExtents<char>('a'), target: new NumberExtents<char>('e'), after: new NumberExtents<char>('g'), value: 'c').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e'), new('g') });
+            }
+
+            public static System.Collections.IEnumerable GetAddNextTest1Data()
+            {
+                static TestCaseData create(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char first, char last)
+                {
+                    return new TestCaseData(before, target, after, first, last);
+                }
+                yield return create(before: new NumberExtents<char>('a', 'b'), target: new NumberExtents<char>('d', 'e'), after: new NumberExtents<char>('j', 'k'), first: 'g', last: 'h').Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h'), new('j', 'k') });
+            }
+
+            public static System.Collections.IEnumerable GetAddNextTest2Data()
+            {
+                static TestCaseData create(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char value)
+                {
+                    return new TestCaseData(before, target, after, value);
+                }
+                yield return create(before: new NumberExtents<char>('a'), target: new NumberExtents<char>('c'), after: new NumberExtents<char>('g'), value: 'e').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e'), new('g') });
+            }
+
+            public static System.Collections.IEnumerable GetRemoveAndGetNextTestData()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, NumberExtents<char>? expected, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, after, expected);
+                }
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new NumberExtents<char>('c'), expected: new NumberExtents<char>('g'), new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('e'), new('g') });
+            }
+
+            public static System.Collections.IEnumerable GetRemoveAndGetPreviousTestData()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, NumberExtents<char>? expected, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, after, expected);
+                }
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new NumberExtents<char>('c'), expected: new NumberExtents<char>('a'), new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('e'), new('g') });
+            }
+
+            public static System.Collections.IEnumerable GetTryExpandTestData()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, bool expected, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, first, last, after, expected);
+                }
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new NumberExtents<char>('d'), first: 'c', last: 'e', expected: true, new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g') });
+            }
+
+            public static System.Collections.IEnumerable GetTryExpandFirstTestData()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char value, bool expected, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, value, after, expected);
+                }
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new NumberExtents<char>('d'), value: 'c', expected: true, new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') });
+            }
+
+            public static System.Collections.IEnumerable GetTryExpandLastTestData()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char value, bool expected, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, value, after, expected);
+                }
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new NumberExtents<char>('d'), value: 'e', expected: true, new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') });
+            }
         }
     }
 }

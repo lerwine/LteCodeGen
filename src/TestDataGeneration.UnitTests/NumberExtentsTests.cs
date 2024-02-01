@@ -11,6 +11,295 @@ namespace TestDataGeneration.UnitTests
         {
         }
 
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest1Data))]
+        public bool IsMoreThanOneAfterTest1(char value, NumberExtents<char> extents)
+        {
+            return value.IsMoreThanOneAfter(extents);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest2Data))]
+        public bool IsMoreThanOneAfterTest2(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return value.IsMoreThanOneAfter(list.AddLast(extents));
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest1Data))]
+        public bool IsMoreThanOneAfterTest3(NumberExtents<char> extents, char value)
+        {
+            return extents.IsMoreThanOneAfter(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest2Data))]
+        public bool IsMoreThanOneAfterTest4(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsMoreThanOneAfter(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest1Data))]
+        public bool IsNotMoreThanOneAfterTest1(char value, NumberExtents<char> extents)
+        {
+            return value.IsNotMoreThanOneAfter(extents);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest2Data))]
+        public bool IsNotMoreThanOneAfterTest2(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return value.IsNotMoreThanOneAfter(list.AddLast(extents));
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest1Data))]
+        public bool IsNotMoreThanOneAfterTest3(NumberExtents<char> extents, char value)
+        {
+            return extents.IsNotMoreThanOneAfter(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest2Data))]
+        public bool IsNotMoreThanOneAfterTest4(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsNotMoreThanOneAfter(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest1Data))]
+        public bool IsMoreThanOneBeforeTest1(char value, NumberExtents<char> extents)
+        {
+            return value.IsMoreThanOneBefore(extents);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest2Data))]
+        public bool IsMoreThanOneBeforeTest2(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return value.IsMoreThanOneBefore(list.AddLast(extents));
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest1Data))]
+        public bool IsMoreThanOneBeforeTest3(NumberExtents<char> extents, char value)
+        {
+            return extents.IsMoreThanOneBefore(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest2Data))]
+        public bool IsMoreThanOneBeforeTest4(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsMoreThanOneBefore(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest1Data))]
+        public bool IsNotMoreThanOneBeforeTest1(char value, NumberExtents<char> extents)
+        {
+            return value.IsNotMoreThanOneBefore(extents);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest2Data))]
+        public bool IsNotMoreThanOneBeforeTest2(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return value.IsNotMoreThanOneBefore(list.AddLast(extents));
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest1Data))]
+        public bool IsNotMoreThanOneBeforeTest3(NumberExtents<char> extents, char value)
+        {
+            return extents.IsNotMoreThanOneBefore(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest2Data))]
+        public bool IsNotMoreThanOneBeforeTest4(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsNotMoreThanOneBefore(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanTest1Data))]
+        public bool IsLessThanTest1(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsLessThan(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanTest2Data))]
+        public bool IsLessThanTest2(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsLessThan(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsGreaterThanTest1Data))]
+        public bool IsGreaterThanTest1(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsGreaterThan(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsGreaterThanTest2Data))]
+        public bool IsGreaterThanTest2(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsGreaterThan(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsIncludedInTestData))]
+        public bool IsIncludedInTest(char value, NumberExtents<char> extents)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return value.IsIncludedIn(list.AddLast(extents));
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIncludesTestData))]
+        public bool IncludesTest(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).Includes(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetWithFirstTestData))]
+        public NumberExtents<char> WithFirstTest(NumberExtents<char> extents, char value)
+        {
+            return extents.WithFirst(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetWithLastTestData))]
+        public NumberExtents<char> WithLastTest(NumberExtents<char> extents, char value)
+        {
+            return extents.WithLast(value);
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddFirstTest1Data))]
+        public NumberExtents<char>[] AddFirstTest1(NumberExtents<char>[] existing, char first, char last)
+        {
+            LinkedList<NumberExtents<char>> list = new(existing);
+            list.AddFirst(first, last);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddFirstTest2Data))]
+        public NumberExtents<char>[] AddFirstTest2(NumberExtents<char>[] existing, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new(existing);
+            list.AddFirst(value);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddLastTest1Data))]
+        public NumberExtents<char>[] AddLastTest1(NumberExtents<char>[] existing, char first, char last)
+        {
+            LinkedList<NumberExtents<char>> list = new(existing);
+            list.AddLast(first, last);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddLastTest2Data))]
+        public NumberExtents<char>[] AddLastTest2(NumberExtents<char>[] existing, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new(existing);
+            list.AddLast(value);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddPreviousTest1Data))]
+        public NumberExtents<char>[] AddPreviousTest1(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char first, char last)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            var node = list.AddLast(target);
+            if (before.HasValue) list.AddFirst(before.Value);
+            if (after.HasValue) list.AddLast(after.Value);
+            node.AddPrevious(first, last);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddPreviousTest2Data))]
+        public NumberExtents<char>[] AddPreviousTest2(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            var node = list.AddLast(target);
+            if (before.HasValue) list.AddFirst(before.Value);
+            if (after.HasValue) list.AddLast(after.Value);
+            node.AddPrevious(value);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddNextTest1Data))]
+        public NumberExtents<char>[] AddNextTest1(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char first, char last)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            var node = list.AddLast(target);
+            if (before.HasValue) list.AddFirst(before.Value);
+            if (after.HasValue) list.AddLast(after.Value);
+            node.AddNext(first, last);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetAddNextTest2Data))]
+        public NumberExtents<char>[] AddNextTest2(NumberExtents<char>? before, NumberExtents<char> target, NumberExtents<char>? after, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            var node = list.AddLast(target);
+            if (before.HasValue) list.AddFirst(before.Value);
+            if (after.HasValue) list.AddLast(after.Value);
+            node.AddNext(value);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetRemoveAndGetNextTestData))]
+        public NumberExtents<char>[] RemoveAndGetNextTest(NumberExtents<char>[] before, NumberExtents<char> target, NumberExtents<char>[] after, NumberExtents<char>? expected)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.RemoveAndGetNext();
+            Assert.That(actual?.Value, Is.EqualTo(expected));
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetRemoveAndGetPreviousTestData))]
+        public NumberExtents<char>[] RemoveAndGetPreviousTest(NumberExtents<char>[] before, NumberExtents<char> target, NumberExtents<char>[] after, NumberExtents<char>? expected)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.RemoveAndGetPrevious();
+            Assert.That(actual?.Value, Is.EqualTo(expected));
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandTestData))]
+        public NumberExtents<char>[] TryExpandTest(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, NumberExtents<char>[] after, bool expected)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.TryExpand(first, last);
+            Assert.That(actual, Is.EqualTo(expected));
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandFirstTestData))]
+        public NumberExtents<char>[] TryExpandFirstTest(NumberExtents<char>[] before, NumberExtents<char> target, char value, NumberExtents<char>[] after, bool expected)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.TryExpandFirst(value);
+            Assert.That(actual, Is.EqualTo(expected));
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandLastTestData))]
+        public NumberExtents<char>[] TryExpandLastTest(NumberExtents<char>[] before, NumberExtents<char> target, char value, NumberExtents<char>[] after, bool expected)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.TryExpandLast(value);
+            Assert.That(actual, Is.EqualTo(expected));
+            return list.ToArray();
+        }
+
         [TestCaseSource(typeof(TestData), nameof(TestData.GetInvalidExtentsTestData))]
         public void InvalidExtentsTest(char first, char last)
         {
