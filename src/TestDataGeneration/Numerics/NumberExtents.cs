@@ -4,6 +4,227 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
+public static class NumberExtents
+{
+    public static bool IsMoreThanOneAfter<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > extents.Last;
+
+    public static bool IsMoreThanOneAfter<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneAfter(value, node.Value);
+
+    public static bool IsNotMoreThanOneAfter<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
+
+    public static bool IsNotMoreThanOneAfter<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(value, node.Value);
+
+    public static bool IsMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
+
+    public static bool IsMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(value, node.Value);
+
+    public static bool IsNotMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
+
+    public static bool IsNotMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
+
+    public static bool IsMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
+
+    public static bool IsMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneAfter(value, node.Value);
+
+    public static bool IsNotMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
+
+    public static bool IsNotMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(value, node.Value);
+
+    public static bool IsMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > extents.Last;
+
+    public static bool IsMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(value, node.Value);
+
+    public static bool IsNotMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
+
+    public static bool IsNotMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
+
+    public static NumberExtents<T> WithFirst<T>(this NumberExtents<T> extents, T first) where T : INumber<T>, IMinMaxValue<T> => new(first, extents.Last);
+
+    public static NumberExtents<T> WithLast<T>(this NumberExtents<T> extents, T last) where T : INumber<T>, IMinMaxValue<T> => new(extents.First, last);
+
+    public static void AddLast<T>(this LinkedList<NumberExtents<T>> list, T first, T last) where T : INumber<T>, IMinMaxValue<T> => list.AddLast(new NumberExtents<T>(first, last));
+
+    public static void AddFirst<T>(this LinkedList<NumberExtents<T>> list, T first, T last) where T : INumber<T>, IMinMaxValue<T> => list.AddFirst(new NumberExtents<T>(first, last));
+
+    public static void AddBefore<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> =>
+        (node.List ?? throw new InvalidOperationException()).AddBefore(node, new NumberExtents<T>(first, last));
+
+    public static void AddAfter<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> =>
+        (node.List ?? throw new InvalidOperationException()).AddAfter(node, new NumberExtents<T>(first, last));
+
+    public static LinkedListNode<T>? RemoveAndGetNext<T>(this LinkedListNode<T> node)
+    {
+        var list = node.List;
+        if (list is null) return null;
+        var result = node.Next;
+        list.Remove(node);
+        return result;
+    }
+
+    public static LinkedListNode<T>? RemoveAndGetPrevious<T>(this LinkedListNode<T> node)
+    {
+        var list = node.List;
+        if (list is null) return null;
+        var result = node.Previous;
+        list.Remove(node);
+        return result;
+    }
+
+    public static bool TryExpand<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T>
+    {
+        var item = node.Value;
+        if (last <= item.Last) return TryExpandFirst(node, first);
+        if (first >= item.First) return TryExpandLast(node, last);
+        var list = node.List;
+        if (list is not null)
+        {
+            var prev = node.Previous;
+            var firstPlusOne = first + T.One;
+            var firstMinusOne = first - T.One;
+            while (prev is not null)
+            {
+                item = prev.Value;
+                if (first < item.First)
+                {
+                    if (firstPlusOne == item.First)
+                    {
+                        list.Remove(prev);
+                        if ((prev = node.Previous) is not null && firstMinusOne == prev.Value.Last)
+                        {
+                            first = prev.Value.First;
+                            list.Remove(prev);
+                        }
+                        break;
+                    }
+                }
+                else
+                {
+                    // first > item.First;
+                    if (first == item.First)
+                        list.Remove(prev);
+                    else if (first < prev.Value.Last)
+                        prev.Value = prev.Value.WithLast(firstMinusOne);
+                    break;
+                }
+            }
+            item = node.Value;
+            var next = node.Next;
+            var lastPlusOne = last + T.One;
+            var lastMinusOne = last - T.One;
+            while (next is not null)
+            {
+                item = next.Value;
+                if (last > item.Last)
+                {
+                    if (lastMinusOne == item.Last)
+                    {
+                        list.Remove(next);
+                        if ((next = node.Next) is not null && lastPlusOne == next.Value.First)
+                        {
+                            last = next.Value.Last;
+                            list.Remove(next);
+                        }
+                        break;
+                    }
+                }
+                else
+                {
+                    if (last == item.Last)
+                        list.Remove(next);
+                    else if (last > next.Value.First)
+                        next.Value = next.Value.WithFirst(lastPlusOne);
+                    break;
+                }
+            }
+        }
+        node.Value = new(first, last);
+        return true;
+    }
+
+    public static bool TryExpandFirst<T>(this LinkedListNode<NumberExtents<T>> node, T first) where T : INumber<T>, IMinMaxValue<T>
+    {
+        var item = node.Value;
+        var last = item.Last;
+        if (first >= item.First) return false;
+        var list = node.List;
+        if (list is not null)
+        {
+            var prev = node.Previous;
+            var plusOne = first + T.One;
+            var minusOne = first - T.One;
+            while (prev is not null)
+            {
+                item = prev.Value;
+                if (first < item.First)
+                {
+                    if (plusOne == item.First)
+                    {
+                        list.Remove(prev);
+                        if ((prev = node.Previous) is not null && minusOne == prev.Value.Last)
+                        {
+                            first = prev.Value.First;
+                            list.Remove(prev);
+                        }
+                        break;
+                    }
+                }
+                else
+                {
+                    // first > item.First;
+                    if (first == item.First)
+                        list.Remove(prev);
+                    else if (first < prev.Value.Last)
+                        prev.Value = prev.Value.WithLast(minusOne);
+                    break;
+                }
+            }
+        }
+        node.Value = new(first, last);
+        return true;
+    }
+
+    public static bool TryExpandLast<T>(this LinkedListNode<NumberExtents<T>> node, T last) where T : INumber<T>, IMinMaxValue<T>
+    {
+        var item = node.Value;
+        var first = item.First;
+        if (last <= item.Last) return false;
+        var list = node.List;
+        if (list is not null)
+        {
+            var next = node.Next;
+            var plusOne = last + T.One;
+            var minusOne = last - T.One;
+            while (next is not null)
+            {
+                item = next.Value;
+                if (last > item.Last)
+                {
+                    if (minusOne == item.Last)
+                    {
+                        list.Remove(next);
+                        if ((next = node.Next) is not null && plusOne == next.Value.First)
+                        {
+                            last = next.Value.Last;
+                            list.Remove(next);
+                        }
+                        break;
+                    }
+                }
+                else
+                {
+                    if (last == item.Last)
+                        list.Remove(next);
+                    else if (last > next.Value.First)
+                        next.Value = next.Value.WithFirst(plusOne);
+                    break;
+                }
+            }
+        }
+        node.Value = new(first, last);
+        return true;
+    }
+}
+
 /// <summary>
 /// Represents the extents of a range of numbers.
 /// </summary>
