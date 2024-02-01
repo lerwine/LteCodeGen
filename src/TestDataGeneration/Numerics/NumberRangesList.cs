@@ -82,6 +82,30 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
+            LinkedListNode<NumberExtents<T>>? node;
+            if (value == T.MaxValue)
+            {
+                if ((node = _backingList.Last) is null || value.IsMoreThanOneAfter(node))
+                {
+                    _backingList.AddLast(value);
+                    return true;
+                }
+                return node.TryExpandLast(value);
+            }
+            if ((node = _backingList.First) is null)
+            {
+                _backingList.AddLast(value);
+                return true;
+            }
+            if (value == T.MinValue)
+            {
+                if (value.IsMoreThanOneBefore(node))
+                {
+                    _backingList.AddFirst(value);
+                    return true;
+                }
+                return node.TryExpandFirst(value);
+            }
             throw new NotImplementedException();
         }
         finally { Monitor.Exit(SyncRoot); }
@@ -93,15 +117,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     /// <param name="item">The range extents to be added.</param>
     /// <returns><see langword="true"/> if the <paramref name="item"/> combined with one or more existing <see cref="NumberExtents{T}"/> elements or was added as a new element;
     /// otherwise, <see langword="false"/>.</returns>
-    public bool Add(NumberExtents<T> item)
-    {
-        Monitor.Enter(SyncRoot);
-        try
-        {
-            throw new NotImplementedException();
-        }
-        finally { Monitor.Exit(SyncRoot); }
-    }
+    public bool Add(NumberExtents<T> item) => Add(item.First, item.Last);
 
     /// <summary>
     /// Adds range extents to the current list.
@@ -113,12 +129,54 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="first"/> is greater than <paramref name="last"/>.</exception>
     public bool Add(T first, T last)
     {
+        int diff = first.CompareTo(last);
+        if (diff > 0) throw new ArgumentOutOfRangeException(nameof(first));
+        if (diff == 0) return Add(first);
         Monitor.Enter(SyncRoot);
         try
         {
-            throw new NotImplementedException();
+            LinkedListNode<NumberExtents<T>>? node;
+            if (last == T.MaxValue)
+            {
+                if ((node = _backingList.Last) is null)
+                {
+                    _backingList.AddLast(first, last);
+                    return true;
+                }
+                return node.TryExpand(first, last);
+            }
+            if ((node = _backingList.First) is null)
+            {
+                _backingList.AddLast(first, last);
+                return true;
+            }
+            if (first == T.MinValue) return node.TryExpand(first, last);
+            var item = node.Value;
+            if (last.IsMoreThanOneBefore(item))
+                _backingList.AddFirst(first, last);
+            else if (first.IsMoreThanOneAfter(item))
+            {
+                var next = node.Next;
+                while (next is not null)
+                {
+                    if (first.IsNotMoreThanOneAfter(next))
+                    {
+                        if (last.IsMoreThanOneBefore(next))
+                        {
+                            next.AddPrevious(first, last);
+                            return true;
+                        }
+                        return next.TryExpand(first, last);
+                    }
+                    next = next.Next;
+                }
+                _backingList.AddLast(first, last);
+            }
+            else
+                return node.TryExpand(first, last);
         }
         finally { Monitor.Exit(SyncRoot); }
+        return true;
     }
 
     void ICollection<NumberExtents<T>>.Add(NumberExtents<T> item) => Add(item);

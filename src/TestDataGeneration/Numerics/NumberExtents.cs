@@ -38,19 +38,37 @@ public static class NumberExtents
 
     public static bool IsNotMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
 
+    public static bool IsLessThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value < node.Value.First;
+
+    public static bool IsLessThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.First < value;
+
+    public static bool IsGreaterThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value > node.Value.Last;
+
+    public static bool IsGreaterThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.Last > value;
+
+    public static bool IsIncludedIn<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => node.Value.Contains(value);
+
+    public static bool Includes<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.Contains(value);
+
     public static NumberExtents<T> WithFirst<T>(this NumberExtents<T> extents, T first) where T : INumber<T>, IMinMaxValue<T> => new(first, extents.Last);
 
     public static NumberExtents<T> WithLast<T>(this NumberExtents<T> extents, T last) where T : INumber<T>, IMinMaxValue<T> => new(extents.First, last);
 
     public static void AddLast<T>(this LinkedList<NumberExtents<T>> list, T first, T last) where T : INumber<T>, IMinMaxValue<T> => list.AddLast(new NumberExtents<T>(first, last));
 
+    public static void AddLast<T>(this LinkedList<NumberExtents<T>> list, T value) where T : INumber<T>, IMinMaxValue<T> => list.AddLast(new NumberExtents<T>(value));
+
     public static void AddFirst<T>(this LinkedList<NumberExtents<T>> list, T first, T last) where T : INumber<T>, IMinMaxValue<T> => list.AddFirst(new NumberExtents<T>(first, last));
 
-    public static void AddBefore<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> =>
-        (node.List ?? throw new InvalidOperationException()).AddBefore(node, new NumberExtents<T>(first, last));
+    public static void AddFirst<T>(this LinkedList<NumberExtents<T>> list, T value) where T : INumber<T>, IMinMaxValue<T> => list.AddFirst(new NumberExtents<T>(value));
 
-    public static void AddAfter<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> =>
-        (node.List ?? throw new InvalidOperationException()).AddAfter(node, new NumberExtents<T>(first, last));
+    public static void AddPrevious<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddBefore(node, new NumberExtents<T>(first, last));
+
+    public static void AddPrevious<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddBefore(node, new NumberExtents<T>(value));
+
+    public static void AddNext<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddAfter(node, new NumberExtents<T>(first, last));
+
+    public static void AddNext<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddAfter(node, new NumberExtents<T>(value));
 
     public static LinkedListNode<T>? RemoveAndGetNext<T>(this LinkedListNode<T> node)
     {
