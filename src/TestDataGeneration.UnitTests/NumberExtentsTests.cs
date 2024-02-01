@@ -18,16 +18,17 @@ namespace TestDataGeneration.UnitTests
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest2Data))]
-        public bool IsMoreThanOneAfterTest2(char value, NumberExtents<char> extents)
+        public bool IsMoreThanOneAfterTest2(NumberExtents<char> extents, char value)
+        {
+            return extents.IsMoreThanOneAfter(value);
+        }
+        
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest1Data))]
+        public bool IsMoreThanOneAfterTest3(char value, NumberExtents<char> extents)
         {
             LinkedList<NumberExtents<char>> list = new();
             return value.IsMoreThanOneAfter(list.AddLast(extents));
-        }
-
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest1Data))]
-        public bool IsMoreThanOneAfterTest3(NumberExtents<char> extents, char value)
-        {
-            return extents.IsMoreThanOneAfter(value);
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneAfterTest2Data))]
@@ -44,16 +45,16 @@ namespace TestDataGeneration.UnitTests
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest2Data))]
-        public bool IsNotMoreThanOneAfterTest2(char value, NumberExtents<char> extents)
+        public bool IsNotMoreThanOneAfterTest2(NumberExtents<char> extents, char value)
         {
-            LinkedList<NumberExtents<char>> list = new();
-            return value.IsNotMoreThanOneAfter(list.AddLast(extents));
+            return extents.IsNotMoreThanOneAfter(value);
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest1Data))]
-        public bool IsNotMoreThanOneAfterTest3(NumberExtents<char> extents, char value)
+        public bool IsNotMoreThanOneAfterTest3(char value, NumberExtents<char> extents)
         {
-            return extents.IsNotMoreThanOneAfter(value);
+            LinkedList<NumberExtents<char>> list = new();
+            return value.IsNotMoreThanOneAfter(list.AddLast(extents));
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneAfterTest2Data))]
@@ -63,63 +64,66 @@ namespace TestDataGeneration.UnitTests
             return list.AddLast(extents).IsNotMoreThanOneAfter(value);
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest1Data))]
-        public bool IsMoreThanOneBeforeTest1(char value, NumberExtents<char> extents)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanOneBeforeTest1Data))]
+        public bool IsLessThanOneBeforeTest1(char value, NumberExtents<char> extents)
         {
-            return value.IsMoreThanOneBefore(extents);
+            return value.IsLessThanOneBefore(extents);
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest2Data))]
-        public bool IsMoreThanOneBeforeTest2(char value, NumberExtents<char> extents)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanOneBeforeTest2Data))]
+        public bool IsLessThanOneBeforeTest2(NumberExtents<char> extents, char value)
+        {
+            return extents.IsLessThanOneBefore(value);
+        }
+        
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanOneBeforeTest1Data))]
+        public bool IsLessThanOneBeforeTest3(char value, NumberExtents<char> extents)
         {
             LinkedList<NumberExtents<char>> list = new();
-            return value.IsMoreThanOneBefore(list.AddLast(extents));
+            return value.IsLessThanOneBefore(list.AddLast(extents));
         }
+        
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest1Data))]
-        public bool IsMoreThanOneBeforeTest3(NumberExtents<char> extents, char value)
-        {
-            return extents.IsMoreThanOneBefore(value);
-        }
-
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsMoreThanOneBeforeTest2Data))]
-        public bool IsMoreThanOneBeforeTest4(NumberExtents<char> extents, char value)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanOneBeforeTest2Data))]
+        public bool IsLessThanOneBeforeTest4(NumberExtents<char> extents, char value)
         {
             LinkedList<NumberExtents<char>> list = new();
-            return list.AddLast(extents).IsMoreThanOneBefore(value);
+            return list.AddLast(extents).IsLessThanOneBefore(value);
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest1Data))]
-        public bool IsNotMoreThanOneBeforeTest1(char value, NumberExtents<char> extents)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotLessThanOneBeforeTest1Data))]
+        public bool IsNotLessThanOneBeforeTest1(char value, NumberExtents<char> extents)
         {
-            return value.IsNotMoreThanOneBefore(extents);
+            return value.IsNotLessThanOneBefore(extents);
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest2Data))]
-        public bool IsNotMoreThanOneBeforeTest2(char value, NumberExtents<char> extents)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotLessThanOneBeforeTest2Data))]
+        public bool IsNotLessThanOneBeforeTest2(NumberExtents<char> extents, char value)
         {
-            LinkedList<NumberExtents<char>> list = new();
-            return value.IsNotMoreThanOneBefore(list.AddLast(extents));
+            return extents.IsNotLessThanOneBefore(value);
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest1Data))]
-        public bool IsNotMoreThanOneBeforeTest3(NumberExtents<char> extents, char value)
-        {
-            return extents.IsNotMoreThanOneBefore(value);
-        }
-
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotMoreThanOneBeforeTest2Data))]
-        public bool IsNotMoreThanOneBeforeTest4(NumberExtents<char> extents, char value)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotLessThanOneBeforeTest1Data))]
+        public bool IsNotLessThanOneBeforeTest3(char value, NumberExtents<char> extents)
         {
             LinkedList<NumberExtents<char>> list = new();
-            return list.AddLast(extents).IsNotMoreThanOneBefore(value);
+            return value.IsNotLessThanOneBefore(list.AddLast(extents));
+        }
+        
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetIsNotLessThanOneBeforeTest2Data))]
+        public bool IsNotLessThanOneBeforeTest4(NumberExtents<char> extents, char value)
+        {
+            LinkedList<NumberExtents<char>> list = new();
+            return list.AddLast(extents).IsNotLessThanOneBefore(value);
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanTest1Data))]
         public bool IsLessThanTest1(char value, NumberExtents<char> extents)
         {
             LinkedList<NumberExtents<char>> list = new();
-            return list.AddLast(extents).IsLessThan(value);
+            return value.IsLessThan(list.AddLast(extents));
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsLessThanTest2Data))]
@@ -133,7 +137,7 @@ namespace TestDataGeneration.UnitTests
         public bool IsGreaterThanTest1(char value, NumberExtents<char> extents)
         {
             LinkedList<NumberExtents<char>> list = new();
-            return list.AddLast(extents).IsGreaterThan(value);
+            return value.IsGreaterThan(list.AddLast(extents));
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetIsGreaterThanTest2Data))]

@@ -7,57 +7,142 @@ namespace TestDataGeneration.UnitTests
     {
         class TestData
         {
+            const char _minPlusOne = '\u0001';
+            const char _maxMinusOne = '\ufffe';
             public static System.Collections.IEnumerable GetIsFirstAdjacentToTestData()
             {
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'b').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'd'), 'b').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'b').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'a').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'c').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'c').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'd').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A'), 'B').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'A').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('B'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('b', 'd'), 'a').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('B', 'd'), 'a').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('b', 'd'), 'A').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('B', 'C'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'b').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'd').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'e').Returns(false);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _minPlusOne).Returns(xxx);
             }
 
             public static System.Collections.IEnumerable GetIsLastAdjacentToTestData()
             {
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'd').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('b', 'c'), 'd').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'd').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A'), 'B').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A'), 'b').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'B').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'e').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'e').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'c').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'c').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'b').Returns(false);
-            }
-
-            public static System.Collections.IEnumerable GetIsBeforeTestData()
-            {
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'd').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('b', 'c'), 'd').Returns(true);
                 yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'd').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'e').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'e').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('A', 'c'), 'd').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'D').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('A', 'C'), 'd').Returns(true);
                 yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'c').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'b').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'a').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('b', 'd'), 'a').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'a').Returns(false);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _minPlusOne).Returns(xxx);
+            }
+
+            public static System.Collections.IEnumerable GetIsBeforeTestData()
+            {
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'c').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A'), 'B').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A'), 'b').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'B').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('C'), 'a').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'e').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'd').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A', 'c'), 'd').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('A', 'C'), 'd').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'D').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'b').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('b', 'd'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('C', 'E'), 'a').Returns(true);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, char.MaxValue), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(char.MinValue, _maxMinusOne), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, char.MaxValue), _minPlusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), char.MaxValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), char.MinValue).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _maxMinusOne).Returns(xxx);
+                // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _minPlusOne).Returns(xxx);
             }
 
             public static System.Collections.IEnumerable GetIsFirstMoreThanOneAfterTestData()
             {
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'b').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'd'), 'b').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'b').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'a').Returns(true);
                 yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(true);
-                yield return new TestCaseData(new NumberExtents<char>('c'), 'c').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'c').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'd').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'e').Returns(false);
-                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'f').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('c'), 'A').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('C'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a'), 'C').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'a').Returns(true);
+                yield return new TestCaseData(new NumberExtents<char>('b', 'd'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'a').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'b').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'c').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'd').Returns(false);
+                yield return new TestCaseData(new NumberExtents<char>('a', 'c'), 'e').Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsAfterTestData()
@@ -312,11 +397,20 @@ namespace TestDataGeneration.UnitTests
                 yield return create(value: 'a', extents: new('c', 'e')).Returns(false);
                 yield return create(value: 'a', extents: new('C', 'E')).Returns(true);
                 yield return create(value: char.MinValue, extents: new('a')).Returns(false);
-                yield return create(value: char.MinValue, extents: new(char.MinValue, 'a')).Returns(false);
                 yield return create(value: char.MaxValue, extents: new('a')).Returns(true);
-                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(false);
-                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'a')).Returns(true);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(true);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: 'e', extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(false);
                 yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsMoreThanOneAfterTest2Data()
@@ -335,14 +429,30 @@ namespace TestDataGeneration.UnitTests
                 yield return create(extents: new('a'), value: 'c').Returns(false);
                 yield return create(extents: new('a'), value: 'C').Returns(true);
                 yield return create(extents: new('c', 'e'), value: 'a').Returns(true);
-                yield return create(extents: new('C', 'E'), value: 'a').Returns(true);
+                yield return create(extents: new('C', 'E'), value: 'a').Returns(false);
                 yield return create(extents: new('b', 'd'), value: 'a').Returns(false);
+                yield return create(extents: new('b', 'd'), value: 'A').Returns(true);
                 yield return create(extents: new('a', 'c'), value: 'a').Returns(false);
                 yield return create(extents: new('a', 'c'), value: 'b').Returns(false);
                 yield return create(extents: new('a', 'c'), value: 'c').Returns(false);
                 yield return create(extents: new('a', 'c'), value: 'd').Returns(false);
                 yield return create(extents: new('a', 'c'), value: 'e').Returns(false);
                 yield return create(extents: new('a', 'c'), value: 'E').Returns(true);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: 'e').Returns(false);
+                yield return create(extents: new('e', char.MaxValue), value: 'a').Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsNotMoreThanOneAfterTest1Data()
@@ -351,7 +461,39 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(value, extents).SetArgDisplayNames((value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'", extents.ToString());
                 }
+                yield return create(value: 'c', extents: new('a')).Returns(false);
+                yield return create(value: 'c', extents: new('A')).Returns(false);
+                yield return create(value: 'C', extents: new('a')).Returns(true);
                 yield return create(value: 'b', extents: new('a')).Returns(true);
+                yield return create(value: 'b', extents: new('A')).Returns(false);
+                yield return create(value: 'a', extents: new('a')).Returns(true);
+                yield return create(value: 'a', extents: new('b')).Returns(true);
+                yield return create(value: 'a', extents: new('c')).Returns(true);
+                yield return create(value: 'a', extents: new('C')).Returns(false);
+                yield return create(value: 'e', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'E', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'd', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'c', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'b', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'a', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'a', extents: new('b', 'd')).Returns(true);
+                yield return create(value: 'a', extents: new('c', 'e')).Returns(true);
+                yield return create(value: 'a', extents: new('C', 'E')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(false);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'e', extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: 'e', extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
             }
 
             public static System.Collections.IEnumerable GetIsNotMoreThanOneAfterTest2Data()
@@ -360,43 +502,199 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
+                yield return create(extents: new('c'), value: 'A').Returns(false);
+                yield return create(extents: new('c'), value: 'a').Returns(false);
+                yield return create(extents: new('C'), value: 'a').Returns(true);
                 yield return create(extents: new('b'), value: 'a').Returns(true);
+                yield return create(extents: new('b'), value: 'A').Returns(false);
+                yield return create(extents: new('a'), value: 'a').Returns(true);
+                yield return create(extents: new('a'), value: 'b').Returns(true);
+                yield return create(extents: new('a'), value: 'c').Returns(true);
+                yield return create(extents: new('a'), value: 'C').Returns(false);
+                yield return create(extents: new('c', 'e'), value: 'a').Returns(false);
+                yield return create(extents: new('C', 'E'), value: 'a').Returns(true);
+                yield return create(extents: new('b', 'd'), value: 'a').Returns(true);
+                yield return create(extents: new('b', 'd'), value: 'A').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'b').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'c').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'd').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'e').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'E').Returns(false);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(true);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: 'e').Returns(true);
+                yield return create(extents: new('e', char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(true);
             }
 
-            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTest1Data()
+            public static System.Collections.IEnumerable GetIsLessThanOneBeforeTest1Data()
             {
                 static TestCaseData create(char value, NumberExtents<char> extents)
                 {
                     return new TestCaseData(value, extents).SetArgDisplayNames((value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'", extents.ToString());
                 }
                 yield return create(value: 'a', extents: new('c')).Returns(true);
+                yield return create(value: 'a', extents: new('C')).Returns(false);
+                yield return create(value: 'a', extents: new('C')).Returns(false);
+                yield return create(value: 'a', extents: new('b')).Returns(false);
+                yield return create(value: 'A', extents: new('b')).Returns(true);
+                yield return create(value: 'a', extents: new('a')).Returns(false);
+                yield return create(value: 'b', extents: new('a')).Returns(false);
+                yield return create(value: 'c', extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new('c', 'e')).Returns(true);
+                yield return create(value: 'a', extents: new('C', 'E')).Returns(false);
+                yield return create(value: 'a', extents: new('b', 'd')).Returns(false);
+                yield return create(value: 'A', extents: new('b', 'd')).Returns(true);
+                yield return create(value: 'a', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'b', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'c', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'd', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'e', extents: new('a', 'c')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(false);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'e', extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: 'a', extents: new('e', char.MaxValue)).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
             }
 
-            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTest2Data()
+            public static System.Collections.IEnumerable GetIsLessThanOneBeforeTest2Data()
             {
                 static TestCaseData create(NumberExtents<char> extents, char value)
                 {
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
                 yield return create(extents: new('a'), value: 'c').Returns(true);
+                yield return create(extents: new('a'), value: 'C').Returns(false);
+                yield return create(extents: new('a'), value: 'b').Returns(false);
+                yield return create(extents: new('A'), value: 'b').Returns(true);
+                yield return create(extents: new('a'), value: 'a').Returns(false);
+                yield return create(extents: new('b'), value: 'a').Returns(false);
+                yield return create(extents: new('c'), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'e').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'E').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'd').Returns(false);
+                yield return create(extents: new('A', 'C'), value: 'd').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'c').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'b').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'a').Returns(false);
+                yield return create(extents: new('b', 'd'), value: 'a').Returns(false);
+                yield return create(extents: new('c', 'e'), value: 'a').Returns(false);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(true);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: 'e').Returns(true);
+                yield return create(extents: new('e', char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(false);
             }
 
-            public static System.Collections.IEnumerable GetIsNotMoreThanOneBeforeTest1Data()
+            public static System.Collections.IEnumerable GetIsNotLessThanOneBeforeTest1Data()
             {
                 static TestCaseData create(char value, NumberExtents<char> extents)
                 {
                     return new TestCaseData(value, extents).SetArgDisplayNames((value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'", extents.ToString());
                 }
+                yield return create(value: 'a', extents: new('c')).Returns(false);
+                yield return create(value: 'a', extents: new('C')).Returns(true);
+                yield return create(value: 'a', extents: new('C')).Returns(true);
                 yield return create(value: 'a', extents: new('b')).Returns(true);
+                yield return create(value: 'A', extents: new('b')).Returns(false);
+                yield return create(value: 'a', extents: new('a')).Returns(true);
+                yield return create(value: 'b', extents: new('a')).Returns(true);
+                yield return create(value: 'c', extents: new('a')).Returns(true);
+                yield return create(value: 'a', extents: new('c', 'e')).Returns(false);
+                yield return create(value: 'a', extents: new('C', 'E')).Returns(true);
+                yield return create(value: 'a', extents: new('b', 'd')).Returns(true);
+                yield return create(value: 'A', extents: new('b', 'd')).Returns(false);
+                yield return create(value: 'a', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'b', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'c', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'd', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'e', extents: new('a', 'c')).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a')).Returns(true);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(true);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: 'a', extents: new('e', char.MaxValue)).Returns(false);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
             }
 
-            public static System.Collections.IEnumerable GetIsNotMoreThanOneBeforeTest2Data()
+            public static System.Collections.IEnumerable GetIsNotLessThanOneBeforeTest2Data()
             {
                 static TestCaseData create(NumberExtents<char> extents, char value)
                 {
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
+                yield return create(extents: new('a'), value: 'c').Returns(false);
+                yield return create(extents: new('a'), value: 'C').Returns(true);
                 yield return create(extents: new('a'), value: 'b').Returns(true);
+                yield return create(extents: new('A'), value: 'b').Returns(false);
+                yield return create(extents: new('a'), value: 'a').Returns(true);
+                yield return create(extents: new('b'), value: 'a').Returns(true);
+                yield return create(extents: new('c'), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'e').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'E').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'd').Returns(true);
+                yield return create(extents: new('A', 'C'), value: 'd').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'c').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'b').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'a').Returns(true);
+                yield return create(extents: new('b', 'd'), value: 'a').Returns(true);
+                yield return create(extents: new('c', 'e'), value: 'a').Returns(true);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: 'e').Returns(false);
+                yield return create(extents: new('e', char.MaxValue), value: 'a').Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(true);
+
             }
 
             public static System.Collections.IEnumerable GetIsLessThanTest1Data()
@@ -405,7 +703,33 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(value, extents).SetArgDisplayNames((value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'", extents.ToString());
                 }
+                yield return create(value: 'a', extents: new('c')).Returns(true);
                 yield return create(value: 'a', extents: new('b')).Returns(true);
+                yield return create(value: 'a', extents: new('a')).Returns(false);
+                yield return create(value: 'b', extents: new('a')).Returns(false);
+                yield return create(value: 'c', extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new('c', 'e')).Returns(true);
+                yield return create(value: 'a', extents: new('b', 'd')).Returns(true);
+                yield return create(value: 'a', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'b', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'c', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'd', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'e', extents: new('a', 'c')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(false);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'e', extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: 'a', extents: new('e', char.MaxValue)).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsLessThanTest2Data()
@@ -414,7 +738,37 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
+                yield return create(extents: new('a'), value: 'c').Returns(true);
                 yield return create(extents: new('a'), value: 'b').Returns(true);
+                yield return create(extents: new('a'), value: 'B').Returns(false);
+                yield return create(extents: new('a'), value: 'a').Returns(false);
+                yield return create(extents: new('b'), value: 'a').Returns(false);
+                yield return create(extents: new('c'), value: 'a').Returns(false);
+                yield return create(extents: new('C'), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'e').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'd').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'D').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'c').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'b').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'a').Returns(false);
+                yield return create(extents: new('b', 'd'), value: 'a').Returns(false);
+                yield return create(extents: new('c', 'e'), value: 'a').Returns(false);
+                yield return create(extents: new('C', 'E'), value: 'a').Returns(true);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(true);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: 'e').Returns(true);
+                yield return create(extents: new('e', char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsGreaterThanTest1Data()
@@ -423,7 +777,35 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(value, extents).SetArgDisplayNames((value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'", extents.ToString());
                 }
+                yield return create(value: 'c', extents: new('a')).Returns(true);
                 yield return create(value: 'b', extents: new('a')).Returns(true);
+                yield return create(value: 'B', extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new('b')).Returns(false);
+                yield return create(value: 'a', extents: new('c')).Returns(false);
+                yield return create(value: 'e', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'd', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'c', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'b', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'a', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'a', extents: new('b', 'd')).Returns(false);
+                yield return create(value: 'a', extents: new('c', 'e')).Returns(false);
+                yield return create(value: 'a', extents: new('C', 'E')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a')).Returns(true);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(true);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: 'a', extents: new('e', char.MaxValue)).Returns(false);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsGreaterThanTest2Data()
@@ -432,7 +814,37 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
+                yield return create(extents: new('c'), value: 'a').Returns(true);
                 yield return create(extents: new('b'), value: 'a').Returns(true);
+                yield return create(extents: new('B'), value: 'a').Returns(true);
+                yield return create(extents: new('a'), value: 'a').Returns(false);
+                yield return create(extents: new('a'), value: 'b').Returns(false);
+                yield return create(extents: new('a'), value: 'c').Returns(false);
+                yield return create(extents: new('a'), value: 'C').Returns(false);
+                yield return create(extents: new('c', 'e'), value: 'a').Returns(true);
+                yield return create(extents: new('b', 'd'), value: 'a').Returns(true);
+                yield return create(extents: new('B', 'D'), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'b').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'c').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'd').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'e').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'E').Returns(false);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: 'e').Returns(false);
+                yield return create(extents: new('e', char.MaxValue), value: 'a').Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(false);
             }
 
             public static System.Collections.IEnumerable GetIsIncludedInTestData()
@@ -441,7 +853,39 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(value, extents).SetArgDisplayNames((value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'", extents.ToString());
                 }
-                yield return create(value: 'b', extents: new('b')).Returns(true);
+                yield return create(value: 'a', extents: new('a')).Returns(true);
+                yield return create(value: 'a', extents: new('b')).Returns(false);
+                yield return create(value: 'a', extents: new('c')).Returns(false);
+                yield return create(value: 'b', extents: new('a')).Returns(false);
+                yield return create(value: 'c', extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new('a', 'b')).Returns(true);
+                yield return create(value: 'b', extents: new('a', 'b')).Returns(true);
+                yield return create(value: 'c', extents: new('a', 'b')).Returns(false);
+                yield return create(value: 'd', extents: new('a', 'b')).Returns(false);
+                yield return create(value: 'a', extents: new('b', 'c')).Returns(false);
+                yield return create(value: 'a', extents: new('c', 'd')).Returns(false);
+                yield return create(value: 'a', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'b', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'c', extents: new('a', 'c')).Returns(true);
+                yield return create(value: 'd', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'e', extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'a', extents: new('b', 'd')).Returns(false);
+                yield return create(value: 'a', extents: new('c', 'e')).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a')).Returns(false);
+                yield return create(value: 'a', extents: new(char.MinValue)).Returns(false);
+                yield return create(value: 'a', extents: new(char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', 'c')).Returns(false);
+                yield return create(value: 'c', extents: new(char.MinValue, 'e')).Returns(true);
+                yield return create(value: 'e', extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: 'e', extents: new(char.MinValue, char.MaxValue)).Returns(true);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, 'c')).Returns(true);
+                yield return create(value: char.MinValue, extents: new('a', char.MaxValue)).Returns(false);
+                yield return create(value: char.MinValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, 'c')).Returns(false);
+                yield return create(value: char.MaxValue, extents: new('a', char.MaxValue)).Returns(true);
+                yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
             }
 
             public static System.Collections.IEnumerable GetIncludesTestData()
@@ -450,7 +894,39 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
-                yield return create(extents: new('b'), value: 'b').Returns(true);
+                yield return create(extents: new('a'), value: 'a').Returns(true);
+                yield return create(extents: new('a'), value: 'b').Returns(false);
+                yield return create(extents: new('a'), value: 'c').Returns(false);
+                yield return create(extents: new('b'), value: 'a').Returns(false);
+                yield return create(extents: new('c'), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'b'), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'b'), value: 'b').Returns(true);
+                yield return create(extents: new('a', 'b'), value: 'c').Returns(false);
+                yield return create(extents: new('a', 'b'), value: 'd').Returns(false);
+                yield return create(extents: new('b', 'c'), value: 'a').Returns(false);
+                yield return create(extents: new('c', 'd'), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'a').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'b').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'c').Returns(true);
+                yield return create(extents: new('a', 'c'), value: 'd').Returns(false);
+                yield return create(extents: new('a', 'c'), value: 'e').Returns(false);
+                yield return create(extents: new('b', 'd'), value: 'a').Returns(false);
+                yield return create(extents: new('c', 'e'), value: 'a').Returns(false);
+                yield return create(extents: new('a'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new('a'), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(false);
+                yield return create(extents: new(char.MaxValue), value: 'a').Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MinValue).Returns(false);
+                yield return create(extents: new('a', 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new(char.MinValue, 'e'), value: 'c').Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: 'e').Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'e').Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MinValue).Returns(true);
+                yield return create(extents: new('a', char.MaxValue), value: char.MinValue).Returns(false);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(true);
+                yield return create(extents: new(char.MinValue, 'c'), value: char.MaxValue).Returns(false);
+                yield return create(extents: new('a', char.MaxValue), value: char.MaxValue).Returns(true);
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(true);
             }
 
             public static System.Collections.IEnumerable GetWithFirstTestData()

@@ -14,37 +14,37 @@ public static class NumberExtents
 
     public static bool IsNotMoreThanOneAfter<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(value, node.Value);
 
-    public static bool IsMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
+    public static bool IsLessThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
 
-    public static bool IsMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(value, node.Value);
+    public static bool IsLessThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsLessThanOneBefore(value, node.Value);
 
-    public static bool IsNotMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
+    public static bool IsNotLessThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
 
-    public static bool IsNotMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
+    public static bool IsNotLessThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotLessThanOneBefore(value, node.Value);
 
     public static bool IsMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
 
-    public static bool IsMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneAfter(value, node.Value);
+    public static bool IsMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneAfter(node.Value, value);
 
     public static bool IsNotMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
 
-    public static bool IsNotMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(value, node.Value);
+    public static bool IsNotMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(node.Value, value);
 
-    public static bool IsMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > extents.Last;
+    public static bool IsLessThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value + T.One) > extents.First;
 
-    public static bool IsMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(value, node.Value);
+    public static bool IsLessThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsLessThanOneBefore(node.Value, value);
 
-    public static bool IsNotMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
+    public static bool IsNotLessThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
 
-    public static bool IsNotMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
+    public static bool IsNotLessThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotLessThanOneBefore(node.Value, value);
 
     public static bool IsLessThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value < node.Value.First;
 
-    public static bool IsLessThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.First < value;
+    public static bool IsLessThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.Last < value;
 
     public static bool IsGreaterThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value > node.Value.Last;
 
-    public static bool IsGreaterThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.Last > value;
+    public static bool IsGreaterThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.First > value;
 
     public static bool IsIncludedIn<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => node.Value.Contains(value);
 

@@ -99,7 +99,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
             }
             if (value == T.MinValue)
             {
-                if (value.IsMoreThanOneBefore(node))
+                if (value.IsLessThanOneBefore(node))
                 {
                     _backingList.AddFirst(value);
                     return true;
@@ -152,7 +152,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
             }
             if (first == T.MinValue) return node.TryExpand(first, last);
             var item = node.Value;
-            if (last.IsMoreThanOneBefore(item))
+            if (last.IsLessThanOneBefore(item))
                 _backingList.AddFirst(first, last);
             else if (first.IsMoreThanOneAfter(item))
             {
@@ -161,7 +161,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
                 {
                     if (first.IsNotMoreThanOneAfter(next))
                     {
-                        if (last.IsMoreThanOneBefore(next))
+                        if (last.IsLessThanOneBefore(next))
                         {
                             next.AddPrevious(first, last);
                             return true;
