@@ -98,6 +98,8 @@ General development reference links
   - [Pester](https://github.com/pester/Pester)
   - [Working with local PSRepositories - PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/gallery/how-to/working-with-local-psrepositories?view=powershellget-3.x)
   - [Install-Script (PowerShellGet) - PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/module/powershellget/install-script?view=powershellget-3.x)
+  - [Cmdlet dynamic parameters](https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/cmdlet-dynamic-parameters?view=powershell-7.4)
+  - [How to Declare Dynamic Parameters](https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/how-to-declare-dynamic-parameters?view=powershell-7.4)
 - [NUnit.org](https://nunit.org/)
   - [NUnit Documentation Site](https://docs.nunit.org/)
   - [Unit testing C# with NUnit and .NET Core](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit)
