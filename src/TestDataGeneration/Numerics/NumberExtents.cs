@@ -14,13 +14,13 @@ public static class NumberExtents
 
     public static bool IsNotMoreThanOneAfter<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(value, node.Value);
 
-    public static bool IsLessThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
+    public static bool IsMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
 
-    public static bool IsLessThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsLessThanOneBefore(value, node.Value);
+    public static bool IsMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(value, node.Value);
 
-    public static bool IsNotLessThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
+    public static bool IsNotMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
 
-    public static bool IsNotLessThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotLessThanOneBefore(value, node.Value);
+    public static bool IsNotMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
 
     public static bool IsMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
 
@@ -30,13 +30,13 @@ public static class NumberExtents
 
     public static bool IsNotMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(node.Value, value);
 
-    public static bool IsLessThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value + T.One) > extents.First;
+    public static bool IsMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value + T.One) > extents.First;
 
-    public static bool IsLessThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsLessThanOneBefore(node.Value, value);
+    public static bool IsMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(node.Value, value);
 
     public static bool IsNotLessThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
 
-    public static bool IsNotLessThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotLessThanOneBefore(node.Value, value);
+    public static bool IsNotMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotLessThanOneBefore(node.Value, value);
 
     public static bool IsLessThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value < node.Value.First;
 
@@ -345,14 +345,14 @@ public readonly struct NumberExtents<T> : IEquatable<NumberExtents<T>>, ICompara
     /// </summary>
     /// <param name="number">The number to compare.</param>
     /// <returns><see langword="true"/> if the specified <paramref name="number"/> is exactly one increment less than the <see cref="First"/> extent; otherwise, <see langword="false"/>.</returns>
-    public bool IsFirstAdjacentTo(T number) => number < First && ++number == First;
+    public bool ImmediatelyFollows(T number) => number < First && ++number == First;
 
     /// <summary>
     /// Gets a value indicating whether a number immediately follows the <see cref="Last"/> extent value.
     /// </summary>
     /// <param name="number">The number to compare.</param>
     /// <returns><see langword="true"/> if the specified <paramref name="number"/> is exactly one increment greater than the <see cref="Last"/> extent; otherwise, <see langword="false"/>.</returns>
-    public bool IsLastAdjacentTo(T number) => number > Last && --number == Last;
+    public bool ImmediatelyPrecedes(T number) => number > Last && --number == Last;
 
     /// <summary>
     /// Gets a value indicating whetehr a number is less than the <see cref="First"/> extent value.
@@ -366,7 +366,7 @@ public readonly struct NumberExtents<T> : IEquatable<NumberExtents<T>>, ICompara
     /// </summary>
     /// <param name="number">The number to compare.</param>
     /// <returns><see langword="true"/> if the specified <paramref name="number"/> is at least 2 increments less than the <see cref="First"/> extent value; otherwise, <see langword="false"/>.</returns>
-    public bool IsFirstMoreThanOneAfter(T number) => number < First && ++number < First;
+    public bool IsMoreThanOneAfter(T number) => number < First && ++number < First;
 
     /// /// <summary>
     /// Gets a value indicating whetehr a number is greater than the <see cref="Last"/> extent value.
@@ -380,7 +380,7 @@ public readonly struct NumberExtents<T> : IEquatable<NumberExtents<T>>, ICompara
     /// </summary>
     /// <param name="number">The number to compare.</param>
     /// <returns><see langword="true"/> if the specified <paramref name="number"/> is at least 2 increments greater than the <see cref="Last"/> extent value; otherwise, <see langword="false"/>.</returns>
-    public bool IsLastMoreThanOneBefore(T number) => number > Last && --number > Last;
+    public bool IsMoreThanOneBefore(T number) => number > Last && --number > Last;
 
     /// <summary>
     /// Compares the current extents with another and returns a value indicating if they are equal.

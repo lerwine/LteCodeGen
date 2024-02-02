@@ -9,7 +9,7 @@ namespace TestDataGeneration.UnitTests
         {
             const char _minPlusOne = '\u0001';
             const char _maxMinusOne = '\ufffe';
-            public static System.Collections.IEnumerable GetIsFirstAdjacentToTestData()
+            public static System.Collections.IEnumerable GetImmediatelyFollowsTestData()
             {
                 yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('b'), 'a').Returns(true);
@@ -48,7 +48,7 @@ namespace TestDataGeneration.UnitTests
                 // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _minPlusOne).Returns(xxx);
             }
 
-            public static System.Collections.IEnumerable GetIsLastAdjacentToTestData()
+            public static System.Collections.IEnumerable GetImmediatelyPrecedesTestData()
             {
                 yield return new TestCaseData(new NumberExtents<char>('a'), 'c').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('a'), 'b').Returns(true);
@@ -126,7 +126,7 @@ namespace TestDataGeneration.UnitTests
                 // yield return new TestCaseData(new NumberExtents<char>(_minPlusOne, _maxMinusOne), _minPlusOne).Returns(xxx);
             }
 
-            public static System.Collections.IEnumerable GetIsFirstMoreThanOneAfterTestData()
+            public static System.Collections.IEnumerable GetIsMoreThanOneAfterTestData()
             {
                 yield return new TestCaseData(new NumberExtents<char>('c'), 'a').Returns(true);
                 yield return new TestCaseData(new NumberExtents<char>('c'), 'A').Returns(true);
@@ -159,7 +159,7 @@ namespace TestDataGeneration.UnitTests
                 yield return new TestCaseData(new NumberExtents<char>('c', 'e'), 'f').Returns(false);
             }
 
-            public static System.Collections.IEnumerable GetIsLastMoreThanOneBeforeTestData()
+            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTestData()
             {
                 yield return new TestCaseData(new NumberExtents<char>('c'), 'd').Returns(false);
                 yield return new TestCaseData(new NumberExtents<char>('b', 'c'), 'd').Returns(false);
@@ -538,7 +538,7 @@ namespace TestDataGeneration.UnitTests
                 yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(true);
             }
 
-            public static System.Collections.IEnumerable GetIsLessThanOneBeforeTest1Data()
+            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTest1Data()
             {
                 static TestCaseData create(char value, NumberExtents<char> extents)
                 {
@@ -578,7 +578,7 @@ namespace TestDataGeneration.UnitTests
                 yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(false);
             }
 
-            public static System.Collections.IEnumerable GetIsLessThanOneBeforeTest2Data()
+            public static System.Collections.IEnumerable GetIsMoreThanOneBeforeTest2Data()
             {
                 static TestCaseData create(NumberExtents<char> extents, char value)
                 {
@@ -617,7 +617,7 @@ namespace TestDataGeneration.UnitTests
                 yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(false);
             }
 
-            public static System.Collections.IEnumerable GetIsNotLessThanOneBeforeTest1Data()
+            public static System.Collections.IEnumerable GetIsNotMoreThanOneBeforeTest1Data()
             {
                 static TestCaseData create(char value, NumberExtents<char> extents)
                 {
@@ -657,7 +657,7 @@ namespace TestDataGeneration.UnitTests
                 yield return create(value: char.MaxValue, extents: new(char.MinValue, char.MaxValue)).Returns(true);
             }
 
-            public static System.Collections.IEnumerable GetIsNotLessThanOneBeforeTest2Data()
+            public static System.Collections.IEnumerable GetIsNotMoreThanOneBeforeTest2Data()
             {
                 static TestCaseData create(NumberExtents<char> extents, char value)
                 {
