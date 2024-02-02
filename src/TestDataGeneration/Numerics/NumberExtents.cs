@@ -30,7 +30,7 @@ public static class NumberExtents
 
     public static bool IsNotMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(node.Value, value);
 
-    public static bool IsMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value + T.One) > extents.First;
+    public static bool IsMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > extents.Last;
 
     public static bool IsMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(node.Value, value);
 
@@ -405,10 +405,10 @@ public readonly struct NumberExtents<T> : IEquatable<NumberExtents<T>>, ICompara
     public ExtentValueRelativity GetRelationOf(T number)
     {
         int diff = number.CompareTo(First);
-        if (diff == 0) return ExtentValueRelativity.IsIncluded;
+        if (diff == 0) return ExtentValueRelativity.Includes;
         if (diff < 0)
-            return (++number == First) ? ExtentValueRelativity.ImmediatelyPrecedes : ExtentValueRelativity.PrecedesWithGap;
-        return (number <= Last) ? ExtentValueRelativity.IsIncluded : (--number == Last) ? ExtentValueRelativity.ImmediatelyFollows : ExtentValueRelativity.FollowsWithGap;
+            return (++number == First) ? ExtentValueRelativity.ImmediatelyFollows : ExtentValueRelativity.FollowsWithGap;
+        return (number <= Last) ? ExtentValueRelativity.Includes : (--number == Last) ? ExtentValueRelativity.ImmediatelyPrecedes : ExtentValueRelativity.PrecedesWithGap;
     }
 
     /// <summary>

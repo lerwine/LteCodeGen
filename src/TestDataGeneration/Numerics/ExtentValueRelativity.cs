@@ -18,7 +18,7 @@ public enum ExtentValueRelativity
     /// <summary>
     /// The number value is not less than the <see cref="NumberExtents{T}.First"/> extent and not greater than the <see cref="NumberExtents{T}.Last"/> extent.
     /// </summary>
-    IsIncluded,
+    Includes,
 
     /// <summary>
     /// The number value is exactly one increment greater than the <see cref="NumberExtents{T}.Last"/> extent.
