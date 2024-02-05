@@ -282,20 +282,21 @@ namespace TestDataGeneration.UnitTests
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandFirstTestData))]
-        public NumberExtents<char>[] TryExpandFirstTest(NumberExtents<char>[] before, NumberExtents<char> target, char value, NumberExtents<char>[] after, bool expected)
+        public NumberExtents<char>[] TryExpandFirstTest(NumberExtents<char>[] before, NumberExtents<char> target, char value, NumberExtents<char>? after, bool expected)
         {
             LinkedList<NumberExtents<char>> list = new(before);
             var node = list.AddLast(target);
-            foreach (var item in after) list.AddLast(item);
+            if (after.HasValue) list.AddLast(after.Value);
             var actual = node.TryExpandFirst(value);
             Assert.That(actual, Is.EqualTo(expected));
             return list.ToArray();
         }
 
         [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandLastTestData))]
-        public NumberExtents<char>[] TryExpandLastTest(NumberExtents<char>[] before, NumberExtents<char> target, char value, NumberExtents<char>[] after, bool expected)
+        public NumberExtents<char>[] TryExpandLastTest(NumberExtents<char>? before, NumberExtents<char> target, char value, NumberExtents<char>[] after, bool expected)
         {
-            LinkedList<NumberExtents<char>> list = new(before);
+            LinkedList<NumberExtents<char>> list = new();
+            if (before.HasValue) list.AddLast(before.Value);
             var node = list.AddLast(target);
             foreach (var item in after) list.AddLast(item);
             var actual = node.TryExpandLast(value);

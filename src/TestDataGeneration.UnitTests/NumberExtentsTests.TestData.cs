@@ -2105,6 +2105,13 @@ namespace TestDataGeneration.UnitTests
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
                 yield return create(extents: new('b'), value: 'a').Returns(new NumberExtents<char>('a', 'b'));
+                yield return create(extents: new('a', 'b'), value: 'a').Returns(new NumberExtents<char>('a', 'b'));
+                yield return create(extents: new('a', 'b'), value: 'b').Returns(new NumberExtents<char>('b'));
+                
+                yield return create(extents: new(char.MaxValue), value: char.MinValue).Returns(new NumberExtents<char>(char.MinValue, char.MaxValue));
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: 'a').Returns(new NumberExtents<char>('a', char.MaxValue));
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(new NumberExtents<char>(char.MinValue, char.MaxValue));
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MaxValue).Returns(new NumberExtents<char>(char.MaxValue));
             }
 
             public static System.Collections.IEnumerable GetWithLastTestData()
@@ -2114,26 +2121,47 @@ namespace TestDataGeneration.UnitTests
                     return new TestCaseData(extents, value).SetArgDisplayNames(extents.ToString(), (value == char.MinValue) ? "char.MinValue" : (value == char.MaxValue) ? "char.MaxValue" : (char.IsAscii(value) && !char.IsControl(value)) ? $"'{value}'" : $"'\\u{(int)value:x4}'");
                 }
                 yield return create(extents: new('a'), value: 'b').Returns(new NumberExtents<char>('a', 'b'));
+                yield return create(extents: new('a', 'b'), value: 'a').Returns(new NumberExtents<char>('a'));
+                yield return create(extents: new('a', 'b'), value: 'b').Returns(new NumberExtents<char>('a', 'b'));
+                yield return create(extents: new(char.MinValue), value: char.MaxValue).Returns(new NumberExtents<char>(char.MinValue, char.MaxValue));
+                yield return create(extents: new(char.MinValue), value: 'a').Returns(new NumberExtents<char>(char.MinValue, 'a'));
+                yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(new NumberExtents<char>(char.MinValue));
+                yield return create(extents: new(char.MinValue), value: char.MaxValue).Returns(new NumberExtents<char>(char.MinValue, char.MaxValue));
             }
 
             public static System.Collections.IEnumerable GetAddFirstTest1Data()
             {
-                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'z').Returns(new NumberExtents<char>[] { new('a', 'z') });
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'a').Returns(new NumberExtents<char>[] { new('a') });
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'b').Returns(new NumberExtents<char>[] { new('a', 'b') });
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'c').Returns(new NumberExtents<char>[] { new('a', 'c') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('d', 'e') }, 'a', 'b').Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('e', 'g') }, 'a', 'c').Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('e', 'g'), new('i', 'k') }, 'a', 'c').Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'k') });
             }
 
             public static System.Collections.IEnumerable GetAddFirstTest2Data()
             {
                 yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a').Returns(new NumberExtents<char>[] { new('a') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('c', 'e') }, 'a').Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('c', 'e'), new('g', 'i') }, 'a').Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'i') });
             }
 
             public static System.Collections.IEnumerable GetAddLastTest1Data()
             {
-                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'z').Returns(new NumberExtents<char>[] { new('a', 'z') });
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'a').Returns(new NumberExtents<char>[] { new('a', 'a') });
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'b').Returns(new NumberExtents<char>[] { new('a', 'b') });
+                yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a', 'c').Returns(new NumberExtents<char>[] { new('a', 'c') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'b') }, 'd', 'e').Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c') }, 'e', 'g').Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, 'i', 'k').Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'k') });
             }
 
             public static System.Collections.IEnumerable GetAddLastTest2Data()
             {
                 yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'a').Returns(new NumberExtents<char>[] { new('a') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c') }, 'e').Returns(new NumberExtents<char>[] { new('a', 'c'), new('e') });
+                yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, 'i').Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i') });
+
             }
 
             public static System.Collections.IEnumerable GetAddPreviousTest1Data()
@@ -2142,7 +2170,12 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, first, last);
                 }
-                yield return create(before: new('a', 'b'), target: new('g', 'h'), after: new('j', 'k'), first: 'd', last: 'e').Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h'), new('j', 'k') });
+                yield return create(before: null, target: new('d', 'e'), after: new('g', 'h'), first: 'a', last: 'b')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h') });
+                yield return create(before: new('a', 'b'), target: new('g', 'h'), after: new('j', 'k'), first: 'd', last: 'e')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h'), new('j', 'k') });
+                yield return create(before: new('a', 'b'), target: new('g', 'h'), after: null, first: 'd', last: 'e')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h') });
             }
 
             public static System.Collections.IEnumerable GetAddPreviousTest2Data()
@@ -2151,7 +2184,9 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, value);
                 }
+                yield return create(before: null, target: new('c'), after: new('e'), value: 'a').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e') });
                 yield return create(before: new('a'), target: new('e'), after: new('g'), value: 'c').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e'), new('g') });
+                yield return create(before: new('a'), target: new('e'), after: null, value: 'c').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e') });
             }
 
             public static System.Collections.IEnumerable GetAddNextTest1Data()
@@ -2160,7 +2195,12 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, first, last);
                 }
-                yield return create(before: new('a', 'b'), target: new('d', 'e'), after: new('j', 'k'), first: 'g', last: 'h').Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h'), new('j', 'k') });
+                yield return create(before: null, target: new('a', 'b'), after: new('g', 'h'), first: 'd', last: 'e')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h') });
+                yield return create(before: new('a', 'b'), target: new('d', 'e'), after: new('j', 'k'), first: 'g', last: 'h')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h'), new('j', 'k') });
+                yield return create(before: new('a', 'b'), target: new('d', 'e'), after: null, first: 'g', last: 'h')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h') });
             }
 
             public static System.Collections.IEnumerable GetAddNextTest2Data()
@@ -2169,7 +2209,9 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, value);
                 }
+                yield return create(before: null, target: new('a'), after: new('e'), value: 'c').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e') });
                 yield return create(before: new('a'), target: new('c'), after: new('g'), value: 'e').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e'), new('g') });
+                yield return create(before: new('a'), target: new('c'), after: null, value: 'e').Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e') });
             }
 
             public static System.Collections.IEnumerable GetRemoveAndGetNextTestData()
@@ -2178,7 +2220,12 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, expected);
                 }
-                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('g'), new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('g') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('g'), new('g'), new('i') )
+                    .Returns(new NumberExtents<char>[] { new('a'), new('g'), new('i') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('g'), new NumberExtents<char>('g'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('g') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: null)
+                    .Returns(new NumberExtents<char>[] { new('a') });
             }
 
             public static System.Collections.IEnumerable GetRemoveAndGetPreviousTestData()
@@ -2187,7 +2234,12 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, expected);
                 }
-                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('a'), new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('g') });
+                yield return create(before: new NumberExtents<char>[] { new('a'), new('c') }, target: new('e'), expected: new('c'), new('g'), new('i'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c'), new('g'), new('i') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('a'), new('e'), new('g'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('e'), new('g') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a'), expected: null, new('c'), new('e'))
+                    .Returns(new NumberExtents<char>[] { new('c'), new('e') });
             }
 
             public static System.Collections.IEnumerable GetTryExpandTestData()
@@ -2196,25 +2248,119 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, first, last, after, expected);
                 }
-                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d'), first: 'c', last: 'e', expected: true, new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g') });
+
+                foreach (var first in new char[] { 'a', 'b', 'c', 'd' })
+                {
+                    foreach (var last in new char[] { 'i', 'j', 'k' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new NumberExtents<char>('m', 'o'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k'), new('m', 'o') });
+                    foreach (var last in new char[] { 'p', 'q', 'r', 's' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
+                            .Returns(new NumberExtents<char>[] { new('a', 's') });
+                    foreach (var last in new char[] { 'l', 'm', 'm', 'o' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'o'), new('q', 's') });
+                }
+                foreach (var first in new char[] { 'e', 'f', 'g', 'h' })
+                {
+                    foreach (var last in new char[] { 'i', 'j', 'k' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new NumberExtents<char>('m', 'o'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'k'), new('m', 'o') });
+                    foreach (var last in new char[] { 'p', 'q', 'r', 's' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 's') });
+                    foreach (var last in new char[] { 'l', 'm', 'm', 'o' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'o'), new('q', 's') });
+                }
+                foreach (var last in new char[] { 'p', 'q', 'r', 's' })
+                    foreach (var first in new char[] { 'i', 'j', 'k' })
+                        yield return create(before: new NumberExtents<char>[] { new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
+                            .Returns(new NumberExtents<char>[] { new('e', 'g'), new('i', 's') });
+
+                foreach (var first in new char[] { 'a', 'b', 'c', 'd' })
+                {
+                    foreach (var last in new char[] { 'e', 'f', 'g' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), first, last, expected: true, new NumberExtents<char>('i', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'g'), new('i', 'k') });
+                    foreach (var last in new char[] { 'h', 'i', 'j', 'k' })
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), first, last, expected: true, new NumberExtents<char>('i', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                }
+
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'd', last: 'j', expected: true, new NumberExtents<char>('k', 'm'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'd', last: 'i', expected: true, new NumberExtents<char>('k', 'm'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'i'), new('k', 'm') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'e', last: 'j', expected: true, new NumberExtents<char>('k', 'm'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'm') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'e', last: 'i', expected: true, new NumberExtents<char>('k', 'm'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'i'), new('k', 'm') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'g', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'g') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'f', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'f') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'e', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'd', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'c', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'f', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'f') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), first: 'a', last: 'e', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), first: 'a', last: 'd', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), first: 'b', last: 'd', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), first: 'c', last: 'd', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), first: 'a', last: 'd', expected: true)
+                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
             }
 
             public static System.Collections.IEnumerable GetTryExpandFirstTestData()
             {
-                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char value, bool expected, params NumberExtents<char>[] after)
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char value, bool expected, NumberExtents<char>? after)
                 {
                     return new TestCaseData(before, target, value, after, expected);
                 }
-                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d'), value: 'c', expected: true, new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') });
+                foreach (var value in new char[] { 'h', 'i', 'j', 'k' })
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), value, expected: true, after: new('m', 'o'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'k'), new('m', 'o') });
+                foreach (var value in new char[] { 'a', 'b', 'c', 'd' })
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), value, expected: true, after: new('m', 'o'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'k'), new('m', 'o') });
+                foreach (var value in new char[] { 'a', 'b', 'c', 'd' })
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), value, expected: true, after: new('i', 'k'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'g'), new('i', 'k') });
+                foreach (var value in new char[] { 'a', 'b' })
+                    yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'i'), value, expected: true, after: new('k', 'm'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'i'), new('k', 'm') });
+                foreach (var value in new char[] { 'a', 'b' })
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), value, expected: true, after: new('g', 'i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'e'), new('g', 'i') });
+                foreach (var value in new char[] { 'a', 'b', 'c' })
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), value, expected: false, after: new('e', 'g'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
             }
 
             public static System.Collections.IEnumerable GetTryExpandLastTestData()
             {
-                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char value, bool expected, params NumberExtents<char>[] after)
+                static TestCaseData create(NumberExtents<char>? before, NumberExtents<char> target, char value, bool expected, params NumberExtents<char>[] after)
                 {
                     return new TestCaseData(before, target, value, after, expected);
                 }
-                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d'), value: 'e', expected: true, new NumberExtents<char>('g')).Returns(new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') });
+                foreach (var value in new char[] { 'h', 'i', 'j', 'k' })
+                    yield return create(before: new('a', 'c'), target: new('e', 'g'), value, expected: true, new('i', 'k'), new('n', 'o'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'k'), new('n', 'o') });
+                foreach (var value in new char[] { 'l', 'm', 'n', 'o' })
+                    yield return create(before: new('a', 'c'), target: new('e', 'g'), value, expected: true, new('i', 'k'), new('n', 'o'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'o') });
+                foreach (var value in new char[] { 'p', 'q' })
+                    yield return create(before: new('a', 'c'), target: new('e', 'g'), value, expected: true, new('i', 'k'), new('n', 'o'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', value) });
             }
         }
     }
