@@ -99,6 +99,7 @@ public static class NumberExtents
             var prev = node.Previous;
             var firstPlusOne = first + T.One;
             var firstMinusOne = first - T.One;
+            // BUG: Method gets stuck in endless loop
             while (prev is not null)
             {
                 item = prev.Value;
@@ -129,6 +130,7 @@ public static class NumberExtents
             var next = node.Next;
             var lastPlusOne = last + T.One;
             var lastMinusOne = last - T.One;
+            // BUG: Method gets stuck in endless loop
             while (next is not null)
             {
                 item = next.Value;
@@ -170,6 +172,7 @@ public static class NumberExtents
             var prev = node.Previous;
             var plusOne = first + T.One;
             var minusOne = first - T.One;
+            // BUG: Method gets stuck in endless loop
             while (prev is not null)
             {
                 item = prev.Value;
@@ -212,6 +215,7 @@ public static class NumberExtents
             var next = node.Next;
             var plusOne = last + T.One;
             var minusOne = last - T.One;
+            // BUG: Method gets stuck in endless loop
             while (next is not null)
             {
                 item = next.Value;
