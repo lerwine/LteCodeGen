@@ -2242,83 +2242,610 @@ namespace TestDataGeneration.UnitTests
                     .Returns(new NumberExtents<char>[] { new('c'), new('e') });
             }
 
-            public static System.Collections.IEnumerable GetTryExpandTestData()
+            public static System.Collections.IEnumerable GetTryExpandTest1Data()
             {
-                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, bool expected, params NumberExtents<char>[] after)
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, params NumberExtents<char>[] after)
                 {
-                    return new TestCaseData(before, target, first, last, after, expected);
+                    return new TestCaseData(before, target, first, last, after);
+                }
+                foreach (var c in new char[] { 'a', 'b' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', c), 'a', 'a')
+                        .Returns(new NumberExtents<char>[] { new('a', c) });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', c), 'a', 'b')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'b')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'b'), 'a', c, new NumberExtents<char>('d'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'b'), c, 'b', new NumberExtents<char>('d', 'e'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'b'), 'a', c, new NumberExtents<char>('d', 'f'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'b', new NumberExtents<char>('e'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'b', new NumberExtents<char>('e', 'g'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'b', new NumberExtents<char>('e', 'f'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f') });
+                }
+                foreach (var c in new char[] { 'a', 'b', 'c' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'c', new NumberExtents<char>('e'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'c', new NumberExtents<char>('e', 'g'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'c', new NumberExtents<char>('e', 'f'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f') });
+                }
+                foreach (var c in new char[] { 'b', 'c' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), c, 'c')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c') });
+                }
+                foreach (var c in new char[] { 'a', 'c' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', c)
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c') });
+                }
+                foreach (var c in new char[] { 'c', 'd' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a'), 'a', 'a', new NumberExtents<char>('c', c))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'd'), 'c', c)
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', c), c, c)
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), 'c', c)
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'd'), c, 'd', new NumberExtents<char>('f'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'd'), c, 'd', new NumberExtents<char>('f', 'g'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f', 'g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'd'), c, 'd', new NumberExtents<char>('f', 'h'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f', 'h') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'd', new NumberExtents<char>('g'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'd', new NumberExtents<char>('g', 'h'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'h') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'd', new NumberExtents<char>('g', 'i'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'i') });
+                }
+                foreach (var c in new char[] { 'c', 'd', 'e' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'e')
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'e', new NumberExtents<char>('g'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'e', new NumberExtents<char>('g', 'h'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'h') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), c, 'e', new NumberExtents<char>('g', 'i'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'i') });
+                }
+                foreach (var c in new char[] { 'd', 'e' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'b'), 'b', 'b', new NumberExtents<char>('d', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'e'), c, 'e')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), 'd', c)
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'e'), c, 'e', new NumberExtents<char>('g'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'e'), c, 'e', new NumberExtents<char>('g', 'h'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'e'), c, 'e', new NumberExtents<char>('g', 'i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'i') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'e', new NumberExtents<char>('j'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'e', new NumberExtents<char>('j', 'k'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'k') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'e', new NumberExtents<char>('j', 'l'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'l') });
+                }
+                foreach (var c in new char[] { 'd', 'e', 'f' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'f')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'f', new NumberExtents<char>('j'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'f', new NumberExtents<char>('j', 'k'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'k') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), c, 'f', new NumberExtents<char>('j', 'l'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'l') });
+                }
+                foreach (var c in new char[] { 'e', 'f' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', c), 'd', 'd')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', c), 'e', 'e')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'f'), c, 'f')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'f')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'f'), c, 'f', new NumberExtents<char>('j'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('j') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'f'), c, 'f', new NumberExtents<char>('j', 'k'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('j', 'k') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'f'), c, 'f', new NumberExtents<char>('j', 'l'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('j', 'l') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'f', new NumberExtents<char>('i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'f', new NumberExtents<char>('i', 'j'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'j') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'f', new NumberExtents<char>('i', 'k'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'k') });
+                }
+                foreach (var c in new char[] { 'e', 'f', 'g' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'g')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), 'c', 'c', new NumberExtents<char>('e', c))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'g', new NumberExtents<char>('i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'g', new NumberExtents<char>('i', 'j'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'j') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), c, 'g', new NumberExtents<char>('i', 'k'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'k') });
+                }
+                foreach (var c in new char[] { 'f', 'g', 'h' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d'), 'd', 'd', new NumberExtents<char>('f', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d'), new('f', c) });
+                }
+                foreach (var c in new char[] { 'g', 'h' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), 'c', 'c', new NumberExtents<char>('g', c))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', c) });
+                }
+                foreach (var c in new char[] { 'g', 'h', 'i' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'e'), 'd', 'd', new NumberExtents<char>('g', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e'), 'e', 'e', new NumberExtents<char>('g', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e'), new('g', c) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'f'), 'e', 'e', new NumberExtents<char>('g', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('g') });
+                }
+                foreach (var c in new char[] { 'i', 'j' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), 'e', 'e', new NumberExtents<char>('i', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', c) });
+                }
+                foreach (var c in new char[] { 'j', 'k', 'l' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), 'd', 'd', new NumberExtents<char>('j', c))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', c) });
                 }
 
-                foreach (var first in new char[] { 'a', 'b', 'c', 'd' })
-                {
-                    foreach (var last in new char[] { 'i', 'j', 'k' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new NumberExtents<char>('m', 'o'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'k'), new('m', 'o') });
-                    foreach (var last in new char[] { 'p', 'q', 'r', 's' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
-                            .Returns(new NumberExtents<char>[] { new('a', 's') });
-                    foreach (var last in new char[] { 'l', 'm', 'm', 'o' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'o'), new('q', 's') });
-                }
-                foreach (var first in new char[] { 'e', 'f', 'g', 'h' })
-                {
-                    foreach (var last in new char[] { 'i', 'j', 'k' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new NumberExtents<char>('m', 'o'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'k'), new('m', 'o') });
-                    foreach (var last in new char[] { 'p', 'q', 'r', 's' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 's') });
-                    foreach (var last in new char[] { 'l', 'm', 'm', 'o' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'o'), new('q', 's') });
-                }
-                foreach (var last in new char[] { 'p', 'q', 'r', 's' })
-                    foreach (var first in new char[] { 'i', 'j', 'k' })
-                        yield return create(before: new NumberExtents<char>[] { new('e', 'g') }, target: new('i', 'k'), first, last, expected: true, new('m', 'o'), new('q', 's'))
-                            .Returns(new NumberExtents<char>[] { new('e', 'g'), new('i', 's') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d'), 'd', 'd')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'b'), 'b', 'b', new NumberExtents<char>('d', 'f'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f') });
 
-                foreach (var first in new char[] { 'a', 'b', 'c', 'd' })
-                {
-                    foreach (var last in new char[] { 'e', 'f', 'g' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), first, last, expected: true, new NumberExtents<char>('i', 'k'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'g'), new('i', 'k') });
-                    foreach (var last in new char[] { 'h', 'i', 'j', 'k' })
-                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), first, last, expected: true, new NumberExtents<char>('i', 'k'))
-                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
-                }
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a'), 'a', 'a', new NumberExtents<char>('c', 'e'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', 'a', new NumberExtents<char>('e'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
 
-                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'd', last: 'j', expected: true, new NumberExtents<char>('k', 'm'))
-                    .Returns(new NumberExtents<char>[] { new('a', 'm') });
-                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'd', last: 'i', expected: true, new NumberExtents<char>('k', 'm'))
-                    .Returns(new NumberExtents<char>[] { new('a', 'i'), new('k', 'm') });
-                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'e', last: 'j', expected: true, new NumberExtents<char>('k', 'm'))
-                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'm') });
-                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'h'), first: 'e', last: 'i', expected: true, new NumberExtents<char>('k', 'm'))
-                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'i'), new('k', 'm') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'g', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'g') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'f', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'f') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'e', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'd', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'c', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first: 'a', last: 'f', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'f') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), first: 'a', last: 'e', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), first: 'a', last: 'd', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), first: 'b', last: 'd', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), first: 'c', last: 'd', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
-                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), first: 'a', last: 'd', expected: true)
-                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), 'd', 'd')
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
+
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), 'e', 'e')
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'd'), 'c', 'c', new NumberExtents<char>('f', 'h'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f', 'h') });
+
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'e'), 'c', 'c', new NumberExtents<char>('g', 'i'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'i') });
+
+                yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('d', 'f'), 'd', 'd', new NumberExtents<char>('j', 'l'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'l') });
+
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('e', 'g'), 'e', 'e', new NumberExtents<char>('i', 'k'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', 'k') });
             }
+
+            public static System.Collections.IEnumerable GetTryExpandTest2Data()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, first, last, after);
+                }
+
+                foreach (char c1 in new char[] { 'a', 'b' })
+                {
+                    foreach (char c2 in new char[] { 'e', 'f' })
+                    {
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new(c1), 'a', 'b', new NumberExtents<char>('d', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', c2) });
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new(c1, 'b'), 'a', 'c', new NumberExtents<char>('e', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', c2) });
+                    }
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new(c1), 'a', 'b')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new(c1, 'b'), 'a', 'c')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new(c1), 'a', 'b', new NumberExtents<char>('d'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new(c1, 'b'), 'a', 'c', new NumberExtents<char>('e', 'g'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                }
+
+                foreach (char c1 in new char[] { 'c', 'd' })
+                {
+                    foreach (char c2 in new char[] { 'f', 'g' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1), 'c', 'd', new NumberExtents<char>('f', c2))
+                            .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f', c2) });
+                    }
+                    foreach (char c2 in new char[] { 'g', 'i' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1, 'd'), 'c', 'e', new NumberExtents<char>('g', c2))
+                            .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', c2) });
+                    }
+                    foreach (char c2 in new char[] { 'f', 'h' })
+                    {
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', c1), 'a', 'd', new NumberExtents<char>('f', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'd'), new('f', c2) });
+                    }
+                    foreach (char c2 in new char[] { 'k', 'l' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1, 'e'), 'c', 'f', new NumberExtents<char>('j', c2))
+                            .Returns(new NumberExtents<char>[] { new('a'), new('c', 'f'), new('j', c2) });
+                    }
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1), 'c', 'd')
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', c1), 'a', 'd')
+                        .Returns(new NumberExtents<char>[] { new('a', 'd') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1, 'd'), 'c', 'e')
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1, 'e'), 'c', 'f')
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1), 'c', 'd', new NumberExtents<char>('f', 'h'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f', 'h') });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', c1), 'a', 'd', new NumberExtents<char>('f', 'g'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'd'), new('f', 'g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new(c1, 'e'), 'c', 'f', new NumberExtents<char>('j'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'f'), new('j') });
+                }
+
+                foreach (char c1 in new char[] { 'd', 'e' })
+                {
+                    foreach (char c2 in new char[] { 'g', 'h' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1), 'd', 'e', new NumberExtents<char>('g', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', c2) });
+                    }
+                    foreach (char c2 in new char[] { 'j', 'k' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1, 'e'), 'd', 'f', new NumberExtents<char>('j', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', c2) });
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1, 'f'), 'd', 'g', new NumberExtents<char>('i', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'g'), new('i', c2) });
+                    }
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1), 'd', 'e')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1, 'e'), 'd', 'f')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1, 'f'), 'd', 'g')
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', c1), 'c', 'e', new NumberExtents<char>('g', 'h'))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'h') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1), 'd', 'e', new NumberExtents<char>('g', 'i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'i') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1, 'e'), 'd', 'f', new NumberExtents<char>('j', 'l'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'l') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new(c1, 'f'), 'd', 'g', new NumberExtents<char>('i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'g'), new('i') });
+                }
+
+                foreach (char c1 in new char[] { 'e', 'f' })
+                {
+                    foreach (char c2 in new char[] { 'j', 'k'})
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1), 'e', 'f', new NumberExtents<char>('j', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('j', c2) });
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1, 'f'), 'e', 'g', new NumberExtents<char>('i', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', c2) });
+                        yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1, 'g'), 'e', 'j', new NumberExtents<char>('j', c2))
+                            .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'j'), new('j', c2) });
+                    }
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1), 'e', 'f')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1), 'e', 'f', new NumberExtents<char>('j', 'l'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('j', 'l') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1, 'f'), 'e', 'g')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1, 'f'), 'e', 'g', new NumberExtents<char>('i'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1, 'g'), 'e', 'j')
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'j') });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new(c1, 'g'), 'e', 'j', new NumberExtents<char>('j', 'l'))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'j'), new('j', 'l') });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'e'), 'c', c1)
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', c1) });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'c'), 'a', 'c', new NumberExtents<char>('e', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', c1) });
+                }
+
+                foreach (char c1 in new char[] { 'g', 'h' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), 'a', 'e', new NumberExtents<char>('g', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'e'), new('g', c1) });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', 'd', new NumberExtents<char>('f', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'd'), new('f', c1) });
+                }
+
+                foreach (char c1 in new char[] { 'g', 'i' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'e'), 'c', 'e', new NumberExtents<char>('g', c1))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', c1) });
+                }
+
+                foreach (char c2 in new char[] { 'g', 'j' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'g'), 'd', c2)
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', c2) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'g'), 'e', c2)
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', c2) });
+                }
+
+                foreach (char c1 in new char[] { 'h', 'i' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), 'a', 'e', new NumberExtents<char>('g', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'e'), new('g', c1) });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', 'd', new NumberExtents<char>('f', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'd'), new('f', c1) });
+                }
+
+                foreach (char c1 in new char[] { 'j', 'k' })
+                {
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), 'a', 'e', new NumberExtents<char>('g', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'e'), new('g', c1) });
+                    yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', 'd', new NumberExtents<char>('f', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'd'), new('f', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'f'), 'd', 'f', new NumberExtents<char>('j', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'g'), 'e', 'g', new NumberExtents<char>('i', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'f'), 'c', 'f', new NumberExtents<char>('j', c1))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'f'), new('j', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'g'), 'd', 'g', new NumberExtents<char>('i', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'g'), new('i', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'j'), 'e', 'j', new NumberExtents<char>('j', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'j'), new('j', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'f'), 'c', 'g', new NumberExtents<char>('i', c1))
+                        .Returns(new NumberExtents<char>[] { new('a'), new('c', 'g'), new('i', c1) });
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'g'), 'd', 'j', new NumberExtents<char>('j', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'j'), new('j', c1) });
+                }
+
+                foreach (char c1 in new char[] { 'k', 'l' })
+                {
+                    yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'j'), 'e', 'i', new NumberExtents<char>('k', c1))
+                        .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'i'), new('k', c1) });
+                }
+
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'c'), 'a', 'c')
+                    .Returns(new NumberExtents<char>[] { new('a', 'c') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', 'd')
+                    .Returns(new NumberExtents<char>[] { new('a', 'd') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), 'a', 'e')
+                    .Returns(new NumberExtents<char>[] { new('a', 'e') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'f'), 'c', 'g')
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'g') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'j'), 'e', 'i')
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'i') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'c'), 'a', 'c', new NumberExtents<char>('e', 'g'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('a', 'c'), 'a', 'd', new NumberExtents<char>('f'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'd'), new('f') });
+                yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('b', 'd'), 'a', 'e', new NumberExtents<char>('g', 'i'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'e'), new('g', 'i') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'f'), 'd', 'f')
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c', 'd'), 'c', 'e', new NumberExtents<char>('g', 'h'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'h') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'f'), 'd', 'f', new NumberExtents<char>('j', 'l'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'f'), new('j', 'l') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'g'), 'e', 'g', new NumberExtents<char>('i'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'f'), 'c', 'f', new NumberExtents<char>('j', 'l'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'f'), new('j', 'l') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'g'), 'd', 'g', new NumberExtents<char>('i'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'g'), new('i') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'j'), 'e', 'j', new NumberExtents<char>('j', 'l'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'j'), new('j', 'l') });
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('d', 'f'), 'c', 'g', new NumberExtents<char>('i'))
+                    .Returns(new NumberExtents<char>[] { new('a'), new('c', 'g'), new('i') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'b') }, target: new('e', 'g'), 'd', 'j', new NumberExtents<char>('j', 'l'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d', 'j'), new('j', 'l') });
+                yield return create(before: new NumberExtents<char>[] { new('a', 'c') }, target: new('f', 'j'), 'e', 'i', new NumberExtents<char>('k', 'm'))
+                    .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'i'), new('k', 'm') });
+            }
+
+            public static System.Collections.IEnumerable GetTryExpandTest3Data()
+            {
+                static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, params NumberExtents<char>[] after)
+                {
+                    return new TestCaseData(before, target, first, last, after);
+                }
+
+                foreach (var first in new char[] { 'a', 'b', 'c', 'd', 'e', 'f' })
+                {
+                    foreach (var last in new char[] { 'o', 'n', 'm', 'l', 'k', 'j' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'i'), first, last, new NumberExtents<char>('k', 'm'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'o') });
+                    foreach (var last in new char[] { 'n', 'm', 'l', 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'j'), first, last, new NumberExtents<char>('j', 'l'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'n') });
+                    foreach (var last in new char[] { 'm', 'l', 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g'), first, last, new NumberExtents<char>('i', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                    foreach (var last in new char[] { 'n', 'm', 'l', 'k', 'j' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'i'), first, last, new NumberExtents<char>('k', 'l'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'n') });
+                    foreach (var last in new char[] { 'm', 'l', 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'j'), first, last, new NumberExtents<char>('j', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                    foreach (var last in new char[] { 'l', 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g'), first, last, new NumberExtents<char>('i', 'j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                    foreach (var last in new char[] { 'm', 'l', 'k', 'j' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'i'), first, last, new NumberExtents<char>('k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                    foreach (var last in new char[] { 'l', 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'j'), first, last, new NumberExtents<char>('j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                    foreach (var last in new char[] { 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g'), first, last, new NumberExtents<char>('i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'i'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'i', 'h', 'g' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    yield return create(before: new NumberExtents<char>[] { new('c', 'e') }, target: new('g', 'j'), first, last: 'j')
+                        .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                }
+                foreach (var first in new char[] { 'a', 'b', 'c', 'd', 'e' })
+                {
+                    foreach (var last in new char[] { 'n', 'm', 'l', 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'j'), first, last, new NumberExtents<char>('j', 'l'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'n') });
+                    foreach (var last in new char[] { 'k', 'j', 'i', 'h', 'g', 'f' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first, last, new NumberExtents<char>('g', 'i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'm', 'l', 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'g'), first, last, new NumberExtents<char>('i', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                    foreach (var last in new char[] { 'm', 'l', 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'j'), first, last, new NumberExtents<char>('j', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                    foreach (var last in new char[] { 'j', 'i', 'h', 'g', 'f' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first, last, new NumberExtents<char>('g', 'j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                    foreach (var last in new char[] { 'l', 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'g'), first, last, new NumberExtents<char>('i', 'j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                    foreach (var last in new char[] { 'l', 'k', 'j', 'i' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'j'), first, last, new NumberExtents<char>('j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f'), first, last, new NumberExtents<char>('j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                    }
+                    foreach (var last in new char[] { 'i', 'h', 'g', 'f' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first, last, new NumberExtents<char>('g'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    foreach (var last in new char[] { 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'g'), first, last, new NumberExtents<char>('i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'g', 'f', 'e' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'e'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'g') });
+                    foreach (var last in new char[] { 'i', 'h', 'g' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'g'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    foreach (var last in new char[] { 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f'), first, last, new NumberExtents<char>('j', 'i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f'), first, last, new NumberExtents<char>('j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                    yield return create(before: new NumberExtents<char>[] { new('c', 'd') }, target: new('f', 'j'), first, last: 'j')
+                        .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                }
+                foreach (var first in new char[] { 'a', 'b', 'c', 'd' })
+                {
+                    foreach (var last in new char[] { 'j', 'i', 'h', 'g', 'f', 'e' })
+                    {
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'd'), first, last, new NumberExtents<char>('f', 'j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'd'), first, last, new NumberExtents<char>('f'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                    }
+                    foreach (var last in new char[] { 'm', 'l', 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'g'), first, last, new NumberExtents<char>('i', 'k'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'm') });
+                    foreach (var last in new char[] { 'k', 'j', 'i', 'h', 'g', 'f' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e'), first, last, new NumberExtents<char>('g', 'i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'j', 'i', 'h', 'g', 'f' })
+                    {
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'f'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e'), first, last, new NumberExtents<char>('g', 'j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                    }
+                    foreach (var last in new char[] { 'l', 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'g'), first, last, new NumberExtents<char>('i', 'j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                    foreach (var last in new char[] { 'i', 'h', 'g', 'f', 'e' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'd'), first, last, new NumberExtents<char>('f', 'g'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    foreach (var last in new char[] { 'k', 'j', 'i', 'h' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'g'), first, last, new NumberExtents<char>('i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'l', 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'f'), first, last, new NumberExtents<char>('j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'l') });
+                    foreach (var last in new char[] { 'i', 'h', 'g', 'f' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e'), first, last, new NumberExtents<char>('g'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    foreach (var last in new char[] { 'i', 'h', 'g' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'g'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    foreach (var last in new char[] { 'k', 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'f'), first, last, new NumberExtents<char>('j', 'i'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'k') });
+                    foreach (var last in new char[] { 'f', 'e', 'd' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c', 'd'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'f') });
+                    foreach (var last in new char[] { 'g', 'f', 'e' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'g') });
+                    foreach (var last in new char[] { 'j', 'i' })
+                        yield return create(before: new NumberExtents<char>[] { new('c') }, target: new('e', 'f'), first, last, new NumberExtents<char>('j'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                }
+                foreach (var first in new char[] { 'a', 'b', 'c' })
+                {
+                    foreach (var last in new char[] { 'j', 'i', 'h', 'g', 'f', 'e', 'd' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c'), first, last, new NumberExtents<char>('e', 'f'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'j') });
+                    foreach (var last in new char[] { 'i', 'h', 'g', 'f', 'e', 'd' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c'), first, last, new NumberExtents<char>('e', 'g'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'i') });
+                    foreach (var last in new char[] { 'g', 'f', 'e', 'd' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c'), first, last, new NumberExtents<char>('e'))
+                            .Returns(new NumberExtents<char>[] { new('a', 'g') });
+                    foreach (var last in new char[] { 'e', 'd', 'c' })
+                        yield return create(before: Array.Empty<NumberExtents<char>>(), target: new('c'), first, last)
+                            .Returns(new NumberExtents<char>[] { new('a', 'e') });
+                }
+            }
+
+            // public static System.Collections.IEnumerable GetTryExpandTest4Data()
+            // {
+            //     static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, params NumberExtents<char>[] after)
+            //     {
+            //         return new TestCaseData(before, target, first, last, after);
+            //     }
+            // }
+
+            // public static System.Collections.IEnumerable GetTryExpandTest5Data()
+            // {
+            //     static TestCaseData create(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, params NumberExtents<char>[] after)
+            //     {
+            //         return new TestCaseData(before, target, first, last, after);
+            //     }
+            // }
 
             public static System.Collections.IEnumerable GetTryExpandFirstTestData()
             {

@@ -270,14 +270,36 @@ namespace TestDataGeneration.UnitTests
             return list.ToArray();
         }
 
-        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandTestData))]
-        public NumberExtents<char>[] TryExpandTest(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, NumberExtents<char>[] after, bool expected)
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandTest1Data))]
+        public NumberExtents<char>[] TryExpandTest1(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, NumberExtents<char>[] after)
         {
             LinkedList<NumberExtents<char>> list = new(before);
             var node = list.AddLast(target);
             foreach (var item in after) list.AddLast(item);
             var actual = node.TryExpand(first, last);
-            Assert.That(actual, Is.EqualTo(expected));
+            Assert.That(actual, Is.False);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandTest2Data))]
+        public NumberExtents<char>[] TryExpandTest2(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, NumberExtents<char>[] after)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.TryExpand(first, last);
+            Assert.That(actual, Is.True);
+            return list.ToArray();
+        }
+
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetTryExpandTest3Data))]
+        public NumberExtents<char>[] TryExpandTest3(NumberExtents<char>[] before, NumberExtents<char> target, char first, char last, NumberExtents<char>[] after)
+        {
+            LinkedList<NumberExtents<char>> list = new(before);
+            var node = list.AddLast(target);
+            foreach (var item in after) list.AddLast(item);
+            var actual = node.TryExpand(first, last);
+            Assert.That(actual, Is.True);
             return list.ToArray();
         }
 
