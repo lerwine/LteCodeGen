@@ -6,245 +6,93 @@ namespace TestDataGeneration.Numerics;
 
 public static class NumberExtents
 {
-    public static bool IsMoreThanOneAfter<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > extents.Last;
-
-    public static bool IsMoreThanOneAfter<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneAfter(value, node.Value);
-
-    public static bool IsNotMoreThanOneAfter<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
-
-    public static bool IsNotMoreThanOneAfter<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(value, node.Value);
-
-    public static bool IsMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
-
-    public static bool IsMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(value, node.Value);
-
-    public static bool IsNotMoreThanOneBefore<T>(this T value, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
-
-    public static bool IsNotMoreThanOneBefore<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneBefore(value, node.Value);
-
-    public static bool IsMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < extents.First;
-
-    public static bool IsMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneAfter(node.Value, value);
-
-    public static bool IsNotMoreThanOneAfter<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= extents.First;
-
-    public static bool IsNotMoreThanOneAfter<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotMoreThanOneAfter(node.Value, value);
-
-    public static bool IsMoreThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > extents.Last;
-
-    public static bool IsMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsMoreThanOneBefore(node.Value, value);
-
-    public static bool IsNotLessThanOneBefore<T>(this NumberExtents<T> extents, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= extents.Last;
-
-    public static bool IsNotMoreThanOneBefore<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => IsNotLessThanOneBefore(node.Value, value);
-
-    public static bool IsLessThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value < node.Value.First;
-
-    public static bool IsLessThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.Last < value;
-
-    public static bool IsGreaterThan<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => value > node.Value.Last;
-
-    public static bool IsGreaterThan<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.First > value;
-
-    public static bool IsIncludedIn<T>(this T value, LinkedListNode<NumberExtents<T>> node) where T : INumber<T>, IMinMaxValue<T> => node.Value.Contains(value);
-
-    public static bool Includes<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => node.Value.Contains(value);
-
-    public static NumberExtents<T> WithFirst<T>(this NumberExtents<T> extents, T first) where T : INumber<T>, IMinMaxValue<T> => new(first, extents.Last);
-
-    public static NumberExtents<T> WithLast<T>(this NumberExtents<T> extents, T last) where T : INumber<T>, IMinMaxValue<T> => new(extents.First, last);
-
-    public static void AddLast<T>(this LinkedList<NumberExtents<T>> list, T first, T last) where T : INumber<T>, IMinMaxValue<T> => list.AddLast(new NumberExtents<T>(first, last));
-
-    public static void AddLast<T>(this LinkedList<NumberExtents<T>> list, T value) where T : INumber<T>, IMinMaxValue<T> => list.AddLast(new NumberExtents<T>(value));
-
-    public static void AddFirst<T>(this LinkedList<NumberExtents<T>> list, T first, T last) where T : INumber<T>, IMinMaxValue<T> => list.AddFirst(new NumberExtents<T>(first, last));
-
-    public static void AddFirst<T>(this LinkedList<NumberExtents<T>> list, T value) where T : INumber<T>, IMinMaxValue<T> => list.AddFirst(new NumberExtents<T>(value));
-
-    public static void AddPrevious<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddBefore(node, new NumberExtents<T>(first, last));
-
-    public static void AddPrevious<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddBefore(node, new NumberExtents<T>(value));
-
-    public static void AddNext<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddAfter(node, new NumberExtents<T>(first, last));
-
-    public static void AddNext<T>(this LinkedListNode<NumberExtents<T>> node, T value) where T : INumber<T>, IMinMaxValue<T> => (node.List ?? throw new InvalidOperationException()).AddAfter(node, new NumberExtents<T>(value));
-
-    public static LinkedListNode<T>? RemoveAndGetNext<T>(this LinkedListNode<T> node)
+    /// <summary>
+    /// Creates new <see cref="NumberExtents{T}"/> with a new <see cref="NumberExtents{T}.First"/> extent value.
+    /// </summary>
+    /// <param name="current">The current extents.</param>
+    /// <param name="first">The new first extent value.</param>
+    /// <returns>The new <see cref="NumberExtents{T}"/> with <see cref="NumberExtents{T}.First"/> equal to <paramref name="first"/>.</returns>
+    public static NumberExtents<T> WithFirst<T>(this NumberExtents<T> current, T first) where T : INumber<T>, IMinMaxValue<T>
     {
-        var list = node.List;
-        if (list is null) return null;
-        var result = node.Next;
-        list.Remove(node);
-        return result;
+        if (first > current.Last) throw new ArgumentOutOfRangeException(nameof(first));
+        return new(first, current.Last);
     }
 
-    public static LinkedListNode<T>? RemoveAndGetPrevious<T>(this LinkedListNode<T> node)
+    /// <summary>
+    /// Creates new <see cref="NumberExtents{T}"/> with a new <see cref="NumberExtents{T}.First"/> extent value.
+    /// </summary>
+    /// <param name="current">The current extents.</param>
+    /// <param name="last">The new last extent value.</param>
+    /// <returns>A new <see cref="NumberExtents{T}"/> object.</returns>
+    public static NumberExtents<T> WithLast<T>(this NumberExtents<T> current, T last) where T : INumber<T>, IMinMaxValue<T>
     {
-        var list = node.List;
-        if (list is null) return null;
-        var result = node.Previous;
-        list.Remove(node);
-        return result;
+        if (last < current.First) throw new ArgumentOutOfRangeException(nameof(last));
+        return new(current.First, last);
     }
 
-    public static bool TryExpand<T>(this LinkedListNode<NumberExtents<T>> node, T first, T last) where T : INumber<T>, IMinMaxValue<T>
-    {
-        var item = node.Value;
-        if (last <= item.Last) return TryExpandFirst(node, first);
-        if (first >= item.First) return TryExpandLast(node, last);
-        var list = node.List;
-        if (list is not null)
-        {
-            var prev = node.Previous;
-            var firstPlusOne = first + T.One;
-            var firstMinusOne = first - T.One;
-            // BUG: Method gets stuck in endless loop
-            while (prev is not null)
-            {
-                item = prev.Value;
-                if (first < item.First)
-                {
-                    if (firstPlusOne == item.First)
-                    {
-                        list.Remove(prev);
-                        if ((prev = node.Previous) is not null && firstMinusOne == prev.Value.Last)
-                        {
-                            first = prev.Value.First;
-                            list.Remove(prev);
-                        }
-                        break;
-                    }
-                }
-                else
-                {
-                    // first > item.First;
-                    if (first == item.First)
-                        list.Remove(prev);
-                    else if (first < prev.Value.Last)
-                        prev.Value = prev.Value.WithLast(firstMinusOne);
-                    break;
-                }
-            }
-            item = node.Value;
-            var next = node.Next;
-            var lastPlusOne = last + T.One;
-            var lastMinusOne = last - T.One;
-            // BUG: Method gets stuck in endless loop
-            while (next is not null)
-            {
-                item = next.Value;
-                if (last > item.Last)
-                {
-                    if (lastMinusOne == item.Last)
-                    {
-                        list.Remove(next);
-                        if ((next = node.Next) is not null && lastPlusOne == next.Value.First)
-                        {
-                            last = next.Value.Last;
-                            list.Remove(next);
-                        }
-                        break;
-                    }
-                }
-                else
-                {
-                    if (last == item.Last)
-                        list.Remove(next);
-                    else if (last > next.Value.First)
-                        next.Value = next.Value.WithFirst(lastPlusOne);
-                    break;
-                }
-            }
-        }
-        node.Value = new(first, last);
-        return true;
-    }
+    /// <summary>
+    /// Tests whether a value of <typeparamref name="T"/> is more than 1 increment greater than a given <see cref="NumberExtents{T}"/>.
+    /// </summary>
+    /// <param name="current">The target value.</param>
+    /// <param name="extents">The extent to compare to.</param>
+    /// <returns><see langword="true"/> if <paramref name="current"/> - <see cref="INumberBase{T}.One"/> is greater than <see cref="NumberExtents{T}.Last"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool FollowsNonAdjacent<T>(this T current, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => current != T.MinValue && (current - T.One) > extents.Last;
 
-    public static bool TryExpandFirst<T>(this LinkedListNode<NumberExtents<T>> node, T first) where T : INumber<T>, IMinMaxValue<T>
-    {
-        var item = node.Value;
-        var last = item.Last;
-        if (first >= item.First) return false;
-        var list = node.List;
-        if (list is not null)
-        {
-            var prev = node.Previous;
-            var plusOne = first + T.One;
-            var minusOne = first - T.One;
-            // BUG: Method gets stuck in endless loop
-            while (prev is not null)
-            {
-                item = prev.Value;
-                if (first < item.First)
-                {
-                    if (plusOne == item.First)
-                    {
-                        list.Remove(prev);
-                        if ((prev = node.Previous) is not null && minusOne == prev.Value.Last)
-                        {
-                            first = prev.Value.First;
-                            list.Remove(prev);
-                        }
-                        break;
-                    }
-                }
-                else
-                {
-                    // first > item.First;
-                    if (first == item.First)
-                        list.Remove(prev);
-                    else if (first < prev.Value.Last)
-                        prev.Value = prev.Value.WithLast(minusOne);
-                    break;
-                }
-            }
-        }
-        node.Value = new(first, last);
-        return true;
-    }
+    /// <summary>
+    /// Tests whether a value of <typeparamref name="T"/> is not more than 1 increment greater than a given <see cref="NumberExtents{T}"/>.
+    /// </summary>
+    /// <param name="current">The target value.</param>
+    /// <param name="extents">The extent to compare to.</param>
+    /// <returns><see langword="true"/> if <paramref name="current"/> - <see cref="INumberBase{T}.One"/> is not greater than <see cref="NumberExtents{T}.Last"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool AdjacentOrDoesNotFollow<T>(this T current, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => current == T.MinValue || (current - T.One) <= extents.Last;
 
-    public static bool TryExpandLast<T>(this LinkedListNode<NumberExtents<T>> node, T last) where T : INumber<T>, IMinMaxValue<T>
-    {
-        var item = node.Value;
-        var first = item.First;
-        if (last <= item.Last) return false;
-        var list = node.List;
-        if (list is not null)
-        {
-            var next = node.Next;
-            var plusOne = last + T.One;
-            var minusOne = last - T.One;
-            // BUG: Method gets stuck in endless loop
-            while (next is not null)
-            {
-                item = next.Value;
-                if (last > item.Last)
-                {
-                    if (minusOne == item.Last)
-                    {
-                        list.Remove(next);
-                        if ((next = node.Next) is not null && plusOne == next.Value.First)
-                        {
-                            last = next.Value.Last;
-                            list.Remove(next);
-                        }
-                        break;
-                    }
-                }
-                else
-                {
-                    if (last == item.Last)
-                        list.Remove(next);
-                    else if (last > next.Value.First)
-                        next.Value = next.Value.WithFirst(plusOne);
-                    break;
-                }
-            }
-        }
-        node.Value = new(first, last);
-        return true;
-    }
+    /// <summary>
+    /// Tests whether a value of <typeparamref name="T"/> is more than 1 increment less than a given <see cref="NumberExtents{T}"/>.
+    /// </summary>
+    /// <param name="current">The target value.</param>
+    /// <param name="extents">The extent to compare to.</param>
+    /// <returns><see langword="true"/> if <paramref name="current"/> + <see cref="INumberBase{T}.One"/> is less than <see cref="NumberExtents{T}.First"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool PrecedesNonAdjacent<T>(this T current, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => current != T.MaxValue && (current + T.One) < extents.First;
+
+    /// <summary>
+    /// Tests whether a value of <typeparamref name="T"/> is not more than 1 increment less than a given <see cref="NumberExtents{T}"/>.
+    /// </summary>
+    /// <param name="current">The target value.</param>
+    /// <param name="extents">The extent to compare to.</param>
+    /// <returns><see langword="true"/> if <paramref name="current"/> + <see cref="INumberBase{T}.One"/> is not less than <see cref="NumberExtents{T}.First"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool AdjacentOrDoesNotPrecede<T>(this T current, NumberExtents<T> extents) where T : INumber<T>, IMinMaxValue<T> => current == T.MaxValue || (current + T.One) >= extents.First;
+
+    /// <summary>
+    /// Tests whether the current <see cref="NumberExtents{T}"/> is at least 2 increments greater than a value of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="current">The target number extent.</param>
+    /// <param name="value">The value to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> + <see cref="INumberBase{T}.One"/> is less than <see cref="NumberExtents{T}.First"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool FollowsNonAdjacent<T>(this NumberExtents<T> current, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MaxValue && (value + T.One) < current.First;
+
+    /// <summary>
+    /// Tests whether the current <see cref="NumberExtents{T}"/> is not more than 1 increment greater than a value of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="current">The target number extent.</param>
+    /// <param name="value">The value to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> + <see cref="INumberBase{T}.One"/> is not less than <see cref="NumberExtents{T}.Last"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool AdjacentOrDoesNotFollow<T>(this NumberExtents<T> current, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MaxValue || (value + T.One) >= current.First;
+
+    /// <summary>
+    /// Tests whether the current <see cref="NumberExtents{T}"/> is at least 2 increments less than a value of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="current">The target number extent.</param>
+    /// <param name="value">The value to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> - <see cref="INumberBase{T}.One"/> is greater than <see cref="NumberExtents{T}.Last"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool PrecedesNonAdjacent<T>(this NumberExtents<T> current, T value) where T : INumber<T>, IMinMaxValue<T> => value != T.MinValue && (value - T.One) > current.Last;
+
+    /// <summary>
+    /// Tests whether the current <see cref="NumberExtents{T}"/> is not more than 1 increment less than a value of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="current">The target number extent.</param>
+    /// <param name="value">The value to compare.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> - <see cref="INumberBase{T}.One"/> is not greater than <see cref="NumberExtents{T}.Last"/>; othwerwise, <see langword="false"/>.</returns>
+    public static bool AdjacentOrDoesNotPrecede<T>(this NumberExtents<T> current, T value) where T : INumber<T>, IMinMaxValue<T> => value == T.MinValue || (value - T.One) <= current.Last;
 }
 
 /// <summary>
