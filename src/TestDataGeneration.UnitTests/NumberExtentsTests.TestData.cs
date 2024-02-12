@@ -1875,7 +1875,7 @@ namespace TestDataGeneration.UnitTests
                 yield return create(extents: new('b'), value: 'a').Returns(new NumberExtents<char>('a', 'b'));
                 yield return create(extents: new('a', 'b'), value: 'a').Returns(new NumberExtents<char>('a', 'b'));
                 yield return create(extents: new('a', 'b'), value: 'b').Returns(new NumberExtents<char>('b'));
-                
+
                 yield return create(extents: new(char.MaxValue), value: char.MinValue).Returns(new NumberExtents<char>(char.MinValue, char.MaxValue));
                 yield return create(extents: new(char.MinValue, char.MaxValue), value: 'a').Returns(new NumberExtents<char>('a', char.MaxValue));
                 yield return create(extents: new(char.MinValue, char.MaxValue), value: char.MinValue).Returns(new NumberExtents<char>(char.MinValue, char.MaxValue));
@@ -1903,7 +1903,7 @@ namespace TestDataGeneration.UnitTests
                 {
                     return new TestCaseData(before, target, after, expected);
                 }
-                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('g'), new('g'), new('i') )
+                yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('g'), new('g'), new('i'))
                     .Returns(new NumberExtents<char>[] { new('a'), new('g'), new('i') });
                 yield return create(before: new NumberExtents<char>[] { new('a') }, target: new('c'), expected: new('g'), new NumberExtents<char>('g'))
                     .Returns(new NumberExtents<char>[] { new('a'), new('g') });

@@ -51,29 +51,164 @@ public partial class NumberRangesListTest
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd1Test1Data))]
-    public NumberExtents<char>[] Add1Test1((char First, char Last)[] list, char value, bool expectedResult)
+    public NumberExtents<char>[] Add1Test1(NumberExtents<char>[] list, char value)
     {
         var target = new NumberRangesList<char>(list);
         var actual = target.Add(value);
-        Assert.That(actual, Is.EqualTo(expectedResult));
+        Assert.That(actual, Is.True);
         return target.ToArray();
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd1Test2Data))]
-    public NumberExtents<char>[] Add1Test2((char First, char Last)[] list, NumberExtents<char> item, bool expectedResult)
+    public NumberExtents<char>[] Add1Test2(NumberExtents<char>[] list, char value)
     {
         var target = new NumberRangesList<char>(list);
-        var actual = target.Add(item);
-        Assert.That(actual, Is.EqualTo(expectedResult));
+        var actual = target.Add(value);
+        Assert.That(actual, Is.True);
         return target.ToArray();
     }
 
-    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2TestData))]
-    public NumberExtents<char>[] Add2Test((char First, char Last)[] list, char first, char last, bool expectedResult)
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd1Test3Data))]
+    public NumberExtents<char>[] Add1Test3(NumberExtents<char>[] list, char value)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(value);
+        Assert.That(actual, Is.False);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd1Test4Data))]
+    public NumberExtents<char>[] Add1Test4(NumberExtents<char>[] list, char value)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(value);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd1Test5Data))]
+    public NumberExtents<char>[] Add1Test5(NumberExtents<char>[] list, char value)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(value);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd1Test6Data))]
+    public NumberExtents<char>[] Add1Test6(NumberExtents<char>[] list, char value)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(value);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test1Data))]
+    public NumberExtents<char>[] Add2Test1(NumberExtents<char>[] list, char first, char last)
     {
         var target = new NumberRangesList<char>(list);
         var actual = target.Add(first, last);
-        Assert.That(actual, Is.EqualTo(expectedResult));
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test2Data))]
+    public NumberExtents<char>[] Add2Test2(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test3Data))]
+    public NumberExtents<char>[] Add2Test3(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test4Data))]
+    public NumberExtents<char>[] Add2Test4(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test5Data))]
+    public NumberExtents<char>[] Add2Test5(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test6Data))]
+    public NumberExtents<char>[] Add2Test6(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test7Data))]
+    public NumberExtents<char>[] Add2Test7(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test8Data))]
+    public NumberExtents<char>[] Add2Test8(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test9Data))]
+    public NumberExtents<char>[] Add2Test9(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.False);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test10Data))]
+    public NumberExtents<char>[] Add2Test10(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test11Data))]
+    public NumberExtents<char>[] Add2Test11(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
+        return target.ToArray();
+    }
+
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetAdd2Test12Data))]
+    public NumberExtents<char>[] Add2Test12(NumberExtents<char>[] list, char first, char last)
+    {
+        var target = new NumberRangesList<char>(list);
+        var actual = target.Add(first, last);
+        Assert.That(actual, Is.True);
         return target.ToArray();
     }
 
