@@ -19,7 +19,7 @@ public partial class NumberRangesListTest
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetConstructorWithNumberExtentsArgsTestData))]
-    public NumberExtents<char>[] ConstructorWithNumberExtentsArgsTest1((char First, char Last)[] list, int expectedCount)
+    public NumberExtents<char>[] ConstructorWithNumberExtentsArgsTest1(NumberExtents<char>[] list, int expectedCount)
     {
         var target = new NumberRangesList<char>(list.AsEnumerable());
         Assert.That(target.Count, Is.EqualTo(expectedCount));
@@ -27,7 +27,7 @@ public partial class NumberRangesListTest
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetConstructorWithNumberExtentsArgsTestData))]
-    public NumberExtents<char>[] ConstructorWithNumberExtentsArgsTest2((char First, char Last)[] list, int expectedCount)
+    public NumberExtents<char>[] ConstructorWithNumberExtentsArgsTest2(NumberExtents<char>[] list, int expectedCount)
     {
         var target = new NumberRangesList<char>(list);
         Assert.That(target.Count, Is.EqualTo(expectedCount));
