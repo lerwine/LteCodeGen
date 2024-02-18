@@ -11,96 +11,142 @@ public partial class NumberRangesListTest
         {
             yield return new TestCaseData(Array.Empty<NumberExtents<char>>(),
                 /*expectedCount*/ 0).Returns(Array.Empty<NumberExtents<char>>());
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new('a', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('Z', 'z'), new('A', 'a') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('A', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('A', 'a'), new('Z', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('A', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('A', 'Z'), new('a', 'z') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new('A', 'Z') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('0', '9'), new('a', 'z'), new('A', 'Z') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new('0', '9'), new('A', 'Z') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new('A', 'Z'), new('0', '9') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('A', 'Z'), new('a', 'z'), new('0', '9') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'n'), new('n', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('n', 'z'), new('a', 'n') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'm'), new('n', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('n', 'z'), new('a', 'm') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'm'), new('o', 'z') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('a', 'm'), new('o', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('o', 'z'), new('a', 'm') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('a', 'm'), new('o', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new('b', 'y') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new NumberExtents<char>[] { new('b', 'y'), new('a', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
-            yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new(char.MinValue, char.MinValue) },
-                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MinValue) });
-            yield return new TestCaseData(new NumberExtents<char>[] { new(char.MinValue, char.MinValue), new('a', 'z') },
-                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MinValue) });
+
+            yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'z'), new(char.MinValue, char.MaxValue) },
+                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MaxValue) })
+                .SetArgDisplayNames("{ ('a', 'z'), (char.MinValue, char.MaxValue) }", "1");
+
+            yield return new TestCaseData(new NumberExtents<char>[] { new(char.MinValue, char.MaxValue), new('a', 'z') },
+                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MaxValue) })
+                .SetArgDisplayNames("{ (char.MinValue, char.MaxValue), ('a', 'z') }", "1");
         }
 
         internal static System.Collections.IEnumerable GetConstructorWithTupleArgsTestData()
         {
             yield return new TestCaseData(Array.Empty<(char First, char Last)>(),
                 /*expectedCount*/ 0).Returns(Array.Empty<NumberExtents<char>>());
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), ('a', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('Z', 'z'), ('A', 'a') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('A', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('A', 'a'), ('Z', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('A', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('A', 'Z'), ('a', 'z') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), ('A', 'Z') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('0', '9'), ('A', 'Z'), ('a', 'z') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('0', '9'), ('a', 'z'), ('A', 'Z') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), ('0', '9'), ('A', 'Z') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), ('A', 'Z'), ('0', '9') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('A', 'Z'), ('a', 'z'), ('0', '9') },
-                /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+                /*expectedCount*/ 3).Returns(new NumberExtents<char>[] { new('0', '9'), new('A', 'Z'), new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'n'), ('n', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('n', 'z'), ('a', 'n') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'm'), ('n', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('n', 'z'), ('a', 'm') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'm'), ('o', 'z') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('a', 'm'), new('o', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('o', 'z'), ('a', 'm') },
                 /*expectedCount*/ 2).Returns(new NumberExtents<char>[] { new('a', 'm'), new('o', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), ('b', 'y') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
+
             yield return new TestCaseData(new (char First, char Last)[] { ('b', 'y'), ('a', 'z') },
                 /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new('a', 'z') });
-            yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), (char.MinValue, char.MinValue) },
-                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MinValue) });
-            yield return new TestCaseData(new (char First, char Last)[] { (char.MinValue, char.MinValue), ('a', 'z') },
-                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MinValue) });
+
+            yield return new TestCaseData(new (char First, char Last)[] { ('a', 'z'), (char.MinValue, char.MaxValue) },
+                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MaxValue) })
+                .SetArgDisplayNames("{ ('a', 'z'), (char.MinValue, char.MaxValue) }", "1");
+
+            yield return new TestCaseData(new (char First, char Last)[] { (char.MinValue, char.MaxValue), ('a', 'z') },
+                /*expectedCount*/ 1).Returns(new NumberExtents<char>[] { new(char.MinValue, char.MaxValue) })
+                .SetArgDisplayNames("{ (char.MinValue, char.MaxValue), ('a', 'z') }", "1");
         }
 
         public static System.Collections.IEnumerable GetAdd1Test1Data()
