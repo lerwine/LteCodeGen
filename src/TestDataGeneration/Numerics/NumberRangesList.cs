@@ -4,6 +4,8 @@ using System.Management.Automation.Provider;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Resources;
+using System.Security.Policy;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TestDataGeneration.Numerics;
 
@@ -124,81 +126,88 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
-            LinkedListNode<NumberExtents<T>>? node;
             if (value == T.MinValue)
             {
-                if ((node = _backingList.First) is null)
-                    _backingList.AddLast(new NumberExtents<T>(value));
-                else
+                if (_backingList.TryGetFirst(out var node, out var extents))
                 {
-                    var item = node.Value;
-                    if (item.First == value) return false;
-                    if (value + T.One == item.First)
-                        node.Value = new(value, item.Last);
+                    if (value >= extents.First) return false;
+                    if (value + T.One == extents.First)
+                        node.Value = new(value, extents.Last);
                     else
                         _backingList.AddFirst(new NumberExtents<T>(value));
                 }
+                else
+                    _backingList.AddLast(new NumberExtents<T>(value));
             }
-            else if ((node = _backingList.Last) is null)
-                _backingList.AddLast(new NumberExtents<T>(value));
-            else
+            else if (_backingList.TryGetLast(out var nextNode, out var nextExtents))
             {
-                var item = node.Value;
-                var diff = value.CompareTo(item.Last);
-                if (diff == 0) return false;
-                if (diff > 0)
+                if (value > nextExtents.Last)
                 {
-                    if (value - T.One == item.Last)
-                        node.Value = new(item.First, value);
+                    if (value - T.One == nextExtents.Last)
+                        nextNode.Value = new(nextExtents.First, value);
                     else
                         _backingList.AddLast(new NumberExtents<T>(value));
                 }
                 else
                 {
-                    if (value >= item.First) return false;
-                    var plusOne = value + T.One;
-                    var minusOne = value - T.One;
-                    do
+                    if (value >= nextExtents.First) return false;
+                    if (nextNode.TryGetPrevious(out var prevNode, out var prevExtents))
                     {
-                        // value < item.First
-                        var prevNode = node.Previous;
-                        if (plusOne == item.First)
+                        while (value < prevExtents.First)
                         {
-                            if (prevNode is null)
-                                node.Value = new(value, item.Last);
-                            else
+                            nextExtents = prevExtents;
+                            if (!(nextNode = prevNode).TryGetPrevious(out prevNode, out prevExtents))
                             {
-                                var last = item.Last;
-                                if ((item = prevNode.Value).Last == minusOne)
-                                {
-                                    _backingList.Remove(node);
-                                    prevNode.Value = new(item.First, last);
-                                }
+                                if (value + T.One == nextExtents.First)
+                                    nextNode.Value = new(value, nextExtents.Last);
                                 else
-                                    node.Value = new(value, last);
+                                    _backingList.AddFirst(new NumberExtents<T>(value));
+                                return true;
                             }
-                            return true;
+                            if (value > prevExtents.Last)
+                            {
+                                if (value - T.One == prevExtents.Last)
+                                {
+                                    if (value + T.One == nextExtents.First)
+                                    {
+                                        _backingList.Remove(nextNode);
+                                        prevNode.Value = new(prevExtents.First, nextExtents.Last);
+                                    }
+                                    else
+                                        prevNode.Value = new(prevExtents.First, value);
+                                }
+                                else if (value + T.One == nextExtents.First)
+                                    nextNode.Value = new(value, nextExtents.Last);
+                                else
+                                    _backingList.AddAfter(prevNode, new NumberExtents<T>(value));
+                                return true;
+                            }
+                            if (value >= prevExtents.First) return false;
                         }
-                        if (prevNode is null)
+                        if (value <= prevExtents.Last) return false;
+                        if (value + T.One == nextExtents.First)
                         {
-                            _backingList.AddFirst(new NumberExtents<T>(value));
-                            return true;
-                        }
-                        item = (node = prevNode).Value;
-                        if ((diff = value.CompareTo(item.Last)) == 0) return false;
-                        if (diff > 0)
-                        {
-                            if (minusOne == item.Last)
-                                node.Value = new(item.First, value);
+                            if (value - T.One == prevExtents.Last)
+                            {
+                                _backingList.Remove(nextNode);
+                                prevNode.Value = new(prevExtents.First, nextExtents.Last);
+                            }
                             else
-                                _backingList.AddAfter(node, new NumberExtents<T>(value));
-                            return true;
+                                nextNode.Value = new(value, nextExtents.Last);
                         }
+                        else if (value - T.One == prevExtents.Last)
+                            prevNode.Value = new(prevExtents.First, value);
+                        else
+                            _backingList.AddAfter(prevNode, new NumberExtents<T>(value));
                     }
-                    while (value < item.First);
-                    return false;
+                    else if (value + T.One == nextExtents.First)
+                        nextNode.Value = new(value, nextExtents.Last);
+                    else
+                        _backingList.AddFirst(new NumberExtents<T>(value));
                 }
             }
+            else
+                _backingList.AddLast(new NumberExtents<T>(value));
         }
         finally { Monitor.Exit(SyncRoot); }
         return true;
@@ -228,131 +237,238 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
         Monitor.Enter(SyncRoot);
         try
         {
-            LinkedListNode<NumberExtents<T>>? node;
+            // If first is MinValue, start from First node; otherwise, start from Last node
             if (first == T.MinValue)
             {
-                if ((node = _backingList.First) is null)
-                    _backingList.AddLast(new NumberExtents<T>(first, last));
-                else
+                if (_backingList.TryGetFirst(out var prevNode, out var prevExtents))
                 {
-                    var item = node.Value;
                     if (last == T.MaxValue)
                     {
-                        if (item.Last < last)
-                        {
-                            var nextNode = node.Next;
-                            while (nextNode is not null) nextNode = nextNode.RemoveAndGetNext();
-                        }
-                        else if (item.First == first)
-                            return false;
-                        node.Value = new(first, last);
+                        prevNode.RemoveFollowing();
+                        prevNode.Value = new(first, last);
                     }
-                    else if ((diff = last.CompareTo(item.First)) < 0)
+                    else if (last < prevExtents.First)
                     {
-                        if (last + T.One == item.First)
-                            node.Value = new(first, item.Last);
+                        if (last + T.One == prevExtents.First)
+                            prevNode.Value = new(first, prevExtents.Last);
                         else
                             _backingList.AddFirst(new NumberExtents<T>(first, last));
                     }
-                    else if (diff == 0)
-                        node.Value = new(first, item.Last);
-                    else if (last <= item.Last)
+                    else if (last <= prevExtents.Last)
                     {
-                        if (item.First == first) return false;
-                        node.Value = new(first, item.Last);
+                        if (prevExtents.First == first) return false;
+                        prevNode.Value = new(first, prevExtents.Last);
                     }
-                    else
+                    else if (last - T.One == prevExtents.Last)
                     {
-                        var nextNode = node.Next;
-                        while (nextNode is not null)
+                        if (prevNode.TryGetNext(out var nextNode, out var nextExtents) && last + T.One == nextExtents.First)
                         {
-                            if ((diff = last.CompareTo((item = nextNode.Value).First)) < 0)
+                            _backingList.Remove(nextNode);
+                            prevNode.Value = new(first, nextExtents.Last);
+                        }
+                        else
+                            prevNode.Value = new(first, last);
+                    }
+                    else if (prevNode.TryGetNext(out var nextNode, out var nextExtents))
+                    {
+                        if (last < nextExtents.First)
+                        {
+                            if (last + T.One == nextExtents.First)
                             {
-                                if (item.First - T.One == last)
+                                last = nextExtents.Last;
+                                _backingList.Remove(nextNode);
+                            }
+                            prevNode.Value = new(first, last);
+                            return true;
+                        }
+                        var lastMinusOne = last - T.One;
+                        // last - T.One > prevExtents.Last
+                        while (last > nextExtents.Last)
+                        {
+                            _backingList.Remove(nextNode);
+                            if (lastMinusOne == nextExtents.Last)
+                            {
+                                if (prevNode.TryGetNext(out nextNode, out nextExtents) && last + T.One == nextExtents.First)
                                 {
                                     _backingList.Remove(nextNode);
-                                    node.Value = new(first, item.Last);
+                                    last = nextExtents.Last;
                                 }
-                                else
-                                    node.Value = new(first, last);
+                                prevNode.Value = new(first, last);
                                 return true;
                             }
-                            if (diff == 0)
+                            if (!prevNode.TryGetNext(out nextNode, out nextExtents))
                             {
-                                _backingList.Remove(nextNode);
-                                node.Value = new(first, item.Last);
+                                prevNode.Value = new(first, last);
                                 return true;
                             }
-                            nextNode = nextNode.RemoveAndGetNext();
                         }
-                        node.Value = new(first, last);
+                        if (last >= nextExtents.First || last + T.One == nextExtents.First) 
+                        {
+                            _backingList.Remove(nextNode);
+                            last = nextExtents.Last;
+                        }
+                        prevNode.Value = new(first, last);
                     }
+                    else
+                        prevNode.Value = new(first, last);
                 }
+                else
+                    _backingList.AddLast(new NumberExtents<T>(first, last));
             }
-            else if ((node = _backingList.Last) is null)
-                _backingList.AddLast(new NumberExtents<T>(first, last));
-            else
+            else if (_backingList.TryGetLast(out var nextNode, out var nextExtents))
             {
-                var item = node.Value;
-                if ((diff = first.CompareTo(item.Last)) > 0)
+                if (first > nextExtents.Last)
                 {
-                    if (first - T.One == item.Last)
-                        node.Value = new(item.First, last);
+                    if (first - T.One == nextExtents.Last)
+                        nextNode.Value = new(nextExtents.First, last);
                     else
                         _backingList.AddLast(new NumberExtents<T>(first, last));
                 }
-                else if (diff == 0) // first == item.Last
-                    node.Value = new(item.First, last);
-                else
+                else if (first >= nextExtents.First)
                 {
-                    LinkedListNode<NumberExtents<T>>? prevNode;
-                    // first < item.First
-                    while (last < item.First)
-                    {
-                        if (last + T.One == item.First)
-                        {
-                            last = item.Last;
-                            break;
-                        }
-                        if ((prevNode = node.Previous) is null) break;
-                        item = (node = prevNode).Value;
-                    }
-                    if (last <= item.Last)
-                    {
-                        if (first >= item.First) return false;
-                        last = item.Last;
-                    }
-                    while (first < item.First)
-                    {
-                        if (first + T.One == item.First)
-                        {
-                            if ((prevNode = node.Previous) is not null && (item = prevNode.Value).Last + T.One == first)
-                            {
-                                first = item.First;
-                                _backingList.Remove(node);
-                                node = prevNode;
-                            }
-                            break;
-                        }
-                        if ((prevNode = node.Previous) is null) break;
-                        var prevtItem = prevNode.Value;
-                        if (first > prevtItem.Last)
-                        {
-                            if (first + T.One == item.Last)
-                            {
-                                _backingList.Remove(node);
-                                node = prevNode;
-                                item = prevtItem;
-                            }
-                            break;
-                        }
-                        _backingList.Remove(node);
-                        item = prevtItem;
-                        node = prevNode;
-                    }
-                    node.Value = new((first < item.First) ? first: item.First, last);
+                    // first <= nextExtents.Last
+                    if (last <= nextExtents.Last) return false;
+                    nextNode.Value = new(nextExtents.First, last);
                 }
+                else if (nextNode.TryGetPrevious(out var prevNode, out var prevExtents))
+                {
+                    var lastPlusOne = last + T.One;
+                    while (lastPlusOne < nextExtents.First)
+                    {
+                        if (prevNode.TryGetPrevious(out var node, out var extents))
+                        {
+                            nextExtents = prevExtents;
+                            prevExtents = extents;
+                            nextNode = prevNode;
+                            prevNode = node;
+                        }
+                        else
+                        {
+                            // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                            // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                            // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                            // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ ? ‖ ? ¦ ? ¦ ? ¦ ? ‖ ? ¦ ? ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            // |   L+1: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ ? ‖ ? ¦ ? ¦ ? ¦ ? ‖ ? ¦ ? ¦ ? ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            if (lastPlusOne == nextExtents.First)
+                                // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                                // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                                // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                                // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                                // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ ? ‖ ? ¦ ? ¦ ? ¦ ? ‖ ? ¦ ? ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                                // |   L+1: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ X ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                                nextNode.Value = new(first, nextExtents.Last);
+                            else if (last <= prevExtents.Last)
+                            {
+                                // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                                // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                                // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                                // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ ? ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                                // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ ? ‖ ? ¦ ? ¦ ? ¦ ? ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                                if (first >= prevExtents.First) return false;
+                                if (lastPlusOne < prevExtents.First)
+                                    _backingList.AddFirst(new NumberExtents<T>(first, last));
+                                else
+                                    prevNode.Value = new(first, prevExtents.Last);
+                            }
+                            else if (first > prevExtents.Last)
+                            {
+                                if (first - T.One == prevExtents.Last)
+                                    prevNode.Value = new(prevExtents.First, last);
+                                else
+                                    _backingList.AddAfter(prevNode, new NumberExtents<T>(first, last));
+                                // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                                // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                                // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                                // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖ ? ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                                // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦ ? ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            }
+                            // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                            // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                            // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                            // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦ ? ‖ ? ¦ ? ¦ ? ¦ ? ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖ ? ¦ ? ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            else
+                                prevNode.Value = new(T.Min(first, prevExtents.First), last);
+                            return true;
+                        }
+                    }
+                    if (first > nextExtents.Last)
+                    {
+                        // lastPlusOne >= nextExtents.First
+                        // nextNode.Next is null || lastPlusOne < nextNode.Next.Value.First
+                        if (first - T.One == nextExtents.Last)
+                            nextNode.Value = new(nextExtents.First, last);
+                        else
+                            _backingList.AddAfter(nextNode, new NumberExtents<T>(first, last));
+                    }
+                    else if (first >= nextExtents.First)
+                    {
+                        if (last <= nextExtents.Last) return false;
+                        nextNode.Value = new(nextExtents.First, last);
+                    }
+                    else
+                    {
+                        if (last < nextExtents.Last) last = nextExtents.Last;
+                        // first < nextExtents.First
+                        // last >= nextExtents.Last
+                        // nextNode.Next is null || lastPlusOne < nextNode.Next.Value.First
+                        // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                        // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                        // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                        // | first: ¦ X ‖ X ¦ X ¦ X ¦ X ‖ X ¦ X ¦ X ‖ X ¦ X ¦ X ¦ X ‖ X ¦ X ¦ X ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                        // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦ X ‖ X ¦ X ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                        while (first < prevExtents.First)
+                        {
+                            _backingList.Remove(nextNode);
+                            nextNode = prevNode;
+                            nextExtents = prevExtents;
+                            if (!nextNode.TryGetPrevious(out prevNode, out prevExtents))
+                            {
+                                nextNode.Value = new(first, last);
+                                return true;
+                            }
+                        }
+                        // first >= prevExtents.First
+                        // first < nextExtents.First
+                        // last >= nextExtents.Last
+                        // nextNode.Next is null || lastPlusOne < nextNode.Next.Value.First
+                        // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                        // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                        // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                        // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖ X ¦ X ¦ X ¦ X ‖ X ¦ X ¦ X ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                        // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦ X ‖ X ¦ X ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                        if (first - T.One > prevExtents.Last)
+                            nextNode.Value = new(first, last);
+                        else
+                        {
+                            // first - T.One <= prevExtents.Last
+                            // first >= prevExtents.First
+                            // first < nextExtents.First
+                            // last >= nextExtents.Last
+                            // nextNode.Next is null || lastPlusOne < nextNode.Next.Value.First
+                            // ‖            ‖               ‖           ‖  prevExtents  ‖           ‖  nextExtents  ‖           ‖               ‖   ¦
+                            // ‖        ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦   ¦   ‖ F ¦   ¦   ¦ L ‖   ¦
+                            // ‖--------¦---‖---¦---¦---¦---‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖---¦---¦---‖---¦---¦---¦-- ‖   ¦
+                            // | first: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖ X ¦ X ¦ X ¦ X ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            // |  last: ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦   ‖   ¦   ¦   ‖   ¦   ¦   ¦ X ‖ X ¦ X ¦   ‖   ¦   ¦   ¦   ‖   ¦
+                            _backingList.Remove(nextNode);
+                            prevNode.Value = new(prevExtents.First, last);
+                        }
+                    }
+                }
+                else if (last < nextExtents.First)
+                {
+                    if (last + T.One == nextExtents.First)
+                        nextNode.Value = new(first, nextExtents.Last);
+                    else
+                        _backingList.AddFirst(new NumberExtents<T>(first, last));
+                }
+                else
+                    nextNode.Value = new(first, T.Max(last, nextExtents.Last));
             }
+            else
+                _backingList.AddLast(new NumberExtents<T>(first, last));
         }
         finally { Monitor.Exit(SyncRoot); }
         return true;
