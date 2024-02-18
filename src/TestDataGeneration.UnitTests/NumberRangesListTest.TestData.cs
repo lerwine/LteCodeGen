@@ -504,8 +504,8 @@ public partial class NumberRangesListTest
                 .Returns(new NumberExtents<char>[] { new('a'), new('c'), new('e') })
                 .SetDescription("Add existing value of single-value element that is preceded and followed by other elements.");
 
-            yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('f') }, 'd')
-                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('f') })
+            yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g') }, 'd')
+                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g') })
                 .SetDescription("Add existing value of three-value element that is preceded and followed by other elements.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'd') }, 'd')
@@ -964,8 +964,8 @@ public partial class NumberRangesListTest
                 .Returns(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f'), new('h', 'j') })
                 .SetDescription("Insert single-value element after existing two-value element with a preceding element and before three-value element.");
 
-            yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'b'), new('f', 'h'), new('i') }, 'd')
-                .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d'), new('f', 'h'), new('i') })
+            yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'b'), new('f', 'h'), new('j') }, 'd')
+                .Returns(new NumberExtents<char>[] { new('a', 'b'), new('d'), new('f', 'h'), new('j') })
                 .SetDescription("Insert single-value element after existing two-value element and before three-value element with an additional following element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'd'), new('h', 'j'), new('l') }, 'f')
@@ -2348,14 +2348,6 @@ public partial class NumberRangesListTest
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'd') }, 'b', 'c')
                 .Returns(new NumberExtents<char>[] { new('a', 'd') })
                 .SetDescription("Two-value add existing Four-value element middle.");
-
-            yield return new TestCaseData(new NumberExtents<char>[] { new('b', 'c') }, 'd', 'a')
-                .Returns(new NumberExtents<char>[] { new('b', 'c') })
-                .SetDescription("Four-value add reverse order values to two-value element.");
-
-            yield return new TestCaseData(Array.Empty<NumberExtents<char>>(), 'c', 'a')
-                .Returns(Array.Empty<NumberExtents<char>>())
-                .SetDescription("Three-value add reverse order values to empty list.");
         }
 
         public static System.Collections.IEnumerable GetAdd2Test10Data()
@@ -2961,12 +2953,132 @@ public partial class NumberRangesListTest
         internal static System.Collections.IEnumerable GetIsProperSubsetOfTestData()
         {
             yield return new TestCaseData(
-                Array.Empty<(char First, char Last)>(),
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g', 'h'), new('d') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('c', 'd'), new('a'), new('g'), new('c', 'd') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e'), new('a'), new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('a'), new('c') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('f', 'g'), new('i') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d'), new('l') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('j') },
+                /*other*/ new NumberExtents<char>[] { new('g'), new('m', 'n'), new('q') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('h') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('d'), new('a'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e', 'f'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('f'), new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c', 'd') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('_') },
+                /*other*/ new NumberExtents<char>[] { new('_') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b') },
+                /*other*/ new NumberExtents<char>[] { new('e', 'f') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('c') },
+                /*other*/ new NumberExtents<char>[] { new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('f') },
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
 
             yield return new TestCaseData(
-                new (char First, char Last)[] { ('a', 'z') },
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('.', 'W') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('F') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
         }
@@ -2974,12 +3086,132 @@ public partial class NumberRangesListTest
         internal static System.Collections.IEnumerable GetIsProperSupersetOfTestData()
         {
             yield return new TestCaseData(
-                Array.Empty<(char First, char Last)>(),
-                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+                new NumberExtents<char>[] { new('a'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g') }
             ).Returns(false);
 
             yield return new TestCaseData(
-                new (char First, char Last)[] { ('a', 'z') },
+                new NumberExtents<char>[] { new('a'), new('c'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('c'), new('f', 'g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f'), new('d') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('d'), new('a'), new('g', 'h'), new('d') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e'), new('a'), new('d', 'e'), new('h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('g', 'h'), new('a'), new('d', 'e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('g'), new('i', 'j') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('l') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('h', 'i') },
+                /*other*/ new NumberExtents<char>[] { new('f'), new('k'), new('n') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('f') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('c'), new('a'), new('e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('g', 'h') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('h'), new('a', 'b') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('c'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('c'), new('f', 'g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e', 'f'), new('i', 'j') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e', 'f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('E') },
+                /*other*/ new NumberExtents<char>[] { new('E') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e', 'f'), new('h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('e', 'f') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('J', 's') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('9') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
         }
@@ -2987,38 +3219,398 @@ public partial class NumberRangesListTest
         internal static System.Collections.IEnumerable GetIsSubsetOfTestData()
         {
             yield return new TestCaseData(
-                Array.Empty<(char First, char Last)>(),
+                new NumberExtents<char>[] { new('a'), new('d'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c', 'd'), new('c', 'd'), new('g', 'h') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e'), new('c') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('c'), new('a'), new('f'), new('c') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('d'), new('a'), new('d'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('f'), new('a'), new('c') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('h'), new('k') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e', 'f'), new('m') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('k') },
+                /*other*/ new NumberExtents<char>[] { new('g', 'h'), new('m'), new('p') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('h', 'i') },
+                /*other*/ new NumberExtents<char>[] { new('e', 'f'), new('a', 'b'), new('h', 'i') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('f') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('f'), new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('d'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('c', 'd'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e', 'f') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e', 'f'), new('i', 'j') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('P') },
+                /*other*/ new NumberExtents<char>[] { new('P') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a') },
+                /*other*/ new NumberExtents<char>[] { new('c') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('c') },
+                /*other*/ new NumberExtents<char>[] { new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') },
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
 
             yield return new TestCaseData(
-                new (char First, char Last)[] { ('a', 'z') },
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('%', 'c') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('>') },
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
         }
 
         internal static System.Collections.IEnumerable GetIsSupersetOfTestData()
         {
             yield return new TestCaseData(
-                Array.Empty<(char First, char Last)>(),
-                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+                new NumberExtents<char>[] { new('a'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d'), new('d'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g', 'h'), new('d') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('c', 'd'), new('a'), new('g'), new('c', 'd') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('a', 'b'), new('e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('f', 'g'), new('a'), new('d') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f', 'g'), new('i', 'j') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('l') }
             ).Returns(false);
 
             yield return new TestCaseData(
-                new (char First, char Last)[] { ('a', 'z') },
-                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+                new NumberExtents<char>[] { new('a'), new('c'), new('i') },
+                /*other*/ new NumberExtents<char>[] { new('e', 'f'), new('k', 'l'), new('o') }
             ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('a', 'b'), new('h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('f', 'g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('g'), new('a') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('e') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('h') },
+                /*other*/ new NumberExtents<char>[] { new('h') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a') },
+                /*other*/ new NumberExtents<char>[] { new('d') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('c', 'd') },
+                /*other*/ new NumberExtents<char>[] { new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('k') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('_') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
         }
 
         internal static System.Collections.IEnumerable GetOverlapsTestData()
         {
             yield return new TestCaseData(
-                Array.Empty<(char First, char Last)>(),
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e'), new('e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d'), new('f'), new('d') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('d'), new('a'), new('f', 'g'), new('d') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e'), new('a'), new('d', 'e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('f'), new('a'), new('c', 'd') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('h'), new('k') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e'), new('n', 'o') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('i'), new('k') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('c'), new('a'), new('e') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('h') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('h', 'i') },
+                /*other*/ new NumberExtents<char>[] { new('h', 'i'), new('a') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('d'), new('f', 'g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('h') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('e') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('$') },
+                /*other*/ new NumberExtents<char>[] { new('$') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a') },
+                /*other*/ new NumberExtents<char>[] { new('d', 'e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('e') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f') },
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
 
             yield return new TestCaseData(
-                new (char First, char Last)[] { ('a', 'z') },
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new(' ') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('J', 'f') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
         }
@@ -3058,14 +3650,134 @@ public partial class NumberRangesListTest
         internal static System.Collections.IEnumerable GetSetEqualsTestData()
         {
             yield return new TestCaseData(
-                Array.Empty<(char First, char Last)>(),
-                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+                new NumberExtents<char>[] { new('a'), new('c'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c'), new('f') }
             ).Returns(true);
 
             yield return new TestCaseData(
-                new (char First, char Last)[] { ('a', 'z') },
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d'), new('d'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f'), new('d') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('c'), new('a'), new('e'), new('c') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('a', 'b'), new('e'), new('g') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('f', 'g'), new('a'), new('d') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('c', 'd'), new('j') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('d'), new('j') },
+                /*other*/ new NumberExtents<char>[] { new('g'), new('l', 'm'), new('o') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('d', 'e'), new('g', 'h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f') },
+                /*other*/ new NumberExtents<char>[] { new('d'), new('a'), new('f') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c'), new('e') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('d', 'e'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('h') },
+                /*other*/ new NumberExtents<char>[] { new('e'), new('h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('f', 'g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('f', 'g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('c', 'd'), new('g') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d') },
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d'), new('g', 'h') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a', 'b'), new('e'), new('g', 'h') },
+                /*other*/ new NumberExtents<char>[] { new('a', 'b'), new('e') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('8') },
+                /*other*/ new NumberExtents<char>[] { new('8') }
+            ).Returns(true);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a') },
+                /*other*/ new NumberExtents<char>[] { new('d') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('c') },
+                /*other*/ new NumberExtents<char>[] { new('a') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('a'), new('d', 'e'), new('g') },
                 /*other*/ Enumerable.Empty<NumberExtents<char>>()
             ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ new NumberExtents<char>[] { new('0', 'R') }
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                new NumberExtents<char>[] { new('Q') },
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(false);
+
+            yield return new TestCaseData(
+                Array.Empty<NumberExtents<char>>(),
+                /*other*/ Enumerable.Empty<NumberExtents<char>>()
+            ).Returns(true);
         }
     }
 }
