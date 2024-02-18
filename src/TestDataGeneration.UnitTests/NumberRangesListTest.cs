@@ -277,35 +277,51 @@ public partial class NumberRangesListTest
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetIsProperSubsetOfTestData))]
-    public bool IsProperSubsetOfTest((char First, char Last)[] list, IEnumerable<NumberExtents<char>> other)
+    public bool IsProperSubsetOfTest(NumberExtents<char>[] list, IEnumerable<NumberExtents<char>> other)
     {
         var target = new NumberRangesList<char>(list);
-        return target.IsProperSubsetOf(other);
+        HashSet<NumberExtents<char>> hashSet = new(target);
+        bool expected = hashSet.IsProperSubsetOf(other);
+        var actual = target.IsProperSubsetOf(other);
+        Assert.That(actual, Is.EqualTo(expected));
+        return actual;
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetIsProperSupersetOfTestData))]
-    public bool IsProperSupersetOfTest((char First, char Last)[] list, IEnumerable<NumberExtents<char>> other)
+    public bool IsProperSupersetOfTest(NumberExtents<char>[] list, IEnumerable<NumberExtents<char>> other)
     {
         var target = new NumberRangesList<char>(list);
-        return target.IsProperSupersetOf(other);
+        HashSet<NumberExtents<char>> hashSet = new(target);
+        bool expected = hashSet.IsProperSupersetOf(other);
+        var actual = target.IsProperSupersetOf(other);
+        Assert.That(actual, Is.EqualTo(expected));
+        return actual;
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetIsSubsetOfTestData))]
-    public bool IsSubsetOfTest((char First, char Last)[] list, IEnumerable<NumberExtents<char>> other)
+    public bool IsSubsetOfTest(NumberExtents<char>[] list, IEnumerable<NumberExtents<char>> other)
     {
         var target = new NumberRangesList<char>(list);
-        return target.IsSubsetOf(other);
+        HashSet<NumberExtents<char>> hashSet = new(target);
+        bool expected = hashSet.IsSubsetOf(other);
+        var actual = target.IsSubsetOf(other);
+        Assert.That(actual, Is.EqualTo(expected));
+        return actual;
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetIsSupersetOfTestData))]
-    public bool IsSupersetOfTest((char First, char Last)[] list, IEnumerable<NumberExtents<char>> other)
+    public bool IsSupersetOfTest(NumberExtents<char>[] list, IEnumerable<NumberExtents<char>> other)
     {
         var target = new NumberRangesList<char>(list);
-        return target.IsSupersetOf(other);
+        HashSet<NumberExtents<char>> hashSet = new(target);
+        bool expected = hashSet.IsSupersetOf(other);
+        var actual = target.IsSupersetOf(other);
+        Assert.That(actual, Is.EqualTo(expected));
+        return actual;
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetOverlapsTestData))]
-    public bool OverlapsTest((char First, char Last)[] list, IEnumerable<NumberExtents<char>> other)
+    public bool OverlapsTest(NumberExtents<char>[] list, IEnumerable<NumberExtents<char>> other)
     {
         var target = new NumberRangesList<char>(list);
         return target.Overlaps(other);
@@ -354,7 +370,7 @@ public partial class NumberRangesListTest
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetSetEqualsTestData))]
-    public bool SetEqualsTest((char First, char Last)[] list, IEnumerable<NumberExtents<char>> other)
+    public bool SetEqualsTest(NumberExtents<char>[] list, IEnumerable<NumberExtents<char>> other)
     {
         var target = new NumberRangesList<char>(list);
         return target.SetEquals(other);
