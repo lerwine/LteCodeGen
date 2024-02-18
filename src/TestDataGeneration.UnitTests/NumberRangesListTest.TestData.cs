@@ -1116,8 +1116,8 @@ public partial class NumberRangesListTest
                 .Returns(new NumberExtents<char>[] { new('a', 'c') })
                 .SetDescription("One-value extend, adjacent to two-value first element.");
 
-            yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'd') }, 'c', 'c')
-                .Returns(new NumberExtents<char>[] { new('a'), new('a', 'c') })
+            yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('d', 'e') }, 'c', 'c')
+                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e') })
                 .SetDescription("One-value extend, adjacent to two-value element that has an additional preceding element..");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('c', 'd') }, 'a', 'b')
@@ -1144,11 +1144,11 @@ public partial class NumberRangesListTest
                 .SetDescription("One-value extend, adjacent to three-value element that has an additional preceding element..");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('c', 'e') }, 'a', 'b')
-                .Returns(new NumberExtents<char>[] { new('a', 'd') })
+                .Returns(new NumberExtents<char>[] { new('a', 'e') })
                 .SetDescription("Two-value extend, adjacent to three-value first element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e', 'g') }, 'c', 'd')
-                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'f') })
+                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'g') })
                 .SetDescription("Two-value extend, adjacent to three-value element that has an additional preceding element..");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('d', 'f') }, 'a', 'c')
@@ -2146,19 +2146,19 @@ public partial class NumberRangesListTest
                 .SetDescription("Two-value insert after existing three-value element with an additional preceding element and before single-value element with an additional following element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c'), new('i') }, 'e', 'g')
-                .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('i') })
+                .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i') })
                 .SetDescription("Three-value insert after existing three-value element and before single-value element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c'), new('i'), new('k') }, 'e', 'g')
-                .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'f'), new('i'), new('k') })
+                .Returns(new NumberExtents<char>[] { new('a', 'c'), new('e', 'g'), new('i'), new('k') })
                 .SetDescription("Three-value insert after existing three-value element and before single-value element with an additional following element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('k') }, 'g', 'i')
-                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'h'), new('k') })
+                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'i'), new('k') })
                 .SetDescription("Three-value insert after existing three-value element with an additional preceding element and before single-value element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('k'), new('m') }, 'g', 'i')
-                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'h'), new('k'), new('m') })
+                .Returns(new NumberExtents<char>[] { new('a'), new('c', 'e'), new('g', 'i'), new('k'), new('m') })
                 .SetDescription("Three-value insert after existing three-value element with an additional preceding element and before single-value element with an additional following element.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'c'), new('g', 'h') }, 'e', 'e')
@@ -2497,8 +2497,8 @@ public partial class NumberRangesListTest
                 .Returns(new NumberExtents<char>[] { new('a', 'e') })
                 .SetDescription("Three-value merge existing two- and single-value elements.");
 
-            yield return new TestCaseData(new NumberExtents<char>[] { new('b', 'c'), new('e') }, 'b', 'd')
-                .Returns(new NumberExtents<char>[] { new('a', 'e') })
+            yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'b'), new('d') }, 'a', 'c')
+                .Returns(new NumberExtents<char>[] { new('a', 'd') })
                 .SetDescription("Three-value merge existing two- and single-value elements.");
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a', 'b'), new('e') }, 'c', 'e')
@@ -2757,10 +2757,10 @@ public partial class NumberRangesListTest
                 .Returns(new NumberExtents<char>[] { new('a', 'h'), new('j') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('j') }, 'b', 'g')
-                .Returns(new NumberExtents<char>[] { new('a', 'h'), new('j') });
+                .Returns(new NumberExtents<char>[] { new('a', 'g'), new('j') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('j') }, 'b', 'f')
-                .Returns(new NumberExtents<char>[] { new('a', 'h'), new('j') });
+                .Returns(new NumberExtents<char>[] { new('a', 'g'), new('j') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('l') }, 'c', 'k')
                 .Returns(new NumberExtents<char>[] { new('a'), new('c', 'l') });
@@ -2787,13 +2787,13 @@ public partial class NumberRangesListTest
                 .Returns(new NumberExtents<char>[] { new('a'), new('d', 'j'), new('l') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('l') }, 'd', 'h')
-                .Returns(new NumberExtents<char>[] { new('a'), new('d', 'h'), new('j') });
+                .Returns(new NumberExtents<char>[] { new('a'), new('d', 'h'), new('l') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('l') }, 'd', 'g')
-                .Returns(new NumberExtents<char>[] { new('a'), new('d', 'g'), new('j') });
+                .Returns(new NumberExtents<char>[] { new('a'), new('d', 'g'), new('l') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('l') }, 'd', 'f')
-                .Returns(new NumberExtents<char>[] { new('a'), new('d', 'g'), new('j') });
+                .Returns(new NumberExtents<char>[] { new('a'), new('d', 'g'), new('l') });
 
             yield return new TestCaseData(new NumberExtents<char>[] { new('a'), new('e'), new('g'), new('l') }, 'e', 'k')
                 .Returns(new NumberExtents<char>[] { new('a'), new('e', 'l') });
