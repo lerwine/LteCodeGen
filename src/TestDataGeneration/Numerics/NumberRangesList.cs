@@ -47,7 +47,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     public NumberRangesList(IEnumerable<NumberExtents<T>> collection)
     {
         if (collection is null) return;
-        var orderedValues = collection.GroupBy(n => n.First).Select(g => (g.Key, g.OrderByDescending(n => n.Last).First().Last)).ToArray();
+        var orderedValues = collection.GroupBy(n => n.First).OrderBy(g => g.Key).Select(g => (g.Key, g.OrderByDescending(n => n.Last).First().Last)).ToArray();
         if (orderedValues.Length == 0) return;
         var (prevFirst, prevLast) = orderedValues[0];
         foreach (var (first, last) in orderedValues.Skip(1))
@@ -56,7 +56,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
             {
                 if (last > prevLast) prevLast = last;
             }
-            else if (first + T.One == prevLast)
+            else if (first - T.One == prevLast)
                 prevLast = last;
             else
             {
@@ -75,18 +75,18 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     public NumberRangesList(IEnumerable<(T First, T Last)> collection)
     {
         if (collection is null) return;
-        var orderedValues = collection.GroupBy(n => n.First).Select(g => (g.Key, g.OrderByDescending(n => n.Last).First().Last)).ToArray();
+        var orderedValues = collection.GroupBy(n => n.First).OrderBy(g => g.Key).Select(g => (g.Key, g.OrderByDescending(n => n.Last).First().Last)).ToArray();
         if (orderedValues.Length == 0) return;
         var (prevFirst, prevLast) = orderedValues[0];
         if (prevFirst > prevLast) throw new ArgumentOutOfRangeException(nameof(collection));
         foreach (var (first, last) in orderedValues.Skip(1))
         {
-            if (last > first) throw new ArgumentOutOfRangeException(nameof(collection));
+            if (first > last) throw new ArgumentOutOfRangeException(nameof(collection));
             if (first <= prevLast)
             {
                 if (last > prevLast) prevLast = last;
             }
-            else if (first + T.One == prevLast)
+            else if (first - T.One == prevLast)
                 prevLast = last;
             else
             {
