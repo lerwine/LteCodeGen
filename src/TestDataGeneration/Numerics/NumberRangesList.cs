@@ -1,11 +1,5 @@
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Management.Automation.Provider;
-using System.Net.NetworkInformation;
 using System.Numerics;
-using System.Resources;
-using System.Security.Policy;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TestDataGeneration.Numerics;
 
@@ -28,9 +22,9 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
     /// </summary>
     public object SyncRoot { get; } = new();
 
-    bool ICollection<NumberExtents<T>>.IsReadOnly=> false;
+    bool ICollection<NumberExtents<T>>.IsReadOnly => false;
 
-    bool IList.IsFixedSize=> false;
+    bool IList.IsFixedSize => false;
 
     bool IList.IsReadOnly => true;
 
@@ -302,7 +296,7 @@ public class NumberRangesList<T> : IReadOnlySet<NumberExtents<T>>, IReadOnlyList
                                 return true;
                             }
                         }
-                        if (last >= nextExtents.First || last + T.One == nextExtents.First) 
+                        if (last >= nextExtents.First || last + T.One == nextExtents.First)
                         {
                             _backingList.Remove(nextNode);
                             last = nextExtents.Last;

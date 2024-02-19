@@ -1,6 +1,4 @@
 using System.Numerics;
-using NUnit.Framework;
-using TestDataGeneration;
 using TestDataGeneration.Numerics;
 
 namespace TestDataGeneration.UnitTests
