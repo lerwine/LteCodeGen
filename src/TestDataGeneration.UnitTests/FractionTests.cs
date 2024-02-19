@@ -163,576 +163,45 @@ public partial class FractionTests
         Assert.That(result, Is.EqualTo(4));
 
         s = "(5)/(4)".AsSpan();
-        returnValue = s.TryMatchOther(out result);
+        returnValue = s.TryMatchGroup(out result);
         Assert.That(returnValue, Is.True);
         Assert.That(result, Is.EqualTo(3));
 
         s = "((5)/(4))".AsSpan();
-        returnValue = s.TryMatchOther(out result);
+        returnValue = s.TryMatchGroup(out result);
         Assert.That(returnValue, Is.True);
         Assert.That(result, Is.EqualTo(9));
 
         s = " (12)".AsSpan();
-        returnValue = s.TryMatchOther(out result);
+        returnValue = s.TryMatchGroup(out _);
         Assert.That(returnValue, Is.False);
 
         s = "((5)/(4)".AsSpan();
-        returnValue = s.TryMatchOther(out result);
+        returnValue = s.TryMatchGroup(out _);
         Assert.That(returnValue, Is.False);
 
         s = "((5/(4))".AsSpan();
-        returnValue = s.TryMatchOther(out result);
+        returnValue = s.TryMatchGroup(out _);
         Assert.That(returnValue, Is.False);
     }
 
-    [Test]
-    public void TryParseSimpleFractionTest()
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetTryParseSimpleFractionTestData))]
+    public void TryParseSimpleFractionTest(string fractionString, NumberStyles style, int expectedNumerator, int expectedDenominator)
     {
-        var separatorChars = new string[] { "∕", "/" };
-        var signChars = new[]
-        {
-            (Sign: "", IsNegative: false),
-            (Sign: "+", IsNegative: false),
-            (Sign: "-", IsNegative: true),
-            (Sign: "−", IsNegative: true)
-        };
-        var style = NumberStyles.AllowLeadingSign | NumberStyles.Integer;
-        var provider = CultureInfo.CurrentCulture.NumberFormat;
-        var wholeNumberTestData1 = signChars.Select(numSign => (numSign.Sign, numSign.IsNegative, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(1, 6)));
-        if (!wholeNumberTestData1.Any(t => t.Expected == 0)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0) });
-        if (!wholeNumberTestData1.Any(t => t.Expected > 1 && t.Expected < 10)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(1, 1, true)) });
-        if (!wholeNumberTestData1.Any(t => t.Expected > 1 && t.IsNegative)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { ("-", true, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(1, 1, true)) });
-        if (!wholeNumberTestData1.Any(t => t.Expected > 10)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(2, 6, true)) });
-        if (!wholeNumberTestData1.Any(t => t.ZeroPad == 0)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (string.Empty, false, ZeroPad: 0, Expected: GetRandomIntByLength(1, 6)) });
-        if (!wholeNumberTestData1.Any(t => t.ZeroPad > 0)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (string.Empty, false, ZeroPad: SharedRandom.Next(1, 4), Expected: GetRandomIntByLength(1, 6)) });
-        var wholeNumberTestData2 = wholeNumberTestData1.Select(t => (OpenPad: SharedRandom.Next(0, 6), t.Sign, t.IsNegative, t.ZeroPad, t.Expected, ClosePad: SharedRandom.Next(0, 6)));
-        if (!wholeNumberTestData2.Any(t => t.OpenPad == 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: 0,
-                string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.OpenPad > 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.ClosePad == 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: 0
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.ClosePad > 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.OpenPad == 0 && t.ClosePad == 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: 0,
-                string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: 0
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.OpenPad > 0 && t.ClosePad > 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                string.Empty, false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        var numDenTestData1 = signChars.SelectMany(numSign =>
-            signChars.SelectMany(denSign =>
-                separatorChars.Select(s =>
-                    (
-                        NumSign: numSign.Sign, NumNegative: numSign.IsNegative, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                        PadSepLeft: SharedRandom.Next(-6, 6),
-                        Separator: s,
-                        PadSepRight: SharedRandom.Next(-6, 6),
-                        DenSign: numSign.Sign, DenNegative: numSign.IsNegative, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                    )
-                )
-            )
-        );
-        if (!numDenTestData1.Any(t => t.ExpectedNum == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: 0,
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.ExpectedNum > 1 && t.ExpectedNum < 10)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 1, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.ExpectedDen == 1)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: 1
-                )
-            });
-        if (!numDenTestData1.Any(t => t.ExpectedDen > 10)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(2, 6, true)
-                )
-            });
-
-        if (!numDenTestData1.Any(t => t.PadSepLeft == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: 0,
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepLeft > 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(1, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepRight == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: 0,
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepRight > 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(1, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepLeft == 0 && t.PadSepRight == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: 0,
-                    Separator: separatorChars[0],
-                    PadSepRight: 0,
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepLeft > 0 && t.PadSepRight > 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(2, 6, true),
-                    PadSepLeft: SharedRandom.Next(1, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(1, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        var numDenTestData2 = numDenTestData1.Select(t =>
-        (
-            OpenPad: SharedRandom.Next(1, 6),
-            t.NumSign, t.NumNegative, t.NumZeroPad, t.ExpectedNum,
-            t.PadSepLeft, t.Separator, t.PadSepRight,
-            t.DenSign, t.DenNegative, t.DenZeroPad, t.ExpectedDen,
-            ClosePad: SharedRandom.Next(1, 6)
-        ));
-        if (!numDenTestData2.Any(t => t.OpenPad == 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: 0,
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!numDenTestData2.Any(t => t.OpenPad > 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!numDenTestData2.Any(t => t.ClosePad == 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: 0
-            ) });
-        if (!numDenTestData2.Any(t => t.ClosePad > 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        if (!numDenTestData2.Any(t => t.OpenPad == 0 && t.ClosePad == 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: 0,
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: 0
-            ) });
-        if (!numDenTestData2.Any(t => t.OpenPad > 0 && t.ClosePad > 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        var wsChars = "      \t";
-        foreach (var (sign, isNegative, zeroPad, expected) in wholeNumberTestData1)
-        {
-            var fStr = $"{sign}{new string('0', zeroPad)}{expected}";
-            var result = Fraction.TryParseSimpleFraction(fStr.AsSpan(), style, provider, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualNumerator, Is.EqualTo(isNegative ? expected * -1 : expected), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(1), fStr);
-        }
-        foreach (var (openPad, sign, isNegative, zeroPad, expected, closePad) in wholeNumberTestData2)
-        {
-            var fStr = $"({GetRandomString(openPad, wsChars)}{sign}{new string('0', zeroPad)}{expected}{GetRandomString(closePad, wsChars)})";
-            var result = Fraction.TryParseSimpleFraction(fStr.AsSpan(), style, provider, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualNumerator, Is.EqualTo(isNegative ? expected * -1 : expected), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(1), fStr);
-        }
-        foreach (var (numSign, numNegative, numZeroPad, expectedNum, padSepLeft, separator, padSepRight, denSign, denNegative, denZeroPad, expectedDen) in numDenTestData1)
-        {
-            var fStr = $"{numSign}{new string('0', numZeroPad)}{expectedNum}{GetRandomString(padSepLeft, wsChars)}{separator}{GetRandomString(padSepRight, wsChars)}{denSign}{new string('0', denZeroPad)}{expectedDen}";
-            var result = Fraction.TryParseSimpleFraction(fStr.AsSpan(), style, provider, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualNumerator, Is.EqualTo(numNegative ? expectedNum * -1 : expectedNum), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(denNegative ? expectedDen * -1 : expectedDen), fStr);
-        }
-        foreach (var (openPad, numSign, numNegative, numZeroPad, expectedNum, padSepLeft, separator, padSepRight, denSign, denNegative, denZeroPad, expectedDen, closePad) in numDenTestData2)
-        {
-            var fStr = $"({GetRandomString(openPad, wsChars)}{numSign}{new string('0', numZeroPad)}{expectedNum}{GetRandomString(padSepLeft, wsChars)}{separator}{GetRandomString(padSepRight, wsChars)}{denSign}{new string('0', denZeroPad)}{expectedDen}{GetRandomString(closePad, wsChars)})";
-            var result = Fraction.TryParseSimpleFraction(fStr.AsSpan(), style, provider, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualNumerator, Is.EqualTo(numNegative ? expectedNum * -1 : expectedNum), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(denNegative ? expectedDen * -1 : expectedDen), fStr);
-        }
+        var result = Fraction.TryParseSimpleFraction(fractionString.AsSpan(), style, CultureInfo.CurrentCulture.NumberFormat, out int actualNumerator, out int actualDenominator);
+        Assert.That(result, Is.True);
+        Assert.That(actualNumerator, Is.EqualTo(expectedNumerator));
+        Assert.That(actualDenominator, Is.EqualTo(expectedDenominator));
     }
 
-    [Test]
-    public void TryParseMixedFractionTest()
+    [TestCaseSource(typeof(TestData), nameof(TestData.GetTryParseMixedFractionTestData))]
+    public void TryParseMixedFractionTest(string fractionString, NumberStyles style, int expectedWholeNumber, int expectedNumerator, int expectedDenominator)
     {
-        var separatorChars = new string[] { "∕", "/" };
-        var signChars = new[]
-        {
-            (Sign: "", IsNegative: false),
-            (Sign: "+", IsNegative: false),
-            (Sign: "-", IsNegative: true),
-            (Sign: "−", IsNegative: true)
-        };
-        var style = NumberStyles.AllowLeadingSign | NumberStyles.Integer;
-        var provider = CultureInfo.CurrentCulture.NumberFormat;
-        var wholeNumberTestData1 = signChars.Select(numSign => (numSign.Sign, numSign.IsNegative, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(1, 6)));
-        if (!wholeNumberTestData1.Any(t => t.Expected == 0)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0) });
-        if (!wholeNumberTestData1.Any(t => t.Expected > 1 && t.Expected < 10)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(1, 1, true)) });
-        if (!wholeNumberTestData1.Any(t => t.Expected > 1 && t.IsNegative)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (Sign: "-", IsNegative: true, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(1, 1, true)) });
-        if (!wholeNumberTestData1.Any(t => t.Expected > 10)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: GetRandomIntByLength(2, 6, true)) });
-        if (!wholeNumberTestData1.Any(t => t.ZeroPad == 0)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (Sign: string.Empty, IsNegative: false, ZeroPad: 0, Expected: GetRandomIntByLength(1, 6)) });
-        if (!wholeNumberTestData1.Any(t => t.ZeroPad > 0)) wholeNumberTestData1 = wholeNumberTestData1.Concat(new[] { (Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(1, 4), Expected: GetRandomIntByLength(1, 6)) });
-        var wholeNumberTestData2 = wholeNumberTestData1.Select(t => (OpenPad: SharedRandom.Next(0, 6), t.Sign, t.IsNegative, t.ZeroPad, t.Expected, ClosePad: SharedRandom.Next(0, 6)));
-        if (!wholeNumberTestData2.Any(t => t.OpenPad == 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: 0,
-                Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.OpenPad > 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.ClosePad == 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: 0
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.ClosePad > 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.OpenPad == 0 && t.ClosePad == 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: 0,
-                Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: 0
-            ) });
-        if (!wholeNumberTestData2.Any(t => t.OpenPad > 0 && t.ClosePad > 0)) wholeNumberTestData2 = wholeNumberTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                Sign: string.Empty, IsNegative: false, ZeroPad: SharedRandom.Next(-9, 4), Expected: 0,
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        var numDenTestData1 = signChars.SelectMany(numSign =>
-            signChars.SelectMany(denSign =>
-                separatorChars.Select(s =>
-                    (
-                        NumSign: numSign.Sign, NumNegative: numSign.IsNegative, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                        PadSepLeft: SharedRandom.Next(-6, 6),
-                        Separator: s,
-                        PadSepRight: SharedRandom.Next(-6, 6),
-                        DenSign: numSign.Sign, DenNegative: numSign.IsNegative, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                    )
-                )
-            )
-        );
-        if (!numDenTestData1.Any(t => t.ExpectedNum == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: 0,
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.ExpectedNum > 1 && t.ExpectedNum < 10)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 1, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.ExpectedDen == 1)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: 1
-                )
-            });
-        if (!numDenTestData1.Any(t => t.ExpectedDen > 10)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(2, 6, true)
-                )
-            });
-
-        if (!numDenTestData1.Any(t => t.PadSepLeft == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: 0,
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepLeft > 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(1, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(-6, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepRight == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: 0,
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepRight > 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: SharedRandom.Next(-6, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(1, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepLeft == 0 && t.PadSepRight == 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6, true),
-                    PadSepLeft: 0,
-                    Separator: separatorChars[0],
-                    PadSepRight: 0,
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        if (!numDenTestData1.Any(t => t.PadSepLeft > 0 && t.PadSepRight > 0)) numDenTestData1 = numDenTestData1.Concat(new[]
-            {
-                (
-                    NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(2, 6, true),
-                    PadSepLeft: SharedRandom.Next(1, 6),
-                    Separator: separatorChars[0],
-                    PadSepRight: SharedRandom.Next(1, 6),
-                    DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                )
-            });
-        var numDenTestData2 = numDenTestData1.Select(t =>
-        (
-            OpenPad: SharedRandom.Next(1, 6),
-            t.NumSign, t.NumNegative, t.NumZeroPad, t.ExpectedNum,
-            t.PadSepLeft, t.Separator, t.PadSepRight,
-            t.DenSign, t.DenNegative, t.DenZeroPad, t.ExpectedDen,
-            ClosePad: SharedRandom.Next(1, 6)
-        ));
-        if (!numDenTestData2.Any(t => t.OpenPad == 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: 0,
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!numDenTestData2.Any(t => t.OpenPad > 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(-6, 6)
-            ) });
-        if (!numDenTestData2.Any(t => t.ClosePad == 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: 0
-            ) });
-        if (!numDenTestData2.Any(t => t.ClosePad > 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(-6, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        if (!numDenTestData2.Any(t => t.OpenPad == 0 && t.ClosePad == 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: 0,
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: 0
-            ) });
-        if (!numDenTestData2.Any(t => t.OpenPad > 0 && t.ClosePad > 0)) numDenTestData2 = numDenTestData2.Concat(new[] { (
-                OpenPad: SharedRandom.Next(1, 6),
-                NumSign: string.Empty, NumNegative: false, NumZeroPad: SharedRandom.Next(-9, 4), ExpectedNum: GetRandomIntByLength(1, 6),
-                PadSepLeft: 0, Separator: separatorChars[0], PadSepRight: 0,
-                DenSign: string.Empty, DenNegative: false, DenZeroPad: SharedRandom.Next(-9, 4), GetRandomIntByLength(1, 6, true),
-                ClosePad: SharedRandom.Next(1, 6)
-            ) });
-        var mixedTestData1 = wholeNumberTestData1.SelectMany(w =>
-            signChars.SelectMany(numSign =>
-                signChars.SelectMany(denSign =>
-                    separatorChars.Select(s =>
-                        (
-                            WnSign: w.Sign, WnIsNegative: w.IsNegative, WnZeroPad: w.ZeroPad, ExpectedWn: w.Expected,
-                            NumPadL: SharedRandom.Next((numSign.Sign.Length > 0) ? -6 : 1, 6),
-                            NumSign: numSign.Sign,
-                            NumPadR: (numSign.Sign.Length > 0) ? SharedRandom.Next(-6, 6) : 0,
-                            NumNegative: numSign.IsNegative, NumZeroPad: SharedRandom.Next(-9, 4),
-                            ExpectedNum: GetRandomIntByLength(1, 6),
-                            PadSepLeft: SharedRandom.Next(-6, 6),
-                            Separator: s,
-                            PadSepRight: SharedRandom.Next(-6, 6),
-                            DenSign: numSign.Sign, DenNegative: numSign.IsNegative, DenZeroPad: SharedRandom.Next(-9, 4), ExpectedDen: GetRandomIntByLength(1, 6, true)
-                        )
-                    )
-                )
-            )
-        );
-        var mixedTestData2 = mixedTestData1.Select(t =>
-        (
-            OpenPad: SharedRandom.Next(1, 6),
-            t.WnSign, t.WnIsNegative, t.WnZeroPad, t.ExpectedWn,
-            t.NumPadL, t.NumSign, t.NumPadR, t.NumNegative, t.NumZeroPad, t.ExpectedNum,
-            t.PadSepLeft, t.Separator, t.PadSepRight, t.DenSign, t.DenNegative, t.DenZeroPad, t.ExpectedDen,
-            ClosePad: SharedRandom.Next(1, 6)
-        ));
-        var wsChars = "      \t";
-        foreach (var (sign, isNegative, zeroPad, expected) in wholeNumberTestData1)
-        {
-            var fStr = $"{sign}{new string('0', zeroPad)}{expected}";
-            var result = Fraction.TryParseMixedFraction(fStr.AsSpan(), style, provider, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualWholeNumber, Is.EqualTo(isNegative ? expected * -1 : expected), fStr);
-            Assert.That(actualNumerator, Is.EqualTo(0), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(1), fStr);
-        }
-        foreach (var (openPad, sign, isNegative, zeroPad, expected, closePad) in wholeNumberTestData2)
-        {
-            var fStr = $"({GetRandomString(openPad, wsChars)}{sign}{new string('0', zeroPad)}{expected}{GetRandomString(closePad, wsChars)})";
-            var result = Fraction.TryParseMixedFraction(fStr.AsSpan(), style, provider, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualWholeNumber, Is.EqualTo(isNegative ? expected * -1 : expected), fStr);
-            Assert.That(actualNumerator, Is.EqualTo(0), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(1), fStr);
-        }
-        foreach (var (numSign, numNegative, numZeroPad, expectedNum, padSepLeft, separator, padSepRight, denSign, denNegative, denZeroPad, expectedDen) in numDenTestData1)
-        {
-            var fStr = $"{numSign}{new string('0', numZeroPad)}{expectedNum}{GetRandomString(padSepLeft, wsChars)}{separator}{GetRandomString(padSepRight, wsChars)}{denSign}{new string('0', denZeroPad)}{expectedDen}";
-            var result = Fraction.TryParseMixedFraction(fStr.AsSpan(), style, provider, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualWholeNumber, Is.EqualTo(0), fStr);
-            Assert.That(actualNumerator, Is.EqualTo(numNegative ? expectedNum * -1 : expectedNum), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(denNegative ? expectedDen * -1 : expectedDen), fStr);
-        }
-        foreach (var (openPad, numSign, numNegative, numZeroPad, expectedNum, padSepLeft, separator, padSepRight, denSign, denNegative, denZeroPad, expectedDen, closePad) in numDenTestData2)
-        {
-            var fStr = $"({GetRandomString(openPad, wsChars)}{numSign}{new string('0', numZeroPad)}{expectedNum}{GetRandomString(padSepLeft, wsChars)}{separator}{GetRandomString(padSepRight, wsChars)}{denSign}{new string('0', denZeroPad)}{expectedDen}{GetRandomString(closePad, wsChars)})";
-            var result = Fraction.TryParseMixedFraction(fStr.AsSpan(), style, provider, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualWholeNumber, Is.EqualTo(0), fStr);
-            Assert.That(actualNumerator, Is.EqualTo(numNegative ? expectedNum * -1 : expectedNum), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(denNegative ? expectedDen * -1 : expectedDen), fStr);
-        }
-        foreach (var (wnSign, wnIsNegative, wnZeroPad, wxpectedWn, numPadL, numSign, numPadR, numNegative, numZeroPad, expectedNum, padSepLeft, sep, padSepRight, denSign, denNegative, denZeroPad, expectedDen) in mixedTestData1)
-        {
-            var fStr = $"{wnSign}{wnZeroPad}{wxpectedWn}{numPadL}{numSign}{numPadR}{new string('0', numZeroPad)}{expectedNum}{GetRandomString(padSepLeft, wsChars)}{sep}{GetRandomString(padSepRight, wsChars)}{denSign}{new string('0', denZeroPad)}{expectedDen}";
-            var result = Fraction.TryParseMixedFraction(fStr.AsSpan(), style, provider, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualWholeNumber, Is.EqualTo(0), fStr);
-            Assert.That(actualNumerator, Is.EqualTo(numNegative ? expectedNum * -1 : expectedNum), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(denNegative ? expectedDen * -1 : expectedDen), fStr);
-        }
-        foreach (var (openPad, wnSign, wnIsNegative, wnZeroPad, wxpectedWn, numPadL, numSign, numPadR, numNegative, numZeroPad, expectedNum, padSepLeft, sep, padSepRight, denSign, denNegative, denZeroPad, expectedDen, closePad) in mixedTestData2)
-        {
-            var fStr = $"({GetRandomString(openPad, wsChars)}{wnSign}{wnZeroPad}{wxpectedWn}{numPadL}{numSign}{numPadR}{new string('0', numZeroPad)}{expectedNum}{GetRandomString(padSepLeft, wsChars)}{sep}{GetRandomString(padSepRight, wsChars)}{denSign}{new string('0', denZeroPad)}{expectedDen}{GetRandomString(closePad, wsChars)})";
-            var result = Fraction.TryParseMixedFraction(fStr.AsSpan(), style, provider, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
-            Assert.That(result, Is.True, fStr);
-            Assert.That(actualWholeNumber, Is.EqualTo(0), fStr);
-            Assert.That(actualNumerator, Is.EqualTo(numNegative ? expectedNum * -1 : expectedNum), fStr);
-            Assert.That(actualDenominator, Is.EqualTo(denNegative ? expectedDen * -1 : expectedDen), fStr);
-        }
+        var result = Fraction.TryParseMixedFraction(fractionString.AsSpan(), style, CultureInfo.CurrentCulture.NumberFormat, out int actualWholeNumber, out int actualNumerator, out int actualDenominator);
+        Assert.That(result, Is.True);
+        Assert.That(actualWholeNumber, Is.EqualTo(expectedWholeNumber));
+        Assert.That(actualNumerator, Is.EqualTo(expectedNumerator));
+        Assert.That(actualDenominator, Is.EqualTo(expectedDenominator));
     }
 
     [Test, Explicit]
@@ -827,7 +296,7 @@ public partial class FractionTests
                 }
             }
         }
-        
+
         foreach (var (numeratorSign, expectedNumNegative) in new[] { (string.Empty, false), ("+", false), ("-", true), ("−", true) })
         {
             foreach (var (denominatorSign, expectedDenNegative) in new[] { (string.Empty, false), ("+", false), ("-", true), ("−", true) })
@@ -847,7 +316,7 @@ public partial class FractionTests
                         Assert.That(denominator, Is.EqualTo(expectedDenominiator), fractionString);
                         Assert.That(isNegative, Is.EqualTo(expectedNumNegative != expectedDenNegative), fractionString);
                     });
-                    
+
                     expectedDenominiator = GetRandomIntByLength(2, 6).ToString();
                     fractionString = fractionString = $"{numeratorSign}{expectedNumerator}{separator}{denominatorSign}{expectedDenominiator}";
                     returnValue = Fraction.TryGetSimpleFractionTokens(fractionString, out numerator, out denominator, out isNegative);
@@ -1033,7 +502,7 @@ public partial class FractionTests
             yield return ("−", GetRandomIntByLength(1, 1).ToString(), true);
             yield return ("−", GetRandomIntByLength(2, 6).ToString(), true);
         }
-        
+
         IEnumerable<(string NumeratorSign, string ExpectedNumerator, string separator, string DenominatorSign, string ExpectedDenominator, bool IsNegative)> getSimpleFractionTests()
         {
             foreach (string separator in new char[] { '∕', '/' }.SelectMany(c => getPadStrings().SelectMany(l => getPadStrings().Select(r => $"{l}{c}{r}"))))
@@ -1159,7 +628,7 @@ public partial class FractionTests
                 yield return ("−", GetRandomIntByLength(2, 6).ToString(), separator, "−", GetRandomIntByLength(2, 6).ToString(), false);
             }
         }
-        
+
         foreach (var (wholeNumberSign, expectedWholeNumber, expectedNegative1) in getWholeNumberTests())
         {
             var fractionString = $"{wholeNumberSign}{expectedWholeNumber}";
