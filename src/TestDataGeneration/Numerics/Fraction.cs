@@ -485,7 +485,7 @@ public static class Fraction
         where T : struct, IBinaryNumber<T>
     {
         if (T.IsZero(denominator) || T.IsNaN(denominator)) return Format_NaN;
-        if (string.IsNullOrEmpty(format)) format  = Default_Number_Format;
+        if (string.IsNullOrEmpty(format)) format = Default_Number_Format;
         if (T.IsZero(numerator)) return wholeNumber.ToString(format, provider ?? _defaultFormatInfo);
         var p = provider ?? _defaultFormatInfo;
         var str = numerator.ToString(format, p) + Separator_Numerator_Denominator + denominator.ToString(format, p);
@@ -607,27 +607,16 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
     public static bool TryMatchSeparator(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
     {
-        endIndex = startIndex;
-        if (endIndex < s.Length && s[endIndex] == '(')
-        {
-            int level = 1;
-            while (++endIndex < s.Length)
+        if (startIndex < 0 || startIndex > s.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+        if (startIndex < s.Length)
+            switch (s[startIndex])
             {
-                char c = s[endIndex];
-                if (c == ')')
-                {
-                    level--;
-                    if (level == 0)
-                    {
-                        endIndex++;
-                        return true;
-                    }
-                }
-                else if (c == '(')
-                    level++;
+                case AltSeparator_Numerator_Denominator:
+                case Separator_Numerator_Denominator:
+                    endIndex = startIndex + 1;
+                    return true;
             }
-            endIndex = startIndex;
-        }
+        endIndex = startIndex;
         return false;
     }
 
@@ -882,7 +871,7 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
         nextIndex = numberStartIndex;
         return false;
     }
-    
+
     /// <summary>
     /// Parses the fraction component tokens from a string representation of a fraction.
     /// </summary>
@@ -1028,7 +1017,7 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
             denominator = string.Empty;
             return true;
         }
-        
+
         int denominatorStartIndex = IndexOfNextNonWhiteSpace(fractionString, numeratorEndIndex);
         if (denominatorStartIndex < 0)
         {
