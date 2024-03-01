@@ -1,0 +1,498 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
+using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Serialization;
+
+namespace TestDataGeneration.Numerics;
+
+[StructLayout(LayoutKind.Explicit)]
+public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, IMinMaxValue<IPV4Address>, IUnsignedNumber<IPV4Address>
+{
+    public const char SeparatorChar = '.';
+
+    private static readonly IPV4Address _one = new(1U);
+    [FieldOffset(0)] private readonly uint _value;
+    [FieldOffset(0)] private readonly byte _octet3;
+    [FieldOffset(1)] private readonly byte _octet2;
+    [FieldOffset(2)] private readonly byte _octet1;
+    [FieldOffset(3)] private readonly byte _octet0;
+
+    public byte Octet0 { get { return _octet0; } }
+    
+    public byte Octet1 { get { return _octet1; } }
+    
+    public byte Octet2 { get { return _octet2; } }
+    
+    public byte Octet3 { get { return _octet3; } }
+    
+    static IPV4Address INumberBase<IPV4Address>.One => _one;
+
+    static int INumberBase<IPV4Address>.Radix => 10;
+
+    static IPV4Address INumberBase<IPV4Address>.Zero => MinValue;
+
+    static IPV4Address IAdditiveIdentity<IPV4Address, IPV4Address>.AdditiveIdentity => MinValue;
+
+    static IPV4Address IMultiplicativeIdentity<IPV4Address, IPV4Address>.MultiplicativeIdentity => _one;
+
+    public static IPV4Address MaxValue => new(uint.MaxValue);
+
+    public static IPV4Address MinValue => new(0u);
+
+    private IPV4Address(uint value)
+    {
+        _octet0 = _octet1 = _octet2 = _octet3 = 0;
+        _value = value;
+    }
+
+    public static IPV4Address FromAddress(uint address)
+    {
+        var bytes = BitConverter.GetBytes(address);
+        return new IPV4Address(bytes[3], bytes[2], bytes[1], bytes[0]);
+    }
+
+    public IPV4Address(byte octet0, byte octet1, byte octet2, byte octet3)
+    {
+        _value = 0;
+        _octet0 = octet0;
+        _octet1 = octet1;
+        _octet2 = octet2;
+        _octet3 = octet3;
+    }
+
+    public static IPV4Address AsNetMask(byte blockBitCount)
+    {
+        if (blockBitCount > IPV4Range.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+        return new IPV4Address(uint.MaxValue >> (32 - blockBitCount));
+    }
+
+    public IPV4Address AsMasked(IPV4Address netMask) => new IPV4Address(_value & netMask._value);
+
+    public IPV4Address AsEndOfSegment(byte blockBitCount)
+    {
+        if (blockBitCount > IPV4Range.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+        return new IPV4Address(_value | uint.MaxValue << blockBitCount);
+    }
+
+    static IPV4Address INumberBase<IPV4Address>.Abs(IPV4Address value) => value;
+
+    public int CompareTo(IPV4Address other) => _value.CompareTo(other._value);
+
+    public int CompareTo(object? obj) => _value.CompareTo((obj is IPV4Address other) ? other._value : obj);
+
+    public bool Equals(IPV4Address other) => _value.Equals(other._value);
+
+    public override bool Equals([NotNullWhen(true)] object? obj) => _value.Equals((obj is IPV4Address other) ? other._value : obj);
+
+    public uint GetAddress() => BitConverter.ToUInt32(new byte[] { _octet0, _octet1, _octet2, _octet3 }, 0);
+        
+    int IBinaryInteger<IPV4Address>.GetByteCount() => sizeof(uint);
+
+    public override int GetHashCode() => _value.GetHashCode();
+
+    int IBinaryInteger<IPV4Address>.GetShortestBitLength() => sizeof(uint);
+
+    TypeCode IConvertible.GetTypeCode() => TypeCode.UInt32;
+
+    static bool INumberBase<IPV4Address>.IsCanonical(IPV4Address value) => true;
+
+    static bool INumberBase<IPV4Address>.IsComplexNumber(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsEvenInteger(IPV4Address value) => uint.IsEvenInteger(value._value);
+
+    static bool INumberBase<IPV4Address>.IsFinite(IPV4Address value) => true;
+
+    static bool INumberBase<IPV4Address>.IsImaginaryNumber(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsInfinity(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsInteger(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsNaN(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsNegative(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsNegativeInfinity(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsNormal(IPV4Address value) => true;
+
+    static bool INumberBase<IPV4Address>.IsOddInteger(IPV4Address value) => uint.IsOddInteger(value._value);
+
+    static bool INumberBase<IPV4Address>.IsPositive(IPV4Address value) => true;
+
+    static bool INumberBase<IPV4Address>.IsPositiveInfinity(IPV4Address value) => false;
+
+    static bool IBinaryNumber<IPV4Address>.IsPow2(IPV4Address value) => uint.IsPow2(value._value);
+
+    static bool INumberBase<IPV4Address>.IsRealNumber(IPV4Address value) => true;
+
+    static bool INumberBase<IPV4Address>.IsSubnormal(IPV4Address value) => false;
+
+    static bool INumberBase<IPV4Address>.IsZero(IPV4Address value) => value._value == 0u;
+
+    static IPV4Address IBinaryNumber<IPV4Address>.Log2(IPV4Address value) => new(Convert.ToUInt32(Math.Log2(value._value)));
+
+    static IPV4Address INumberBase<IPV4Address>.MaxMagnitude(IPV4Address x, IPV4Address y) => (x._value < y._value) ? y : x;
+
+    static IPV4Address INumberBase<IPV4Address>.MaxMagnitudeNumber(IPV4Address x, IPV4Address y) => (x._value < y._value) ? y : x;
+
+    static IPV4Address INumberBase<IPV4Address>.MinMagnitude(IPV4Address x, IPV4Address y) => (x._value < y._value) ? x : y;
+
+    static IPV4Address INumberBase<IPV4Address>.MinMagnitudeNumber(IPV4Address x, IPV4Address y) => (x._value < y._value) ? x : y;
+
+    public static IPV4Address Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider = null)
+    {
+        if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
+                byte.TryParse(s0, style, provider, out byte o0) && byte.TryParse(s1, style, provider, out byte o1) && byte.TryParse(s2, style, provider, out byte o2) && byte.TryParse(s3, style, provider, out byte o3))
+            return new(o0, o1, o2, o3);
+        throw new FormatException($"The input string '{s}' was not in a correct format.");
+    }
+
+    public static IPV4Address Parse(string s, NumberStyles style, IFormatProvider? provider = null)
+    {
+        ArgumentNullException.ThrowIfNull(s);
+        return Parse(s.AsSpan(), style, provider);
+    }
+
+    public static IPV4Address Parse(ReadOnlySpan<char> s, IFormatProvider? provider = null)
+    {
+        if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
+                byte.TryParse(s0, provider, out byte o0) && byte.TryParse(s1, provider, out byte o1) && byte.TryParse(s2, provider, out byte o2) && byte.TryParse(s3, provider, out byte o3))
+            return new(o0, o1, o2, o3);
+        throw new FormatException($"The input string '{s}' was not in a correct format.");
+    }
+
+    public static IPV4Address Parse(string s, IFormatProvider? provider = null)
+    {
+        ArgumentNullException.ThrowIfNull(s);
+        return Parse(s.AsSpan(), provider);
+    }
+
+    static IPV4Address IBinaryInteger<IPV4Address>.PopCount(IPV4Address value) => new(uint.PopCount(value._value));
+
+    bool IConvertible.ToBoolean(IFormatProvider? provider) => ((IConvertible)_value).ToBoolean(provider);
+
+    byte IConvertible.ToByte(IFormatProvider? provider) => ((IConvertible)_value).ToByte(provider);
+
+    char IConvertible.ToChar(IFormatProvider? provider) => ((IConvertible)_value).ToChar(provider);
+
+    DateTime IConvertible.ToDateTime(IFormatProvider? provider) => ((IConvertible)_value).ToDateTime(provider);
+
+    decimal IConvertible.ToDecimal(IFormatProvider? provider) => ((IConvertible)_value).ToDecimal(provider);
+
+    double IConvertible.ToDouble(IFormatProvider? provider) => ((IConvertible)_value).ToDouble(provider);
+
+    short IConvertible.ToInt16(IFormatProvider? provider) => ((IConvertible)_value).ToInt16(provider);
+
+    int IConvertible.ToInt32(IFormatProvider? provider) => ((IConvertible)_value).ToInt32(provider);
+
+    long IConvertible.ToInt64(IFormatProvider? provider) => ((IConvertible)_value).ToInt64(provider);
+
+    sbyte IConvertible.ToSByte(IFormatProvider? provider) => ((IConvertible)_value).ToSByte(provider);
+
+    float IConvertible.ToSingle(IFormatProvider? provider) => ((IConvertible)_value).ToSingle(provider);
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => (format is null && formatProvider is null) ? ToString() :
+        $"{_octet0.ToString(format, formatProvider)}.{_octet1.ToString(format, formatProvider)}.{_octet2.ToString(format, formatProvider)}.{_octet3.ToString(format, formatProvider)}";
+
+    string IConvertible.ToString(IFormatProvider? provider) => (provider is null) ? ToString() :
+        $"{_octet0.ToString(provider)}.{_octet1.ToString(provider)}.{_octet2.ToString(provider)}.{_octet3.ToString(provider)}";
+
+    public override string ToString() => $"{_octet0}.{_octet1}.{_octet2}.{_octet3}";
+
+    object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
+    {
+        ArgumentNullException.ThrowIfNull(conversionType);
+        if (conversionType.Equals(typeof(uint))) return _value;
+        if (conversionType.Equals(typeof(IPV4Address))) return this;
+        return ((IConvertible)_value).ToType(conversionType, provider);
+    }
+
+    ushort IConvertible.ToUInt16(IFormatProvider? provider) => ((IConvertible)_value).ToUInt16(provider);
+
+    uint IConvertible.ToUInt32(IFormatProvider? provider) => _value;
+
+    ulong IConvertible.ToUInt64(IFormatProvider? provider) => ((IConvertible)_value).ToUInt64(provider);
+
+    static IPV4Address IBinaryInteger<IPV4Address>.TrailingZeroCount(IPV4Address value)
+    {
+        var s = value._value.ToString();
+        int e = s.Length;
+        int i = e - 1;
+        if (s[i] != '0') return MinValue;
+        while (i > 0)
+        {
+            var n = i - 1;
+            if (s[n] != '0') break;
+            i = n;
+        }
+        return new((uint)(e - i));
+    }
+
+    static bool INumberBase<IPV4Address>.TryConvertFromChecked<TOther>(TOther value, out IPV4Address result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<IPV4Address>.TryConvertFromSaturating<TOther>(TOther value, out IPV4Address result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<IPV4Address>.TryConvertFromTruncating<TOther>(TOther value, out IPV4Address result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<IPV4Address>.TryConvertToChecked<TOther>(IPV4Address value, out TOther result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<IPV4Address>.TryConvertToSaturating<TOther>(IPV4Address value, out TOther result)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool INumberBase<IPV4Address>.TryConvertToTruncating<TOther>(IPV4Address value, out TOther result)
+    {
+        throw new NotImplementedException();
+    }
+
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+        var end = destination.Length;
+        if (!_octet0.TryFormat(destination, out charsWritten, format, provider) || charsWritten >= end) return false;
+        destination[charsWritten++] = SeparatorChar;
+        if (charsWritten == end) return false;
+        if (_octet1.TryFormat(destination[charsWritten..], out int cw, format, provider))
+        {
+            if ((charsWritten += cw) >= end) return false;
+            destination[charsWritten++] = SeparatorChar;
+            if (charsWritten == end) return false;
+            if (_octet2.TryFormat(destination[charsWritten..], out cw, format, provider))
+            {
+                if ((charsWritten += cw) >= end) return false;
+                destination[charsWritten++] = SeparatorChar;
+                if (charsWritten == end) return false;
+                var result = _octet3.TryFormat(destination[charsWritten..], out cw, format, provider);
+                charsWritten += cw;
+                return result;
+            }
+        }
+        charsWritten += cw;
+        return false;
+    }
+
+    private static bool TryGetNumberSpans(ReadOnlySpan<char> s, out ReadOnlySpan<char> o0, out ReadOnlySpan<char> o1, out ReadOnlySpan<char> o2, out ReadOnlySpan<char> o3)
+    {
+        int index = s.IndexOf(SeparatorChar);
+        if (index < 0)
+        {
+            o0 = s;
+            o1 = o2 = o3 = ReadOnlySpan<char>.Empty;
+        }
+        else
+        {
+            o0 = s[0..index];
+            if (++index < s.Length)
+            {
+                if ((index = (s = s[index..]).IndexOf(SeparatorChar)) < 0)
+                {
+                    o1 = s;
+                    o2 = o3 = ReadOnlySpan<char>.Empty;
+                }
+                else
+                {
+                    o1 = s[0..index];
+                    if (++index < s.Length)
+                    {
+                        if ((index = (s = s[index..]).IndexOf(SeparatorChar)) < 0)
+                        {
+                            o2 = s;
+                            o3 = ReadOnlySpan<char>.Empty;
+                        }
+                        else
+                        {
+                            o2 = s[0..index];;
+                            if (++index < s.Length)
+                            {
+                                if ((index = (s = s[index..]).IndexOf(SeparatorChar)) < 0)
+                                {
+                                    o3 = s;
+                                    return o0.Length > 0 && o1.Length > 0 && o2.Length > 0 && o3.Length > 0;
+                                }
+                                o3 = s[0..index];
+                            }
+                            else
+                                o3 = ReadOnlySpan<char>.Empty;
+                        }
+                    }
+                    else
+                        o2 = o3 = ReadOnlySpan<char>.Empty;
+                }
+            }
+            else
+                o1 = o2 = o3 = ReadOnlySpan<char>.Empty;
+        }
+        return false;
+    }
+    
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
+            byte.TryParse(s0, style, provider, out byte o0) && byte.TryParse(s1, style, provider, out byte o1) && byte.TryParse(s2, style, provider, out byte o2) && byte.TryParse(s3, style, provider, out byte o3))
+        {
+            result = new(o0, o1, o2, o3);
+            return true;
+        }
+        result = MinValue;
+        return false;
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            result = MinValue;
+            return false;
+        }
+        return TryParse(s.AsSpan(), style, provider, out result);
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
+            byte.TryParse(s0, provider, out byte o0) && byte.TryParse(s1, provider, out byte o1) && byte.TryParse(s2, provider, out byte o2) && byte.TryParse(s3, provider, out byte o3))
+        {
+            result = new(o0, o1, o2, o3);
+            return true;
+        }
+        result = MinValue;
+        return false;
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            result = MinValue;
+            return false;
+        }
+        return TryParse(s.AsSpan(), provider, out result);
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
+            byte.TryParse(s0, style, null, out byte o0) && byte.TryParse(s1, style, null, out byte o1) && byte.TryParse(s2, style, null, out byte o2) && byte.TryParse(s3, style, null, out byte o3))
+        {
+            result = new(o0, o1, o2, o3);
+            return true;
+        }
+        result = MinValue;
+        return false;
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, NumberStyles style, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            result = MinValue;
+            return false;
+        }
+        return TryParse(s.AsSpan(), style, out result);
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
+            byte.TryParse(s0, out byte o0) && byte.TryParse(s1, out byte o1) && byte.TryParse(s2, out byte o2) && byte.TryParse(s3, out byte o3))
+        {
+            result = new(o0, o1, o2, o3);
+            return true;
+        }
+        result = MinValue;
+        return false;
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out IPV4Address result)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            result = MinValue;
+            return false;
+        }
+        return TryParse(s.AsSpan(), out result);
+    }
+
+    static bool IBinaryInteger<IPV4Address>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out IPV4Address value)
+    {
+        throw new NotImplementedException();
+    }
+
+    static bool IBinaryInteger<IPV4Address>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out IPV4Address value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static IPV4Address operator +(IPV4Address value) => new(+value._value);
+
+    public static IPV4Address operator +(IPV4Address left, IPV4Address right) => new(left._value + right._value);
+
+    public static IPV4Address operator -(IPV4Address value) => new((uint)-value._value);
+
+    public static IPV4Address operator -(IPV4Address left, IPV4Address right) => new(left._value - right._value);
+
+    public static IPV4Address operator ~(IPV4Address value) => new(~value._value);
+
+    public static IPV4Address operator ++(IPV4Address value) => new(value._value + 1u);
+
+    public static IPV4Address operator --(IPV4Address value) => new(value._value - 1u);
+
+    public static IPV4Address operator *(IPV4Address left, IPV4Address right) => new(left._value * right._value);
+
+    public static IPV4Address operator /(IPV4Address left, IPV4Address right) => new(left._value / right._value);
+
+    public static IPV4Address operator %(IPV4Address left, IPV4Address right) => new(left._value % right._value);
+
+    public static IPV4Address operator &(IPV4Address left, IPV4Address right) => new(left._value & right._value);
+
+    public static IPV4Address operator |(IPV4Address left, IPV4Address right) => new(left._value | right._value);
+
+    public static IPV4Address operator ^(IPV4Address left, IPV4Address right) => new(left._value ^ right._value);
+
+    public static IPV4Address operator <<(IPV4Address value, int shiftAmount) => new(value._value << shiftAmount);
+
+    public static IPV4Address operator >>(IPV4Address value, int shiftAmount) => new(value._value >> shiftAmount);
+
+    public static bool operator ==(IPV4Address left, IPV4Address right) => left._value.Equals(right._value);
+
+    public static bool operator !=(IPV4Address left, IPV4Address right) => !left._value.Equals(right._value);
+
+    public static bool operator <(IPV4Address left, IPV4Address right) => left._value < right._value;
+
+    public static bool operator >(IPV4Address left, IPV4Address right) => left._value > right._value;
+
+    public static bool operator <=(IPV4Address left, IPV4Address right) => left._value <= right._value;
+
+    public static bool operator >=(IPV4Address left, IPV4Address right) => left._value >= right._value;
+
+    public static IPV4Address operator >>>(IPV4Address value, int shiftAmount) => new(value._value >>> shiftAmount);
+}
