@@ -122,10 +122,8 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     #region Static Methods
 
-    public static UnsignedFraction16 Abs(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    static UnsignedFraction16 INumberBase<UnsignedFraction16>.Abs(UnsignedFraction16 value) => value;
+
 
     public static UnsignedFraction16 Add(byte wholeNumber1, UnsignedFraction16 fraction1, byte wholeNumber2, UnsignedFraction16 fraction2, out byte sum)
     {
@@ -177,80 +175,17 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsEvenInteger(UnsignedFraction16 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (value.Numerator > value.Denominator && value.Numerator % value.Denominator == 0 && value.Numerator / value.Denominator % 2 == 0));
 
-    public static bool IsComplexNumber(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsInteger(UnsignedFraction16 value) => value.Denominator != 0 && (value.Numerator == 0 || (value.Numerator > value.Denominator && value.Numerator % value.Denominator == 0));
 
-    public static bool IsEvenInteger(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(UnsignedFraction16 value) => value.Denominator == 0;
 
-    public static bool IsFinite(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsOddInteger(UnsignedFraction16 value) => value.Denominator != 0 && value.Numerator != 0 && value.Numerator > value.Denominator && value.Numerator % value.Denominator == 0 &&
+        value.Numerator / value.Denominator % 2 != 0;
 
-    public static bool IsImaginaryNumber(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsInfinity(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsInteger(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNaN(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegative(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegativeInfinity(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNormal(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsOddInteger(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositive(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositiveInfinity(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPow2(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPow2(UnsignedFraction16 value) => double.IsPow2(value.ToDouble());
 
     public static bool IsProperFraction(UnsignedFraction16 value)
     {
@@ -262,50 +197,27 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsRealNumber(UnsignedFraction16 value) => value.Denominator != 0;
 
     public static bool IsSimplestForm(UnsignedFraction16 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsZero(UnsignedFraction16 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsZero(UnsignedFraction16 value) => value.Numerator == 0 && value.Denominator != 0;
 
     public static UnsignedFraction16 Log2(UnsignedFraction16 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedFraction16 MaxMagnitude(UnsignedFraction16 x, UnsignedFraction16 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedFraction16 MaxMagnitude(UnsignedFraction16 x, UnsignedFraction16 y) => (x > y) ? x : y;
 
-    public static UnsignedFraction16 MaxMagnitudeNumber(UnsignedFraction16 x, UnsignedFraction16 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedFraction16 MaxMagnitudeNumber(UnsignedFraction16 x, UnsignedFraction16 y) => (x > y) ? x : y;
 
-    public static UnsignedFraction16 MinMagnitude(UnsignedFraction16 x, UnsignedFraction16 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedFraction16 MinMagnitude(UnsignedFraction16 x, UnsignedFraction16 y) => (x < y) ? x : y;
 
-    public static UnsignedFraction16 MinMagnitudeNumber(UnsignedFraction16 x, UnsignedFraction16 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedFraction16 MinMagnitudeNumber(UnsignedFraction16 x, UnsignedFraction16 y) => (x < y) ? x : y;
 
     public static UnsignedFraction16 Multiply(byte wholeMultiplier, UnsignedFraction16 multiplierFraction, byte wholeMultiplicand, UnsignedFraction16 multiplicandFraction, out byte product)
     {
@@ -442,7 +354,7 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
 
     #region Static Properties
 
-    static int INumberBase<UnsignedFraction16>.Radix => 10;
+    static int INumberBase<UnsignedFraction16>.Radix => 2;
 
     static UnsignedFraction16 IAdditiveIdentity<UnsignedFraction16, UnsignedFraction16>.AdditiveIdentity => Zero;
 
@@ -491,6 +403,28 @@ public readonly struct UnsignedFraction16 : ISimpleFraction<UnsignedFraction16, 
     #endregion
 
     #region Static Methods
+
+    static bool INumberBase<UnsignedFraction16>.IsCanonical(UnsignedFraction16 value) => true;
+
+    static bool INumberBase<UnsignedFraction16>.IsComplexNumber(UnsignedFraction16 value) => false;
+
+    static bool INumberBase<UnsignedFraction16>.IsFinite(UnsignedFraction16 value) => true;
+
+    static bool INumberBase<UnsignedFraction16>.IsImaginaryNumber(UnsignedFraction16 value) => false;
+
+    static bool INumberBase<UnsignedFraction16>.IsInfinity(UnsignedFraction16 value) => false;
+
+    static bool INumberBase<UnsignedFraction16>.IsNegative(UnsignedFraction16 value) => false;
+
+    static bool INumberBase<UnsignedFraction16>.IsNegativeInfinity(UnsignedFraction16 value) => false;
+
+    static bool INumberBase<UnsignedFraction16>.IsNormal(UnsignedFraction16 value) => true;
+
+    static bool INumberBase<UnsignedFraction16>.IsPositive(UnsignedFraction16 value) => true;
+
+    static bool INumberBase<UnsignedFraction16>.IsPositiveInfinity(UnsignedFraction16 value) => false;
+
+    static bool INumberBase<UnsignedFraction16>.IsSubnormal(UnsignedFraction16 value) => false;
 
     static bool INumberBase<UnsignedFraction16>.TryConvertFromChecked<TOther>(TOther value, out UnsignedFraction16 result)
     {

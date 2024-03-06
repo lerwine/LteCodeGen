@@ -162,10 +162,8 @@ public readonly struct MixedFraction96 : IMixedSignedFraction<MixedFraction96, i
         throw new NotImplementedException();
     }
 
-    public static bool IsEvenInteger(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsEvenInteger(MixedFraction96 value) => value.Denominator != 0 && ((value.Numerator == 0) ? value.WholeNumber % 2 == 0 :
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0 && (value.WholeNumber + value.Numerator / value.Denominator) % 2 == 0));
 
     public static bool IsFinite(MixedFraction96 value)
     {
@@ -182,20 +180,16 @@ public readonly struct MixedFraction96 : IMixedSignedFraction<MixedFraction96, i
         throw new NotImplementedException();
     }
 
-    public static bool IsInteger(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsInteger(MixedFraction96 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0));
 
-    public static bool IsNaN(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
 
-    public static bool IsNegative(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(MixedFraction96 value) => value.Denominator == 0;
+
+    public static bool IsNegative(MixedFraction96 value) => value.Denominator != 0 &&
+        ((value.Numerator != 0) ? ((value.Denominator < 0) ?
+        ((value.Numerator > 0) ? value.WholeNumber > 0 : value.WholeNumber < 0) :
+        (value.Numerator < 0) ? value.WholeNumber > 0 : value.WholeNumber < 0) : value.WholeNumber < 0);
 
     public static bool IsNegativeInfinity(MixedFraction96 value)
     {
@@ -207,25 +201,20 @@ public readonly struct MixedFraction96 : IMixedSignedFraction<MixedFraction96, i
         throw new NotImplementedException();
     }
 
-    public static bool IsOddInteger(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsOddInteger(MixedFraction96 value) => value.Denominator != 0 && ((value.Numerator != 0) ? Math.Abs(value.Numerator) > Math.Abs(value.Denominator) &&
+        value.Numerator % value.Denominator == 0 && (value.WholeNumber + value.Numerator / value.Denominator) % 2 != 0 : value.WholeNumber % 2 != 0);
 
-    public static bool IsPositive(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPositive(MixedFraction96 value) => value.Denominator != 0 &&
+        ((value.Numerator == 0) ? value.WholeNumber >= 0 : ((value.Denominator < 0) ?
+        ((value.Numerator < 0) ? value.WholeNumber > 0 : value.WholeNumber < 0) :
+        (value.Numerator > 0) ? value.WholeNumber > 0 : value.WholeNumber < 0));
 
     public static bool IsPositiveInfinity(MixedFraction96 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsPow2(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPow2(MixedFraction96 value) => double.IsPow2(value.ToDouble());
 
     public static bool IsProperFraction(MixedFraction96 value)
     {
@@ -237,10 +226,7 @@ public readonly struct MixedFraction96 : IMixedSignedFraction<MixedFraction96, i
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsRealNumber(MixedFraction96 value) => value.Denominator != 0;
 
     public static bool IsSimplestForm(MixedFraction96 value)
     {
@@ -252,34 +238,31 @@ public readonly struct MixedFraction96 : IMixedSignedFraction<MixedFraction96, i
         throw new NotImplementedException();
     }
 
-    public static bool IsZero(MixedFraction96 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsZero(MixedFraction96 value) => value.Numerator == 0 && value.WholeNumber == 0 && value.Denominator != 0;
 
     public static MixedFraction96 Log2(MixedFraction96 value)
     {
         throw new NotImplementedException();
     }
 
-    public static MixedFraction96 MaxMagnitude(MixedFraction96 x, MixedFraction96 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static MixedFraction96 MaxMagnitude(MixedFraction96 x, MixedFraction96 y) => (x > y) ? x : y;
 
     public static MixedFraction96 MaxMagnitudeNumber(MixedFraction96 x, MixedFraction96 y)
     {
-        throw new NotImplementedException();
+        MixedFraction96 ax = Abs(x);
+        MixedFraction96 ay = Abs(y);
+        if ((ax > ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? y : x;
     }
 
-    public static MixedFraction96 MinMagnitude(MixedFraction96 x, MixedFraction96 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static MixedFraction96 MinMagnitude(MixedFraction96 x, MixedFraction96 y) => (x < y) ? x : y;
 
     public static MixedFraction96 MinMagnitudeNumber(MixedFraction96 x, MixedFraction96 y)
     {
-        throw new NotImplementedException();
+        MixedFraction96 ax = Abs(x);
+        MixedFraction96 ay = Abs(y);
+        if ((ax < ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? x : y;
     }
 
     public static MixedFraction96 Multiply(int wholeNumber, Fraction64 fraction)
@@ -377,7 +360,7 @@ public readonly struct MixedFraction96 : IMixedSignedFraction<MixedFraction96, i
 
     #region Static Properties
 
-    static int INumberBase<MixedFraction96>.Radix => 10;
+    static int INumberBase<MixedFraction96>.Radix => 2;
 
     static MixedFraction96 IAdditiveIdentity<MixedFraction96, MixedFraction96>.AdditiveIdentity => Zero;
 

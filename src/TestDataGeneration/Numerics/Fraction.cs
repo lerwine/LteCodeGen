@@ -8,7 +8,7 @@ namespace TestDataGeneration.Numerics;
 /// <summary>
 /// Helper class for fractional values.
 /// </summary>
-public static class Fraction
+public static partial class Fraction
 {
     /// <summary>
     /// The default separator for the <see cref="IFraction{TSelf, TValue}.Numerator" /> and <see cref="IFraction{TSelf, TValue}.Denominator" />.
@@ -25,6 +25,14 @@ public static class Fraction
     public const char Group_Open = '(';
 
     public const char Group_Close = ')';
+
+    public const char HexSpecifier_UC_Char = 'X';
+
+    public const char HexSpecifier_LC_Char = 'x';
+
+    public const char Alt_HexSpecifier_UC_Char = 'H';
+
+    public const char Alt_HexSpecifier_LC_Char = 'h';
 
     /// <summary>
     /// The default positive sign character.
@@ -620,6 +628,93 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
         return false;
     }
 
+    public static bool TryMatchHexSpecifier(this ReadOnlySpan<char> s, out int endIndex) => TryMatchHexSpecifier(s, 0, out endIndex);
+
+    public static bool TryMatchHexSpecifier(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
+    {
+        if (startIndex < 0 || startIndex > s.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+        if (startIndex < int.MaxValue && startIndex + 1 < s.Length && s[startIndex] == '0')
+            switch (s[startIndex + 1])
+            {
+                case HexSpecifier_LC_Char:
+                case HexSpecifier_UC_Char:
+                case Alt_HexSpecifier_LC_Char:
+                case Alt_HexSpecifier_UC_Char:
+                    endIndex = startIndex + 1;
+                    return true;
+            }
+        endIndex = startIndex;
+        return false;
+    }
+
+    public static bool TryMatchSequence(this ReadOnlySpan<char> s, IEnumerable<char> characters, out int endIndex) => TryMatchSequence(s, 0, characters, out endIndex);
+
+    public static bool TryMatchSequence(this ReadOnlySpan<char> s, int startIndex, IEnumerable<char> characters, out int endIndex)
+    {
+        if (startIndex < 0 || startIndex > s.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+        if (characters is null)
+        {
+            endIndex = startIndex;
+            return startIndex == s.Length;
+        }
+        var enumerator = characters.GetEnumerator();
+        endIndex = startIndex;
+        while (enumerator.MoveNext())
+        {
+            if (endIndex == s.Length || enumerator.Current != s[endIndex])
+            {
+                endIndex = startIndex;
+                return startIndex == s.Length;
+            }
+            endIndex++;
+        }
+        return true;
+    }
+
+    public static bool TryMatchSign(this ReadOnlySpan<char> s, NumberFormatInfo formatInfo, out int endIndex) => TryMatchSign(s, formatInfo, 0, out endIndex);
+
+    public static bool TryMatchSign(this ReadOnlySpan<char> s, NumberFormatInfo formatInfo, int startIndex, out int endIndex)
+    {
+        if (string.IsNullOrEmpty(formatInfo.NegativeSign))
+        {
+
+        }
+        else
+        {
+
+        }
+        if (startIndex < 0 || startIndex > s.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+        if (startIndex < s.Length)
+            switch (s[startIndex + 1])
+            {
+                case 'E':
+                case 'e':
+                    // [Ee][+-]?\d+
+                    endIndex = startIndex + 1;
+                    return true;
+            }
+        endIndex = startIndex;
+        return false;
+    }
+
+    public static bool TryMatchExponent(this ReadOnlySpan<char> s, out int endIndex) => TryMatchExponent(s, 0, out endIndex);
+
+    public static bool TryMatchExponent(this ReadOnlySpan<char> s, int startIndex, out int endIndex)
+    {
+        if (startIndex < 0 || startIndex > s.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+        if (startIndex < s.Length)
+            switch (s[startIndex + 1])
+            {
+                case 'E':
+                case 'e':
+                    // [Ee][+-]?\d+
+                    endIndex = startIndex + 1;
+                    return true;
+            }
+        endIndex = startIndex;
+        return false;
+    }
+
     public static bool IsOtherChar(char c) => c switch { Group_Open or Group_Close or Separator_Numerator_Denominator or AltSeparator_Numerator_Denominator => false, _ => !(char.IsWhiteSpace(c) || char.IsDigit(c)) };
 
     public static bool TryMatchOther(this ReadOnlySpan<char> s, out int endIndex) => TryMatchOther(s, 0, out endIndex);
@@ -667,6 +762,28 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
     public static bool TryParseSimpleFraction<T>(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out T numerator, out T denominator)
         where T : struct, IBinaryNumber<T>
     {
+        // NumberStyles.AllowLeadingWhite
+        // NumberStyles.AllowTrailingWhite
+
+        // NumberStyles.AllowLeadingSign
+        // NumberStyles.AllowTrailingSign
+        // System.Globalization.NumberFormatInfo.PositiveSign
+        // System.Globalization.NumberFormatInfo.NegativeSign
+
+        // NumberStyles.AllowDecimalPoint
+
+        // NumberStyles.AllowParentheses : Only one parenthesis for number
+        // NumberStyles.AllowThousands
+        // System.Globalization.NumberFormatInfo.NumberGroupSizes
+        // System.Globalization.NumberFormatInfo.NumberGroupSeparator
+
+        // NumberStyles.AllowCurrencySymbol
+        // System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator
+        // System.Globalization.NumberFormatInfo.CurrencyGroupSeparator
+        // System.Globalization.NumberFormatInfo.CurrencySymbol
+
+        // NumberStyles.AllowHexSpecifier
+        // "0x" or "&h" prefix for hex numbers - only if not NumberStyles.AllowHexSpecifier
         if (s.IsEmpty)
         {
             numerator = denominator = default;

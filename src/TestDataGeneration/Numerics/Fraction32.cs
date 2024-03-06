@@ -111,7 +111,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
     {
         if (Denominator == 0) return double.NaN;
         if (provider is null)
-            return (Numerator == 0) ? Convert.ToDouble(Numerator) :Convert.ToDouble(Numerator) / Convert.ToDouble(Denominator);
+            return (Numerator == 0) ? Convert.ToDouble(Numerator) : Convert.ToDouble(Numerator) / Convert.ToDouble(Denominator);
         return (Numerator == 0) ? Convert.ToDouble(Numerator, provider) : Convert.ToDouble(Numerator, provider) / Convert.ToDouble(Denominator, provider);
     }
 
@@ -124,10 +124,11 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
 
     #region Static Methods
 
-    public static Fraction32 Abs(Fraction32 value) => (value.Denominator == 0) ? value : new (short.Abs(value.Numerator), short.Abs(value.Denominator));
+    public static Fraction32 Abs(Fraction32 value) => (value.Denominator == 0) ? value : new(short.Abs(value.Numerator), short.Abs(value.Denominator));
 
     public static Fraction32 Add(short wholeNumber1, Fraction32 fraction1, short wholeNumber2, Fraction32 fraction2, out short sum)
     {
+        (short wholeNumber, short numerator, short denominator) = AddFractions(wholeNumber1, fraction1, wholeNumber2, fraction2);
         throw new NotImplementedException();
     }
 
@@ -176,80 +177,22 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsEvenInteger(Fraction32 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0 && value.Numerator / value.Denominator % 2 == 0));
 
-    public static bool IsComplexNumber(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsInteger(Fraction32 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0));
 
-    public static bool IsEvenInteger(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(Fraction32 value) => value.Denominator == 0;
 
-    public static bool IsFinite(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNegative(Fraction32 value) => value.Denominator != 0 && value.Numerator != 0 && ((value.Denominator < 0) ? value.Numerator > 0 : value.Numerator < 0);
 
-    public static bool IsImaginaryNumber(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsOddInteger(Fraction32 value) => value.Denominator != 0 && value.Numerator != 0 && Math.Abs(value.Numerator) > Math.Abs(value.Denominator) &&
+        value.Numerator % value.Denominator == 0 && value.Numerator / value.Denominator % 2 != 0;
 
-    public static bool IsInfinity(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPositive(Fraction32 value) => value.Denominator != 0 && (value.Numerator == 0 || ((value.Denominator < 0) ? value.Numerator < 0 : value.Numerator > 0));
 
-    public static bool IsInteger(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNaN(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegative(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegativeInfinity(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNormal(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsOddInteger(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositive(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositiveInfinity(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPow2(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPow2(Fraction32 value) => double.IsPow2(value.ToDouble());
 
     public static bool IsProperFraction(Fraction32 value)
     {
@@ -261,49 +204,38 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsRealNumber(Fraction32 value) => value.Denominator != 0;
 
     public static bool IsSimplestForm(Fraction32 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsZero(Fraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsZero(Fraction32 value) => value.Numerator == 0 && value.Denominator != 0;
 
     public static Fraction32 Log2(Fraction32 value)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction32 MaxMagnitude(Fraction32 x, Fraction32 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction32 MaxMagnitude(Fraction32 x, Fraction32 y) => (x > y) ? x : y;
 
     public static Fraction32 MaxMagnitudeNumber(Fraction32 x, Fraction32 y)
     {
-        throw new NotImplementedException();
+        Fraction32 ax = Abs(x);
+        Fraction32 ay = Abs(y);
+        if ((ax > ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? y : x;
     }
 
-    public static Fraction32 MinMagnitude(Fraction32 x, Fraction32 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction32 MinMagnitude(Fraction32 x, Fraction32 y) => (x < y) ? x : y;
 
     public static Fraction32 MinMagnitudeNumber(Fraction32 x, Fraction32 y)
     {
-        throw new NotImplementedException();
+        Fraction32 ax = Abs(x);
+        Fraction32 ay = Abs(y);
+        if ((ax < ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? x : y;
     }
 
     public static Fraction32 Multiply(short wholeMultiplier, Fraction32 multiplierFraction, short wholeMultiplicand, Fraction32 multiplicandFraction, out short product)
@@ -441,7 +373,7 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
 
     #region Static Properties
 
-    static int INumberBase<Fraction32>.Radix => 10;
+    static int INumberBase<Fraction32>.Radix => 2;
 
     static Fraction32 IAdditiveIdentity<Fraction32, Fraction32>.AdditiveIdentity => Zero;
 
@@ -490,6 +422,24 @@ public readonly struct Fraction32 : ISimpleSignedFraction<Fraction32, short, Mix
     #endregion
 
     #region Static Methods
+
+    static bool INumberBase<Fraction32>.IsCanonical(Fraction32 value) => true;
+
+    static bool INumberBase<Fraction32>.IsComplexNumber(Fraction32 value) => false;
+
+    static bool INumberBase<Fraction32>.IsFinite(Fraction32 value) => true;
+
+    static bool INumberBase<Fraction32>.IsImaginaryNumber(Fraction32 value) => false;
+
+    static bool INumberBase<Fraction32>.IsInfinity(Fraction32 value) => false;
+
+    static bool INumberBase<Fraction32>.IsNegativeInfinity(Fraction32 value) => false;
+
+    static bool INumberBase<Fraction32>.IsNormal(Fraction32 value) => true;
+
+    static bool INumberBase<Fraction32>.IsPositiveInfinity(Fraction32 value) => false;
+
+    static bool INumberBase<Fraction32>.IsSubnormal(Fraction32 value) => false;
 
     static bool INumberBase<Fraction32>.TryConvertFromChecked<TOther>(TOther value, out Fraction32 result)
     {

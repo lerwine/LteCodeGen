@@ -111,7 +111,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
     {
         if (Denominator == 0) return double.NaN;
         if (provider is null)
-            return (Numerator == 0) ? Convert.ToDouble(Numerator) : Convert.ToDouble(Numerator) / Convert.ToDouble(Denominator);
+            return (Numerator == 0) ? 0.0 : (Denominator == 1) ? Convert.ToDouble(Numerator) : Convert.ToDouble(Numerator) / Convert.ToDouble(Denominator);
         return (Numerator == 0) ? Convert.ToDouble(Numerator, provider) : Convert.ToDouble(Numerator, provider) / Convert.ToDouble(Denominator, provider);
     }
 
@@ -126,6 +126,15 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     public static Fraction64 Abs(Fraction64 value) => (value.Denominator == 0) ? value : new(int.Abs(value.Numerator), int.Abs(value.Denominator));
 
+    /// <summary>
+    /// Adds individual mixed fraction components.
+    /// </summary>
+    /// <param name="wholeNumber1">The first whole number.</param>
+    /// <param name="fraction1">The first fraction.</param>
+    /// <param name="wholeNumber2">The second whole number.</param>
+    /// <param name="fraction2">The second fraction</param>
+    /// <param name="sum">Returns fractional part the sum of the added mixed fractions.</param>
+    /// <returns>The whole number part of the sum of the added mixed fractions.</returns>
     public static Fraction64 Add(int wholeNumber1, Fraction64 fraction1, int wholeNumber2, Fraction64 fraction2, out int sum)
     {
         throw new NotImplementedException();
@@ -176,80 +185,22 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsEvenInteger(Fraction64 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0 && value.Numerator / value.Denominator % 2 == 0));
 
-    public static bool IsComplexNumber(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsInteger(Fraction64 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0));
 
-    public static bool IsEvenInteger(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(Fraction64 value) => value.Denominator == 0;
 
-    public static bool IsFinite(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNegative(Fraction64 value) => value.Denominator != 0 && value.Numerator != 0 && ((value.Denominator < 0) ? value.Numerator > 0 : value.Numerator < 0);
 
-    public static bool IsImaginaryNumber(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsOddInteger(Fraction64 value) => value.Denominator != 0 && value.Numerator != 0 && Math.Abs(value.Numerator) > Math.Abs(value.Denominator) &&
+        value.Numerator % value.Denominator == 0 && value.Numerator / value.Denominator % 2 != 0;
 
-    public static bool IsInfinity(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPositive(Fraction64 value) => value.Denominator != 0 && (value.Numerator == 0 || ((value.Denominator < 0) ? value.Numerator < 0 : value.Numerator > 0));
 
-    public static bool IsInteger(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNaN(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegative(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegativeInfinity(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNormal(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsOddInteger(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositive(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositiveInfinity(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPow2(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPow2(Fraction64 value) => double.IsPow2(value.ToDouble());
 
     public static bool IsProperFraction(Fraction64 value)
     {
@@ -261,49 +212,38 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsRealNumber(Fraction64 value) => value.Denominator != 0;
 
     public static bool IsSimplestForm(Fraction64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsZero(Fraction64 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsZero(Fraction64 value) => value.Numerator == 0 && value.Denominator != 0;
 
     public static Fraction64 Log2(Fraction64 value)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction64 MaxMagnitude(Fraction64 x, Fraction64 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction64 MaxMagnitude(Fraction64 x, Fraction64 y) => (x > y) ? x : y;
 
     public static Fraction64 MaxMagnitudeNumber(Fraction64 x, Fraction64 y)
     {
-        throw new NotImplementedException();
+        Fraction64 ax = Abs(x);
+        Fraction64 ay = Abs(y);
+        if ((ax > ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? y : x;
     }
 
-    public static Fraction64 MinMagnitude(Fraction64 x, Fraction64 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction64 MinMagnitude(Fraction64 x, Fraction64 y) => (x < y) ? x : y;
 
     public static Fraction64 MinMagnitudeNumber(Fraction64 x, Fraction64 y)
     {
-        throw new NotImplementedException();
+        Fraction64 ax = Abs(x);
+        Fraction64 ay = Abs(y);
+        if ((ax < ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? x : y;
     }
 
     public static Fraction64 Multiply(int wholeMultiplier, Fraction64 multiplierFraction, int wholeMultiplicand, Fraction64 multiplicandFraction, out int product)
@@ -441,7 +381,7 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
 
     #region Static Properties
 
-    static int INumberBase<Fraction64>.Radix => 10;
+    static int INumberBase<Fraction64>.Radix => 2;
 
     static Fraction64 IAdditiveIdentity<Fraction64, Fraction64>.AdditiveIdentity => Zero;
 
@@ -490,6 +430,24 @@ public readonly struct Fraction64 : ISimpleSignedFraction<Fraction64, int, Mixed
     #endregion
 
     #region Static Methods
+
+    static bool INumberBase<Fraction64>.IsCanonical(Fraction64 value) => true;
+
+    static bool INumberBase<Fraction64>.IsComplexNumber(Fraction64 value) => false;
+
+    static bool INumberBase<Fraction64>.IsFinite(Fraction64 value) => true;
+
+    static bool INumberBase<Fraction64>.IsImaginaryNumber(Fraction64 value) => false;
+
+    static bool INumberBase<Fraction64>.IsInfinity(Fraction64 value) => false;
+
+    static bool INumberBase<Fraction64>.IsNegativeInfinity(Fraction64 value) => false;
+
+    static bool INumberBase<Fraction64>.IsNormal(Fraction64 value) => true;
+
+    static bool INumberBase<Fraction64>.IsPositiveInfinity(Fraction64 value) => false;
+
+    static bool INumberBase<Fraction64>.IsSubnormal(Fraction64 value) => false;
 
     static bool INumberBase<Fraction64>.TryConvertFromChecked<TOther>(TOther value, out Fraction64 result)
     {

@@ -38,6 +38,23 @@ You can run the following command to install the latest version:
 Install-Module -Name Pester -Force -SkipPublisherCheck
 ```
 
+## Nubmer Parsing
+
+- `NumberStyles.AllowLeadingWhite` and `NumberStyles.AllowTrailingWhite`
+- `NumberStyles.AllowLeadingSign` and `NumberStyles.AllowTrailingSign`
+  - `NumberFormatInfo.PositiveSign`
+  - `NumberFormatInfo.NegativeSign`
+- `NumberStyles.AllowParentheses` - Only one set of parentheses per number.
+- `NumberStyles.AllowDecimalPoint`
+  - `NumberFormatInfo.CurrencyDecimalSeparator` if `NumberStyles.AllowCurrencySymbol`; otherwise, `NumberFormatInfo.NumberDecimalSeparator`
+- `NumberStyles.AllowThousands`
+  - `NumberFormatInfo.CurrencyGroupSeparator` if `NumberStyles.AllowCurrencySymbol`; otherwise, `NumberFormatInfo.NumberGroupSeparator`
+- `NumberStyles.AllowExponent` - formats following number: `[Ee][+-]?\d+` (`nnnExx`, `nnnE+xx` and `nnnE-xx`). Sign for number precedes the number or follows the exponent
+- `NumberStyles.AllowCurrencySymbol`
+  - Uses `NumberFormatInfo.CurrencyDecimalSeparator` if `NumberStyles.AllowDecimalPoint`
+  - Uses `NumberFormatInfo.CurrencyGroupSeparator` if `NumberStyles.AllowThousands`
+- `NumberStyles.AllowHexSpecifier` - Allows letters `a` to `f` and `A` to `F` for digits.
+
 ## TODO
 
 - [ ] Import [FsInfoCat.Numerics](https://github.com/lerwine/FsInfoCat/tree/main/src/FsInfoCat/Numerics)

@@ -123,10 +123,7 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
 
     #region Static Methods
 
-    public static UnsignedMixedFraction192 Abs(UnsignedMixedFraction192 value)
-    {
-        throw new NotImplementedException();
-    }
+    static UnsignedMixedFraction192 INumberBase<UnsignedMixedFraction192>.Abs(UnsignedMixedFraction192 value) => value;
 
     public static UnsignedMixedFraction192 Add(ulong wholeNumber, UnsignedFraction128 fraction)
     {
@@ -163,10 +160,8 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
         throw new NotImplementedException();
     }
 
-    public static bool IsEvenInteger(UnsignedMixedFraction192 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsEvenInteger(UnsignedMixedFraction192 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (value.Numerator > value.Denominator && value.Numerator % value.Denominator == 0));
 
     public static bool IsFinite(UnsignedMixedFraction192 value)
     {
@@ -188,10 +183,7 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(UnsignedMixedFraction192 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(UnsignedMixedFraction192 value) => value.Denominator == 0;
 
     public static bool IsNegative(UnsignedMixedFraction192 value)
     {
@@ -208,10 +200,8 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
         throw new NotImplementedException();
     }
 
-    public static bool IsOddInteger(UnsignedMixedFraction192 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsOddInteger(UnsignedMixedFraction192 value) => value.Denominator != 0 && ((value.Numerator != 0) ? value.Numerator > value.Denominator &&
+        value.Numerator % value.Denominator == 0 && (value.WholeNumber + value.Numerator / value.Denominator) % 2 != 0 : value.WholeNumber % 2 != 0);
 
     public static bool IsPositive(UnsignedMixedFraction192 value)
     {
@@ -223,10 +213,7 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
         throw new NotImplementedException();
     }
 
-    public static bool IsPow2(UnsignedMixedFraction192 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPow2(UnsignedMixedFraction192 value) => double.IsPow2(value.ToDouble());
 
     public static bool IsProperFraction(UnsignedMixedFraction192 value)
     {
@@ -253,35 +240,20 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
         throw new NotImplementedException();
     }
 
-    public static bool IsZero(UnsignedMixedFraction192 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsZero(UnsignedMixedFraction192 value) => value.Numerator == 0 && value.WholeNumber == 0 && value.Denominator != 0;
 
     public static UnsignedMixedFraction192 Log2(UnsignedMixedFraction192 value)
     {
         throw new NotImplementedException();
     }
 
-    public static UnsignedMixedFraction192 MaxMagnitude(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedMixedFraction192 MaxMagnitude(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y) => (x > y) ? x : y;
 
-    public static UnsignedMixedFraction192 MaxMagnitudeNumber(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedMixedFraction192 MaxMagnitudeNumber(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y) => (x > y) ? x : y;
 
-    public static UnsignedMixedFraction192 MinMagnitude(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedMixedFraction192 MinMagnitude(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y) => (x < y) ? x : y;
 
-    public static UnsignedMixedFraction192 MinMagnitudeNumber(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static UnsignedMixedFraction192 MinMagnitudeNumber(UnsignedMixedFraction192 x, UnsignedMixedFraction192 y) => (x < y) ? x : y;
 
     public static UnsignedMixedFraction192 Multiply(ulong wholeNumber, UnsignedFraction128 fraction)
     {
@@ -378,7 +350,7 @@ public readonly struct UnsignedMixedFraction192 : IMixedFraction<UnsignedMixedFr
 
     #region Static Properties
 
-    static int INumberBase<UnsignedMixedFraction192>.Radix => 10;
+    static int INumberBase<UnsignedMixedFraction192>.Radix => 2;
 
     static UnsignedMixedFraction192 IAdditiveIdentity<UnsignedMixedFraction192, UnsignedMixedFraction192>.AdditiveIdentity => Zero;
 

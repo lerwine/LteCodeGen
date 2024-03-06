@@ -122,10 +122,8 @@ public readonly struct UnsignedFraction32 : ISimpleFraction<UnsignedFraction32, 
 
     #region Static Methods
 
-    public static UnsignedFraction32 Abs(UnsignedFraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    static UnsignedFraction32 INumberBase<UnsignedFraction32>.Abs(UnsignedFraction32 value) => value;
+
 
     public static UnsignedFraction32 Add(ushort wholeNumber1, UnsignedFraction32 fraction1, ushort wholeNumber2, UnsignedFraction32 fraction2, out ushort sum)
     {
@@ -212,10 +210,7 @@ public readonly struct UnsignedFraction32 : ISimpleFraction<UnsignedFraction32, 
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(UnsignedFraction32 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(UnsignedFraction32 value) => value.Denominator == 0;
 
     public static bool IsNegative(UnsignedFraction32 value)
     {
@@ -442,7 +437,7 @@ public readonly struct UnsignedFraction32 : ISimpleFraction<UnsignedFraction32, 
 
     #region Static Properties
 
-    static int INumberBase<UnsignedFraction32>.Radix => 10;
+    static int INumberBase<UnsignedFraction32>.Radix => 2;
 
     static UnsignedFraction32 IAdditiveIdentity<UnsignedFraction32, UnsignedFraction32>.AdditiveIdentity => Zero;
 

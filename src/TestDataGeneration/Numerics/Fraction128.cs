@@ -176,80 +176,22 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static bool IsCanonical(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsEvenInteger(Fraction128 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0 && value.Numerator / value.Denominator % 2 == 0));
 
-    public static bool IsComplexNumber(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsInteger(Fraction128 value) => value.Denominator != 0 && (value.Numerator == 0 ||
+        (Math.Abs(value.Numerator) > Math.Abs(value.Denominator) && value.Numerator % value.Denominator == 0));
 
-    public static bool IsEvenInteger(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(Fraction128 value) => value.Denominator == 0L;
 
-    public static bool IsFinite(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNegative(Fraction128 value) => value.Denominator != 0L && value.Numerator != 0L && ((value.Denominator < 0L) ? value.Numerator > 0 : value.Numerator < 0L);
 
-    public static bool IsImaginaryNumber(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsOddInteger(Fraction128 value) => value.Denominator != 0L && value.Numerator != 0L && Math.Abs(value.Numerator) > Math.Abs(value.Denominator) &&
+        value.Numerator % value.Denominator == 0L && value.Numerator / value.Denominator % 2 != 0L;
 
-    public static bool IsInfinity(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPositive(Fraction128 value) => value.Denominator != 0L && (value.Numerator == 0L || ((value.Denominator < 0L) ? value.Numerator < 0L : value.Numerator > 0L));
 
-    public static bool IsInteger(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNaN(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegative(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNegativeInfinity(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsNormal(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsOddInteger(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositive(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPositiveInfinity(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsPow2(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsPow2(Fraction128 value) => double.IsPow2(value.ToDouble());
 
     public static bool IsProperFraction(Fraction128 value)
     {
@@ -261,49 +203,38 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
         throw new NotImplementedException();
     }
 
-    public static bool IsRealNumber(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsRealNumber(Fraction128 value) => value.Denominator != 0;
 
     public static bool IsSimplestForm(Fraction128 value)
     {
         throw new NotImplementedException();
     }
 
-    public static bool IsSubnormal(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool IsZero(Fraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsZero(Fraction128 value) => value.Numerator == 0 && value.Denominator != 0;
 
     public static Fraction128 Log2(Fraction128 value)
     {
         throw new NotImplementedException();
     }
 
-    public static Fraction128 MaxMagnitude(Fraction128 x, Fraction128 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction128 MaxMagnitude(Fraction128 x, Fraction128 y) => (x > y) ? x : y;
 
     public static Fraction128 MaxMagnitudeNumber(Fraction128 x, Fraction128 y)
     {
-        throw new NotImplementedException();
+        Fraction128 ax = Abs(x);
+        Fraction128 ay = Abs(y);
+        if ((ax > ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? y : x;
     }
 
-    public static Fraction128 MinMagnitude(Fraction128 x, Fraction128 y)
-    {
-        throw new NotImplementedException();
-    }
+    public static Fraction128 MinMagnitude(Fraction128 x, Fraction128 y) => (x < y) ? x : y;
 
     public static Fraction128 MinMagnitudeNumber(Fraction128 x, Fraction128 y)
     {
-        throw new NotImplementedException();
+        Fraction128 ax = Abs(x);
+        Fraction128 ay = Abs(y);
+        if ((ax < ay) || ay.Denominator == 0) return x;
+        return (ax != ay) ? y : IsNegative(x) ? x : y;
     }
 
     public static Fraction128 Multiply(long wholeMultiplier, Fraction128 multiplierFraction, long wholeMultiplicand, Fraction128 multiplicandFraction, out long product)
@@ -441,7 +372,7 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
 
     #region Static Properties
 
-    static int INumberBase<Fraction128>.Radix => 10;
+    static int INumberBase<Fraction128>.Radix => 2;
 
     static Fraction128 IAdditiveIdentity<Fraction128, Fraction128>.AdditiveIdentity => Zero;
 
@@ -490,6 +421,24 @@ public readonly struct Fraction128 : ISimpleSignedFraction<Fraction128, long, Mi
     #endregion
 
     #region Static Methods
+
+    static bool INumberBase<Fraction128>.IsCanonical(Fraction128 value) => true;
+
+    static bool INumberBase<Fraction128>.IsComplexNumber(Fraction128 value) => false;
+
+    static bool INumberBase<Fraction128>.IsFinite(Fraction128 value) => true;
+
+    static bool INumberBase<Fraction128>.IsImaginaryNumber(Fraction128 value) => false;
+
+    static bool INumberBase<Fraction128>.IsInfinity(Fraction128 value) => false;
+
+    static bool INumberBase<Fraction128>.IsNegativeInfinity(Fraction128 value) => false;
+
+    static bool INumberBase<Fraction128>.IsNormal(Fraction128 value) => true;
+
+    static bool INumberBase<Fraction128>.IsPositiveInfinity(Fraction128 value) => false;
+
+    static bool INumberBase<Fraction128>.IsSubnormal(Fraction128 value) => false;
 
     static bool INumberBase<Fraction128>.TryConvertFromChecked<TOther>(TOther value, out Fraction128 result)
     {

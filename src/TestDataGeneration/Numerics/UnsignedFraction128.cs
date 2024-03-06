@@ -122,10 +122,8 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
 
     #region Static Methods
 
-    public static UnsignedFraction128 Abs(UnsignedFraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    static UnsignedFraction128 INumberBase<UnsignedFraction128>.Abs(UnsignedFraction128 value) => value;
+
 
     public static UnsignedFraction128 Add(ulong wholeNumber1, UnsignedFraction128 fraction1, ulong wholeNumber2, UnsignedFraction128 fraction2, out ulong sum)
     {
@@ -212,10 +210,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
         throw new NotImplementedException();
     }
 
-    public static bool IsNaN(UnsignedFraction128 value)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool IsNaN(UnsignedFraction128 value) => value.Denominator == 0;
 
     public static bool IsNegative(UnsignedFraction128 value)
     {
@@ -443,7 +438,7 @@ public readonly struct UnsignedFraction128 : ISimpleFraction<UnsignedFraction128
 
     #region Static Properties
 
-    static int INumberBase<UnsignedFraction128>.Radix => 10;
+    static int INumberBase<UnsignedFraction128>.Radix => 2;
 
     static UnsignedFraction128 IAdditiveIdentity<UnsignedFraction128, UnsignedFraction128>.AdditiveIdentity => Zero;
 

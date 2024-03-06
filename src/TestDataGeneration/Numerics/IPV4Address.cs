@@ -47,7 +47,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
     /// </summary>
     /// <returns>The value of the fourth octet.</returns>
     public byte Octet3 { get { return _octet3; } }
-    
+
     static IPV4Address INumberBase<IPV4Address>.One => _one;
 
     static int INumberBase<IPV4Address>.Radix => 2;
@@ -147,7 +147,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
     /// </summary>
     /// <returns>A 32-bit IP address value from the current <see cref="IPV4Address"/>.</returns>
     public uint GetAddress() => BitConverter.ToUInt32(new byte[] { _octet0, _octet1, _octet2, _octet3 }, 0);
-        
+
     int IBinaryInteger<IPV4Address>.GetByteCount() => 4;
 
     public override int GetHashCode() => _value.GetHashCode();
@@ -372,7 +372,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
                         }
                         else
                         {
-                            o2 = s[0..index];;
+                            o2 = s[0..index]; ;
                             if (++index < s.Length)
                             {
                                 if ((index = (s = s[index..]).IndexOf(SeparatorChar)) < 0)
@@ -395,7 +395,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
         }
         return false;
     }
-    
+
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Address result)
     {
         if (TryGetNumberSpans(s, out ReadOnlySpan<char> s0, out ReadOnlySpan<char> s1, out ReadOnlySpan<char> s2, out ReadOnlySpan<char> s3) &&
