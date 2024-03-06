@@ -110,7 +110,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
     /// <returns>A <see cref="IPV4Address"/> value representing the last address in the specified segnment.</returns>
     public IPV4Address AsEndOfSegment(byte blockBitCount)
     {
-        if (blockBitCount > IPV4Range.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+        if (blockBitCount > IPv4CidrBlock.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
         return new IPV4Address(_value | uint.MaxValue << blockBitCount);
     }
 
@@ -141,7 +141,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
     /// <returns>An <see cref="IPV4Address"/> value representing a netmask value.</returns>
     public static IPV4Address AsNetMask(byte blockBitCount)
     {
-        if (blockBitCount > IPV4Range.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+        if (blockBitCount > IPv4CidrBlock.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
         return new IPV4Address(uint.MaxValue >> (32 - blockBitCount));
     }
 
