@@ -459,14 +459,14 @@ public readonly struct MixedFraction48 : IMixedSignedFraction<MixedFraction48, s
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="style"/> is not a supported <see cref="NumberStyles"/> value.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="Fraction32"/>.</exception>
+    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="MixedFraction48"/>.</exception>
     public static MixedFraction48 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// Parses a string into a <see cref="Fraction32"/> value.
+    /// Parses a string into a <see cref="MixedFraction48"/> value.
     /// </summary>
     /// <param name="s">The string to parse.</param>
     /// <param name="style">A bitwise combination of number styles that can be present in <paramref name="s"/>.</param>
@@ -475,7 +475,7 @@ public readonly struct MixedFraction48 : IMixedSignedFraction<MixedFraction48, s
     /// <exception cref="ArgumentException"><paramref name="style"/> is not a supported <see cref="NumberStyles"/> value.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="Fraction32"/>.</exception>
+    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="MixedFraction48"/>.</exception>
     public static MixedFraction48 Parse(string s, NumberStyles style, IFormatProvider? provider)
     {
         throw new NotImplementedException();
@@ -488,21 +488,21 @@ public readonly struct MixedFraction48 : IMixedSignedFraction<MixedFraction48, s
     /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="FormatException"><paramref name="s"/> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="Fraction32"/>.</exception>
+    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="MixedFraction48"/>.</exception>
     public static MixedFraction48 Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// Parses a string into a <see cref="Fraction32"/> value.
+    /// Parses a string into a <see cref="MixedFraction48"/> value.
     /// </summary>
     /// <param name="s">The string to parse.</param>
     /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> is not in the correct format.</exception>
-    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="Fraction32"/>.</exception>
+    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="MixedFraction48"/>.</exception>
     public static MixedFraction48 Parse(string s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
