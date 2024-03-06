@@ -69,6 +69,12 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
         BlockBitCount = other.BlockBitCount;
     }
 
+    /// <summary>
+    /// Initializes a new <c>IPV4Range</c> that represents a block of IP addresses.
+    /// </summary>
+    /// <param name="address">An IPv4 address that is contained in the IP address block.</param>
+    /// <param name="blockBitCount">The number of bits in the IP address block.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
     public IPV4Range(IPV4Address address, byte blockBitCount)
     {
         BlockBitCount = blockBitCount;
@@ -92,6 +98,15 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
         }
     }
 
+    /// <summary>
+    /// Initializes a new <c>IPV4Range</c> that represents a block of IP addresses.
+    /// </summary>
+    /// <param name="octet0">The first octet of anIPv4  address that is contained in the IP address block.</param>
+    /// <param name="octet1">The second octet of anIPv4  address that is contained in the IP address block.</param>
+    /// <param name="octet2">The third octet of anIPv4  address that is contained in the IP address block.</param>
+    /// <param name="octet3">The fourth octet of anIPv4  address that is contained in the IP address block.</param>
+    /// <param name="blockBitCount">The number of bits in the IP address block.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
     public IPV4Range(byte octet0, byte octet1, byte octet2, byte octet3, byte blockBitCount)
     {
         BlockBitCount = blockBitCount;
@@ -115,6 +130,13 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
         }
     }
 
+    /// <summary>
+    /// Creates a new IPv4 addresss from a 32-bit IPv4 address value.
+    /// </summary>
+    /// <param name="address">The 32-bit IPv4 address value.</param>
+    /// <param name="blockBitCount">The number of bits in the IP address block.</param>
+    /// <returns>An <see cref="IPV4Range"/> that contains the specified IPv4 address.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
     public static IPV4Range FromAddress(uint address, byte blockBitCount) => new(IPV4Address.FromAddress(address), blockBitCount);
 
     public IPV4Range Clone() => new(this);
@@ -146,6 +168,10 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
         return base.GetHashCode();
     }
 
+    /// <summary>
+    /// Gets an <see cref="IEnumerator{T}"/> that iterates through all the IP addresses included in the IP address range.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator<IPV4Address> GetEnumerator()
     {
         throw new NotImplementedException();
@@ -161,32 +187,63 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
         return base.ToString()!;
     }
 
-    public string ToString(string? format, IFormatProvider? formatProvider)
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
     {
         throw new NotImplementedException();
     }
 
-    public static IPV4Range Parse(string s, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Range result)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
-
+    /// <summary>
+    /// Parses a span of characters into a <see cref="IPV4Range"/> value.
+    /// </summary>
+    /// <param name="s">The span of characters to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
+    /// <returns>The result of parsing <paramref name="s"/>.</returns>
+    /// <exception cref="FormatException"><paramref name="s"/> is not in the correct format.</exception>
+    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="IPV4Range"/>.</exception>
     public static IPV4Range Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Parses a string into a <see cref="IPV4Range"/> value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
+    /// <returns>The result of parsing <paramref name="s"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see langword="null"/>.</exception>
+    /// <exception cref="FormatException"><paramref name="s"/> is not in the correct format.</exception>
+    /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="IPV4Range"/>.</exception>
+    public static IPV4Range Parse(string s, IFormatProvider? provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Tries to parse a span of characters into a <see cref="IPV4Range"/> value.
+    /// </summary>
+    /// <param name="s">The span of characters to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
+    /// <param name="result">On return, contains the result of succesfully parsing <paramref name="s"/>.</param>
+    /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Range result)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Tries to parse a string into a <see cref="IPV4Range"/> value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
+    /// <param name="result">On return, contains the result of succesfully parsing <paramref name="s"/>.</param>
+    /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPV4Range result)
+    {
+        throw new NotImplementedException();
+    }
+
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         throw new NotImplementedException();
     }
