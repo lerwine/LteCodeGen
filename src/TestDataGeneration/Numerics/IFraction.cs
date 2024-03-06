@@ -28,28 +28,28 @@ public interface IFraction<TSelf, TValue> : IConvertible, IBinaryNumber<TSelf>, 
     /// Adds a fractional value to the current fraction.
     /// </summary>
     /// <param name="fraction">The fraction to add.</param>
-    /// <returns>A sum of the two fractions.</returns>
+    /// <returns>A proper fraction representing sum of the two fractions, reduced to its simplest form.</returns>
     TSelf Add(TSelf fraction);
 
     /// <summary>
     /// Subtracts a fractional value from the current fraction.
     /// </summary>
     /// <param name="fraction">The fraction to subtract.</param>
-    /// <returns>The difference of the two fractions.</returns>
+    /// <returns>A proper fraction representing the difference of the two fractions, reduced to its simplest form.</returns>
     TSelf Subtract(TSelf fraction);
 
     /// <summary>
     /// Multiplies the current fraction with a fractional value.
     /// </summary>
     /// <param name="fraction">The multiplicand.</param>
-    /// <returns>The product of the multiplication.</returns>
+    /// <returns>A proper fraction representing the product of the multiplication, reduced to its simplest form.</returns>
     TSelf Multiply(TSelf fraction);
 
     /// <summary>
     /// Divides the current fraction by a fractional value.
     /// </summary>
     /// <param name="fraction">The divisor.</param>
-    /// <returns>The quotient of the division.</returns>
+    /// <returns>A proper fraction representing the quotient of the division, reduced to its simplest form.</returns>
     TSelf Divide(TSelf fraction);
 
     /// <summary>
@@ -114,19 +114,19 @@ public interface IFraction<TSelf, TValue, TMixed, TFraction> : IFraction<TSelf, 
     where TMixed : struct, IMixedFraction<TMixed, TValue, TFraction>?
     where TFraction : struct, ISimpleFraction<TFraction, TValue, TMixed>?
 {
-    /// /// <summary>
+    /// <summary>
     /// Represents a value that is not a number (NaN).
     /// </summary>
     /// <returns>An object of type <typeparamref name="TSelf"/> where the <see cref="IFraction{TSelf, TValue}.Denominator"/>, <see cref="IFraction{TSelf, TValue}.Numerator"/>,
     /// and <see cref="IMixedFraction{TSelf, TValue}.WholeNumber"/> (if applicable) are all zeroes.</returns>
     static abstract TSelf NaN { get; }
-    
+
     /// <summary>
     /// Adds a fraction to a whole number.
     /// </summary>
     /// <param name="wholeNumber">The whole number to add to.</param>
     /// <param name="fraction">The fractional value to be added.</param>
-    /// <returns>The sum as a mixed fraction.</returns>
+    /// <returns>A proper mixed fraction representing the sum, reduced to its simplest form.</returns>
     static abstract TMixed Add(TValue wholeNumber, TFraction fraction);
 
     /// <summary>
@@ -134,7 +134,7 @@ public interface IFraction<TSelf, TValue, TMixed, TFraction> : IFraction<TSelf, 
     /// </summary>
     /// <param name="wholeNumber">The whole number to subtract from.</param>
     /// <param name="fraction">The fractional value to subtract.</param>
-    /// <returns>The difference as a mixed fraction.</returns>
+    /// <returns>A proper mixed fraction representing the difference, reduced to its simplest form.</returns>
     static abstract TMixed Subtract(TValue wholeNumber, TFraction fraction);
 
     /// <summary>
@@ -142,7 +142,7 @@ public interface IFraction<TSelf, TValue, TMixed, TFraction> : IFraction<TSelf, 
     /// </summary>
     /// <param name="wholeNumber">The whole number to be multiplied.</param>
     /// <param name="fraction">The fractional value to multiply by.</param>
-    /// <returns>The product as a mixed fraction.</returns>
+    /// <returns>A proper mixed fraction representing the product, reduced to its simplest form.</returns>
     static abstract TMixed Multiply(TValue wholeNumber, TFraction fraction);
 
     /// <summary>
@@ -150,6 +150,6 @@ public interface IFraction<TSelf, TValue, TMixed, TFraction> : IFraction<TSelf, 
     /// </summary>
     /// <param name="wholeNumber">The whole number to divide.</param>
     /// <param name="fraction">The fractional value to divide by.</param>
-    /// <returns>The quotient as a mixed fraction.</returns>
+    /// <returns>A proper mixed fraction representing the quotient, reduced to its simplest form.</returns>
     static abstract TMixed Divide(TValue wholeNumber, TFraction fraction);
 }

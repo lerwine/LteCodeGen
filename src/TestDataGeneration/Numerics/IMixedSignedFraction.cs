@@ -2,8 +2,8 @@ using System.Numerics;
 
 namespace TestDataGeneration.Numerics;
 
-/// /// <summary>
-/// Interface for a signed fraction with a whole number.
+/// <summary>
+/// Interface for values representing signed fractions with a whole number.
 /// </summary>
 /// <typeparam name="TSelf">The type that implements this interface.</typeparam>
 /// <typeparam name="TValue">The value type for the <see cref="IFraction{TSelf, TValue}.Numerator"/>, <see cref="IFraction{TSelf, TValue}.Denominator"/>,
@@ -13,8 +13,8 @@ public interface IMixedSignedFraction<TSelf, TValue> : ISignedFraction<TSelf, TV
     where TValue : struct, IBinaryNumber<TValue>, ISignedNumber<TValue>
 { }
 
-/// /// <summary>
-/// Interface for a signed fraction with a whole number.
+/// <summary>
+/// Interface for values representing signed fractions with a whole number.
 /// </summary>
 /// <typeparam name="TSelf">The type that implements this interface.</typeparam>
 /// <typeparam name="TValue">The value type for the <see cref="IFraction{TSelf, TValue}.Numerator"/>, <see cref="IFraction{TSelf, TValue}.Denominator"/>,

@@ -3,7 +3,7 @@ using System.Numerics;
 namespace TestDataGeneration.Numerics;
 
 /// <summary>
-/// Interface for a fraction with a whole number.
+/// Base interface for values representing fractions with a whole number.
 /// </summary>
 /// <typeparam name="TSelf">The type that implements this interface.</typeparam>
 /// <typeparam name="TValue">The value type for the <see cref="IFraction{TSelf, TValue}.Numerator"/>, <see cref="IFraction{TSelf, TValue}.Denominator"/>,
@@ -30,7 +30,7 @@ public interface IMixedFraction<TSelf, TValue> : IFraction<TSelf, TValue>
     static abstract TSelf Invert(TSelf fraction, bool doNotReduce, bool doNotMakeProper);
 
     /// <summary>
-    /// Gets a proper fraction.
+    /// Converts a fraction to a proper fraction.
     /// </summary>
     /// <param name="value">The fraction to convert.</param>
     /// <returns>A mixed fraction with the <see cref="IFraction{TSelf, TValue}.Numerator"/> being less than the <see cref="IFraction{TSelf, TValue}.Denominator"/>.</returns>
@@ -45,7 +45,7 @@ public interface IMixedFraction<TSelf, TValue> : IFraction<TSelf, TValue>
 }
 
 /// <summary>
-/// Interface for a fraction with a whole number.
+/// Base interface for values representing fractions with a whole number.
 /// </summary>
 /// <typeparam name="TSelf">The type that implements this interface.</typeparam>
 /// <typeparam name="TValue">The value type for the <see cref="IFraction{TSelf, TValue}.Numerator"/>, <see cref="IFraction{TSelf, TValue}.Denominator"/>,
