@@ -7,7 +7,7 @@ namespace TestDataGeneration.Numerics;
 /// <summary>
 /// Represents an IPv4 CIDR address block.
 /// </summary>
-public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBlock>, IReadOnlySet<IPV4Address>, IFormattable, IParsable<IPv4CidrBlock>, ISpanFormattable,
+public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBlock>, IReadOnlySet<IPv4Address>, IFormattable, IParsable<IPv4CidrBlock>, ISpanFormattable,
     ISpanParsable<IPv4CidrBlock>, IEqualityOperators<IPv4CidrBlock, IPv4CidrBlock, bool>, IComparisonOperators<IPv4CidrBlock, IPv4CidrBlock, bool>, ICloneable
 {
     /// <summary>
@@ -16,22 +16,22 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     public const byte MAX_BLOCK_BIT_COUNT = 32;
 
     /// <summary>
-    /// Gets the original <see cref="IPV4Address"/> that was used to create the current <see cref="IPv4CidrBlock"/>.
+    /// Gets the original <see cref="IPv4Address"/> that was used to create the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
-    /// <returns>The original <see cref="IPV4Address"/> that was used to create the current <see cref="IPv4CidrBlock"/>.</returns>
-    public IPV4Address OriginalAddress { get; }
+    /// <returns>The original <see cref="IPv4Address"/> that was used to create the current <see cref="IPv4CidrBlock"/>.</returns>
+    public IPv4Address OriginalAddress { get; }
 
     /// <summary>
-    /// Gets the first <see cref="IPV4Address"/> in the current <see cref="IPv4CidrBlock"/>.
+    /// Gets the first <see cref="IPv4Address"/> in the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
-    /// <returns>The first <see cref="IPV4Address"/> in the current <see cref="IPv4CidrBlock"/>.</returns>
-    public IPV4Address First { get; }
+    /// <returns>The first <see cref="IPv4Address"/> in the current <see cref="IPv4CidrBlock"/>.</returns>
+    public IPv4Address First { get; }
 
     /// <summary>
-    /// Gets the last <see cref="IPV4Address"/> in the current <see cref="IPv4CidrBlock"/>.
+    /// Gets the last <see cref="IPv4Address"/> in the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
-    /// <returns>The last <see cref="IPV4Address"/> in the current <see cref="IPv4CidrBlock"/>.</returns>
-    public IPV4Address Last { get; }
+    /// <returns>The last <see cref="IPv4Address"/> in the current <see cref="IPv4CidrBlock"/>.</returns>
+    public IPv4Address Last { get; }
 
     /// <summary>
     /// Gets the number of bits for the block represented by the current <see cref="IPv4CidrBlock"/>.
@@ -43,7 +43,7 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// Gets the netmask value for the block represented by the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
     /// <returns>The netmask value for the block represented by the current <see cref="IPv4CidrBlock"/>.</returns>
-    public IPV4Address Mask { get; }
+    public IPv4Address Mask { get; }
 
     /// <summary>
     /// Gets the number of IP addresses in the block represented by the current <see cref="IPv4CidrBlock"/>.
@@ -55,8 +55,8 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// </summary>
     public IPv4CidrBlock()
     {
-        Mask = First = OriginalAddress = IPV4Address.MinValue;
-        Last = IPV4Address.MaxValue;
+        Mask = First = OriginalAddress = IPv4Address.MinValue;
+        Last = IPv4Address.MaxValue;
         BlockBitCount = 0;
     }
 
@@ -75,23 +75,23 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <param name="address">An IPv4 address that is contained in the IP address block.</param>
     /// <param name="blockBitCount">The number of bits in the IP address block.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
-    public IPv4CidrBlock(IPV4Address address, byte blockBitCount)
+    public IPv4CidrBlock(IPv4Address address, byte blockBitCount)
     {
         BlockBitCount = blockBitCount;
         OriginalAddress = address;
         switch (blockBitCount)
         {
             case 0:
-                Mask = First = OriginalAddress = IPV4Address.MinValue;
-                Last = IPV4Address.MaxValue;
+                Mask = First = OriginalAddress = IPv4Address.MinValue;
+                Last = IPv4Address.MaxValue;
                 break;
             case MAX_BLOCK_BIT_COUNT:
-                Mask = IPV4Address.MaxValue;
+                Mask = IPv4Address.MaxValue;
                 First = Last = address;
                 break;
             default:
                 if (blockBitCount > MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
-                Mask = IPV4Address.AsNetMask(blockBitCount);
+                Mask = IPv4Address.AsNetMask(blockBitCount);
                 First = address.AsMasked(Mask);
                 Last = First.AsEndOfSegment(blockBitCount);
                 break;
@@ -110,20 +110,20 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     public IPv4CidrBlock(byte octet0, byte octet1, byte octet2, byte octet3, byte blockBitCount)
     {
         BlockBitCount = blockBitCount;
-        OriginalAddress = new IPV4Address(octet0, octet1, octet2, octet3);
+        OriginalAddress = new IPv4Address(octet0, octet1, octet2, octet3);
         switch (blockBitCount)
         {
             case 0:
-                Mask = First = OriginalAddress = IPV4Address.MinValue;
-                Last = IPV4Address.MaxValue;
+                Mask = First = OriginalAddress = IPv4Address.MinValue;
+                Last = IPv4Address.MaxValue;
                 break;
             case MAX_BLOCK_BIT_COUNT:
-                Mask = IPV4Address.MaxValue;
+                Mask = IPv4Address.MaxValue;
                 First = Last = OriginalAddress;
                 break;
             default:
                 if (blockBitCount > MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
-                Mask = IPV4Address.AsNetMask(blockBitCount);
+                Mask = IPv4Address.AsNetMask(blockBitCount);
                 First = OriginalAddress.AsMasked(Mask);
                 Last = First.AsEndOfSegment(blockBitCount);
                 break;
@@ -137,7 +137,7 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <param name="blockBitCount">The number of bits in the IP address block.</param>
     /// <returns>An <see cref="IPv4CidrBlock"/> that contains the specified IPv4 address.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
-    public static IPv4CidrBlock FromAddress(uint address, byte blockBitCount) => new(IPV4Address.FromAddress(address), blockBitCount);
+    public static IPv4CidrBlock FromAddress(uint address, byte blockBitCount) => new(IPv4Address.FromAddress(address), blockBitCount);
 
     public IPv4CidrBlock Clone() => new(this);
 
@@ -148,7 +148,7 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
         throw new NotImplementedException();
     }
 
-    public bool Contains(IPV4Address item)
+    public bool Contains(IPv4Address item)
     {
         throw new NotImplementedException();
     }
@@ -172,7 +172,7 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// Gets an <see cref="IEnumerator{T}"/> that iterates through all the IP addresses included in the IP address block.
     /// </summary>
     /// <returns></returns>
-    public IEnumerator<IPV4Address> GetEnumerator()
+    public IEnumerator<IPv4Address> GetEnumerator()
     {
         throw new NotImplementedException();
     }
@@ -248,32 +248,32 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
         throw new NotImplementedException();
     }
 
-    public bool IsProperSubsetOf(IEnumerable<IPV4Address> other)
+    public bool IsProperSubsetOf(IEnumerable<IPv4Address> other)
     {
         throw new NotImplementedException();
     }
 
-    public bool IsProperSupersetOf(IEnumerable<IPV4Address> other)
+    public bool IsProperSupersetOf(IEnumerable<IPv4Address> other)
     {
         throw new NotImplementedException();
     }
 
-    public bool IsSubsetOf(IEnumerable<IPV4Address> other)
+    public bool IsSubsetOf(IEnumerable<IPv4Address> other)
     {
         throw new NotImplementedException();
     }
 
-    public bool IsSupersetOf(IEnumerable<IPV4Address> other)
+    public bool IsSupersetOf(IEnumerable<IPv4Address> other)
     {
         throw new NotImplementedException();
     }
 
-    public bool Overlaps(IEnumerable<IPV4Address> other)
+    public bool Overlaps(IEnumerable<IPv4Address> other)
     {
         throw new NotImplementedException();
     }
 
-    public bool SetEquals(IEnumerable<IPV4Address> other)
+    public bool SetEquals(IEnumerable<IPv4Address> other)
     {
         throw new NotImplementedException();
     }
