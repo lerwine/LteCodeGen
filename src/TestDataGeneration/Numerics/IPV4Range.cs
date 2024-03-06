@@ -1,30 +1,58 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace TestDataGeneration.Numerics;
 
+/// <summary>
+/// Represents an IP address range.
+/// </summary>
 public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnlySet<IPV4Address>, IFormattable, IParsable<IPV4Range>, ISpanFormattable,
-    ISpanParsable<IPV4Range>, IEqualityOperators<IPV4Range, IPV4Range, bool>, IComparisonOperators<IPV4Range, IPV4Range, bool>
+    ISpanParsable<IPV4Range>, IEqualityOperators<IPV4Range, IPV4Range, bool>, IComparisonOperators<IPV4Range, IPV4Range, bool>, ICloneable
 {
+    /// <summary>
+    /// The maximum address block bit size.
+    /// </summary>
     public const byte MAX_BLOCK_BIT_COUNT = 32;
 
+    /// <summary>
+    /// Gets the original <see cref="IPV4Address"/> that was used to create the current <see cref="IPV4Range"/>.
+    /// </summary>
+    /// <returns>The original <see cref="IPV4Address"/> that was used to create the current <see cref="IPV4Range"/>.</returns>
     public IPV4Address OriginalAddress { get; }
 
+    /// <summary>
+    /// Gets the first <see cref="IPV4Address"/> in the current <see cref="IPV4Range"/>.
+    /// </summary>
+    /// <returns>The first <see cref="IPV4Address"/> in the current <see cref="IPV4Range"/>.</returns>
     public IPV4Address First { get; }
 
+    /// <summary>
+    /// Gets the last <see cref="IPV4Address"/> in the current <see cref="IPV4Range"/>.
+    /// </summary>
+    /// <returns>The last <see cref="IPV4Address"/> in the current <see cref="IPV4Range"/>.</returns>
     public IPV4Address Last { get; }
 
+    /// <summary>
+    /// Gets the number of bits for the block represented by the current <see cref="IPV4Range"/>.
+    /// </summary>
+    /// <returns>The number of bits for the block represented by the current <see cref="IPV4Range"/>.</returns>
     public byte BlockBitCount { get; }
 
+    /// <summary>
+    /// Gets the netmask value for the block represented by the current <see cref="IPV4Range"/>.
+    /// </summary>
+    /// <returns>The netmask value for the block represented by the current <see cref="IPV4Range"/>.</returns>
     public IPV4Address Mask { get; }
 
+    /// <summary>
+    /// Gets the number of IP addresses in the block represented by the current <see cref="IPV4Range"/>.
+    /// </summary>
     public int Count => throw new NotImplementedException();
 
+    /// <summary>
+    /// Initializes a new <c>IPV4Range</c> that represents all possible IPv4 address values.
+    /// </summary>
     public IPV4Range()
     {
         Mask = First = OriginalAddress = IPV4Address.MinValue;
@@ -32,7 +60,7 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
         BlockBitCount = 0;
     }
 
-    public IPV4Range(IPV4Range other)
+    private IPV4Range(IPV4Range other)
     {
         Mask = other.Mask;
         First = other.First;
@@ -88,6 +116,10 @@ public class IPV4Range : IEquatable<IPV4Range>, IComparable<IPV4Range>, IReadOnl
     }
 
     public static IPV4Range FromAddress(uint address, byte blockBitCount) => new(IPV4Address.FromAddress(address), blockBitCount);
+
+    public IPV4Range Clone() => new(this);
+
+    object ICloneable.Clone() => new IPV4Range(this);
 
     public int CompareTo(IPV4Range? other)
     {

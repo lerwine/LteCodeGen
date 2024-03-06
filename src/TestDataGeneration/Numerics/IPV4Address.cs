@@ -1,19 +1,20 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Serialization;
+using static TestDataGeneration.Numerics.NumberStatic;
 
 namespace TestDataGeneration.Numerics;
 
+/// <summary>
+/// Represents an IPv4 internet address.
+/// </summary>
 [StructLayout(LayoutKind.Explicit)]
 public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, IMinMaxValue<IPV4Address>, IUnsignedNumber<IPV4Address>
 {
+    /// <summary>
+    /// The octet separator character.
+    /// </summary>
     public const char SeparatorChar = '.';
 
     private static readonly IPV4Address _one = new(1U);
@@ -23,17 +24,33 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
     [FieldOffset(2)] private readonly byte _octet1;
     [FieldOffset(3)] private readonly byte _octet0;
 
+    /// <summary>
+    /// Gets the value of the first octet.
+    /// </summary>
+    /// <returns>The value of the first octet.</returns>
     public byte Octet0 { get { return _octet0; } }
-    
+
+    /// <summary>
+    /// Gets the value of the second octet.
+    /// </summary>
+    /// <returns>The value of the second octet.</returns>
     public byte Octet1 { get { return _octet1; } }
-    
+
+    /// <summary>
+    /// Gets the value of the third octet.
+    /// </summary>
+    /// <returns>The value of the third octet.</returns>
     public byte Octet2 { get { return _octet2; } }
-    
+
+    /// <summary>
+    /// Gets the value of the fourth octet.
+    /// </summary>
+    /// <returns>The value of the fourth octet.</returns>
     public byte Octet3 { get { return _octet3; } }
     
     static IPV4Address INumberBase<IPV4Address>.One => _one;
 
-    static int INumberBase<IPV4Address>.Radix => 10;
+    static int INumberBase<IPV4Address>.Radix => 2;
 
     static IPV4Address INumberBase<IPV4Address>.Zero => MinValue;
 
@@ -41,8 +58,16 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     static IPV4Address IMultiplicativeIdentity<IPV4Address, IPV4Address>.MultiplicativeIdentity => _one;
 
+    /// <summary>
+    /// Gets the maximum IPv4 address value.
+    /// </summary>
+    /// <returns>The maximum IPv4 address value.</returns>
     public static IPV4Address MaxValue => new(uint.MaxValue);
 
+    /// <summary>
+    /// Gets the minimum IPv4 address value.
+    /// </summary>
+    /// <returns>The minimum IPv4 address value.</returns>
     public static IPV4Address MinValue => new(0u);
 
     private IPV4Address(uint value)
@@ -51,12 +76,13 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
         _value = value;
     }
 
-    public static IPV4Address FromAddress(uint address)
-    {
-        var bytes = BitConverter.GetBytes(address);
-        return new IPV4Address(bytes[3], bytes[2], bytes[1], bytes[0]);
-    }
-
+    /// <summary>
+    /// Creates a new <c>IPV4Address</c> value.
+    /// </summary>
+    /// <param name="octet0">The value of the first octet.</param>
+    /// <param name="octet1">The value of the second octet.</param>
+    /// <param name="octet2">The value of the third octet.</param>
+    /// <param name="octet3">The value of the fourth octet.</param>
     public IPV4Address(byte octet0, byte octet1, byte octet2, byte octet3)
     {
         _value = 0;
@@ -66,14 +92,29 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
         _octet3 = octet3;
     }
 
+    /// <summary>
+    /// Gets an <see cref="IPV4Address"/> as a netmask value.
+    /// </summary>
+    /// <param name="blockBitCount">The number of bits in the netmask value.</param>
+    /// <returns>An <see cref="IPV4Address"/> value representing a netmask value.</returns>
     public static IPV4Address AsNetMask(byte blockBitCount)
     {
         if (blockBitCount > IPV4Range.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
         return new IPV4Address(uint.MaxValue >> (32 - blockBitCount));
     }
 
-    public IPV4Address AsMasked(IPV4Address netMask) => new IPV4Address(_value & netMask._value);
+    /// <summary>
+    /// Gets a masked <see cref="IPV4Address"/> value.
+    /// </summary>
+    /// <param name="netMask">The netmask value to use.</param>
+    /// <returns>A masked <see cref="IPV4Address"/> value.</returns>
+    public IPV4Address AsMasked(IPV4Address netMask) => new(_value & netMask._value);
 
+    /// <summary>
+    /// Gets the last <see cref="IPV4Address"/> value in the specified segnment.
+    /// </summary>
+    /// <param name="blockBitCount">The number of bits in the segment.</param>
+    /// <returns>A <see cref="IPV4Address"/> value representing the last address in the specified segnment.</returns>
     public IPV4Address AsEndOfSegment(byte blockBitCount)
     {
         if (blockBitCount > IPV4Range.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
@@ -90,13 +131,28 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     public override bool Equals([NotNullWhen(true)] object? obj) => _value.Equals((obj is IPV4Address other) ? other._value : obj);
 
+    /// <summary>
+    /// Gets a <see cref="IPV4Address"/> value from a 32-bit integer value.
+    /// </summary>
+    /// <param name="address">The 32-bit IP address value.</param>
+    /// <returns>A <see cref="IPV4Address"/> value from a 32-bit integer value.</returns>
+    public static IPV4Address FromAddress(uint address)
+    {
+        var bytes = BitConverter.GetBytes(address);
+        return new IPV4Address(bytes[3], bytes[2], bytes[1], bytes[0]);
+    }
+
+    /// <summary>
+    /// Gets the 32-bit IP address value from the current <see cref="IPV4Address"/>.
+    /// </summary>
+    /// <returns>A 32-bit IP address value from the current <see cref="IPV4Address"/>.</returns>
     public uint GetAddress() => BitConverter.ToUInt32(new byte[] { _octet0, _octet1, _octet2, _octet3 }, 0);
         
-    int IBinaryInteger<IPV4Address>.GetByteCount() => sizeof(uint);
+    int IBinaryInteger<IPV4Address>.GetByteCount() => 4;
 
     public override int GetHashCode() => _value.GetHashCode();
 
-    int IBinaryInteger<IPV4Address>.GetShortestBitLength() => sizeof(uint);
+    int IBinaryInteger<IPV4Address>.GetShortestBitLength() => (sizeof(uint) * 8) - BitOperations.LeadingZeroCount(_value);
 
     TypeCode IConvertible.GetTypeCode() => TypeCode.UInt32;
 
@@ -104,7 +160,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     static bool INumberBase<IPV4Address>.IsComplexNumber(IPV4Address value) => false;
 
-    static bool INumberBase<IPV4Address>.IsEvenInteger(IPV4Address value) => uint.IsEvenInteger(value._value);
+    static bool INumberBase<IPV4Address>.IsEvenInteger(IPV4Address value) => (value._value & 1u) == 0u;
 
     static bool INumberBase<IPV4Address>.IsFinite(IPV4Address value) => true;
 
@@ -120,9 +176,9 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     static bool INumberBase<IPV4Address>.IsNegativeInfinity(IPV4Address value) => false;
 
-    static bool INumberBase<IPV4Address>.IsNormal(IPV4Address value) => true;
+    static bool INumberBase<IPV4Address>.IsNormal(IPV4Address value) => value._value != 0u;
 
-    static bool INumberBase<IPV4Address>.IsOddInteger(IPV4Address value) => uint.IsOddInteger(value._value);
+    static bool INumberBase<IPV4Address>.IsOddInteger(IPV4Address value) => (value._value & 1u) != 0u;
 
     static bool INumberBase<IPV4Address>.IsPositive(IPV4Address value) => true;
 
@@ -136,7 +192,7 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     static bool INumberBase<IPV4Address>.IsZero(IPV4Address value) => value._value == 0u;
 
-    static IPV4Address IBinaryNumber<IPV4Address>.Log2(IPV4Address value) => new(Convert.ToUInt32(Math.Log2(value._value)));
+    static IPV4Address IBinaryNumber<IPV4Address>.Log2(IPV4Address value) => new((uint)BitOperations.Log2(value._value));
 
     static IPV4Address INumberBase<IPV4Address>.MaxMagnitude(IPV4Address x, IPV4Address y) => (x._value < y._value) ? y : x;
 
@@ -220,50 +276,46 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     ulong IConvertible.ToUInt64(IFormatProvider? provider) => ((IConvertible)_value).ToUInt64(provider);
 
-    static IPV4Address IBinaryInteger<IPV4Address>.TrailingZeroCount(IPV4Address value)
-    {
-        var s = value._value.ToString();
-        int e = s.Length;
-        int i = e - 1;
-        if (s[i] != '0') return MinValue;
-        while (i > 0)
-        {
-            var n = i - 1;
-            if (s[n] != '0') break;
-            i = n;
-        }
-        return new((uint)(e - i));
-    }
+    static IPV4Address IBinaryInteger<IPV4Address>.TrailingZeroCount(IPV4Address value) => new((uint)BitOperations.TrailingZeroCount(value._value));
 
     static bool INumberBase<IPV4Address>.TryConvertFromChecked<TOther>(TOther value, out IPV4Address result)
     {
-        throw new NotImplementedException();
+        if (TryConvertFromCheckedToUInt32(value, out uint u))
+        {
+            result = new(u);
+            return true;
+        }
+        result = MinValue;
+        return false;
     }
 
     static bool INumberBase<IPV4Address>.TryConvertFromSaturating<TOther>(TOther value, out IPV4Address result)
     {
-        throw new NotImplementedException();
+        if (TryConvertFromSaturatingToUInt32(value, out uint u))
+        {
+            result = new(u);
+            return true;
+        }
+        result = MinValue;
+        return false;
     }
 
     static bool INumberBase<IPV4Address>.TryConvertFromTruncating<TOther>(TOther value, out IPV4Address result)
     {
-        throw new NotImplementedException();
+        if (TryConvertFromTruncatingToUInt32(value, out uint u))
+        {
+            result = new(u);
+            return true;
+        }
+        result = MinValue;
+        return false;
     }
 
-    static bool INumberBase<IPV4Address>.TryConvertToChecked<TOther>(IPV4Address value, out TOther result)
-    {
-        throw new NotImplementedException();
-    }
+    static bool INumberBase<IPV4Address>.TryConvertToChecked<TOther>(IPV4Address value, [MaybeNullWhen(false)] out TOther result) => TryConvertUInt32ToChecked(value._value, out result);
 
-    static bool INumberBase<IPV4Address>.TryConvertToSaturating<TOther>(IPV4Address value, out TOther result)
-    {
-        throw new NotImplementedException();
-    }
+    static bool INumberBase<IPV4Address>.TryConvertToSaturating<TOther>(IPV4Address value, [MaybeNullWhen(false)] out TOther result) => TryConvertUInt32ToSaturating(value._value, out result);
 
-    static bool INumberBase<IPV4Address>.TryConvertToTruncating<TOther>(IPV4Address value, out TOther result)
-    {
-        throw new NotImplementedException();
-    }
+    static bool INumberBase<IPV4Address>.TryConvertToTruncating<TOther>(IPV4Address value, [MaybeNullWhen(false)] out TOther result) => TryConvertUInt32ToTruncating(value._value, out result);
 
     bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
@@ -434,23 +486,29 @@ public readonly struct IPV4Address : IConvertible, IBinaryInteger<IPV4Address>, 
 
     static bool IBinaryInteger<IPV4Address>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out IPV4Address value)
     {
-        throw new NotImplementedException();
+        if (TryReadBigEndian(source, isUnsigned, out uint u))
+        {
+            value = new(u);
+            return true;
+        }
+        value = MinValue;
+        return false;
     }
 
     static bool IBinaryInteger<IPV4Address>.TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out IPV4Address value)
     {
-        throw new NotImplementedException();
+        if (TryReadLittleEndian(source, isUnsigned, out uint u))
+        {
+            value = new(u);
+            return true;
+        }
+        value = MinValue;
+        return false;
     }
 
-    public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten)
-    {
-        throw new NotImplementedException();
-    }
+    bool IBinaryInteger<IPV4Address>.TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => TryWriteBigEndian(_value, destination, out bytesWritten);
 
-    public bool TryWriteLittleEndian(Span<byte> destination, out int bytesWritten)
-    {
-        throw new NotImplementedException();
-    }
+    bool IBinaryInteger<IPV4Address>.TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) => TryWriteLittleEndian(_value, destination, out bytesWritten);
 
     public static IPV4Address operator +(IPV4Address value) => new(+value._value);
 
