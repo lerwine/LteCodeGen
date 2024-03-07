@@ -7,13 +7,18 @@ namespace TestDataGeneration.Numerics;
 /// <summary>
 /// Represents an IPv4 CIDR address block.
 /// </summary>
-public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBlock>, IReadOnlySet<IPv4Address>, IFormattable, IParsable<IPv4CidrBlock>, ISpanFormattable,
+public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBlock>, IComparable, IReadOnlySet<IPv4Address>, IFormattable, IParsable<IPv4CidrBlock>, ISpanFormattable,
     ISpanParsable<IPv4CidrBlock>, IEqualityOperators<IPv4CidrBlock, IPv4CidrBlock, bool>, IComparisonOperators<IPv4CidrBlock, IPv4CidrBlock, bool>, ICloneable
 {
     /// <summary>
+    /// The block size separator character.
+    /// </summary>
+    public const char SeparatorChar = '/';
+
+    /// <summary>
     /// The maximum address block bit size.
     /// </summary>
-    public const byte MAX_BLOCK_BIT_COUNT = 32;
+    public const byte MaxBlockBitCount = 32;
 
     /// <summary>
     /// Gets the original <see cref="IPv4Address"/> that was used to create the current <see cref="IPv4CidrBlock"/>.
@@ -48,7 +53,7 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <summary>
     /// Gets the number of IP addresses in the block represented by the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
-    public int Count => throw new NotImplementedException();
+    public int Count => BlockBitCount + 1;
 
     /// <summary>
     /// Initializes a new <c>IPV4Range</c> that represents all possible IPv4 address values.
@@ -85,12 +90,12 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
                 Mask = First = OriginalAddress = IPv4Address.MinValue;
                 Last = IPv4Address.MaxValue;
                 break;
-            case MAX_BLOCK_BIT_COUNT:
+            case MaxBlockBitCount:
                 Mask = IPv4Address.MaxValue;
                 First = Last = address;
                 break;
             default:
-                if (blockBitCount > MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+                if (blockBitCount > MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
                 Mask = IPv4Address.AsNetMask(blockBitCount);
                 First = address.AsMasked(Mask);
                 Last = First.AsEndOfSegment(blockBitCount);
@@ -117,12 +122,12 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
                 Mask = First = OriginalAddress = IPv4Address.MinValue;
                 Last = IPv4Address.MaxValue;
                 break;
-            case MAX_BLOCK_BIT_COUNT:
+            case MaxBlockBitCount:
                 Mask = IPv4Address.MaxValue;
                 First = Last = OriginalAddress;
                 break;
             default:
-                if (blockBitCount > MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+                if (blockBitCount > MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
                 Mask = IPv4Address.AsNetMask(blockBitCount);
                 First = OriginalAddress.AsMasked(Mask);
                 Last = First.AsEndOfSegment(blockBitCount);
@@ -145,52 +150,40 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
 
     public int CompareTo(IPv4CidrBlock? other)
     {
-        throw new NotImplementedException();
+        if (other is null) return 1;
+        if (ReferenceEquals(this, other)) return 0;
+        int diff = First.CompareTo(other.First);
+        return (diff == 0) ? BlockBitCount.CompareTo(other.BlockBitCount) : diff;
+    }
+
+    int IComparable.CompareTo(object? obj)
+    {
+        if (obj is null) return 1;
+        if (obj is not IPv4CidrBlock other) return -1;
+        if (ReferenceEquals(this, other)) return 0;
+        int diff = First.CompareTo(other.First);
+        return (diff == 0) ? BlockBitCount.CompareTo(other.BlockBitCount) : diff;
     }
 
     public bool Contains(IPv4Address item)
     {
-        throw new NotImplementedException();
+        int diff = item.CompareTo(First);
+        return diff == 0 || (diff > 0 && (item <= Last));
     }
 
-    public bool Equals(IPv4CidrBlock? other)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Equals(IPv4CidrBlock? other) => other is not null && (ReferenceEquals(this, other) || (First.Equals(other.First) && BlockBitCount == other.BlockBitCount));
 
-    public override bool Equals(object? obj)
-    {
-        return base.Equals(obj);
-    }
+    public override bool Equals(object? obj) => obj is IPv4CidrBlock other && (ReferenceEquals(this, other) || (First.Equals(other.First) && BlockBitCount == other.BlockBitCount));
 
-    public override int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
+    public override int GetHashCode() => HashCode.Combine(First, BlockBitCount);
 
     /// <summary>
     /// Gets an <see cref="IEnumerator{T}"/> that iterates through all the IP addresses included in the IP address block.
     /// </summary>
     /// <returns></returns>
-    public IEnumerator<IPv4Address> GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerator<IPv4Address> GetEnumerator() => new Enumerator(this);
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string ToString()
-    {
-        return base.ToString()!;
-    }
-
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider)
-    {
-        throw new NotImplementedException();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
     /// <summary>
     /// Parses a span of characters into a <see cref="IPv4CidrBlock"/> value.
@@ -202,7 +195,12 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="IPv4CidrBlock"/>.</exception>
     public static IPv4CidrBlock Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
-        throw new NotImplementedException();
+        int index = s.IndexOf(SeparatorChar);
+        if (index < 0) throw new FormatException("Invalid valid CIDR notation string.");
+        var address = IPv4Address.Parse(s[..index], provider);
+        var size = byte.Parse(s[(index + 1)..], provider);
+        try { return new IPv4CidrBlock(IPv4Address.Parse(s[..index], provider), byte.Parse(s[(index + 1)..], provider)); }
+        catch (ArgumentOutOfRangeException exception) { throw new FormatException("Invalid valid CIDR notation string.", exception); }
     }
 
     /// <summary>
@@ -216,8 +214,13 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <exception cref="OverflowException"><paramref name="s"/> is not representable by a <see cref="IPv4CidrBlock"/>.</exception>
     public static IPv4CidrBlock Parse(string s, IFormatProvider? provider)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(s);
+        return Parse(s.AsSpan(), provider);
     }
+
+    public override string ToString() => $"{First}{SeparatorChar}{BlockBitCount}";
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => $"{First.ToString(format, formatProvider)}{SeparatorChar}{BlockBitCount.ToString(format, formatProvider)}";
 
     /// <summary>
     /// Tries to parse a span of characters into a <see cref="IPv4CidrBlock"/> value.
@@ -228,7 +231,14 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPv4CidrBlock result)
     {
-        throw new NotImplementedException();
+        int index = s.IndexOf(SeparatorChar);
+        if (index > 0 && IPv4Address.TryParse(s[0..index], provider, out IPv4Address address) && byte.TryParse(s[(index + 1)..], out byte blockBitCount) && blockBitCount <= MaxBlockBitCount)
+        {
+            result = new(address, blockBitCount);
+            return true;
+        }
+        result = default;
+        return false;
     }
 
     /// <summary>
@@ -240,11 +250,71 @@ public class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBloc
     /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out IPv4CidrBlock result)
     {
-        throw new NotImplementedException();
+        if (s is null)
+        {
+            result = default;
+            return false;
+        }
+        return TryParse(s.AsSpan(), provider, out result);
     }
 
     bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
+        var end = destination.Length;
+        if (First.TryFormat(destination, out charsWritten, format, provider))
+        {
+            if (charsWritten == end) return false;
+            destination[charsWritten++] = SeparatorChar;
+            if (charsWritten == end) return false;
+            if (BlockBitCount.TryFormat(destination[charsWritten..], out int cw, format, provider))
+            {
+                charsWritten = cw;
+                return true;
+            }
+            if (cw > 0)
+                charsWritten = (cw > (end - charsWritten)) ? end : charsWritten + cw; 
+        }
+        return false;
+    }
+
+    private int CheckUniqueAndUnfoundElements(IEnumerable<IPv4CidrBlock> other, bool returnIfUnfound, out int unfoundCount)
+    {
+        // if (_backingList.Count == 0)
+        // {
+        //     int numElementsInOther = 0;
+        //     foreach (NumberExtents<T> item in other)
+        //     {
+        //         numElementsInOther++;
+        //         break;
+        //     }
+        //     unfoundCount = numElementsInOther;
+        //     return 0;
+        // }
+
+        // BitArray bitHelper = new(_backingList.Count);
+
+        // unfoundCount = 0;
+        // int uniqueFoundCount = 0;
+        // foreach (NumberExtents<T> item in other)
+        // {
+        //     int index = InternalIndexOf(item);
+
+        //     if (index >= 0)
+        //     {
+        //         if (!bitHelper.Get(index))
+        //         {
+        //             bitHelper.Set(index, true);
+        //             uniqueFoundCount++;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         unfoundCount++;
+        //         if (returnIfUnfound) break;
+        //     }
+        // }
+
+        // return uniqueFoundCount;
         throw new NotImplementedException();
     }
 

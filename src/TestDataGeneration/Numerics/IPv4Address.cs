@@ -110,7 +110,7 @@ public readonly struct IPv4Address : IConvertible, IBinaryInteger<IPv4Address>, 
     /// <returns>A <see cref="IPv4Address"/> value representing the last address in the specified segnment.</returns>
     public IPv4Address AsEndOfSegment(byte blockBitCount)
     {
-        if (blockBitCount > IPv4CidrBlock.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+        if (blockBitCount > IPv4CidrBlock.MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
         return new IPv4Address(_value | uint.MaxValue << blockBitCount);
     }
 
@@ -141,7 +141,7 @@ public readonly struct IPv4Address : IConvertible, IBinaryInteger<IPv4Address>, 
     /// <returns>An <see cref="IPv4Address"/> value representing a netmask value.</returns>
     public static IPv4Address AsNetMask(byte blockBitCount)
     {
-        if (blockBitCount > IPv4CidrBlock.MAX_BLOCK_BIT_COUNT) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
+        if (blockBitCount > IPv4CidrBlock.MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
         return new IPv4Address(uint.MaxValue >> (32 - blockBitCount));
     }
 
@@ -518,8 +518,10 @@ public readonly struct IPv4Address : IConvertible, IBinaryInteger<IPv4Address>, 
 
     float IConvertible.ToSingle(IFormatProvider? provider) => ((IConvertible)_value).ToSingle(provider);
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => (format is null && formatProvider is null) ? ToString() :
+    internal string ToString(string? format, IFormatProvider? formatProvider) => (format is null && formatProvider is null) ? ToString() :
         $"{_octet0.ToString(format, formatProvider)}.{_octet1.ToString(format, formatProvider)}.{_octet2.ToString(format, formatProvider)}.{_octet3.ToString(format, formatProvider)}";
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString(format, formatProvider);
 
     string IConvertible.ToString(IFormatProvider? provider) => (provider is null) ? ToString() :
         $"{_octet0.ToString(provider)}.{_octet1.ToString(provider)}.{_octet2.ToString(provider)}.{_octet3.ToString(provider)}";
@@ -579,7 +581,7 @@ public readonly struct IPv4Address : IConvertible, IBinaryInteger<IPv4Address>, 
 
     static bool INumberBase<IPv4Address>.TryConvertToTruncating<TOther>(IPv4Address value, [MaybeNullWhen(false)] out TOther result) => TryConvertUInt32ToTruncating(value._value, out result);
 
-    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    internal bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         var end = destination.Length;
         if (!_octet0.TryFormat(destination, out charsWritten, format, provider) || charsWritten >= end) return false;
@@ -603,6 +605,7 @@ public readonly struct IPv4Address : IConvertible, IBinaryInteger<IPv4Address>, 
         charsWritten += cw;
         return false;
     }
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => TryFormat(destination, out charsWritten, format, provider);
 
     static bool IBinaryInteger<IPv4Address>.TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out IPv4Address value)
     {
