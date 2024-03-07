@@ -277,7 +277,7 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
         return false;
     }
 
-    private int CheckUniqueAndUnfoundElements(IEnumerable<IPv4CidrBlock> other, bool returnIfUnfound, out int unfoundCount)
+    private int CheckUniqueAndUnfoundElements(IEnumerable<IPv4Address> other, bool returnIfUnfound, out int unfoundCount)
     {
         // if (_backingList.Count == 0)
         // {
