@@ -39,10 +39,10 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
     public IPv4Address Last { get; }
 
     /// <summary>
-    /// Gets the number of bits for the block represented by the current <see cref="IPv4CidrBlock"/>.
+    /// Gets the number of shared initial bits for addresses in the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
-    /// <returns>The number of bits for the block represented by the current <see cref="IPv4CidrBlock"/>.</returns>
-    public byte BlockBitCount { get; }
+    /// <returns>The number of shared initial bits, counting from the most-significant bit of the address, for the current <see cref="IPv4CidrBlock"/>.</returns>
+    public byte PrefixBitLength { get; }
 
     /// <summary>
     /// Gets the netmask value for the block represented by the current <see cref="IPv4CidrBlock"/>.
@@ -53,7 +53,7 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
     /// <summary>
     /// Gets the number of IP addresses in the block represented by the current <see cref="IPv4CidrBlock"/>.
     /// </summary>
-    public int Count => BlockBitCount + 1;
+    int IReadOnlyCollection<IPv4Address>.Count => (PrefixBitLength < 2) ? int.MaxValue : 1 << (32 - PrefixBitLength);
 
     /// <summary>
     /// Initializes a new <c>IPV4Range</c> that represents all possible IPv4 address values.
@@ -62,7 +62,7 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
     {
         Mask = First = OriginalAddress = IPv4Address.MinValue;
         Last = IPv4Address.MaxValue;
-        BlockBitCount = 0;
+        PrefixBitLength = 0;
     }
 
     private IPv4CidrBlock(IPv4CidrBlock other)
@@ -71,20 +71,20 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
         First = other.First;
         Last = other.Last;
         OriginalAddress = other.OriginalAddress;
-        BlockBitCount = other.BlockBitCount;
+        PrefixBitLength = other.PrefixBitLength;
     }
 
     /// <summary>
     /// Initializes a new <c>IPV4Range</c> that represents a block of IP addresses.
     /// </summary>
     /// <param name="address">An IPv4 address that is contained in the IP address block.</param>
-    /// <param name="blockBitCount">The number of bits in the IP address block.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
-    public IPv4CidrBlock(IPv4Address address, byte blockBitCount)
+    /// <param name="prefixBitLength">The number of shared initial bits for addresses in the IP address block.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="prefixBitLength"/> is greater than 32.</exception>
+    public IPv4CidrBlock(IPv4Address address, byte prefixBitLength)
     {
-        BlockBitCount = blockBitCount;
+        PrefixBitLength = prefixBitLength;
         OriginalAddress = address;
-        switch (blockBitCount)
+        switch (prefixBitLength)
         {
             case 0:
                 Mask = First = OriginalAddress = IPv4Address.MinValue;
@@ -95,10 +95,10 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
                 First = Last = address;
                 break;
             default:
-                if (blockBitCount > MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
-                Mask = IPv4Address.AsNetMask(blockBitCount);
+                if (prefixBitLength > MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(prefixBitLength));
+                Mask = IPv4Address.AsNetMask(prefixBitLength);
                 First = address.AsMasked(Mask);
-                Last = First.AsEndOfSegment(blockBitCount);
+                Last = First.AsEndOfSegment(prefixBitLength);
                 break;
         }
     }
@@ -110,13 +110,13 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
     /// <param name="octet1">The second octet of anIPv4  address that is contained in the IP address block.</param>
     /// <param name="octet2">The third octet of anIPv4  address that is contained in the IP address block.</param>
     /// <param name="octet3">The fourth octet of anIPv4  address that is contained in the IP address block.</param>
-    /// <param name="blockBitCount">The number of bits in the IP address block.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
-    public IPv4CidrBlock(byte octet0, byte octet1, byte octet2, byte octet3, byte blockBitCount)
+    /// <param name="prefixBitLength">The number of shared initial bits for addresses in the IP address block.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="prefixBitLength"/> is greater than 32.</exception>
+    public IPv4CidrBlock(byte octet0, byte octet1, byte octet2, byte octet3, byte prefixBitLength)
     {
-        BlockBitCount = blockBitCount;
+        PrefixBitLength = prefixBitLength;
         OriginalAddress = new IPv4Address(octet0, octet1, octet2, octet3);
-        switch (blockBitCount)
+        switch (prefixBitLength)
         {
             case 0:
                 Mask = First = OriginalAddress = IPv4Address.MinValue;
@@ -127,10 +127,10 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
                 First = Last = OriginalAddress;
                 break;
             default:
-                if (blockBitCount > MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(blockBitCount));
-                Mask = IPv4Address.AsNetMask(blockBitCount);
+                if (prefixBitLength > MaxBlockBitCount) throw new ArgumentOutOfRangeException(nameof(prefixBitLength));
+                Mask = IPv4Address.AsNetMask(prefixBitLength);
                 First = OriginalAddress.AsMasked(Mask);
-                Last = First.AsEndOfSegment(blockBitCount);
+                Last = First.AsEndOfSegment(prefixBitLength);
                 break;
         }
     }
@@ -139,10 +139,10 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
     /// Creates a new <see cref="IPv4CidrBlock"/> from a 32-bit IPv4 address value and block bit count.
     /// </summary>
     /// <param name="address">The 32-bit IPv4 address value.</param>
-    /// <param name="blockBitCount">The number of bits in the IP address block.</param>
-    /// <returns>An <see cref="IPv4CidrBlock"/> that contains the specified IPv4 address.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="blockBitCount"/> is greater than 32.</exception>
-    public static IPv4CidrBlock FromAddress(uint address, byte blockBitCount) => new(IPv4Address.FromAddress(address), blockBitCount);
+    /// <param name="prefixBitLength">The number of shared initial bits for addresses in the IP address block.</param>
+    /// /// <returns>An <see cref="IPv4CidrBlock"/> that contains the specified IPv4 address.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="prefixBitLength"/> is greater than 32.</exception>
+    public static IPv4CidrBlock FromAddress(uint address, byte prefixBitLength) => new(IPv4Address.FromAddress(address), prefixBitLength);
 
     public IPv4CidrBlock Clone() => new(this);
 
@@ -153,7 +153,7 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
         if (other is null) return 1;
         if (ReferenceEquals(this, other)) return 0;
         int diff = First.CompareTo(other.First);
-        return (diff == 0) ? BlockBitCount.CompareTo(other.BlockBitCount) : diff;
+        return (diff == 0) ? PrefixBitLength.CompareTo(other.PrefixBitLength) : diff;
     }
 
     int IComparable.CompareTo(object? obj)
@@ -162,7 +162,7 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
         if (obj is not IPv4CidrBlock other) return -1;
         if (ReferenceEquals(this, other)) return 0;
         int diff = First.CompareTo(other.First);
-        return (diff == 0) ? BlockBitCount.CompareTo(other.BlockBitCount) : diff;
+        return (diff == 0) ? PrefixBitLength.CompareTo(other.PrefixBitLength) : diff;
     }
 
     public bool Contains(IPv4Address item)
@@ -171,11 +171,13 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
         return diff == 0 || (diff > 0 && (item <= Last));
     }
 
-    public bool Equals(IPv4CidrBlock? other) => other is not null && (ReferenceEquals(this, other) || (First.Equals(other.First) && BlockBitCount == other.BlockBitCount));
+    public bool Equals(IPv4CidrBlock? other) => other is not null && (ReferenceEquals(this, other) || (First.Equals(other.First) && PrefixBitLength == other.PrefixBitLength));
 
-    public override bool Equals(object? obj) => obj is IPv4CidrBlock other && (ReferenceEquals(this, other) || (First.Equals(other.First) && BlockBitCount == other.BlockBitCount));
+    public override bool Equals(object? obj) => obj is IPv4CidrBlock other && (ReferenceEquals(this, other) || (First.Equals(other.First) && PrefixBitLength == other.PrefixBitLength));
 
-    public override int GetHashCode() => HashCode.Combine(First, BlockBitCount);
+    public long GetCount() => 1L << (32 - PrefixBitLength);
+
+    public override int GetHashCode() => HashCode.Combine(First, PrefixBitLength);
 
     /// <summary>
     /// Gets an <see cref="IEnumerator{T}"/> that iterates through all the IP addresses included in the IP address block.
@@ -218,9 +220,9 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
         return Parse(s.AsSpan(), provider);
     }
 
-    public override string ToString() => $"{First}{SeparatorChar}{BlockBitCount}";
+    public override string ToString() => $"{First}{SeparatorChar}{PrefixBitLength}";
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => $"{First.ToString(format, formatProvider)}{SeparatorChar}{BlockBitCount.ToString(format, formatProvider)}";
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => $"{First.ToString(format, formatProvider)}{SeparatorChar}{PrefixBitLength.ToString(format, formatProvider)}";
 
     /// <summary>
     /// Tries to parse a span of characters into a <see cref="IPv4CidrBlock"/> value.
@@ -266,7 +268,7 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
             if (charsWritten == end) return false;
             destination[charsWritten++] = SeparatorChar;
             if (charsWritten == end) return false;
-            if (BlockBitCount.TryFormat(destination[charsWritten..], out int cw, format, provider))
+            if (PrefixBitLength.TryFormat(destination[charsWritten..], out int cw, format, provider))
             {
                 charsWritten = cw;
                 return true;
@@ -279,18 +281,6 @@ public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4
 
     private int CheckUniqueAndUnfoundElements(IEnumerable<IPv4Address> other, bool returnIfUnfound, out int unfoundCount)
     {
-        // if (_backingList.Count == 0)
-        // {
-        //     int numElementsInOther = 0;
-        //     foreach (NumberExtents<T> item in other)
-        //     {
-        //         numElementsInOther++;
-        //         break;
-        //     }
-        //     unfoundCount = numElementsInOther;
-        //     return 0;
-        // }
-
         // BitArray bitHelper = new(_backingList.Count);
 
         // unfoundCount = 0;
