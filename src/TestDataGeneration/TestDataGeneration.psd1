@@ -72,7 +72,9 @@ NestedModules = @('TestDataGeneration.dll')
 FunctionsToExport = @('Select-Random', 'Get-RandomIpV4Address')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Get-RandomInteger', 'Convert-RangePatternToRandomInt', 'Get-RandomCharacterSource', 'Remove-NonPrintableChars', 'ConvertFrom-BinaryNotation', 'ConvertTo-BinaryNotation')
+CmdletsToExport = @('Get-RandomInteger', 'Convert-RangePatternToRandomInt', 'Get-RandomCharacterSource', 'Remove-NonPrintableChars', 'ConvertFrom-BinaryNotation',
+    'ConvertTo-BinaryNotation', 'Get-FirstIPAddress', 'Get-LastIPAddress', 'Get-FirstIPNetworkAddress', 'Get-LastIPNetworkAddress', 'Get-IPNetworkAddressExtents',
+    'Test-IPNetworkContains', 'Get-SortedIPNetworks', 'Get-UniqueIPNetworks')
 
 # Variables to export from this module
 VariablesToExport = '*'

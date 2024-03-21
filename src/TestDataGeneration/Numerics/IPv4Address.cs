@@ -10,6 +10,7 @@ namespace TestDataGeneration.Numerics;
 /// Represents an IPv4 internet address.
 /// </summary>
 [StructLayout(LayoutKind.Explicit)]
+[Obsolete("Use System.Net.IPAddress, instead")]
 public readonly struct IPv4Address : IConvertible, IBinaryInteger<IPv4Address>, IMinMaxValue<IPv4Address>, IUnsignedNumber<IPv4Address>
 {
     #region Fields

@@ -7,6 +7,7 @@ namespace TestDataGeneration.Numerics;
 /// <summary>
 /// Represents an IPv4 CIDR address block.
 /// </summary>
+[Obsolete("Use TestDataGeneration.Net.IPNetwork, instead")]
 public partial class IPv4CidrBlock : IEquatable<IPv4CidrBlock>, IComparable<IPv4CidrBlock>, IComparable, IReadOnlySet<IPv4Address>, IFormattable, IParsable<IPv4CidrBlock>, ISpanFormattable,
     ISpanParsable<IPv4CidrBlock>, IEqualityOperators<IPv4CidrBlock, IPv4CidrBlock, bool>, IComparisonOperators<IPv4CidrBlock, IPv4CidrBlock, bool>, ICloneable
 {

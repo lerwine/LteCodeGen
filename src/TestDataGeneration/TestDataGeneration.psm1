@@ -161,3 +161,235 @@ Function Get-RandomIpV4Address {
         }
     }
 }
+
+Function Test-IPNetworkPrefixLength {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, HelpMessage = 'Network prefix length to test')]
+        [Alias('Prefix', 'MaskLength', 'NetMask', 'NetMaskLength', 'Bits')]
+        [int[]]$PrefixLength,
+
+        [Parameter(Mandatory = $true, Position = 1, HelpMessage = 'Target IP addresss')]
+        [Alias('Address', 'IP')]
+        [IPAddress]$IPAddress,
+
+        [switch]$ThrowValidationMetadataException
+    )
+
+    Begin {
+        $MaxValue = 32;
+        if ($IPAddress.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6) { $MaxValue = 128 }
+    }
+
+    Process {
+        $Passed = $true;
+        foreach ($p in $PrefixLength) {
+            if ($p -lt 0) {
+                $Passed = $false;
+                if ($ThrowValidationMetadataException.IsPresent) {
+                    throw ([System.Management.Automation.ValidationMetadataException]::new("The $p argument is less than the minimum allowed range of 0."));
+                }
+            } else {
+                if ($p -gt $MaxValue) {
+                    $Passed = $false;
+                    if ($ThrowValidationMetadataException.IsPresent) {
+                        throw ([System.Management.Automation.ValidationMetadataException]::new("The $p argument is greater than the maximum allowed range of $MaxValue."));
+                    }
+                }
+            }
+        }
+        if (-not $Passed) {
+            $false | Write-Output
+            break;
+        }
+    }
+
+    End {
+        $true | Write-Output
+    }
+}
+
+Function Get-FirstIPAddress {
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, HelpMessage = 'IP in target CIDR block')]
+        [Alias('Address', 'IP')]
+        [IPAddress[]]$IPAddress
+    )
+
+    Begin {
+        $FirstIPAddress = $null;
+    }
+
+    Process {
+        if ($null -eq $FirstIPAddress -or [TestDataGeneration.Net.IPAddressComparer]::Compare($IPAddress[0], $FirstIPAddress) -lt 0) {
+            $FirstIPAddress = $IPAddress[0];
+        }
+        foreach ($ip in ($IPAddress | Select-Object -Skip 1)) {
+            if ([TestDataGeneration.Net.IPAddressComparer]::Compare($ip, $FirstIPAddress) -lt 0) {
+                $FirstIPAddress = $ip;
+            }
+        }
+    }
+    
+    End {
+        $FirstIPAddress | Write-Output;
+    }
+}
+
+Function Get-LastIPAddress {
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, HelpMessage = 'IP in target CIDR block')]
+        [Alias('Address', 'IP')]
+        [IPAddress[]]$IPAddress
+    )
+
+    Begin {
+        $LastIPAddress = $null;
+    }
+
+    Process {
+        if ($null -eq $LastIPAddress -or [TestDataGeneration.Net.IPAddressComparer]::Compare($IPAddress[0], $LastIPAddress) -gt 0) {
+            $LastIPAddress = $IPAddress[0];
+        }
+        foreach ($ip in ($IPAddress | Select-Object -Skip 1)) {
+            if ([TestDataGeneration.Net.IPAddressComparer]::Compare($ip, $LastIPAddress) -gt 0) {
+                $LastIPAddress = $ip;
+            }
+        }
+    }
+    
+    End {
+        $LastIPAddress | Write-Output;
+    }
+}
+
+Function Get-FirstIPNetworkAddress {
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, HelpMessage = 'IP in target CIDR block')]
+        [Alias('Address', 'IP')]
+        [IPAddress]$IPAddress,
+
+        [Parameter(Mandatory = $true, Position = 1, HelpMessage = 'Number of bits in prefix representing the CIDR block')]
+        [ValidateScript({ $_ | Test-IPNetworkPrefixLength -IPAddress $IPAddress -ThrowValidationMetadataException })]
+        [Alias('Prefix', 'MaskLength', 'NetMask', 'NetMaskLength', 'Bits')]
+        [int]$PrefixLength
+    )
+
+    [TestDataGeneration.Net.IPNetwork]::GetFirstAddressInBlock($IPAddress, $PrefixLength) | Write-Output;
+}
+
+Function Get-LastIPNetworkAddress {
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, HelpMessage = 'IP in target CIDR block')]
+        [Alias('Address', 'IP')]
+        [IPAddress]$IPAddress,
+
+        [Parameter(Mandatory = $true, Position = 1, HelpMessage = 'Number of bits in prefix representing the CIDR block')]
+        [ValidateScript({ $_ | Test-IPNetworkPrefixLength -IPAddress $IPAddress -ThrowValidationMetadataException })]
+        [Alias('Prefix', 'MaskLength', 'NetMask', 'NetMaskLength', 'Bits')]
+        [int]$PrefixLength
+    )
+
+    [TestDataGeneration.Net.IPNetwork]::GetLastAddressInBlock($IPAddress, $PrefixLength) | Write-Output;
+}
+
+Function Get-IPNetworkAddressExtents {
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, HelpMessage = 'IP in target CIDR block')]
+        [Alias('Address', 'IP')]
+        [IPAddress]$IPAddress,
+
+        [Parameter(Mandatory = $true, Position = 1, HelpMessage = 'Number of bits in prefix representing the CIDR block')]
+        [ValidateScript({ $_ | Test-IPNetworkPrefixLength -IPAddress $IPAddress -ThrowValidationMetadataException })]
+        [Alias('Prefix', 'MaskLength', 'NetMask', 'NetMaskLength', 'Bits')]
+        [int]$PrefixLength
+    )
+
+    Process {
+        [IPAddress]$Last = $null;
+        $First = [TestDataGeneration.Net.IPNetwork]::GetIPAddressBlockExtents($IPAddress, $PrefixLength, [ref]$Last)
+        [PSCustomObject]@{
+            First = $First;
+            Last = $Last;
+            MaskLength = $PrefixLength;
+            Target = $IPAddress;
+        } | Write-Output;
+    }
+}
+
+Function Test-IPNetworkContains {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, HelpMessage = 'IP address to test')]
+        [Alias('Address', 'IP')]
+        [IPAddress[]]$IPAddress,
+
+        [Parameter(Mandatory = $true, Position = 0, HelpMessage = 'IP in target CIDR block')]
+        [Alias('CIDR', 'IPNetwork', 'Block')]
+        [IPAddress]$Network,
+
+        [Parameter(Mandatory = $true, Position = 1, HelpMessage = 'Number of bits in prefix representing the CIDR block')]
+        [ValidateScript({ $_ | Test-IPNetworkPrefixLength -IPAddress $IPAddress -ThrowValidationMetadataException })]
+        [Alias('Prefix', 'MaskLength', 'NetMask', 'NetMaskLength', 'Bits')]
+        [int]$PrefixLength
+    )
+
+    Begin {
+        $IPNetwork = [TestDataGeneration.Net.IPNetwork]::new($Network, $PrefixLength);
+    }
+
+    Process {
+        $Passed = $true;
+        foreach ($ip in $IPAddress) {
+            if (-not $IPNetwork.Contains($ip)) {
+                $Passed = $false;
+                break;
+            }
+        }
+        if (-not $Passed) {
+            $False | Write-Output;
+            break;
+        }
+    }
+
+    End { $true | Write-Output }
+}
+
+Function Get-SortedIPNetworks {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, HelpMessage = 'IP address to sort')]
+        [Alias('Address', 'IP')]
+        [IPAddress[]]$IPAddress,
+
+        [switch]$Unique,
+
+        [switch]$Descending
+    )
+
+    Begin { $AllAddresses = @() }
+
+    Process { $AllAddresses += $IPAddress }
+
+    End {
+        if ($Unique.IsPresent) { $AllAddresses = @([TestDataGeneration.Net.IPAddressComparer]::Distinct($AllAddresses)) }
+        [TestDataGeneration.Net.IPAddressComparer]::Sort($AllAddresses, $Descending.IsPresent) | Write-Output;
+    }
+}
+
+Function Get-UniqueIPNetworks {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, HelpMessage = 'IP address to filter')]
+        [Alias('Address', 'IP')]
+        [IPAddress[]]$IPAddress
+    )
+
+    Begin { $AllAddresses = @() }
+
+    Process { $AllAddresses += $IPAddress }
+
+    End {
+        [TestDataGeneration.Net.IPAddressComparer]::Distinct($AllAddresses) | Write-Output;
+    }
+}
