@@ -6,9 +6,9 @@ namespace TestDataGeneration.Net;
 
 public class IPNetwork : IEquatable<IPNetwork>
 {
-    public IPAddress BaseAddress { get; }
-
     private readonly byte[] _bytes;
+
+    public IPAddress BaseAddress { get; }
 
     public int PrefixLength { get; }
 
@@ -31,7 +31,7 @@ public class IPNetwork : IEquatable<IPNetwork>
         {
             if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                 return address.Equals(IPAddress.IPv6Any) ? address : IPAddress.IPv6Any;
-            return  address.Equals(IPAddress.Any) ? address : IPAddress.Any;
+            return address.Equals(IPAddress.Any) ? address : IPAddress.Any;
         }
         if (prefixLength > 0)
         {
@@ -92,7 +92,7 @@ public class IPNetwork : IEquatable<IPNetwork>
         {
             if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                 return address.Equals(IPAddress.IPv6None) ? address : IPAddress.IPv6None;
-            return  address.Equals(IPAddress.None) ? address : IPAddress.None;
+            return address.Equals(IPAddress.None) ? address : IPAddress.None;
         }
         if (prefixLength > 0)
         {
@@ -265,7 +265,7 @@ public class IPNetwork : IEquatable<IPNetwork>
                     while (++index < e) lastBytes[index] = 255;
                     lastAddress = new(lastBytes);
                 }
-                
+
                 return new(firstBytes);
             }
         }

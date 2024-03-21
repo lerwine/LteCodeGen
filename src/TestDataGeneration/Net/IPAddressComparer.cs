@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace TestDataGeneration.Net;
 
@@ -25,7 +20,7 @@ public class IPAddressComparer : IEqualityComparer<IPAddress>, IComparer<IPAddre
 
     public static int InvertedCompare(IPAddress? x, IPAddress? y)
     {
-        if (x is null) return (y is null) ? -1: 0;
+        if (x is null) return (y is null) ? -1 : 0;
         if (y is null) return 1;
         if (ReferenceEquals(x, y)) return 0;
         if (x.AddressFamily != y.AddressFamily)
