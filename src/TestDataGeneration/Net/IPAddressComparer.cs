@@ -7,17 +7,6 @@ public class IPAddressComparer : IEqualityComparer<IPAddress>, IComparer<IPAddre
 {
     public static readonly IPAddressComparer Instance = new();
 
-    public static IEnumerable<IPAddress> Sort(IEnumerable<IPAddress> source, bool descending = false)
-    {
-        if (source is null) return Enumerable.Empty<IPAddress>();
-        var sorted = source.ToList();
-        if (sorted.Count < 2) return source;
-        sorted.Sort(descending ? InvertedCompare : Compare);
-        return sorted.ToArray();
-    }
-
-    public static IEnumerable<IPAddress> Distinct(IEnumerable<IPAddress> source) => source.Distinct(Instance);
-
     public static int InvertedCompare(IPAddress? x, IPAddress? y)
     {
         if (x is null) return (y is null) ? -1 : 0;
