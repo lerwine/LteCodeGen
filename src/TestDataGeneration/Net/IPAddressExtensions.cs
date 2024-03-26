@@ -102,22 +102,7 @@ public static class IPAddressExtensions
                 var b = bytes[index];
                 var m = (byte)(bytes[index] | (byte.MaxValue >> bits));
                 var e = max >> 3;
-                if (m != b)
-                {
-                    bytes[index] = m;
-                    while (++index < e) bytes[index] = 255;
-                    return new(bytes);
-                }
-                else
-                    while (++index < e)
-                    {
-                        if (bytes[index] != 255)
-                        {
-                            bytes[index] = 255;
-                            while (++index < e) bytes[index] = 255;
-                            return new(bytes);
-                        }
-                    }
+                
             }
             return address;
         }
