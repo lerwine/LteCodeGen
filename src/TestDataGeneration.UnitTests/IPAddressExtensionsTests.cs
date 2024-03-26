@@ -27,7 +27,7 @@ public partial class IPAddressExtensionsTests
     [Description("Gets first IP address in block where the return value is equal to the input value.")]
     public void GetFirstAddressInBlockTest2(IPAddress address, byte prefixLength)
     {
-        var result = address.GetFirstAddressInBlock(0);
+        var result = address.GetFirstAddressInBlock(prefixLength);
         Assert.That(result, Is.SameAs(address));
     }
 
@@ -41,10 +41,10 @@ public partial class IPAddressExtensionsTests
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetGetLastAddressInBlockTest2Data))]
     [Description("Gets last IP address in block where the return value is equal to the input value.")]
-    public IPAddress? GetLastAddressInBlockTest2(IPAddress address, byte prefixLength)
+    public void GetLastAddressInBlockTest2(IPAddress address, byte prefixLength)
     {
-        try { return address.GetLastAddressInBlock(prefixLength); }
-        catch { return null; }
+        var result = address.GetLastAddressInBlock(prefixLength);
+        Assert.That(result, Is.SameAs(address));
     }
 
     [TestCaseSource(typeof(TestData), nameof(TestData.GetGetIPAddressBlockExtentsTestData))]

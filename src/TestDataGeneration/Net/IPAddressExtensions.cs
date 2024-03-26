@@ -131,21 +131,11 @@ public static class IPAddressExtensions
         {
             if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
             {
-                if (address.Equals(IPAddress.IPv6Any))
-                {
-                    lastAddress = IPAddress.IPv6None;
-                    return address;
-                }
                 lastAddress = address.Equals(IPAddress.IPv6None) ? address : IPAddress.IPv6None;
-                return IPAddress.IPv6Any;
-            }
-            if (address.Equals(IPAddress.Any))
-            {
-                lastAddress = IPAddress.None;
-                return address;
+                return address.Equals(IPAddress.IPv6Any) ? address : IPAddress.IPv6Any;
             }
             lastAddress = address.Equals(IPAddress.None) ? address : IPAddress.None;
-            return IPAddress.Any;
+            return address.Equals(IPAddress.Any) ? address : IPAddress.Any;
         }
         int max = (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) ? 128 : 32;
         if (prefixLength == max)
@@ -153,98 +143,93 @@ public static class IPAddressExtensions
             lastAddress = address;
             return address;
         }
-        if (prefixLength < max)
+        if (prefixLength > max)
+            throw new ArgumentOutOfRangeException(nameof(prefixLength));
+        byte[] firstBytes = address.GetAddressBytes();
+        byte[] lastBytes = address.GetAddressBytes();
+        var bits = prefixLength % 8;
+        if (bits == 0)
         {
-            byte[] firstBytes = address.GetAddressBytes();
-            byte[] lastBytes = address.GetAddressBytes();
-            var bits = prefixLength % 8;
-            int index, e;
-            if (bits == 0)
+            int firstIndex = prefixLength >> 3;
+            var e = max >> 3;
+            int lastIndex = firstIndex;
+            do
             {
-                index = prefixLength >> 3;
-                e = max >> 3;
-                if (firstBytes[index] == 0)
+                if (lastBytes[lastIndex] != 255)
                 {
-                    lastBytes[index] = 255;
-                    for (int i = index + 1; i < e; i++)
-                        lastBytes[i] = 255;
+                    lastBytes[lastIndex] = 255;
+                    while (++lastIndex < e) lastBytes[lastIndex] = 255;
                     lastAddress = new(lastBytes);
-                    while (++index < e)
+                    do
                     {
-                        if (firstBytes[index] != 0)
+                        if (firstBytes[firstIndex] != 0)
                         {
-                            firstBytes[index] = 0;
-                            while (++index < e) firstBytes[index] = 0;
+                            firstBytes[firstIndex] = 0;
+                            while (++firstIndex < e) firstBytes[firstIndex] = 0;
                             return new(firstBytes);
                         }
                     }
+                    while (++firstIndex < e);
                     return address;
                 }
-                firstBytes[index] = 0;
-                for (int i = index + 1; i < e; i++)
-                    firstBytes[i] = 0;
-                do
-                {
-                    if (lastBytes[index] != 255)
-                    {
-                        lastBytes[index] = 255;
-                        while (++index < e) lastBytes[index] = 255;
-                        lastAddress = new(lastBytes);
-                        return new(firstBytes);
-                    }
-                }
-                while (++index < e);
-                lastAddress = address;
-                return new(firstBytes);
             }
-            index = (prefixLength - bits) >> 3;
-            var fb = firstBytes[index];
-            var fm = (byte)(firstBytes[index] & (byte.MaxValue << (8 - bits)));
-            var lb = lastBytes[index];
-            var lm = (byte)(lastBytes[index] | (byte.MaxValue >> bits));
-            e = max >> 3;
-            if (fm == fb)
+            while (++lastIndex < e);
+            lastAddress = address;
+            do
             {
-                lastBytes[index] = lm;
-                for (int i = index + 1; i < e; i++) lastBytes[index] = 255;
+                if (firstBytes[firstIndex] != 0)
+                {
+                    firstBytes[firstIndex] = 0;
+                    while (++firstIndex < e) firstBytes[firstIndex] = 0;
+                    return new(firstBytes);
+                }
+            }
+            while (++firstIndex < e);
+        }
+        else
+        {
+            int firstIndex = (prefixLength - bits) >> 3;
+            var b = firstBytes[firstIndex];
+            var fm = (byte)(firstBytes[firstIndex] & (byte.MaxValue << (8 - bits)));
+            var lm = (byte)(lastBytes[firstIndex] | (byte.MaxValue >> bits));
+            var e = max >> 3;
+            int lastIndex = firstIndex;
+            lastAddress = address;
+            if (lm != b)
+            {
+                lastBytes[lastIndex] = lm;
+                while (++lastIndex < e) lastBytes[lastIndex] = 255;
                 lastAddress = new(lastBytes);
-                while (++index < e)
-                {
-                    if (firstBytes[index] != 0)
-                    {
-                        firstBytes[index] = 0;
-                        while (++index < e) firstBytes[index] = 0;
-                        return new(firstBytes);
-                    }
-                }
-                return address;
-            }
-            firstBytes[index] = fm;
-            for (int i = index + 1; i < e; i++) firstBytes[index] = 0;
-            if (lm == lb)
-            {
-                while (++index < e)
-                {
-                    if (lastBytes[index] != 255)
-                    {
-                        lastBytes[index] = 255;
-                        while (++index < e) lastBytes[index] = 255;
-                        lastAddress = new(lastBytes);
-                        return new(firstBytes);
-                    }
-                }
-                lastAddress = address;
             }
             else
+                while (++lastIndex < e)
+                {
+                    if (lastBytes[lastIndex] != 255)
+                    {
+                        lastBytes[lastIndex] = 255;
+                        while (++lastIndex < e) lastBytes[lastIndex] = 255;
+                        lastAddress = new(lastBytes);
+                        break;
+                    }
+                }
+            if (fm != b)
             {
-                lastBytes[index] = lm;
-                while (++index < e) lastBytes[index] = 255;
-                lastAddress = new(lastBytes);
+                firstBytes[firstIndex] = fm;
+                while (++firstIndex < e) firstBytes[firstIndex] = 0;
+                return new(firstBytes);
             }
-
-            return new(firstBytes);
+            else
+                while (++firstIndex < e)
+                {
+                    if (firstBytes[firstIndex] != 0)
+                    {
+                        firstBytes[firstIndex] = 0;
+                        while (++firstIndex < e) firstBytes[firstIndex] = 0;
+                        return new(firstBytes);
+                    }
+                }
         }
-        throw new ArgumentOutOfRangeException(nameof(prefixLength));
+        return address;
     }
 
     public static IEnumerable<IPAddress> Sort(this IEnumerable<IPAddress> source, bool descending = false)
